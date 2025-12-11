@@ -92,7 +92,7 @@ export default function AdminDashboard() {
     const handleSavePage = async (page: PageData) => {
         setSaving(true);
         try {
-            await api.admin.updatePage(page.id, page);
+            await api.admin.updatePage(page.id, page as unknown as Record<string, unknown>);
             setMessage({ type: 'success', text: 'Page updated successfully!' });
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
     const handleSaveStat = async (stat: Stat) => {
         setSaving(true);
         try {
-            await api.admin.updateStat(stat.id, stat);
+            await api.admin.updateStat(stat.id, stat as unknown as Record<string, unknown>);
             setMessage({ type: 'success', text: 'Stat updated successfully!' });
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {

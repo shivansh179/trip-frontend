@@ -52,6 +52,9 @@ export interface Destination {
     imageUrl: string;
     tripCount: number;
     description?: string;
+    region?: string;
+    country?: string;
+    isFeatured?: boolean;
 }
 
 export interface Category {
