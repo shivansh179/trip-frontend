@@ -1,0 +1,40 @@
+
+> trip-frontend@0.1.0 dev
+> next dev
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/apple/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/apple/Desktop/Trip/trip-frontend/package-lock.json
+
+   ▲ Next.js 16.0.8 (Turbopack)
+   - Local:         http://localhost:3000
+   - Network:       http://192.168.1.12:3000
+
+ ✓ Starting...
+ ✓ Ready in 795ms
+ GET / 200 in 1649ms (compile: 1478ms, render: 171ms)
+ GET / 200 in 73ms (compile: 15ms, render: 58ms)
+ GET /api/trips 404 in 446ms (compile: 387ms, render: 59ms)
+ GET / 200 in 38ms (compile: 4ms, render: 35ms)
+ GET / 200 in 56ms (compile: 7ms, render: 49ms)
+ GET /trips/1 200 in 767ms (compile: 698ms, render: 69ms)
+ GET /checkout?tripId=1&guests=1&date=2025-11-22 200 in 356ms (compile: 321ms, render: 35ms)
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1584900400128-5121377121f9?w=800&q=80 404
+ GET / 200 in 116ms (compile: 9ms, render: 107ms)
+ GET /hotels 200 in 259ms (compile: 238ms, render: 21ms)
+ GET /hotels/3 200 in 517ms (compile: 501ms, render: 16ms)
+ ✓ Compiled in 91ms
+ ✓ Compiled in 81ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /hotels/3 200 in 131ms (compile: 22ms, render: 109ms)
+ GET /checkout?tripId=1&guests=1&date=2025-11-22 200 in 508ms (compile: 93ms, render: 415ms)
+ ✓ Compiled in 50ms
+ ✓ Compiled in 81ms
+ ✓ Compiled in 85ms
+ ✓ Compiled in 87ms
+ ✓ Compiled in 33ms
+ ✓ Compiled in 30ms
+ ✓ Compiled in 24ms

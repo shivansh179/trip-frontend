@@ -61,9 +61,10 @@ export default function Header() {
                     <div className="flex justify-between items-center">
                         {/* Logo */}
                         <Link href="/" className="relative z-10">
-                            <span className={`font-display text-2xl md:text-3xl tracking-wide transition-colors duration-500 ${getTextColor()}`}>
-                                Wanderlust
-                            </span>
+                            {/* <span className={`font-display text-2xl md:text-3xl tracking-wide transition-colors duration-500 ${getTextColor()}`}>
+                                YlooTrips
+                            </span> */}
+                            <img src="/logo.png" alt="YlooTrips" width={100} height={100} />
                         </Link>
 
                         {/* Desktop Navigation */}

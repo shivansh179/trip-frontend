@@ -1,0 +1,40 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { XCircle } from 'lucide-react';
+
+export default function PaymentFailurePage() {
+    const router = useRouter();
+    
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-cream">
+            <div className="text-center max-w-md">
+                <XCircle className="w-16 h-16 text-error mx-auto mb-4" />
+                <h1 className="text-3xl font-light mb-4">Payment Failed</h1>
+                <p className="text-text-secondary mb-6">
+                    Your payment could not be processed. Please try again or contact support.
+                </p>
+                <div className="flex gap-4 justify-center">
+                    <button
+                        onClick={() => router.push('/trips')}
+                        className="btn-secondary"
+                    >
+                        Back to Trips
+                    </button>
+                    <button
+                        onClick={() => router.push('/')}
+                        className="btn-primary"
+                    >
+                        Back to Home
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+
+
+
+
+

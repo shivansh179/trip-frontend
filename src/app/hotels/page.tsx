@@ -48,7 +48,12 @@ export default function HotelsPage() {
 
   const formatPrice = (price: number | { value: string }) => {
     const numPrice = typeof price === 'object' ? parseFloat(price.value) : price;
-    return `$${numPrice}`;
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(numPrice);
   };
 
   return (

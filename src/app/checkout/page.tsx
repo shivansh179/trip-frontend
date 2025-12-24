@@ -1,0 +1,374 @@
+'use client';
+
+import { useEffect, useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Calendar, Users, MapPin, Lock, CheckCircle } from 'lucide-react';
+import { api } from '@/lib/api';
+import { Trip } from '@/types';
+import { formatPrice } from '@/lib/utils';
+import PaymentMethods from '@/components/PaymentMethods';
+
+function CheckoutContent() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    
+    const tripId = searchParams.get('tripId');
+    const guests = Number(searchParams.get('guests')) || 1;
+    const date = searchParams.get('date') || '';
+    
+    const [trip, setTrip] = useState<Trip | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+    const [bookingReference, setBookingReference] = useState<string | undefined>(undefined);
+    
+    const [formData, setFormData] = useState({
+        customerName: '',
+        customerEmail: '',
+        customerPhone: '',
+        numberOfGuests: guests,
+        travelDate: date,
+        specialRequests: '',
+        paymentMethod: 'card',
+    });
+
+    useEffect(() => {
+        const fetchTrip = async () => {
+            if (!tripId) {
+                router.push('/trips');
+                return;
+            }
+            
+            try {
+                const response = await api.getTripById(Number(tripId));
+                setTrip(response.data);
+                setFormData(prev => ({
+                    ...prev,
+                    numberOfGuests: guests,
+                    travelDate: date,
+                }));
+            } catch (error) {
+                console.error('Error fetching trip:', error);
+                router.push('/trips');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTrip();
+    }, [tripId, guests, date, router]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        if (!trip) return;
+        
+        if (!formData.paymentMethod || formData.paymentMethod.trim() === '') {
+            alert('Please select a payment method');
+            return;
+        }
+        
+        setSubmitting(true);
+        
+        try {
+            const bookingData = {
+                trip: { id: trip.id },
+                customerName: formData.customerName,
+                customerEmail: formData.customerEmail,
+                customerPhone: formData.customerPhone,
+                numberOfGuests: formData.numberOfGuests,
+                travelDate: formData.travelDate,
+                specialRequests: formData.specialRequests,
+                paymentMethod: formData.paymentMethod,
+            };
+            
+            const bookingResponse = await api.createBooking(bookingData);
+            const booking = bookingResponse.data;
+            setBookingReference(booking.bookingReference);
+            
+            const paymentResponse = await api.initiatePayment(booking.bookingReference);
+            const paymentData = paymentResponse.data;
+            
+            if (paymentData.success === false) {
+                throw new Error(paymentData.error || 'Failed to initiate payment');
+            }
+            
+            if (paymentData.paymentUrl) {
+                window.location.href = paymentData.paymentUrl;
+            } else {
+                throw new Error(paymentData.error || 'Failed to get payment URL from Easebuzz. Please check your payment gateway configuration.');
+            }
+        } catch (error: any) {
+            console.error('Error creating booking:', error);
+            
+            let errorMessage = 'Failed to create booking. Please try again.';
+            
+            if (error.response) {
+                const errorData = error.response.data;
+                if (errorData?.error) {
+                    errorMessage = errorData.error;
+                } else if (errorData?.message) {
+                    errorMessage = errorData.message;
+                } else if (typeof errorData === 'string') {
+                    errorMessage = errorData;
+                }
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            alert(errorMessage);
+            setSubmitting(false);
+        }
+    };
+
+    const basePrice = trip ? (typeof trip.price === 'number' ? trip.price : parseFloat(trip.price.toString())) * formData.numberOfGuests : 0;
+    const discountPercent = formData.paymentMethod === 'upi' ? 5 : formData.paymentMethod === 'card' ? 3 : formData.paymentMethod === 'netbanking' ? 0 : 0;
+    const discountAmount = (basePrice * discountPercent) / 100;
+    const totalPrice = basePrice - discountAmount;
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-text-secondary">Loading checkout...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!trip) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-4xl font-light mb-4">Trip Not Found</h1>
+                    <button onClick={() => router.push('/trips')} className="btn-primary">
+                        Back to Trips
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-cream py-16">
+            <div className="section-container">
+                <div className="max-w-5xl mx-auto">
+                    <h1 className="text-display-xl mb-8 mt-16">Complete Your Booking</h1>
+                    
+                    <div className="grid lg:grid-cols-3 gap-12">
+                        <div className="lg:col-span-2">
+                            <form onSubmit={handleSubmit} className="space-y-8">
+                                <section className="bg-cream-light p-6 border border-primary/10">
+                                    <h2 className="text-2xl font-light mb-4">Trip Summary</h2>
+                                    <div className="space-y-3">
+                                        <div className="flex items-start gap-3">
+                                            <MapPin size={20} className="text-secondary mt-1" />
+                                            <div>
+                                                <p className="text-caption text-text-secondary">Destination</p>
+                                                <p className="text-body-lg">{trip.destination}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start gap-3">
+                                            <Calendar size={20} className="text-secondary mt-1" />
+                                            <div>
+                                                <p className="text-caption text-text-secondary">Duration</p>
+                                                <p className="text-body-lg">{trip.duration}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start gap-3">
+                                            <Users size={20} className="text-secondary mt-1" />
+                                            <div>
+                                                <p className="text-caption text-text-secondary">Trip Title</p>
+                                                <p className="text-body-lg">{trip.title}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <h2 className="text-2xl font-light mb-6">Personal Information</h2>
+                                    <div className="space-y-6">
+                                        <div>
+                                            <label className="text-caption text-text-secondary mb-2 block">
+                                                Full Name *
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                value={formData.customerName}
+                                                onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
+                                                className="w-full p-4 border border-primary/20 bg-white text-primary"
+                                                placeholder="John Doe"
+                                            />
+                                        </div>
+                                        
+                                        <div className="grid md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label className="text-caption text-text-secondary mb-2 block">
+                                                    Email Address *
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    required
+                                                    value={formData.customerEmail}
+                                                    onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
+                                                    className="w-full p-4 border border-primary/20 bg-white text-primary"
+                                                    placeholder="john@example.com"
+                                                />
+                                            </div>
+                                            
+                                            <div>
+                                                <label className="text-caption text-text-secondary mb-2 block">
+                                                    Phone Number *
+                                                </label>
+                                                <input
+                                                    type="tel"
+                                                    required
+                                                    value={formData.customerPhone}
+                                                    onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
+                                                    className="w-full p-4 border border-primary/20 bg-white text-primary"
+                                                    placeholder="+1 234 567 8900"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <h2 className="text-2xl font-light mb-6">Travel Details</h2>
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="text-caption text-text-secondary mb-2 block">
+                                                Travel Date *
+                                            </label>
+                                            <input
+                                                type="date"
+                                                required
+                                                value={formData.travelDate}
+                                                onChange={(e) => setFormData({ ...formData, travelDate: e.target.value })}
+                                                min={new Date().toISOString().split('T')[0]}
+                                                className="w-full p-4 border border-primary/20 bg-white text-primary"
+                                            />
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="text-caption text-text-secondary mb-2 block">
+                                                Number of Guests *
+                                            </label>
+                                            <select
+                                                required
+                                                value={formData.numberOfGuests}
+                                                onChange={(e) => setFormData({ ...formData, numberOfGuests: Number(e.target.value) })}
+                                                className="w-full p-4 border border-primary/20 bg-white text-primary"
+                                            >
+                                                {Array.from({ length: trip.maxGroupSize || 10 }, (_, i) => i + 1).map((num) => (
+                                                    <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <h2 className="text-2xl font-light mb-6">Special Requests</h2>
+                                    <textarea
+                                        value={formData.specialRequests}
+                                        onChange={(e) => setFormData({ ...formData, specialRequests: e.target.value })}
+                                        rows={4}
+                                        className="w-full p-4 border border-primary/20 bg-white text-primary"
+                                        placeholder="Any special requests or dietary requirements..."
+                                    />
+                                </section>
+
+                                <section>
+                                    <PaymentMethods
+                                        selectedMethod={formData.paymentMethod}
+                                        onMethodChange={(method) => setFormData({ ...formData, paymentMethod: method })}
+                                        amount={totalPrice}
+                                        bookingReference={bookingReference}
+                                    />
+                                </section>
+
+                                <div className="flex items-center gap-4 pt-6">
+                                    <button
+                                        type="submit"
+                                        disabled={submitting}
+                                        className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {submitting ? 'Processing...' : 'Complete Booking'}
+                                    </button>
+                                    <div className="flex items-center gap-2 text-body-sm text-text-secondary">
+                                        <Lock size={16} />
+                                        <span>Secure Payment</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div className="lg:sticky lg:top-24 h-fit">
+                            <div className="bg-cream-light p-8 border border-primary/10">
+                                <h2 className="text-2xl font-light mb-6">Order Summary</h2>
+                                
+                                <div className="space-y-4 mb-6">
+                                    <div className="flex justify-between text-body-lg">
+                                        <span className="text-text-secondary">Trip Price</span>
+                                        <span>{formatPrice(trip.price)} × {formData.numberOfGuests}</span>
+                                    </div>
+                                    {trip.originalPrice && (
+                                        <div className="flex justify-between text-body-sm text-text-secondary line-through">
+                                            <span>Original Price</span>
+                                            <span>{formatPrice(trip.originalPrice)} × {formData.numberOfGuests}</span>
+                                        </div>
+                                    )}
+                                    {discountPercent > 0 && (
+                                        <div className="flex justify-between text-body-lg text-success">
+                                            <span>Discount ({discountPercent}%)</span>
+                                            <span>-{formatPrice(discountAmount)}</span>
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                <div className="pt-6 border-t border-primary/10 mb-6">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-xl font-light">Total</span>
+                                        <span className="text-3xl font-light">{formatPrice(totalPrice)}</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="space-y-3 text-body-sm text-text-secondary">
+                                    <div className="flex items-start gap-2">
+                                        <CheckCircle size={16} className="text-success mt-1 flex-shrink-0" />
+                                        <span>Instant confirmation</span>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                        <CheckCircle size={16} className="text-success mt-1 flex-shrink-0" />
+                                        <span>Free cancellation up to 24 hours</span>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                        <CheckCircle size={16} className="text-success mt-1 flex-shrink-0" />
+                                        <span>24/7 customer support</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default function CheckoutPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-text-secondary">Loading checkout...</p>
+                </div>
+            </div>
+        }>
+            <CheckoutContent />
+        </Suspense>
+    );
+}

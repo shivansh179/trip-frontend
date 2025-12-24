@@ -16,7 +16,7 @@ export default function Navbar() {
 
   const links = [
     { name: 'Destinations', href: '/destinations' },
-    { name: 'Hotels', href: '/hotels' },
+    { name: 'Stays', href: '/hotels' },
     { name: 'About', href: '/about' },
     { name: 'Journal', href: '/blogs' },
     { name: 'Contact', href: '/contact' },

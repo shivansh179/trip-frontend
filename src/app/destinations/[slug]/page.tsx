@@ -1,0 +1,327 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { MapPin, Calendar, DollarSign, Globe, Clock, Shield, Utensils, Camera, ArrowRight, Star } from 'lucide-react';
+import { api } from '@/lib/api';
+import TripCard from '@/components/TripCard';
+import { Trip } from '@/types';
+import { formatPrice } from '@/lib/utils';
+
+interface DestinationDetail {
+    id: number;
+    destination: {
+        id: number;
+        name: string;
+        slug: string;
+        description: string;
+        imageUrl: string;
+        country: string;
+        region: string;
+    };
+    overview: string;
+    bestTimeToVisit: string;
+    climate: string;
+    culture: string;
+    cuisine: string;
+    highlights: string[];
+    galleryImages: string[];
+    popularActivities: string[];
+    visaInfo: string;
+    currency: string;
+    language: string;
+    timeZone: string;
+    safetyRating: number;
+    budgetRange: string;
+}
+
+export default function DestinationDetailPage() {
+    const params = useParams();
+    const slug = params?.slug as string;
+    
+    const [detail, setDetail] = useState<DestinationDetail | null>(null);
+    const [trips, setTrips] = useState<Trip[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const detailRes = await api.getDestinationDetails(slug);
+                setDetail(detailRes.data);
+                
+                // Fetch trips for this destination after detail is loaded
+                if (detailRes.data?.destination?.id) {
+                    try {
+                        const tripsResponse = await api.getTrips({ destinationId: detailRes.data.destination.id });
+                        setTrips(tripsResponse.data);
+                    } catch (tripErr) {
+                        console.error('Error fetching trips:', tripErr);
+                        setTrips([]);
+                    }
+                }
+                
+                setError(null);
+            } catch (err: any) {
+                console.error('Error fetching destination:', err);
+                setError(err.response?.status === 404 ? 'Destination not found' : 'Failed to load destination');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (slug) {
+            fetchData();
+        }
+    }, [slug]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-text-secondary">Loading destination...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !detail) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-4xl font-light mb-4">404</h1>
+                    <p className="text-text-secondary mb-8">{error || 'Destination not found'}</p>
+                    <Link href="/destinations" className="btn-primary">
+                        Back to Destinations
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    const destination = detail.destination;
+
+    return (
+        <div className="min-h-screen">
+            {/* Hero Section */}
+            <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
+                <Image
+                    src={detail.galleryImages?.[0] || destination.imageUrl || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80'}
+                    alt={destination.name}
+                    fill
+                    className="object-cover"
+                    priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30"></div>
+                
+                <div className="relative z-10 h-full flex items-end">
+                    <div className="section-container w-full pb-16">
+                        <div className="max-w-3xl">
+                            <h1 className="text-display-xl text-white mb-4">{destination.name}</h1>
+                            <p className="text-body-lg text-white/90 mb-6">{destination.description}</p>
+                            <div className="flex flex-wrap gap-4 text-white">
+                                <div className="flex items-center gap-2">
+                                    <MapPin size={20} />
+                                    <span>{destination.country}, {destination.region}</span>
+                                </div>
+                                {detail.safetyRating && (
+                                    <div className="flex items-center gap-2">
+                                        <Shield size={20} />
+                                        <span>Safety: {detail.safetyRating}/5</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Quick Info Bar */}
+            <section className="bg-cream-dark border-b border-primary/10">
+                <div className="section-container py-6">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        {detail.currency && (
+                            <div className="flex items-center gap-3">
+                                <DollarSign size={24} className="text-secondary" />
+                                <div>
+                                    <p className="text-caption text-text-secondary">Currency</p>
+                                    <p className="font-medium">{detail.currency}</p>
+                                </div>
+                            </div>
+                        )}
+                        {detail.language && (
+                            <div className="flex items-center gap-3">
+                                <Globe size={24} className="text-secondary" />
+                                <div>
+                                    <p className="text-caption text-text-secondary">Language</p>
+                                    <p className="font-medium">{detail.language}</p>
+                                </div>
+                            </div>
+                        )}
+                        {detail.timeZone && (
+                            <div className="flex items-center gap-3">
+                                <Clock size={24} className="text-secondary" />
+                                <div>
+                                    <p className="text-caption text-text-secondary">Time Zone</p>
+                                    <p className="font-medium">{detail.timeZone}</p>
+                                </div>
+                            </div>
+                        )}
+                        {detail.budgetRange && (
+                            <div className="flex items-center gap-3">
+                                <DollarSign size={24} className="text-secondary" />
+                                <div>
+                                    <p className="text-caption text-text-secondary">Budget</p>
+                                    <p className="font-medium">{detail.budgetRange}</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </section>
+
+            <div className="section-container py-16">
+                <div className="grid lg:grid-cols-3 gap-12">
+                    {/* Main Content */}
+                    <div className="lg:col-span-2 space-y-12">
+                        {/* Overview */}
+                        {detail.overview && (
+                            <section>
+                                <h2 className="text-display-lg mb-6">Overview</h2>
+                                <div className="prose max-w-none">
+                                    <p className="text-body-lg leading-relaxed whitespace-pre-line">{detail.overview}</p>
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Highlights */}
+                        {detail.highlights && detail.highlights.length > 0 && (
+                            <section>
+                                <h2 className="text-display-lg mb-6">Highlights</h2>
+                                <ul className="grid md:grid-cols-2 gap-4">
+                                    {detail.highlights.map((highlight, index) => (
+                                        <li key={index} className="flex items-start gap-3">
+                                            <Star size={20} className="text-accent mt-1 flex-shrink-0" />
+                                            <span className="text-body-lg">{highlight}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
+                        )}
+
+                        {/* Gallery */}
+                        {detail.galleryImages && detail.galleryImages.length > 0 && (
+                            <section>
+                                <h2 className="text-display-lg mb-6">Gallery</h2>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                    {detail.galleryImages.slice(0, 6).map((image, index) => (
+                                        <div key={index} className="aspect-square relative overflow-hidden rounded-lg">
+                                            <Image
+                                                src={image}
+                                                alt={`${destination.name} ${index + 1}`}
+                                                fill
+                                                className="object-cover hover:scale-110 transition-transform duration-500"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Popular Activities */}
+                        {detail.popularActivities && detail.popularActivities.length > 0 && (
+                            <section>
+                                <h2 className="text-display-lg mb-6">Popular Activities</h2>
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    {detail.popularActivities.map((activity, index) => (
+                                        <div key={index} className="p-6 bg-cream-light border border-primary/10">
+                                            <p className="text-body-lg">{activity}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Culture */}
+                        {detail.culture && (
+                            <section>
+                                <h2 className="text-display-lg mb-6">Culture & Heritage</h2>
+                                <p className="text-body-lg leading-relaxed whitespace-pre-line">{detail.culture}</p>
+                            </section>
+                        )}
+
+                        {/* Cuisine */}
+                        {detail.cuisine && (
+                            <section>
+                                <h2 className="text-display-lg mb-6 flex items-center gap-3">
+                                    <Utensils size={32} className="text-accent" />
+                                    Local Cuisine
+                                </h2>
+                                <p className="text-body-lg leading-relaxed whitespace-pre-line">{detail.cuisine}</p>
+                            </section>
+                        )}
+                    </div>
+
+                    {/* Sidebar */}
+                    <div className="space-y-8">
+                        {/* Quick Facts */}
+                        <div className="bg-cream-light p-8 border border-primary/10">
+                            <h3 className="text-2xl font-light mb-6">Quick Facts</h3>
+                            <div className="space-y-4">
+                                {detail.bestTimeToVisit && (
+                                    <div>
+                                        <p className="text-caption text-text-secondary mb-1">Best Time to Visit</p>
+                                        <p className="text-body-lg">{detail.bestTimeToVisit}</p>
+                                    </div>
+                                )}
+                                {detail.climate && (
+                                    <div>
+                                        <p className="text-caption text-text-secondary mb-1">Climate</p>
+                                        <p className="text-body-lg">{detail.climate}</p>
+                                    </div>
+                                )}
+                                {detail.visaInfo && (
+                                    <div>
+                                        <p className="text-caption text-text-secondary mb-1">Visa Information</p>
+                                        <p className="text-body-lg">{detail.visaInfo}</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Available Trips */}
+                        {trips.length > 0 && (
+                            <div>
+                                <h3 className="text-2xl font-light mb-6">Available Trips</h3>
+                                <div className="space-y-4">
+                                    {trips.slice(0, 3).map((trip) => (
+                                        <Link key={trip.id} href={`/trips/${trip.id}`}>
+                                            <div className="p-6 bg-cream-light border border-primary/10 hover:border-primary/30 transition-all card-elegant">
+                                                <h4 className="text-xl font-light mb-2">{trip.title}</h4>
+                                                <p className="text-body-sm text-text-secondary mb-4 line-clamp-2">{trip.shortDescription}</p>
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-2xl font-light">{trip.price ? formatPrice(trip.price) : 'N/A'}</span>
+                                                    <ArrowRight size={20} className="text-secondary" />
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                                {trips.length > 3 && (
+                                    <Link href={`/trips?destination=${destination.name}`} className="btn-ghost mt-4 w-full justify-center">
+                                        View All {trips.length} Trips
+                                    </Link>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+

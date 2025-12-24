@@ -1,5 +1,5 @@
 // API Configuration
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
 
 // API Client
 import axios from 'axios';
@@ -34,6 +34,7 @@ export const api = {
   getFeaturedDestinations: () => apiClient.get('/destinations/featured'),
   getPopularDestinations: () => apiClient.get('/destinations/popular'),
   getDestinationBySlug: (slug: string) => apiClient.get(`/destinations/slug/${slug}`),
+  getDestinationDetails: (slug: string) => apiClient.get(`/destinations/slug/${slug}/details`),
 
   // Trips
   getTrips: (params?: { category?: string; destination?: string; destinationId?: number }) =>
@@ -43,6 +44,7 @@ export const api = {
   getTrendingTrips: () => apiClient.get('/trips/trending'),
   searchTrips: (query: string) => apiClient.get('/trips/search', { params: { q: query } }),
   getTripById: (id: number) => apiClient.get(`/trips/${id}`),
+  getTripItinerary: (id: number) => apiClient.get(`/trips/${id}/itinerary`),
 
   // Hotels
   getHotels: (destinationId?: number) =>
@@ -62,8 +64,22 @@ export const api = {
   getBlogById: (id: number) => apiClient.get(`/blogs/${id}`),
   getBlogBySlug: (slug: string) => apiClient.get(`/blogs/slug/${slug}`),
 
+  // Bookings
+  createBooking: (bookingData: any) => apiClient.post('/bookings', bookingData),
+  getBooking: (reference: string) => apiClient.get(`/bookings/${reference}`),
+  updatePaymentStatus: (reference: string, paymentData: any) =>
+    apiClient.post(`/bookings/${reference}/payment`, paymentData),
+
+  // Payment
+  initiatePayment: (bookingReference: string) => apiClient.post(`/payment/initiate/${bookingReference}`),
+  getPaymentStatus: (bookingReference: string) => apiClient.get(`/payment/status/${bookingReference}`),
+
   // Seed Data
   seedData: () => apiClient.post('/seed/data'),
+  
+  // Direct API client access for custom calls
+  get: (url: string) => apiClient.get(url),
+  post: (url: string, data?: any) => apiClient.post(url, data),
 
   // Admin Authentication
   adminLogin: (username: string, password: string) =>
@@ -101,12 +117,19 @@ export const api = {
     updateDestination: (id: number, data: Record<string, unknown>) => apiClient.put(`/admin/destinations/${id}`, data),
     createDestination: (data: Record<string, unknown>) => apiClient.post('/admin/destinations', data),
     deleteDestination: (id: number) => apiClient.delete(`/admin/destinations/${id}`),
+    getDestinationDetails: (id: number) => apiClient.get(`/admin/destinations/${id}/details`),
+    updateDestinationDetails: (id: number, data: Record<string, unknown>) => apiClient.put(`/admin/destinations/${id}/details`, data),
+    createDestinationDetails: (id: number, data: Record<string, unknown>) => apiClient.post(`/admin/destinations/${id}/details`, data),
 
     // Trips
     getTrips: () => apiClient.get('/admin/trips'),
     updateTrip: (id: number, data: Record<string, unknown>) => apiClient.put(`/admin/trips/${id}`, data),
     createTrip: (data: Record<string, unknown>) => apiClient.post('/admin/trips', data),
     deleteTrip: (id: number) => apiClient.delete(`/admin/trips/${id}`),
+    getTripItineraries: (id: number) => apiClient.get(`/admin/trips/${id}/itineraries`),
+    createTripItinerary: (id: number, data: Record<string, unknown>) => apiClient.post(`/admin/trips/${id}/itineraries`, data),
+    updateTripItinerary: (id: number, data: Record<string, unknown>) => apiClient.put(`/admin/itineraries/${id}`, data),
+    deleteTripItinerary: (id: number) => apiClient.delete(`/admin/itineraries/${id}`),
 
     // Hotels
     getHotels: () => apiClient.get('/admin/hotels'),
@@ -125,5 +148,11 @@ export const api = {
     updateBlog: (id: number, data: Record<string, unknown>) => apiClient.put(`/admin/blogs/${id}`, data),
     createBlog: (data: Record<string, unknown>) => apiClient.post('/admin/blogs', data),
     deleteBlog: (id: number) => apiClient.delete(`/admin/blogs/${id}`),
+
+    // Bookings
+    getBookings: () => apiClient.get('/admin/bookings'),
+    getBooking: (id: number) => apiClient.get(`/admin/bookings/${id}`),
+    markBookingAsReviewed: (reference: string) => apiClient.put(`/admin/bookings/${reference}/review`),
+    updateBookingStatus: (id: number, status: string) => apiClient.put(`/admin/bookings/${id}/status`, { status }),
   },
 };
