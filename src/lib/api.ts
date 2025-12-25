@@ -72,7 +72,17 @@ export const api = {
 
   // Payment
   initiatePayment: (bookingReference: string) => apiClient.post(`/payment/initiate/${bookingReference}`),
-  getPaymentStatus: (bookingReference: string) => apiClient.get(`/payment/status/${bookingReference}`),
+  getPaymentStatus: (bookingReference: string) => apiClient.get(`/payment/status/${bookingReference}`, {
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    },
+    // Add timestamp to prevent caching
+    params: {
+      _t: Date.now()
+    }
+  }),
 
   // Seed Data
   seedData: () => apiClient.post('/seed/data'),

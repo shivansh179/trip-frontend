@@ -46,6 +46,23 @@ function PaymentSuccessContent() {
     useEffect(() => {
         // Ensure we're in the browser
         setMounted(true);
+        
+        // Handle page reload - clear any cached data
+        const handleBeforeUnload = () => {
+            // Clear session storage to force fresh data on reload
+            if (typeof window !== 'undefined' && window.sessionStorage) {
+                const txnid = new URLSearchParams(window.location.search).get('txnid');
+                if (txnid) {
+                    sessionStorage.setItem('lastPaymentTxnid', txnid);
+                }
+            }
+        };
+        
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
     }, []);
     
     useEffect(() => {
@@ -57,7 +74,10 @@ function PaymentSuccessContent() {
             
             const { txnid: urlTxnid, status } = getUrlParams();
             
+            console.log('Payment success page - URL params:', { urlTxnid, status });
+            
             if (!urlTxnid) {
+                console.error('Missing transaction ID in URL');
                 setError('Invalid payment response. Missing transaction ID.');
                 setLoading(false);
                 return;
@@ -65,17 +85,53 @@ function PaymentSuccessContent() {
             
             setTxnid(urlTxnid);
             
+            // Set a timeout to prevent infinite loading
+            const timeoutId = setTimeout(() => {
+                console.error('API call timeout');
+                setError('Request timed out. Please try refreshing the page.');
+                setLoading(false);
+            }, 10000); // 10 second timeout
+            
             try {
-                // Get booking status - API returns booking directly in response.data
-                const response = await api.getPaymentStatus(urlTxnid);
+                console.log('Calling API for booking:', urlTxnid);
+                
+                // Retry logic for 405 errors (might be a caching issue)
+                let response;
+                let retries = 0;
+                const maxRetries = 2;
+                
+                while (retries <= maxRetries) {
+                    try {
+                        response = await api.getPaymentStatus(urlTxnid);
+                        break; // Success, exit retry loop
+                    } catch (retryErr: any) {
+                        if (retryErr.response?.status === 405 && retries < maxRetries) {
+                            console.log(`405 error, retrying... (${retries + 1}/${maxRetries})`);
+                            retries++;
+                            await new Promise(resolve => setTimeout(resolve, 500 * retries)); // Exponential backoff
+                            continue;
+                        }
+                        throw retryErr; // Re-throw if not 405 or max retries reached
+                    }
+                }
+                
+                clearTimeout(timeoutId);
+                
+                if (!response) {
+                    throw new Error('No response received from API');
+                }
+                
+                console.log('API response received:', response);
                 const bookingData = response.data;
                 
                 if (!bookingData) {
+                    console.error('No booking data in response');
                     setNotFound(true);
                     setLoading(false);
                     return;
                 }
                 
+                console.log('Booking data:', bookingData);
                 setBooking(bookingData);
                 
                 // Check payment status
@@ -86,13 +142,26 @@ function PaymentSuccessContent() {
                     setError('Payment verification failed. Payment status: ' + (bookingData.paymentStatus || 'Unknown'));
                 }
             } catch (err: any) {
+                clearTimeout(timeoutId);
                 console.error('Error verifying payment:', err);
+                console.error('Error details:', {
+                    message: err.message,
+                    response: err.response,
+                    status: err.response?.status,
+                    data: err.response?.data
+                });
                 
-                // Check if it's a 404 or not found error
-                if (err.response?.status === 404 || err.message?.includes('not found') || err.message?.includes('Not Found')) {
+                // Handle different error types
+                if (err.response?.status === 405) {
+                    setError('Method not allowed. Please contact support if this issue persists.');
+                } else if (err.response?.status === 404 || err.message?.includes('not found') || err.message?.includes('Not Found')) {
                     setNotFound(true);
+                } else if (err.response?.status === 500) {
+                    setError('Server error. Please try again later.');
+                } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+                    setError('Request timed out. Please try refreshing the page.');
                 } else {
-                    setError('Failed to verify payment: ' + (err.message || 'Unknown error'));
+                    setError('Failed to verify payment: ' + (err.response?.data?.message || err.message || 'Unknown error'));
                 }
             } finally {
                 setLoading(false);
@@ -148,10 +217,26 @@ function PaymentSuccessContent() {
                     <XCircle className="w-16 h-16 text-error mx-auto mb-4" />
                     <h1 className="text-3xl font-light mb-4">Payment Verification Failed</h1>
                     <p className="text-text-secondary mb-6">{error}</p>
+                    {txnid && (
+                        <p className="text-sm text-text-secondary mb-4">
+                            Booking Reference: <strong>{txnid}</strong>
+                        </p>
+                    )}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
-                            onClick={() => router.push('/trips')}
+                            onClick={() => {
+                                setLoading(true);
+                                setError(null);
+                                // Force reload the page to retry
+                                window.location.reload();
+                            }}
                             className="btn-primary"
+                        >
+                            Retry Verification
+                        </button>
+                        <button
+                            onClick={() => router.push('/trips')}
+                            className="btn-outline"
                         >
                             Back to Trips
                         </button>
@@ -244,6 +329,21 @@ function PaymentSuccessContent() {
 }
 
 export default function PaymentSuccessPage() {
+    // Force dynamic rendering and disable caching for payment success page
+    // This ensures fresh data on every load, especially after external redirects
+    if (typeof window !== 'undefined') {
+        // Clear any cached data
+        if ('caches' in window) {
+            caches.keys().then(names => {
+                names.forEach(name => {
+                    if (name.includes('payment') || name.includes('success')) {
+                        caches.delete(name);
+                    }
+                });
+            });
+        }
+    }
+    
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center bg-cream">
