@@ -51,20 +51,24 @@ export default function Header() {
         <>
             <header
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-smooth ${isScrolled
-                        ? 'bg-cream/95 blur-overlay py-4 shadow-sm'
-                        : hasHero
-                            ? 'bg-transparent py-6 md:py-8'
-                            : 'bg-cream py-6 md:py-8 border-b border-primary/5'
+                    ? 'bg-cream/95 blur-overlay py-4 shadow-sm'
+                    : hasHero
+                        ? 'bg-transparent py-6 md:py-8'
+                        : 'bg-cream py-6 md:py-8 border-b border-primary/5'
                     }`}
             >
                 <div className="section-container">
                     <div className="flex justify-between items-center">
                         {/* Logo */}
                         <Link href="/" className="relative z-10">
-                            {/* <span className={`font-display text-2xl md:text-3xl tracking-wide transition-colors duration-500 ${getTextColor()}`}>
-                                YlooTrips
-                            </span> */}
-                            <img src="/logo.png" alt="YlooTrips" width={100} height={100} />
+                            <img
+                                src="/logo.png"
+                                alt="YlooTrips"
+                                className={`h-10 md:h-12 w-auto object-contain transition-all duration-500 ${hasHero && !isScrolled && !isMobileMenuOpen
+                                        ? 'brightness-0 invert'
+                                        : ''
+                                    }`}
+                            />
                         </Link>
 
                         {/* Desktop Navigation */}
@@ -74,8 +78,8 @@ export default function Header() {
                                     key={link.name}
                                     href={link.href}
                                     className={`text-caption uppercase tracking-[0.15em] font-medium transition-all duration-500 hover-line ${pathname === link.href
-                                            ? 'text-secondary'
-                                            : `${getTextColor()} hover:text-secondary`
+                                        ? 'text-secondary'
+                                        : `${getTextColor()} hover:text-secondary`
                                         }`}
                                 >
                                     {link.name}

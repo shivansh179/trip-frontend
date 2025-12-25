@@ -15,11 +15,11 @@ function PaymentSuccessContent() {
     const [notFound, setNotFound] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [txnid, setTxnid] = useState<string | null>(null);
-    
+
     // Get URL params - handle both Next.js searchParams and window.location for external redirects
     const getUrlParams = () => {
         if (typeof window === 'undefined') return { txnid: null, status: null };
-        
+
         // Try Next.js searchParams first
         try {
             const txnid = searchParams?.get('txnid');
@@ -30,7 +30,7 @@ function PaymentSuccessContent() {
         } catch (e) {
             console.log('searchParams not ready, using window.location');
         }
-        
+
         // Fallback to window.location for external redirects
         if (typeof window !== 'undefined') {
             const params = new URLSearchParams(window.location.search);
@@ -39,14 +39,14 @@ function PaymentSuccessContent() {
                 status: params.get('status')
             };
         }
-        
+
         return { txnid: null, status: null };
     };
-    
+
     useEffect(() => {
         // Ensure we're in the browser
         setMounted(true);
-        
+
         // Handle page reload - clear any cached data
         const handleBeforeUnload = () => {
             // Clear session storage to force fresh data on reload
@@ -57,49 +57,49 @@ function PaymentSuccessContent() {
                 }
             }
         };
-        
+
         window.addEventListener('beforeunload', handleBeforeUnload);
-        
+
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
     }, []);
-    
+
     useEffect(() => {
         if (!mounted) return;
-        
+
         const verifyPayment = async () => {
             // Small delay to ensure URL params are available after external redirect
             await new Promise(resolve => setTimeout(resolve, 100));
-            
+
             const { txnid: urlTxnid, status } = getUrlParams();
-            
+
             console.log('Payment success page - URL params:', { urlTxnid, status });
-            
+
             if (!urlTxnid) {
                 console.error('Missing transaction ID in URL');
                 setError('Invalid payment response. Missing transaction ID.');
                 setLoading(false);
                 return;
             }
-            
+
             setTxnid(urlTxnid);
-            
+
             // Set a timeout to prevent infinite loading
             const timeoutId = setTimeout(() => {
                 console.error('API call timeout');
                 setError('Request timed out. Please try refreshing the page.');
                 setLoading(false);
             }, 10000); // 10 second timeout
-            
+
             try {
                 console.log('Calling API for booking:', urlTxnid);
-                
+
                 // Retry logic for 405 errors (might be a caching issue)
                 let response;
                 let retries = 0;
                 const maxRetries = 2;
-                
+
                 while (retries <= maxRetries) {
                     try {
                         response = await api.getPaymentStatus(urlTxnid);
@@ -114,26 +114,26 @@ function PaymentSuccessContent() {
                         throw retryErr; // Re-throw if not 405 or max retries reached
                     }
                 }
-                
+
                 clearTimeout(timeoutId);
-                
+
                 if (!response) {
                     throw new Error('No response received from API');
                 }
-                
+
                 console.log('API response received:', response);
                 const bookingData = response.data;
-                
+
                 if (!bookingData) {
                     console.error('No booking data in response');
                     setNotFound(true);
                     setLoading(false);
                     return;
                 }
-                
+
                 console.log('Booking data:', bookingData);
                 setBooking(bookingData);
-                
+
                 // Check payment status
                 if (bookingData.paymentStatus === 'PAID' || status === 'success') {
                     // Payment successful - show success page
@@ -150,7 +150,7 @@ function PaymentSuccessContent() {
                     status: err.response?.status,
                     data: err.response?.data
                 });
-                
+
                 // Handle different error types
                 if (err.response?.status === 405) {
                     setError('Method not allowed. Please contact support if this issue persists.');
@@ -167,10 +167,10 @@ function PaymentSuccessContent() {
                 setLoading(false);
             }
         };
-        
+
         verifyPayment();
     }, [mounted, searchParams, router]);
-    
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-cream">
@@ -181,10 +181,10 @@ function PaymentSuccessContent() {
             </div>
         );
     }
-    
+
     if (notFound) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-cream">
+            <div className="min-h-screen flex items-center justify-center  bg-cream">
                 <div className="text-center max-w-md">
                     <XCircle className="w-16 h-16 text-error mx-auto mb-4" />
                     <h1 className="text-3xl font-light mb-4">Booking Not Found</h1>
@@ -209,7 +209,7 @@ function PaymentSuccessContent() {
             </div>
         );
     }
-    
+
     if (error) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-cream">
@@ -251,16 +251,16 @@ function PaymentSuccessContent() {
             </div>
         );
     }
-    
+
     return (
-        <div className="min-h-screen flex items-center justify-center bg-cream py-16">
+        <div className="min-h-screen flex items-center justify-center mt-20 bg-cream py-16">
             <div className="text-center max-w-2xl mx-auto px-4">
-                <CheckCircle className="w-20 h-20 text-success mx-auto mb-6" />
+                <CheckCircle className="w-20 h-20 text-success  text-green-600 mx-auto mb-6" />
                 <h1 className="text-display-xl mb-4">Payment Successful!</h1>
                 <p className="text-body-lg text-text-secondary mb-8">
                     Your booking has been confirmed. You will receive a confirmation email shortly.
                 </p>
-                
+
                 {booking && (
                     <div className="bg-cream-light p-8 border border-primary/10 mb-8 text-left">
                         <h2 className="text-2xl font-light mb-6">Booking Details</h2>
@@ -308,7 +308,7 @@ function PaymentSuccessContent() {
                         </div>
                     </div>
                 )}
-                
+
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <button
                         onClick={() => router.push('/trips')}
@@ -343,7 +343,7 @@ export default function PaymentSuccessPage() {
             });
         }
     }
-    
+
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center bg-cream">

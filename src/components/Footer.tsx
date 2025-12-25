@@ -25,9 +25,9 @@ export default function Footer() {
       { name: 'Partnerships', href: '/partnerships' },
     ],
     legal: [
-      { name: 'Privacy Policy', href: '/privacy' },
-      { name: 'Terms of Service', href: '/terms' },
-      { name: 'Cookie Policy', href: '/cookies' },
+      { name: 'Privacy Policy', href: '/privacy-policy' },
+      { name: 'Terms of Service', href: '/privacy-policy' },
+      { name: 'Refund Policy', href: '/privacy-policy#cancellation' },
     ],
   };
 
@@ -45,7 +45,7 @@ export default function Footer() {
             {/* Brand Column */}
             <div className="lg:col-span-5 space-y-8">
               <Link href="/" className="inline-block">
-                <span className="font-display text-4xl tracking-wide">Wanderlust</span>
+                <img src="/logo.png" alt="YlooTrips" className="h-12 w-auto object-contain brightness-0 invert" />
               </Link>
               <p className="text-cream/60 text-body-sm leading-relaxed max-w-md">
                 We believe in slow travel and meaningful connections. Our curated journeys
@@ -139,7 +139,7 @@ export default function Footer() {
           <div className="section-container py-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-6">
               <p className="text-caption text-cream/40 uppercase tracking-widest">
-                © {currentYear} Wanderlust Inc. All rights reserved.
+                © {currentYear} YlooTrips. All rights reserved.
               </p>
 
               {/* Social Links */}

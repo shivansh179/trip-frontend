@@ -18,11 +18,11 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Wanderlust | Curated Travel Experiences",
+  title: "YlooTrips | Curated Travel Experiences",
   description: "Discover extraordinary destinations and transformative journeys. We craft bespoke travel experiences for the modern explorer seeking authentic connections and unforgettable moments.",
   keywords: "luxury travel, curated experiences, boutique hotels, adventure travel, sustainable tourism",
   openGraph: {
-    title: "Wanderlust | Curated Travel Experiences",
+    title: "YlooTrips | Curated Travel Experiences",
     description: "Discover extraordinary destinations and transformative journeys.",
     type: "website",
   },

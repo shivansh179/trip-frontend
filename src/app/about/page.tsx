@@ -79,7 +79,7 @@ export default function AboutPage() {
                 </h2>
               </div>
               <p className="text-primary/70 text-body-lg leading-relaxed">
-                Founded in 2012, Wanderlust began with a simple belief: the best travel experiences
+                Founded in 2012, YlooTrips began with a simple belief: the best travel experiences
                 happen when you move beyond the familiar and embrace the unknown. We&apos;ve spent
                 over a decade perfecting the art of crafting journeys that transform, inspire, and
                 connect travelers with the soul of each destination.

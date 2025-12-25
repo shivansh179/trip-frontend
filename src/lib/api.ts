@@ -1,5 +1,6 @@
 // API Configuration
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
+// export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 // API Client
 import axios from 'axios';
@@ -86,7 +87,7 @@ export const api = {
 
   // Seed Data
   seedData: () => apiClient.post('/seed/data'),
-  
+
   // Direct API client access for custom calls
   get: (url: string) => apiClient.get(url),
   post: (url: string, data?: any) => apiClient.post(url, data),
@@ -164,5 +165,25 @@ export const api = {
     getBooking: (id: number) => apiClient.get(`/admin/bookings/${id}`),
     markBookingAsReviewed: (reference: string) => apiClient.put(`/admin/bookings/${reference}/review`),
     updateBookingStatus: (id: number, status: string) => apiClient.put(`/admin/bookings/${id}/status`, { status }),
+
+    // Contact Inquiries
+    getInquiries: () => apiClient.get('/admin/inquiries'),
+    getInquiryCounts: () => apiClient.get('/admin/inquiries/count'),
+    getInquiry: (id: number) => apiClient.get(`/admin/inquiries/${id}`),
+    markInquiryAsRead: (id: number) => apiClient.put(`/admin/inquiries/${id}/read`),
+    updateInquiryStatus: (id: number, status: string) => apiClient.put(`/admin/inquiries/${id}/status`, { status }),
+    updateInquiryNotes: (id: number, notes: string) => apiClient.put(`/admin/inquiries/${id}/notes`, { notes }),
+    deleteInquiry: (id: number) => apiClient.delete(`/admin/inquiries/${id}`),
   },
+
+  // Contact Form (Public)
+  submitContactInquiry: (data: {
+    name: string;
+    email: string;
+    phone?: string;
+    destination?: string;
+    travelers?: string;
+    preferredDates?: string;
+    message?: string;
+  }) => apiClient.post('/contact', data),
 };

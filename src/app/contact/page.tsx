@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowUpRight, Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import { ArrowUpRight, Mail, Phone, MapPin, Clock, Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import PageHero from '@/components/PageHero';
+import { api } from '@/lib/api';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -16,10 +17,49 @@ export default function ContactPage() {
     message: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [statusMessage, setStatusMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      const response = await api.submitContactInquiry({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        destination: formData.destination || undefined,
+        travelers: formData.travelers || undefined,
+        preferredDates: formData.dates || undefined,
+        message: formData.message || undefined,
+      });
+
+      if (response.data.success) {
+        setSubmitStatus('success');
+        setStatusMessage(response.data.message || 'Thank you! We\'ll get back to you within 24 hours.');
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          destination: '',
+          travelers: '',
+          dates: '',
+          message: '',
+        });
+      } else {
+        setSubmitStatus('error');
+        setStatusMessage(response.data.error || 'Something went wrong. Please try again.');
+      }
+    } catch (error: any) {
+      setSubmitStatus('error');
+      setStatusMessage(error.response?.data?.error || 'Failed to submit inquiry. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -137,9 +177,37 @@ export default function ContactPage() {
                   />
                 </div>
 
-                <button type="submit" className="btn-primary w-full md:w-auto">
-                  <span>Send Inquiry</span>
-                  <Send className="w-4 h-4" />
+                {/* Status Messages */}
+                {submitStatus === 'success' && (
+                  <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 text-green-700">
+                    <CheckCircle className="w-5 h-5 shrink-0" />
+                    <p>{statusMessage}</p>
+                  </div>
+                )}
+
+                {submitStatus === 'error' && (
+                  <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 text-red-700">
+                    <AlertCircle className="w-5 h-5 shrink-0" />
+                    <p>{statusMessage}</p>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="btn-primary w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Send Inquiry</span>
+                      <Send className="w-4 h-4" />
+                    </>
+                  )}
                 </button>
               </form>
             </div>
@@ -155,8 +223,8 @@ export default function ContactPage() {
                     <Mail className="w-5 h-5 text-accent mt-1" />
                     <div>
                       <p className="text-caption uppercase tracking-widest text-cream/50 mb-1">Email</p>
-                      <a href="mailto:hello@wanderlust.com" className="text-lg hover:text-accent transition-colors">
-                        hello@wanderlust.com
+                      <a href="mailto:connectylootrips@gmail.com" className="text-lg hover:text-accent transition-colors">
+                      connectylootrips@gmail.com
                       </a>
                     </div>
                   </div>
@@ -164,8 +232,8 @@ export default function ContactPage() {
                     <Phone className="w-5 h-5 text-accent mt-1" />
                     <div>
                       <p className="text-caption uppercase tracking-widest text-cream/50 mb-1">Phone</p>
-                      <a href="tel:+1234567890" className="text-lg hover:text-accent transition-colors">
-                        +1 (234) 567-890
+                      <a href="tel:+91 8427831127" className="text-lg hover:text-accent transition-colors">
+                    +91 8427831127
                       </a>
                     </div>
                   </div>

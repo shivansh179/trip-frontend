@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, ArrowRight, ChevronDown } from 'lucide-react';
+import { ArrowUpRight, ArrowRight, ChevronDown, Volume2, VolumeX } from 'lucide-react';
 
 interface HeroProps {
     content?: {
@@ -24,7 +24,9 @@ interface HeroProps {
 
 export default function Hero({ content, stats }: HeroProps) {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
     const heroRef = useRef<HTMLDivElement>(null);
+    const audioRef = useRef<HTMLAudioElement>(null);
 
     // Fallback content if not provided
     const eyebrow = content?.eyebrow || 'Curated Journeys for the Soul';
@@ -57,22 +59,81 @@ export default function Hero({ content, stats }: HeroProps) {
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
 
+    // Simple audio state
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    // Simple toggle function
+    const toggleAudio = () => {
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        if (audio.paused) {
+            audio.volume = 0.2;
+            audio.play();
+            setIsPlaying(true);
+        } else {
+            audio.pause();
+            setIsPlaying(false);
+        }
+    };
+
     return (
         <section ref={heroRef} className="relative h-screen min-h-[800px] overflow-hidden">
-            {/* Background Image with Parallax */}
+            {/* Background Music - Calm Ambient */}
+            <audio
+                ref={audioRef}
+                loop
+                preload="auto"
+                src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"
+            />
+
+            {/* Music Toggle Button */}
+            <button
+                onClick={toggleAudio}
+                className="absolute bottom-24 right-8 z-30 p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-cream hover:bg-white/20 transition-all duration-300 group"
+                aria-label={isPlaying ? "Pause music" : "Play music"}
+                title={isPlaying ? "🔇 Pause calm music" : "🎵 Play calm music"}
+            >
+                {isPlaying ? (
+                    <Volume2 className="w-5 h-5 group-hover:scale-110 transition-transform animate-pulse" />
+                ) : (
+                    <VolumeX className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                )}
+            </button>
+
+            {/* Video Background with Parallax */}
             <div
                 className="absolute inset-0 transition-transform duration-300 ease-out"
                 style={{
                     transform: `translate(${mousePosition.x * 20}px, ${mousePosition.y * 20}px) scale(1.1)`
                 }}
             >
+                {/* Video Background */}
+                <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    poster={imageUrl}
+                    className="absolute inset-0 w-full h-full object-cover"
+                >
+                    {/* High quality travel/tourism videos from Pexels (royalty-free) */}
+                    <source
+                        src="https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_30fps.mp4"
+                        type="video/mp4"
+                    />
+                    {/* Fallback for browsers that don't support video */}
+                    Your browser does not support the video tag.
+                </video>
+                {/* Fallback Image for slow connections */}
                 <Image
                     src={imageUrl}
                     alt="Hero background"
                     fill
                     priority
-                    className="object-cover"
+                    className="object-cover -z-10"
                 />
+                {/* Gradient Overlays for text readability */}
                 <div className="absolute inset-0 bg-linear-to-r from-primary/80 via-primary/50 to-transparent" />
                 <div className="absolute inset-0 bg-primary/30" />
             </div>

@@ -68,14 +68,14 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
 
     const generateUPIQRCode = () => {
         // Generate UPI payment URL
-        const upiId = 'wanderlust@paytm'; // Replace with your actual UPI ID
-        const merchantName = 'Wanderlust Travel';
+        const upiId = 'ylootrips@paytm'; // Replace with your actual UPI ID
+        const merchantName = 'YlooTrips';
         const transactionNote = bookingReference ? `Booking ${bookingReference}` : 'Trip Booking';
         const amountStr = amount.toFixed(2);
-        
+
         // UPI Deep Link Format
         const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${amountStr}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
-        
+
         return upiUrl;
     };
 
@@ -91,15 +91,14 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                 {paymentMethods.map((method) => {
                     const Icon = method.icon;
                     const isSelected = selectedMethod === method.id;
-                    
+
                     return (
                         <label
                             key={method.id}
-                            className={`flex items-start gap-4 p-5 border-2 rounded-lg cursor-pointer transition-all ${
-                                isSelected
+                            className={`flex items-start gap-4 p-5 border-2 rounded-lg cursor-pointer transition-all ${isSelected
                                     ? 'border-secondary bg-secondary/5'
                                     : 'border-primary/20 bg-white hover:border-primary/40'
-                            }`}
+                                }`}
                         >
                             <input
                                 type="radio"
@@ -148,7 +147,7 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                             {showQRCode ? 'Hide QR Code' : 'Show QR Code'}
                         </button>
                     </div>
-                    
+
                     {showQRCode ? (
                         <div className="space-y-4">
                             <div className="bg-white p-6 rounded-lg border-2 border-dashed border-primary/20 flex flex-col items-center">
@@ -166,7 +165,7 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                                 </p>
                                 <div className="bg-primary/5 p-4 rounded-lg w-full">
                                     <p className="text-caption text-text-secondary mb-1">UPI ID</p>
-                                    <p className="text-body-lg font-mono">wanderlust@paytm</p>
+                                    <p className="text-body-lg font-mono">ylootrips@paytm</p>
                                 </div>
                                 <div className="bg-primary/5 p-4 rounded-lg w-full mt-2">
                                     <p className="text-caption text-text-secondary mb-1">Amount</p>

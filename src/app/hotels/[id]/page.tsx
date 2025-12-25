@@ -304,7 +304,7 @@ export default function HotelDetailPage() {
                                 <div className="space-y-2">
                                     <a href="tel:+1234567890" className="flex items-center gap-2 text-body-lg hover:text-secondary transition-colors">
                                         <Phone size={18} />
-                                        <span>+1 (234) 567-8900</span>
+                                        <span>+91 8427831127</span>
                                     </a>
                                     <a href="mailto:info@localhi.com" className="flex items-center gap-2 text-body-lg hover:text-secondary transition-colors">
                                         <Mail size={18} />

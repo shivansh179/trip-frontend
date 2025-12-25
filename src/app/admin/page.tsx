@@ -7,7 +7,7 @@ import {
     LayoutDashboard, FileText, MapPin, Compass, Building,
     MessageSquare, BookOpen, Settings, LogOut, ChevronRight,
     Save, RefreshCw, Plus, Trash2, Eye, ChevronDown, ChevronUp,
-    ShoppingBag, CheckCircle, XCircle, Clock
+    ShoppingBag, CheckCircle, XCircle, Clock, Mail, User, Calendar, Phone
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import ImagePreview from '@/components/ImagePreview';
@@ -48,6 +48,7 @@ export default function AdminDashboard() {
     const [expandedTrips, setExpandedTrips] = useState<Record<number, boolean>>({});
     const [expandedHotels, setExpandedHotels] = useState<Record<number, boolean>>({});
     const [expandedBlogs, setExpandedBlogs] = useState<Record<number, boolean>>({});
+    const [inquiries, setInquiries] = useState<Record<string, unknown>[]>([]);
     const [message, setMessage] = useState({ type: '', text: '' });
 
     useEffect(() => {
@@ -71,7 +72,7 @@ export default function AdminDashboard() {
     const fetchAllData = async () => {
         setLoading(true);
         try {
-            const [pagesRes, statsRes, destRes, tripsRes, hotelsRes, testsRes, blogsRes, bookingsRes] = await Promise.all([
+            const [pagesRes, statsRes, destRes, tripsRes, hotelsRes, testsRes, blogsRes, bookingsRes, inquiriesRes] = await Promise.all([
                 api.admin.getPages().catch(() => ({ data: [] })),
                 api.admin.getStats().catch(() => ({ data: [] })),
                 api.admin.getDestinations().catch(() => ({ data: [] })),
@@ -80,6 +81,7 @@ export default function AdminDashboard() {
                 api.admin.getTestimonials().catch(() => ({ data: [] })),
                 api.admin.getBlogs().catch(() => ({ data: [] })),
                 api.admin.getBookings().catch(() => ({ data: [] })),
+                api.admin.getInquiries().catch(() => ({ data: [] })),
             ]);
             setPages(Array.isArray(pagesRes.data) ? pagesRes.data : []);
             setStats(Array.isArray(statsRes.data) ? statsRes.data : []);
@@ -89,11 +91,12 @@ export default function AdminDashboard() {
             setTestimonials(Array.isArray(testsRes.data) ? testsRes.data : []);
             setBlogs(Array.isArray(blogsRes.data) ? blogsRes.data : []);
             setBookings(Array.isArray(bookingsRes.data) ? bookingsRes.data : []);
-            
+            setInquiries(Array.isArray(inquiriesRes.data) ? inquiriesRes.data : []);
+
             // Fetch destination details and trip itineraries
             const destDetails: Record<number, Record<string, unknown>> = {};
             const tripItins: Record<number, Record<string, unknown>[]> = {};
-            
+
             for (const dest of Array.isArray(destRes.data) ? destRes.data : []) {
                 try {
                     const detailRes = await api.admin.getDestinationDetails(dest.id as number);
@@ -107,7 +110,7 @@ export default function AdminDashboard() {
                     }
                 }
             }
-            
+
             for (const trip of Array.isArray(tripsRes.data) ? tripsRes.data : []) {
                 try {
                     const itinRes = await api.admin.getTripItineraries(trip.id as number);
@@ -121,7 +124,7 @@ export default function AdminDashboard() {
                     }
                 }
             }
-            
+
             setDestinationDetails(destDetails);
             setTripItineraries(tripItins);
         } catch (error) {
@@ -171,7 +174,7 @@ export default function AdminDashboard() {
             // Save destination details if they exist
             const details = destinationDetails[dest.id as number];
             if (details) {
-                await api.admin.updateDestinationDetails(dest.id as number, details).catch(() => {});
+                await api.admin.updateDestinationDetails(dest.id as number, details).catch(() => { });
             }
             setMessage({ type: 'success', text: 'Destination updated!' });
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
@@ -180,7 +183,7 @@ export default function AdminDashboard() {
         }
         setSaving(false);
     };
-    
+
     const handleSaveDestinationDetails = async (destId: number, details: Record<string, unknown>) => {
         setSaving(true);
         try {
@@ -193,7 +196,7 @@ export default function AdminDashboard() {
         }
         setSaving(false);
     };
-    
+
     const toggleDestinationExpanded = (id: number) => {
         setExpandedDestinations({ ...expandedDestinations, [id]: !expandedDestinations[id] });
         // Load details if expanding for first time
@@ -202,7 +205,7 @@ export default function AdminDashboard() {
                 if (res.data) {
                     setDestinationDetails({ ...destinationDetails, [id]: res.data });
                 }
-            }).catch(() => {});
+            }).catch(() => { });
         }
     };
 
@@ -217,7 +220,7 @@ export default function AdminDashboard() {
         }
         setSaving(false);
     };
-    
+
     const toggleTripExpanded = (id: number) => {
         setExpandedTrips({ ...expandedTrips, [id]: !expandedTrips[id] });
         if (!expandedTrips[id] && !tripItineraries[id]) {
@@ -233,7 +236,7 @@ export default function AdminDashboard() {
             });
         }
     };
-    
+
     const handleSaveItinerary = async (tripId: number, itinerary: Record<string, unknown>) => {
         setSaving(true);
         try {
@@ -250,7 +253,7 @@ export default function AdminDashboard() {
         }
         setSaving(false);
     };
-    
+
     const handleDeleteItinerary = async (id: number) => {
         if (!confirm('Are you sure you want to delete this itinerary day?')) return;
         setSaving(true);
@@ -264,11 +267,11 @@ export default function AdminDashboard() {
         }
         setSaving(false);
     };
-    
+
     const toggleHotelExpanded = (id: number) => {
         setExpandedHotels({ ...expandedHotels, [id]: !expandedHotels[id] });
     };
-    
+
     const toggleBlogExpanded = (id: number) => {
         setExpandedBlogs({ ...expandedBlogs, [id]: !expandedBlogs[id] });
     };
@@ -514,6 +517,7 @@ export default function AdminDashboard() {
         { id: 'stats', icon: LayoutDashboard, label: 'Statistics' },
         { id: 'testimonials', icon: MessageSquare, label: 'Testimonials' },
         { id: 'bookings', icon: ShoppingBag, label: 'Bookings' },
+        { id: 'inquiries', icon: Mail, label: 'Inquiries' },
     ];
 
     if (loading) {
@@ -532,7 +536,7 @@ export default function AdminDashboard() {
             {/* Sidebar */}
             <aside className="w-64 bg-primary text-cream fixed h-full">
                 <div className="p-6 border-b border-white/10">
-                    <Link href="/" className="font-display text-2xl">Wanderlust</Link>
+                    <Link href="/" className="font-display text-2xl">YlooTrips</Link>
                     <p className="text-caption text-cream/50 mt-1">Admin Panel</p>
                 </div>
 
@@ -607,15 +611,15 @@ export default function AdminDashboard() {
                                                 className="w-full h-48 rounded"
                                             />
                                         </div>
-                                        
+
                                         {/* Form Fields */}
                                         <div className="lg:col-span-2 space-y-4">
-                                        <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Hero Title</label>
-                                            <input
-                                                type="text"
-                                                value={page.heroTitle || ''}
-                                                onChange={(e) => setPages(pages.map(p => p.id === page.id ? { ...p, heroTitle: e.target.value } : p))}
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Hero Title</label>
+                                                <input
+                                                    type="text"
+                                                    value={page.heroTitle || ''}
+                                                    onChange={(e) => setPages(pages.map(p => p.id === page.id ? { ...p, heroTitle: e.target.value } : p))}
                                                     className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
                                                 />
                                             </div>
@@ -626,15 +630,15 @@ export default function AdminDashboard() {
                                                     onChange={(e) => setPages(pages.map(p => p.id === page.id ? { ...p, heroSubtitle: e.target.value } : p))}
                                                     rows={3}
                                                     className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Hero Image URL</label>
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Hero Image URL</label>
                                                 <div className="flex gap-2">
-                                            <input
-                                                type="text"
-                                                value={page.heroImageUrl || ''}
-                                                onChange={(e) => setPages(pages.map(p => p.id === page.id ? { ...p, heroImageUrl: e.target.value } : p))}
+                                                    <input
+                                                        type="text"
+                                                        value={page.heroImageUrl || ''}
+                                                        onChange={(e) => setPages(pages.map(p => p.id === page.id ? { ...p, heroImageUrl: e.target.value } : p))}
                                                         className="flex-1 px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
                                                         placeholder="https://images.unsplash.com/..."
                                                     />
@@ -648,16 +652,16 @@ export default function AdminDashboard() {
                                                             <Eye className="w-4 h-4" />
                                                         </a>
                                                     )}
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() => handleSavePage(page)}
-                                        disabled={saving}
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={() => handleSavePage(page)}
+                                                disabled={saving}
                                                 className="flex items-center gap-2 px-6 py-2 bg-primary text-cream hover:bg-primary-light transition-colors disabled:opacity-50"
-                                    >
-                                        <Save className="w-4 h-4" />
-                                        <span>{saving ? 'Saving...' : 'Save Changes'}</span>
-                                    </button>
+                                            >
+                                                <Save className="w-4 h-4" />
+                                                <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -731,16 +735,16 @@ export default function AdminDashboard() {
                                                 className="w-full h-48 rounded"
                                             />
                                         </div>
-                                        
+
                                         {/* Form Fields */}
                                         <div className="lg:col-span-2 space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Name</label>
-                                            <input
-                                                type="text"
-                                                value={dest.name as string || ''}
-                                                onChange={(e) => setDestinations(destinations.map(d => d.id === dest.id ? { ...d, name: e.target.value } : d))}
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                <div>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={dest.name as string || ''}
+                                                        onChange={(e) => setDestinations(destinations.map(d => d.id === dest.id ? { ...d, name: e.target.value } : d))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
                                                     />
                                                 </div>
@@ -760,26 +764,26 @@ export default function AdminDashboard() {
                                                         value={dest.tripCount as number || 0}
                                                         onChange={(e) => setDestinations(destinations.map(d => d.id === dest.id ? { ...d, tripCount: Number(e.target.value) } : d))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Region</label>
-                                            <input
-                                                type="text"
-                                                value={dest.region as string || ''}
-                                                onChange={(e) => setDestinations(destinations.map(d => d.id === dest.id ? { ...d, region: e.target.value } : d))}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Region</label>
+                                                    <input
+                                                        type="text"
+                                                        value={dest.region as string || ''}
+                                                        onChange={(e) => setDestinations(destinations.map(d => d.id === dest.id ? { ...d, region: e.target.value } : d))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Country</label>
-                                            <input
-                                                type="text"
-                                                value={dest.country as string || ''}
-                                                onChange={(e) => setDestinations(destinations.map(d => d.id === dest.id ? { ...d, country: e.target.value } : d))}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Country</label>
+                                                    <input
+                                                        type="text"
+                                                        value={dest.country as string || ''}
+                                                        onChange={(e) => setDestinations(destinations.map(d => d.id === dest.id ? { ...d, country: e.target.value } : d))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
-                                            />
-                                        </div>
+                                                    />
+                                                </div>
                                                 <div className="flex items-center gap-4 pt-6">
                                                     <label className="flex items-center gap-2">
                                                         <input
@@ -793,21 +797,21 @@ export default function AdminDashboard() {
                                                 </div>
                                             </div>
                                             <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Description</label>
-                                            <textarea
-                                                value={dest.description as string || ''}
-                                                onChange={(e) => setDestinations(destinations.map(d => d.id === dest.id ? { ...d, description: e.target.value } : d))}
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Description</label>
+                                                <textarea
+                                                    value={dest.description as string || ''}
+                                                    onChange={(e) => setDestinations(destinations.map(d => d.id === dest.id ? { ...d, description: e.target.value } : d))}
                                                     rows={3}
                                                     className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Image URL</label>
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Image URL</label>
                                                 <div className="flex gap-2">
-                                            <input
-                                                type="text"
-                                                value={dest.imageUrl as string || ''}
-                                                onChange={(e) => setDestinations(destinations.map(d => d.id === dest.id ? { ...d, imageUrl: e.target.value } : d))}
+                                                    <input
+                                                        type="text"
+                                                        value={dest.imageUrl as string || ''}
+                                                        onChange={(e) => setDestinations(destinations.map(d => d.id === dest.id ? { ...d, imageUrl: e.target.value } : d))}
                                                         className="flex-1 px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
                                                         placeholder="https://images.unsplash.com/..."
                                                     />
@@ -821,17 +825,17 @@ export default function AdminDashboard() {
                                                             <Eye className="w-4 h-4" />
                                                         </a>
                                                     ) : null}
-                                        </div>
-                                    </div>
+                                                </div>
+                                            </div>
                                             <div className="flex gap-2">
-                                    <button
-                                        onClick={() => handleSaveDestination(dest)}
-                                        disabled={saving}
+                                                <button
+                                                    onClick={() => handleSaveDestination(dest)}
+                                                    disabled={saving}
                                                     className="flex items-center gap-2 px-6 py-2 bg-primary text-cream hover:bg-primary-light transition-colors disabled:opacity-50"
-                                    >
-                                        <Save className="w-4 h-4" />
-                                        <span>Save</span>
-                                    </button>
+                                                >
+                                                    <Save className="w-4 h-4" />
+                                                    <span>Save</span>
+                                                </button>
                                                 <button
                                                     onClick={() => handleDeleteDestination(dest.id as number)}
                                                     disabled={saving}
@@ -839,11 +843,11 @@ export default function AdminDashboard() {
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                     <span>Delete</span>
-                                    </button>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     {/* Destination Details Section - Expandable */}
                                     <div className="mt-4 border-t border-primary/10 pt-4">
                                         <button
@@ -853,7 +857,7 @@ export default function AdminDashboard() {
                                             <span className="text-sm font-medium text-primary">Destination Details & Content</span>
                                             {expandedDestinations[dest.id as number] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                                         </button>
-                                        
+
                                         {expandedDestinations[dest.id as number] && (
                                             <div className="mt-4 p-4 bg-cream space-y-4">
                                                 {(() => {
@@ -964,28 +968,28 @@ export default function AdminDashboard() {
                                                                     />
                                                                 </div>
                                                             </div>
-                                                            
+
                                                             <EditableList
                                                                 items={Array.isArray(details.highlights) ? details.highlights : []}
                                                                 onChange={(items) => setDestinationDetails({ ...destinationDetails, [dest.id as number]: { ...details, highlights: items } })}
                                                                 label="Highlights"
                                                                 placeholder="Add highlight..."
                                                             />
-                                                            
+
                                                             <EditableList
                                                                 items={Array.isArray(details.galleryImages) ? details.galleryImages : []}
                                                                 onChange={(items) => setDestinationDetails({ ...destinationDetails, [dest.id as number]: { ...details, galleryImages: items } })}
                                                                 label="Gallery Images (URLs)"
                                                                 placeholder="Add image URL..."
                                                             />
-                                                            
+
                                                             <EditableList
                                                                 items={Array.isArray(details.popularActivities) ? details.popularActivities : []}
                                                                 onChange={(items) => setDestinationDetails({ ...destinationDetails, [dest.id as number]: { ...details, popularActivities: items } })}
                                                                 label="Popular Activities"
                                                                 placeholder="Add activity..."
                                                             />
-                                                            
+
                                                             <button
                                                                 onClick={() => handleSaveDestinationDetails(dest.id as number, details)}
                                                                 disabled={saving}
@@ -1033,31 +1037,31 @@ export default function AdminDashboard() {
                                                 className="w-full h-48 rounded"
                                             />
                                         </div>
-                                        
+
                                         {/* Form Fields */}
                                         <div className="lg:col-span-2 space-y-4">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="md:col-span-2">
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Title</label>
-                                            <input
-                                                type="text"
-                                                value={trip.title as string || ''}
-                                                onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, title: e.target.value } : t))}
+                                                <div className="md:col-span-2">
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Title</label>
+                                                    <input
+                                                        type="text"
+                                                        value={trip.title as string || ''}
+                                                        onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, title: e.target.value } : t))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
-                                            />
-                                        </div>
-                                        <div>
+                                                    />
+                                                </div>
+                                                <div>
                                                     <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Price (₹)</label>
-                                            <input
-                                                type="number"
-                                                value={trip.price as number || 0}
-                                                onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, price: Number(e.target.value) } : t))}
+                                                    <input
+                                                        type="number"
+                                                        value={trip.price as number || 0}
+                                                        onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, price: Number(e.target.value) } : t))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
-                                            />
+                                                    />
                                                     {(trip.price && typeof trip.price === 'number' && trip.price > 0) ? (
                                                         <p className="text-xs text-primary/50 mt-1">{formatPrice(trip.price)}</p>
                                                     ) : null}
-                                        </div>
+                                                </div>
                                                 <div>
                                                     <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Original Price (₹)</label>
                                                     <input
@@ -1065,14 +1069,14 @@ export default function AdminDashboard() {
                                                         value={trip.originalPrice as number || 0}
                                                         onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, originalPrice: Number(e.target.value) } : t))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Duration</label>
-                                            <input
-                                                type="text"
-                                                value={trip.duration as string || ''}
-                                                onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, duration: e.target.value } : t))}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Duration</label>
+                                                    <input
+                                                        type="text"
+                                                        value={trip.duration as string || ''}
+                                                        onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, duration: e.target.value } : t))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
                                                         placeholder="e.g., 5 Days"
                                                     />
@@ -1085,14 +1089,14 @@ export default function AdminDashboard() {
                                                         onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, difficulty: e.target.value } : t))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
                                                         placeholder="e.g., Easy, Moderate, Hard"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Category</label>
-                                            <input
-                                                type="text"
-                                                value={trip.category as string || ''}
-                                                onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, category: e.target.value } : t))}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Category</label>
+                                                    <input
+                                                        type="text"
+                                                        value={trip.category as string || ''}
+                                                        onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, category: e.target.value } : t))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
                                                         placeholder="e.g., Luxury, Adventure, Cultural"
                                                     />
@@ -1183,15 +1187,15 @@ export default function AdminDashboard() {
                                                     onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, description: e.target.value } : t))}
                                                     rows={4}
                                                     className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Image URL</label>
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Image URL</label>
                                                 <div className="flex gap-2">
-                                            <input
-                                                type="text"
-                                                value={trip.imageUrl as string || ''}
-                                                onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, imageUrl: e.target.value } : t))}
+                                                    <input
+                                                        type="text"
+                                                        value={trip.imageUrl as string || ''}
+                                                        onChange={(e) => setTrips(trips.map(t => t.id === trip.id ? { ...t, imageUrl: e.target.value } : t))}
                                                         className="flex-1 px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
                                                         placeholder="https://images.unsplash.com/..."
                                                     />
@@ -1205,17 +1209,17 @@ export default function AdminDashboard() {
                                                             <Eye className="w-4 h-4" />
                                                         </a>
                                                     ) : null}
-                                        </div>
-                                    </div>
+                                                </div>
+                                            </div>
                                             <div className="flex gap-2">
-                                    <button
-                                        onClick={() => handleSaveTrip(trip)}
-                                        disabled={saving}
+                                                <button
+                                                    onClick={() => handleSaveTrip(trip)}
+                                                    disabled={saving}
                                                     className="flex items-center gap-2 px-6 py-2 bg-primary text-cream hover:bg-primary-light transition-colors disabled:opacity-50"
-                                    >
-                                        <Save className="w-4 h-4" />
-                                        <span>Save</span>
-                                    </button>
+                                                >
+                                                    <Save className="w-4 h-4" />
+                                                    <span>Save</span>
+                                                </button>
                                                 <button
                                                     onClick={() => handleDeleteTrip(trip.id as number)}
                                                     disabled={saving}
@@ -1223,11 +1227,11 @@ export default function AdminDashboard() {
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                     <span>Delete</span>
-                                    </button>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     {/* Trip Itineraries Section - Expandable */}
                                     <div className="mt-4 border-t border-primary/10 pt-4">
                                         <button
@@ -1237,7 +1241,7 @@ export default function AdminDashboard() {
                                             <span className="text-sm font-medium text-primary">Trip Itinerary (Day-by-Day)</span>
                                             {expandedTrips[trip.id as number] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                                         </button>
-                                        
+
                                         {expandedTrips[trip.id as number] && (
                                             <div className="mt-4 space-y-4">
                                                 {(tripItineraries[trip.id as number] || []).map((itin: Record<string, unknown>, idx: number) => (
@@ -1402,16 +1406,16 @@ export default function AdminDashboard() {
                                                 className="w-full h-48 rounded"
                                             />
                                         </div>
-                                        
+
                                         {/* Form Fields */}
                                         <div className="lg:col-span-2 space-y-4">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Name</label>
-                                            <input
-                                                type="text"
-                                                value={hotel.name as string || ''}
-                                                onChange={(e) => setHotels(hotels.map(h => h.id === hotel.id ? { ...h, name: e.target.value } : h))}
+                                                <div>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={hotel.name as string || ''}
+                                                        onChange={(e) => setHotels(hotels.map(h => h.id === hotel.id ? { ...h, name: e.target.value } : h))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
                                                     />
                                                 </div>
@@ -1423,18 +1427,18 @@ export default function AdminDashboard() {
                                                         onChange={(e) => setHotels(hotels.map(h => h.id === hotel.id ? { ...h, type: e.target.value } : h))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
                                                         placeholder="e.g., Boutique, Resort, Villa"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">City</label>
-                                            <input
-                                                type="text"
-                                                value={hotel.city as string || ''}
-                                                onChange={(e) => setHotels(hotels.map(h => h.id === hotel.id ? { ...h, city: e.target.value } : h))}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">City</label>
+                                                    <input
+                                                        type="text"
+                                                        value={hotel.city as string || ''}
+                                                        onChange={(e) => setHotels(hotels.map(h => h.id === hotel.id ? { ...h, city: e.target.value } : h))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
-                                            />
-                                        </div>
-                                        <div>
+                                                    />
+                                                </div>
+                                                <div>
                                                     <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Country</label>
                                                     <input
                                                         type="text"
@@ -1455,16 +1459,16 @@ export default function AdminDashboard() {
                                                 </div>
                                                 <div>
                                                     <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Price/Night (₹)</label>
-                                            <input
-                                                type="number"
-                                                value={hotel.pricePerNight as number || 0}
-                                                onChange={(e) => setHotels(hotels.map(h => h.id === hotel.id ? { ...h, pricePerNight: Number(e.target.value) } : h))}
+                                                    <input
+                                                        type="number"
+                                                        value={hotel.pricePerNight as number || 0}
+                                                        onChange={(e) => setHotels(hotels.map(h => h.id === hotel.id ? { ...h, pricePerNight: Number(e.target.value) } : h))}
                                                         className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
-                                            />
+                                                    />
                                                     {(hotel.pricePerNight && typeof hotel.pricePerNight === 'number' && hotel.pricePerNight > 0) ? (
                                                         <p className="text-xs text-primary/50 mt-1">{formatPrice(hotel.pricePerNight)} / night</p>
                                                     ) : null}
-                                        </div>
+                                                </div>
                                                 <div>
                                                     <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Rating</label>
                                                     <input
@@ -1508,14 +1512,14 @@ export default function AdminDashboard() {
                                                 </div>
                                             </div>
                                             <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Description</label>
-                                            <textarea
-                                                value={hotel.description as string || ''}
-                                                onChange={(e) => setHotels(hotels.map(h => h.id === hotel.id ? { ...h, description: e.target.value } : h))}
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Description</label>
+                                                <textarea
+                                                    value={hotel.description as string || ''}
+                                                    onChange={(e) => setHotels(hotels.map(h => h.id === hotel.id ? { ...h, description: e.target.value } : h))}
                                                     rows={4}
                                                     className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
-                                            />
-                                        </div>
+                                                />
+                                            </div>
                                             <div>
                                                 <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Image URL</label>
                                                 <div className="flex gap-2">
@@ -1536,17 +1540,17 @@ export default function AdminDashboard() {
                                                             <Eye className="w-4 h-4" />
                                                         </a>
                                                     ) : null}
-                                    </div>
+                                                </div>
                                             </div>
                                             <div className="flex gap-2">
-                                    <button
-                                        onClick={() => handleSaveHotel(hotel)}
-                                        disabled={saving}
+                                                <button
+                                                    onClick={() => handleSaveHotel(hotel)}
+                                                    disabled={saving}
                                                     className="flex items-center gap-2 px-6 py-2 bg-primary text-cream hover:bg-primary-light transition-colors disabled:opacity-50"
-                                    >
-                                        <Save className="w-4 h-4" />
-                                        <span>Save</span>
-                                    </button>
+                                                >
+                                                    <Save className="w-4 h-4" />
+                                                    <span>Save</span>
+                                                </button>
                                                 <button
                                                     onClick={() => handleDeleteHotel(hotel.id as number)}
                                                     disabled={saving}
@@ -1554,11 +1558,11 @@ export default function AdminDashboard() {
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                     <span>Delete</span>
-                                    </button>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     {/* Hotel Amenities & Images Section - Expandable */}
                                     <div className="mt-4 border-t border-primary/10 pt-4">
                                         <button
@@ -1568,7 +1572,7 @@ export default function AdminDashboard() {
                                             <span className="text-sm font-medium text-primary">Amenities & Images</span>
                                             {expandedHotels[hotel.id as number] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                                         </button>
-                                        
+
                                         {expandedHotels[hotel.id as number] && (
                                             <div className="mt-4 p-4 bg-cream space-y-4">
                                                 <EditableList
@@ -1577,14 +1581,14 @@ export default function AdminDashboard() {
                                                     label="Amenities"
                                                     placeholder="Add amenity..."
                                                 />
-                                                
+
                                                 <EditableList
                                                     items={Array.isArray(hotel.images) ? hotel.images : []}
                                                     onChange={(items) => setHotels(hotels.map(h => h.id === hotel.id ? { ...h, images: items } : h))}
                                                     label="Hotel Images (URLs)"
                                                     placeholder="Add image URL..."
                                                 />
-                                                
+
                                                 <button
                                                     onClick={() => handleSaveHotel(hotel)}
                                                     disabled={saving}
@@ -1629,7 +1633,7 @@ export default function AdminDashboard() {
                                                 className="w-full h-48 rounded"
                                             />
                                         </div>
-                                        
+
                                         {/* Form Fields */}
                                         <div className="lg:col-span-2 space-y-4">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1760,7 +1764,7 @@ export default function AdminDashboard() {
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     {/* Blog Tags Section - Expandable */}
                                     <div className="mt-4 border-t border-primary/10 pt-4">
                                         <button
@@ -1770,7 +1774,7 @@ export default function AdminDashboard() {
                                             <span className="text-sm font-medium text-primary">Tags</span>
                                             {expandedBlogs[blog.id as number] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                                         </button>
-                                        
+
                                         {expandedBlogs[blog.id as number] && (
                                             <div className="mt-4 p-4 bg-cream">
                                                 <EditableList
@@ -1779,7 +1783,7 @@ export default function AdminDashboard() {
                                                     label="Blog Tags"
                                                     placeholder="Add tag..."
                                                 />
-                                                
+
                                                 <button
                                                     onClick={() => handleSaveBlog(blog)}
                                                     disabled={saving}
@@ -1865,14 +1869,14 @@ export default function AdminDashboard() {
                                         </div>
                                     </div>
                                     <div className="flex gap-2 mt-4">
-                                    <button
-                                        onClick={() => handleSaveTestimonial(test)}
-                                        disabled={saving}
+                                        <button
+                                            onClick={() => handleSaveTestimonial(test)}
+                                            disabled={saving}
                                             className="flex items-center gap-2 px-6 py-2 bg-primary text-cream hover:bg-primary-light transition-colors disabled:opacity-50"
-                                    >
-                                        <Save className="w-4 h-4" />
-                                        <span>Save</span>
-                                    </button>
+                                        >
+                                            <Save className="w-4 h-4" />
+                                            <span>Save</span>
+                                        </button>
                                         <button
                                             onClick={() => handleDeleteTestimonial(test.id as number)}
                                             disabled={saving}
@@ -1880,7 +1884,7 @@ export default function AdminDashboard() {
                                         >
                                             <Trash2 className="w-4 h-4" />
                                             <span>Delete</span>
-                                    </button>
+                                        </button>
                                     </div>
                                 </div>
                             ))}
@@ -1892,8 +1896,8 @@ export default function AdminDashboard() {
                             <h2 className="text-xl font-medium text-primary">Bookings</h2>
                             <div className="space-y-4">
                                 {bookings.map((booking: any) => (
-                                    <div 
-                                        key={booking.id} 
+                                    <div
+                                        key={booking.id}
                                         className={`p-6 border border-primary/10 bg-cream-light ${!booking.adminReviewed ? 'border-l-4 border-l-secondary' : ''}`}
                                     >
                                         <div className="flex justify-between items-start mb-4">
@@ -1909,11 +1913,10 @@ export default function AdminDashboard() {
                                                 </p>
                                             </div>
                                             <div className="text-right">
-                                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded text-sm ${
-                                                    booking.paymentStatus === 'PAID' ? 'bg-success/20 text-success' :
+                                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded text-sm ${booking.paymentStatus === 'PAID' ? 'bg-success/20 text-success' :
                                                     booking.paymentStatus === 'FAILED' ? 'bg-error/20 text-error' :
-                                                    'bg-warning/20 text-warning'
-                                                }`}>
+                                                        'bg-warning/20 text-warning'
+                                                    }`}>
                                                     {booking.paymentStatus === 'PAID' && <CheckCircle size={16} />}
                                                     {booking.paymentStatus === 'FAILED' && <XCircle size={16} />}
                                                     {booking.paymentStatus === 'PENDING' && <Clock size={16} />}
@@ -1921,7 +1924,7 @@ export default function AdminDashboard() {
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                                             <div>
                                                 <p className="text-caption text-text-secondary">Trip</p>
@@ -1940,7 +1943,7 @@ export default function AdminDashboard() {
                                                 <p className="text-body-lg font-medium">{formatPrice(booking.finalAmount || booking.totalAmount)}</p>
                                             </div>
                                         </div>
-                                        
+
                                         {booking.discountAmount > 0 && (
                                             <div className="mb-4 p-3 bg-success/10 rounded">
                                                 <p className="text-sm text-success">
@@ -1948,28 +1951,28 @@ export default function AdminDashboard() {
                                                 </p>
                                             </div>
                                         )}
-                                        
+
                                         {booking.paymentMethod && (
                                             <div className="mb-4">
                                                 <p className="text-caption text-text-secondary">Payment Method</p>
                                                 <p className="text-body-lg">{booking.paymentMethod.toUpperCase()}</p>
                                             </div>
                                         )}
-                                        
+
                                         {booking.specialRequests && (
                                             <div className="mb-4">
                                                 <p className="text-caption text-text-secondary">Special Requests</p>
                                                 <p className="text-body-sm">{booking.specialRequests}</p>
                                             </div>
                                         )}
-                                        
+
                                         <div className="flex gap-2 mt-4">
                                             {!booking.adminReviewed && (
                                                 <button
                                                     onClick={async () => {
                                                         try {
                                                             await api.admin.markBookingAsReviewed(booking.bookingReference);
-                                                            setBookings(bookings.map((b: any) => 
+                                                            setBookings(bookings.map((b: any) =>
                                                                 b.id === booking.id ? { ...b, adminReviewed: true } : b
                                                             ));
                                                             setMessage({ type: 'success', text: 'Booking marked as reviewed!' });
@@ -1996,6 +1999,153 @@ export default function AdminDashboard() {
                                     <div className="text-center py-12 text-text-secondary">
                                         <ShoppingBag className="w-16 h-16 mx-auto mb-4 opacity-30" />
                                         <p>No bookings yet</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Inquiries Tab */}
+                    {activeTab === 'inquiries' && (
+                        <div className="space-y-6">
+                            <div className="flex justify-between items-center mb-4">
+                                <div>
+                                    <h2 className="text-xl font-medium text-primary">Contact Inquiries</h2>
+                                    <p className="text-sm text-primary/50 mt-1">Manage inquiries from the contact form</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="px-3 py-1 bg-accent/20 text-primary text-sm rounded">
+                                        {inquiries.filter((i: any) => !i.isRead).length} unread
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="space-y-4">
+                                {inquiries.map((inquiry: any) => (
+                                    <div key={inquiry.id} className={`p-6 border ${inquiry.isRead ? 'bg-cream border-primary/10' : 'bg-accent/5 border-accent/30'}`}>
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${inquiry.isRead ? 'bg-primary/10' : 'bg-accent/20'}`}>
+                                                    <User className="w-5 h-5 text-primary" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="font-medium text-primary">{inquiry.name}</h3>
+                                                    <p className="text-sm text-primary/60">{inquiry.email}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <select
+                                                    value={inquiry.status || 'NEW'}
+                                                    onChange={async (e) => {
+                                                        try {
+                                                            await api.admin.updateInquiryStatus(inquiry.id, e.target.value);
+                                                            setInquiries(inquiries.map((i: any) =>
+                                                                i.id === inquiry.id ? { ...i, status: e.target.value } : i
+                                                            ));
+                                                            setMessage({ type: 'success', text: 'Status updated!' });
+                                                            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+                                                        } catch {
+                                                            setMessage({ type: 'error', text: 'Failed to update status' });
+                                                        }
+                                                    }}
+                                                    className={`px-3 py-1 text-sm border rounded cursor-pointer ${inquiry.status === 'NEW' ? 'bg-blue-50 border-blue-200 text-blue-700' :
+                                                            inquiry.status === 'CONTACTED' ? 'bg-yellow-50 border-yellow-200 text-yellow-700' :
+                                                                inquiry.status === 'CONVERTED' ? 'bg-green-50 border-green-200 text-green-700' :
+                                                                    'bg-gray-50 border-gray-200 text-gray-700'
+                                                        }`}
+                                                >
+                                                    <option value="NEW">New</option>
+                                                    <option value="CONTACTED">Contacted</option>
+                                                    <option value="CONVERTED">Converted</option>
+                                                    <option value="CLOSED">Closed</option>
+                                                </select>
+                                                <span className="text-xs text-primary/40">
+                                                    {new Date(inquiry.createdAt).toLocaleDateString()}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
+                                            {inquiry.phone && (
+                                                <div className="flex items-center gap-2">
+                                                    <Phone className="w-4 h-4 text-primary/40" />
+                                                    <span>{inquiry.phone}</span>
+                                                </div>
+                                            )}
+                                            {inquiry.destination && (
+                                                <div className="flex items-center gap-2">
+                                                    <MapPin className="w-4 h-4 text-primary/40" />
+                                                    <span>{inquiry.destination}</span>
+                                                </div>
+                                            )}
+                                            {inquiry.travelers && (
+                                                <div className="flex items-center gap-2">
+                                                    <User className="w-4 h-4 text-primary/40" />
+                                                    <span>{inquiry.travelers} travelers</span>
+                                                </div>
+                                            )}
+                                            {inquiry.preferredDates && (
+                                                <div className="flex items-center gap-2">
+                                                    <Calendar className="w-4 h-4 text-primary/40" />
+                                                    <span>{inquiry.preferredDates}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        {inquiry.message && (
+                                            <div className="bg-primary/5 p-4 rounded mb-4">
+                                                <p className="text-sm text-primary/80">{inquiry.message}</p>
+                                            </div>
+                                        )}
+                                        <div className="flex items-center gap-2">
+                                            {!inquiry.isRead && (
+                                                <button
+                                                    onClick={async () => {
+                                                        try {
+                                                            await api.admin.markInquiryAsRead(inquiry.id);
+                                                            setInquiries(inquiries.map((i: any) =>
+                                                                i.id === inquiry.id ? { ...i, isRead: true } : i
+                                                            ));
+                                                            setMessage({ type: 'success', text: 'Marked as read!' });
+                                                            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+                                                        } catch {
+                                                            setMessage({ type: 'error', text: 'Failed to mark as read' });
+                                                        }
+                                                    }}
+                                                    className="flex items-center gap-2 px-4 py-2 bg-secondary text-cream hover:bg-secondary-dark transition-colors"
+                                                >
+                                                    <CheckCircle className="w-4 h-4" />
+                                                    <span>Mark as Read</span>
+                                                </button>
+                                            )}
+                                            <a
+                                                href={`mailto:${inquiry.email}?subject=Re: Your Travel Inquiry - YlooTrips&body=Hi ${inquiry.name},%0D%0A%0D%0AThank you for your interest in traveling with YlooTrips.%0D%0A%0D%0A`}
+                                                className="flex items-center gap-2 px-4 py-2 bg-primary text-cream hover:bg-primary-light transition-colors"
+                                            >
+                                                <Mail className="w-4 h-4" />
+                                                <span>Reply</span>
+                                            </a>
+                                            <button
+                                                onClick={async () => {
+                                                    if (!confirm('Are you sure you want to delete this inquiry?')) return;
+                                                    try {
+                                                        await api.admin.deleteInquiry(inquiry.id);
+                                                        setInquiries(inquiries.filter((i: any) => i.id !== inquiry.id));
+                                                        setMessage({ type: 'success', text: 'Inquiry deleted!' });
+                                                        setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+                                                    } catch {
+                                                        setMessage({ type: 'error', text: 'Failed to delete inquiry' });
+                                                    }
+                                                }}
+                                                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white hover:bg-red-600 transition-colors"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                                <span>Delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                                {inquiries.length === 0 && (
+                                    <div className="text-center py-12 text-text-secondary">
+                                        <Mail className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                                        <p>No inquiries yet</p>
                                     </div>
                                 )}
                             </div>
