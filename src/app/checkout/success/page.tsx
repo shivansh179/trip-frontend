@@ -46,12 +46,12 @@ function CheckoutSuccessContent() {
     }
 
     return (
-        <div className="min-h-screen bg-cream py-16">
+        <div className="min-h-screen bg-cream py-16 mt-20">
             <div className="section-container">
                 <div className="max-w-2xl mx-auto text-center">
                     <div className="mb-8">
                         <div className="w-20 h-20 rounded-full bg-success flex items-center justify-center mx-auto mb-6">
-                            <CheckCircle size={48} className="text-white" />
+                            <CheckCircle size={48} className="text-green-500" />
                         </div>
                         <h1 className="text-display-xl mb-4">Booking Confirmed!</h1>
                         <p className="text-body-lg text-text-secondary">
