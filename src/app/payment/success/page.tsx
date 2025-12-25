@@ -13,21 +13,61 @@ function PaymentSuccessContent() {
     const [booking, setBooking] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
     const [notFound, setNotFound] = useState(false);
+    const [mounted, setMounted] = useState(false);
+    const [txnid, setTxnid] = useState<string | null>(null);
+    
+    // Get URL params - handle both Next.js searchParams and window.location for external redirects
+    const getUrlParams = () => {
+        if (typeof window === 'undefined') return { txnid: null, status: null };
+        
+        // Try Next.js searchParams first
+        try {
+            const txnid = searchParams?.get('txnid');
+            const status = searchParams?.get('status');
+            if (txnid) {
+                return { txnid, status };
+            }
+        } catch (e) {
+            console.log('searchParams not ready, using window.location');
+        }
+        
+        // Fallback to window.location for external redirects
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                txnid: params.get('txnid'),
+                status: params.get('status')
+            };
+        }
+        
+        return { txnid: null, status: null };
+    };
     
     useEffect(() => {
+        // Ensure we're in the browser
+        setMounted(true);
+    }, []);
+    
+    useEffect(() => {
+        if (!mounted) return;
+        
         const verifyPayment = async () => {
-            const txnid = searchParams.get('txnid');
-            const status = searchParams.get('status');
+            // Small delay to ensure URL params are available after external redirect
+            await new Promise(resolve => setTimeout(resolve, 100));
             
-            if (!txnid) {
+            const { txnid: urlTxnid, status } = getUrlParams();
+            
+            if (!urlTxnid) {
                 setError('Invalid payment response. Missing transaction ID.');
                 setLoading(false);
                 return;
             }
             
+            setTxnid(urlTxnid);
+            
             try {
                 // Get booking status - API returns booking directly in response.data
-                const response = await api.getPaymentStatus(txnid);
+                const response = await api.getPaymentStatus(urlTxnid);
                 const bookingData = response.data;
                 
                 if (!bookingData) {
@@ -60,7 +100,7 @@ function PaymentSuccessContent() {
         };
         
         verifyPayment();
-    }, [searchParams, router]);
+    }, [mounted, searchParams, router]);
     
     if (loading) {
         return (
@@ -80,7 +120,7 @@ function PaymentSuccessContent() {
                     <XCircle className="w-16 h-16 text-error mx-auto mb-4" />
                     <h1 className="text-3xl font-light mb-4">Booking Not Found</h1>
                     <p className="text-text-secondary mb-6">
-                        We couldn't find a booking with reference: <strong>{searchParams.get('txnid')}</strong>
+                        We couldn't find a booking with reference: <strong>{txnid || 'Unknown'}</strong>
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
@@ -209,7 +249,7 @@ export default function PaymentSuccessPage() {
             <div className="min-h-screen flex items-center justify-center bg-cream">
                 <div className="text-center">
                     <Loader2 className="w-16 h-16 animate-spin text-secondary mx-auto mb-4" />
-                    <p className="text-text-secondary">Loading...</p>
+                    <p className="text-text-secondary">Loading payment details...</p>
                 </div>
             </div>
         }>
