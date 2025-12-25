@@ -8,18 +8,18 @@ export async function POST(request: NextRequest) {
     // Easebuzz sends form-urlencoded data via POST
     // Parse the raw body as form data
     const contentType = request.headers.get('content-type') || '';
-    
+
     let txnid: string | null = null;
     let status: string = 'success';
     let easepayid: string | null = null;
-    
+
     if (contentType.includes('application/x-www-form-urlencoded')) {
       // Parse form-urlencoded data
       const formData = await request.formData();
       txnid = formData.get('txnid')?.toString() || formData.get('udf1')?.toString() || null;
       status = formData.get('status')?.toString() || 'success';
       easepayid = formData.get('easepayid')?.toString() || null;
-      
+
       console.log('Easebuzz POST received (form-urlencoded):', {
         txnid,
         status,
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
         txnid = body.txnid || body.udf1 || null;
         status = body.status || 'success';
         easepayid = body.easepayid || null;
-        
+
         console.log('Easebuzz POST received (JSON):', { txnid, status, easepayid });
       } catch (e) {
         // If JSON parsing fails, try to get from URL search params
@@ -41,38 +41,40 @@ export async function POST(request: NextRequest) {
         txnid = url.searchParams.get('txnid') || url.searchParams.get('udf1');
         status = url.searchParams.get('status') || 'success';
         easepayid = url.searchParams.get('easepayid');
-        
+
         console.log('Easebuzz POST received (URL params):', { txnid, status, easepayid });
       }
     }
-    
+
     if (!txnid) {
       console.error('Missing transaction ID in payment success POST');
       // If no txnid, redirect to failure page
       return NextResponse.redirect(
-        new URL(`/payment/failure?error=Missing transaction ID`, request.url)
+        new URL(`/payment/failure?error=Missing transaction ID`, request.url),
+        { status: 303 }
       );
     }
-    
+
     // Redirect to frontend success page with GET parameters
     const baseUrl = request.nextUrl.origin;
     const successUrl = new URL(`/payment/success`, baseUrl);
     successUrl.searchParams.set('txnid', txnid);
     successUrl.searchParams.set('status', status);
-    
+
     // Preserve other important fields as query params
     if (easepayid) {
       successUrl.searchParams.set('easepayid', easepayid);
     }
-    
+
     console.log('Redirecting to:', successUrl.toString());
-    
-    return NextResponse.redirect(successUrl);
+
+    return NextResponse.redirect(successUrl, { status: 303 });
   } catch (error) {
     console.error('Error processing payment success POST:', error);
     const baseUrl = request.nextUrl.origin;
     return NextResponse.redirect(
-      new URL(`/payment/failure?error=Failed to process payment response`, baseUrl)
+      new URL(`/payment/failure?error=Failed to process payment response`, baseUrl),
+      { status: 303 }
     );
   }
 }
@@ -82,18 +84,19 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const txnid = searchParams.get('txnid');
   const status = searchParams.get('status') || 'success';
-  
+
   if (!txnid) {
     return NextResponse.redirect(
-      new URL('/payment/failure?error=Missing transaction ID', request.url)
+      new URL('/payment/failure?error=Missing transaction ID', request.url),
+      { status: 303 }
     );
   }
-  
+
   // Redirect to frontend success page
   const successUrl = new URL('/payment/success', request.url);
   successUrl.searchParams.set('txnid', txnid);
   successUrl.searchParams.set('status', status);
-  
-  return NextResponse.redirect(successUrl);
+
+  return NextResponse.redirect(successUrl, { status: 303 });
 }
 
