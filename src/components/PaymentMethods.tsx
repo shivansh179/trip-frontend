@@ -35,13 +35,13 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
             discount: 3,
             description: 'Visa, Mastercard, RuPay, Amex',
         },
-        {
-            id: 'netbanking',
-            name: 'Net Banking',
-            icon: Building2,
-            discount: 0,
-            description: 'Pay directly from your bank account',
-        },
+        // {
+        //     id: 'netbanking',
+        //     name: 'Net Banking',
+        //     icon: Building2,
+        //     discount: 0,
+        //     description: 'Pay directly from your bank account',
+        // },
     ];
 
     const formatCardNumber = (value: string) => {
