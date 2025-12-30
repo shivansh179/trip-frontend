@@ -145,7 +145,7 @@ export default function Footer() {
               {/* Social Links */}
               <div className="flex items-center gap-6">
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com/ylootrips/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-cream/40 hover:text-accent transition-colors"
@@ -154,7 +154,7 @@ export default function Footer() {
                   <Instagram className="w-5 h-5" />
                 </a>
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com/profile.php?id=61574908545709"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-cream/40 hover:text-accent transition-colors"
@@ -162,7 +162,7 @@ export default function Footer() {
                 >
                   <Facebook className="w-5 h-5" />
                 </a>
-                <a
+                {/* <a
                   href="https://twitter.com"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -170,7 +170,7 @@ export default function Footer() {
                   aria-label="Twitter"
                 >
                   <Twitter className="w-5 h-5" />
-                </a>
+                </a> */}
 
                 {/* Hidden Admin Button - appears as a very subtle dot */}
                 <button

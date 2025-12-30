@@ -11,16 +11,16 @@ import PaymentMethods from '@/components/PaymentMethods';
 function CheckoutContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    
+
     const tripId = searchParams.get('tripId');
     const guests = Number(searchParams.get('guests')) || 1;
     const date = searchParams.get('date') || '';
-    
+
     const [trip, setTrip] = useState<Trip | null>(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [bookingReference, setBookingReference] = useState<string | undefined>(undefined);
-    
+
     const [formData, setFormData] = useState({
         customerName: '',
         customerEmail: '',
@@ -37,7 +37,7 @@ function CheckoutContent() {
                 router.push('/trips');
                 return;
             }
-            
+
             try {
                 const response = await api.getTripById(Number(tripId));
                 setTrip(response.data);
@@ -59,16 +59,16 @@ function CheckoutContent() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!trip) return;
-        
+
         if (!formData.paymentMethod || formData.paymentMethod.trim() === '') {
             alert('Please select a payment method');
             return;
         }
-        
+
         setSubmitting(true);
-        
+
         try {
             const bookingData = {
                 trip: { id: trip.id },
@@ -80,18 +80,18 @@ function CheckoutContent() {
                 specialRequests: formData.specialRequests,
                 paymentMethod: formData.paymentMethod,
             };
-            
+
             const bookingResponse = await api.createBooking(bookingData);
             const booking = bookingResponse.data;
             setBookingReference(booking.bookingReference);
-            
+
             const paymentResponse = await api.initiatePayment(booking.bookingReference);
             const paymentData = paymentResponse.data;
-            
+
             if (paymentData.success === false) {
                 throw new Error(paymentData.error || 'Failed to initiate payment');
             }
-            
+
             if (paymentData.paymentUrl) {
                 window.location.href = paymentData.paymentUrl;
             } else {
@@ -99,9 +99,9 @@ function CheckoutContent() {
             }
         } catch (error: any) {
             console.error('Error creating booking:', error);
-            
+
             let errorMessage = 'Failed to create booking. Please try again.';
-            
+
             if (error.response) {
                 const errorData = error.response.data;
                 if (errorData?.error) {
@@ -114,7 +114,7 @@ function CheckoutContent() {
             } else if (error.message) {
                 errorMessage = error.message;
             }
-            
+
             alert(errorMessage);
             setSubmitting(false);
         }
@@ -154,7 +154,7 @@ function CheckoutContent() {
             <div className="section-container">
                 <div className="max-w-5xl mx-auto">
                     <h1 className="text-display-xl mb-8 mt-16">Complete Your Booking</h1>
-                    
+
                     <div className="grid lg:grid-cols-3 gap-12">
                         <div className="lg:col-span-2">
                             <form onSubmit={handleSubmit} className="space-y-8">
@@ -201,7 +201,7 @@ function CheckoutContent() {
                                                 placeholder="John Doe"
                                             />
                                         </div>
-                                        
+
                                         <div className="grid md:grid-cols-2 gap-6">
                                             <div>
                                                 <label className="text-caption text-text-secondary mb-2 block">
@@ -216,7 +216,7 @@ function CheckoutContent() {
                                                     placeholder="john@example.com"
                                                 />
                                             </div>
-                                            
+
                                             <div>
                                                 <label className="text-caption text-text-secondary mb-2 block">
                                                     Phone Number *
@@ -250,7 +250,7 @@ function CheckoutContent() {
                                                 className="w-full p-4 border border-primary/20 bg-white text-primary"
                                             />
                                         </div>
-                                        
+
                                         <div>
                                             <label className="text-caption text-text-secondary mb-2 block">
                                                 Number of Guests *
@@ -308,7 +308,7 @@ function CheckoutContent() {
                         <div className="lg:sticky lg:top-24 h-fit">
                             <div className="bg-cream-light p-8 border border-primary/10">
                                 <h2 className="text-2xl font-light mb-6">Order Summary</h2>
-                                
+
                                 <div className="space-y-4 mb-6">
                                     <div className="flex justify-between text-body-lg">
                                         <span className="text-text-secondary">Trip Price</span>
@@ -327,23 +327,23 @@ function CheckoutContent() {
                                         </div>
                                     )}
                                 </div>
-                                
+
                                 <div className="pt-6 border-t border-primary/10 mb-6">
                                     <div className="flex justify-between items-center">
                                         <span className="text-xl font-light">Total</span>
                                         <span className="text-3xl font-light">{formatPrice(totalPrice)}</span>
                                     </div>
                                 </div>
-                                
+
                                 <div className="space-y-3 text-body-sm text-text-secondary">
                                     <div className="flex items-start gap-2">
                                         <CheckCircle size={16} className="text-success mt-1 flex-shrink-0" />
                                         <span>Instant confirmation</span>
                                     </div>
-                                    <div className="flex items-start gap-2">
+                                    {/* <div className="flex items-start gap-2">
                                         <CheckCircle size={16} className="text-success mt-1 flex-shrink-0" />
                                         <span>Free cancellation up to 24 hours</span>
-                                    </div>
+                                    </div> */}
                                     <div className="flex items-start gap-2">
                                         <CheckCircle size={16} className="text-success mt-1 flex-shrink-0" />
                                         <span>24/7 customer support</span>

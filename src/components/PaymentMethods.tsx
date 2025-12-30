@@ -96,8 +96,8 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                         <label
                             key={method.id}
                             className={`flex items-start gap-4 p-5 border-2 rounded-lg cursor-pointer transition-all ${isSelected
-                                    ? 'border-secondary bg-secondary/5'
-                                    : 'border-primary/20 bg-white hover:border-primary/40'
+                                ? 'border-secondary bg-secondary/5'
+                                : 'border-primary/20 bg-white hover:border-primary/40'
                                 }`}
                         >
                             <input
@@ -281,7 +281,7 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
             )}
 
             {/* Net Banking Info */}
-            {selectedMethod === 'netbanking' && (
+            {/* {selectedMethod === 'netbanking' && (
                 <div className="mt-6 p-6 bg-cream-light border border-primary/10 rounded-lg">
                     <h3 className="text-xl font-light mb-4 flex items-center gap-2">
                         <Building2 size={24} className="text-secondary" />
@@ -303,7 +303,7 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
 
             {/* Security Notice */}
             <div className="bg-accent/10 p-4 rounded-lg border border-accent/20">

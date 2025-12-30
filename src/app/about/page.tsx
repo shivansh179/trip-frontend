@@ -153,7 +153,7 @@ export default function AboutPage() {
       </section>
 
       {/* Team Section */}
-      <section className="py-24 md:py-32 bg-cream">
+      {/* <section className="py-24 md:py-32 bg-cream">
         <div className="section-container">
           <div className="text-center mb-16">
             <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-4">
@@ -182,7 +182,7 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
       <section className="py-20 bg-primary text-cream">
