@@ -124,7 +124,7 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                                 <p className="text-body-sm text-text-secondary">{method.description}</p>
                             </div>
                             {isSelected && (
-                                <CheckCircle size={20} className="text-secondary flex-shrink-0 mt-1" />
+                                <CheckCircle size={20} className="text-secondary shrink-0 mt-1" />
                             )}
                         </label>
                     );
@@ -308,7 +308,7 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
             {/* Security Notice */}
             <div className="bg-accent/10 p-4 rounded-lg border border-accent/20">
                 <div className="flex items-start gap-3">
-                    <CheckCircle size={20} className="text-success mt-0.5 flex-shrink-0" />
+                    <CheckCircle size={20} className="text-success mt-0.5 shrink-0" />
                     <div>
                         <p className="text-body-sm font-medium text-primary mb-1">Secure Payment</p>
                         <p className="text-body-sm text-text-secondary">

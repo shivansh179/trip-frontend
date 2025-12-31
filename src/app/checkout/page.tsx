@@ -337,15 +337,15 @@ function CheckoutContent() {
 
                                 <div className="space-y-3 text-body-sm text-text-secondary">
                                     <div className="flex items-start gap-2">
-                                        <CheckCircle size={16} className="text-success mt-1 flex-shrink-0" />
+                                        <CheckCircle size={16} className="text-success mt-1 shrink-0" />
                                         <span>Instant confirmation</span>
                                     </div>
                                     {/* <div className="flex items-start gap-2">
-                                        <CheckCircle size={16} className="text-success mt-1 flex-shrink-0" />
+                                        <CheckCircle size={16} className="text-success mt-1 shrink-0" />
                                         <span>Free cancellation up to 24 hours</span>
                                     </div> */}
                                     <div className="flex items-start gap-2">
-                                        <CheckCircle size={16} className="text-success mt-1 flex-shrink-0" />
+                                        <CheckCircle size={16} className="text-success mt-1 shrink-0" />
                                         <span>24/7 customer support</span>
                                     </div>
                                 </div>
