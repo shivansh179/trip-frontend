@@ -104,19 +104,19 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
             description: 'Pay using UPI apps like PhonePe, Google Pay, Paytm',
         },
         {
-            id: 'card',
-            name: 'Credit/Debit Card',
+            id: 'credit_card',
+            name: 'Credit Card',
             icon: CreditCard,
             discount: 3,
-            description: 'Visa, Mastercard, RuPay, Amex',
+            description: 'Visa, Mastercard, Amex • EMI available',
         },
-        // {
-        //     id: 'netbanking',
-        //     name: 'Net Banking',
-        //     icon: Building2,
-        //     discount: 0,
-        //     description: 'Pay directly from your bank account',
-        // },
+        {
+            id: 'debit_card',
+            name: 'Debit Card',
+            icon: CreditCard,
+            discount: 3,
+            description: 'Visa, Mastercard, RuPay',
+        },
     ];
 
     const formatCardNumber = (value: string) => {
@@ -207,7 +207,7 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
             </div>
 
             {/* Payment Type Selection - Full Payment vs EMI (Credit Card Only) */}
-            {selectedMethod === 'card' && emiOptions.length > 0 && (
+            {selectedMethod === 'credit_card' && emiOptions.length > 0 && (
                 <div className="mt-6 space-y-4">
                     <h3 className="text-lg font-medium text-primary">How would you like to pay?</h3>
 
@@ -279,8 +279,8 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                                             key={emi.tenure}
                                             onClick={() => handleEmiSelect(emi)}
                                             className={`flex items-center gap-4 p-4 border-2 rounded-lg cursor-pointer transition-all ${isSelected
-                                                    ? 'border-secondary bg-white shadow-sm'
-                                                    : 'border-primary/10 bg-white hover:border-primary/30'
+                                                ? 'border-secondary bg-white shadow-sm'
+                                                : 'border-primary/10 bg-white hover:border-primary/30'
                                                 }`}
                                         >
                                             {/* Custom Radio Circle */}
