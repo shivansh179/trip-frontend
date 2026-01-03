@@ -41,8 +41,9 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
         const fetchEmiOptions = async () => {
             if (amount >= 2500) {
                 try {
-                    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-                    const response = await fetch(`${API_URL}/api/emi/options?amount=${amount}`);
+                    // Use API_BASE_URL which already includes /api
+                    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
+                    const response = await fetch(`${API_URL}/emi/options?amount=${amount}`);
                     const data = await response.json();
                     if (data.eligible && data.options) {
                         setEmiOptions(data.options);
