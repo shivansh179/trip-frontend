@@ -1,24 +1,99 @@
 'use client';
 
-import { CreditCard, Smartphone, Building2, QrCode, CheckCircle } from 'lucide-react';
-import { useState } from 'react';
+import { CreditCard, Smartphone, Building2, QrCode, CheckCircle, Calendar, Percent, TrendingUp } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+
+interface EmiOption {
+    tenure: number;
+    interestRate: number;
+    monthlyAmount: number;
+    totalAmount: number;
+    interestAmount: number;
+    noCost: boolean;
+    label: string;
+    description: string;
+}
 
 interface PaymentMethodsProps {
     selectedMethod: string;
     onMethodChange: (method: string) => void;
     amount: number;
     bookingReference?: string;
+    selectedEmi?: EmiOption | null;
+    onEmiChange?: (emi: EmiOption | null) => void;
 }
 
-export default function PaymentMethods({ selectedMethod, onMethodChange, amount, bookingReference }: PaymentMethodsProps) {
+export default function PaymentMethods({ selectedMethod, onMethodChange, amount, bookingReference, selectedEmi, onEmiChange }: PaymentMethodsProps) {
     const [showQRCode, setShowQRCode] = useState(false);
+    const [emiOptions, setEmiOptions] = useState<EmiOption[]>([]);
+    const [showEmi, setShowEmi] = useState(false);
+    const [selectedEmiLocal, setSelectedEmiLocal] = useState<EmiOption | null>(null);
     const [cardData, setCardData] = useState({
         cardNumber: '',
         expiryDate: '',
         cvv: '',
         cardholderName: '',
     });
+
+    // Fetch EMI options when amount changes
+    useEffect(() => {
+        const fetchEmiOptions = async () => {
+            if (amount >= 2500) {
+                try {
+                    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+                    const response = await fetch(`${API_URL}/api/emi/options?amount=${amount}`);
+                    const data = await response.json();
+                    if (data.eligible && data.options) {
+                        setEmiOptions(data.options);
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch EMI options:', error);
+                    // Use fallback local calculation
+                    const fallbackOptions: EmiOption[] = [
+                        {
+                            tenure: 3,
+                            interestRate: 0,
+                            monthlyAmount: Math.ceil(amount / 3),
+                            totalAmount: amount,
+                            interestAmount: 0,
+                            noCost: true,
+                            label: '3 Months No-Cost EMI',
+                            description: `Pay ₹${Math.ceil(amount / 3).toLocaleString('en-IN')}/month with 0% interest`
+                        },
+                        {
+                            tenure: 6,
+                            interestRate: 16,
+                            monthlyAmount: Math.ceil(calculateEmi(amount, 6, 16)),
+                            totalAmount: Math.ceil(calculateEmi(amount, 6, 16) * 6),
+                            interestAmount: Math.ceil(calculateEmi(amount, 6, 16) * 6 - amount),
+                            noCost: false,
+                            label: '6 Months EMI @ 16% p.a.',
+                            description: `Pay ₹${Math.ceil(calculateEmi(amount, 6, 16)).toLocaleString('en-IN')}/month`
+                        }
+                    ];
+                    setEmiOptions(fallbackOptions);
+                }
+            } else {
+                setEmiOptions([]);
+            }
+        };
+
+        fetchEmiOptions();
+    }, [amount]);
+
+    // EMI calculation helper
+    const calculateEmi = (principal: number, months: number, annualRate: number) => {
+        const r = annualRate / 12 / 100;
+        return principal * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
+    };
+
+    const handleEmiSelect = (emi: EmiOption | null) => {
+        setSelectedEmiLocal(emi);
+        if (onEmiChange) {
+            onEmiChange(emi);
+        }
+    };
 
     const paymentMethods = [
         {
@@ -131,6 +206,132 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                 })}
             </div>
 
+            {/* Payment Type Selection - Full Payment vs EMI (Credit Card Only) */}
+            {selectedMethod === 'card' && emiOptions.length > 0 && (
+                <div className="mt-6 space-y-4">
+                    <h3 className="text-lg font-medium text-primary">How would you like to pay?</h3>
+
+                    {/* Two Choice Toggle */}
+                    <div className="grid grid-cols-2 gap-4">
+                        {/* Full Payment Option */}
+                        <label
+                            className={`relative p-5 border-2 rounded-lg cursor-pointer transition-all ${!showEmi
+                                ? 'border-secondary bg-secondary/5 shadow-md'
+                                : 'border-primary/20 bg-white hover:border-primary/40'
+                                }`}
+                        >
+                            <input
+                                type="radio"
+                                name="paymentType"
+                                checked={!showEmi}
+                                onChange={() => {
+                                    setShowEmi(false);
+                                    handleEmiSelect(null);
+                                }}
+                                className="sr-only"
+                            />
+                            <div className="text-center">
+                                <CreditCard size={32} className={!showEmi ? 'text-secondary mx-auto mb-2' : 'text-primary/40 mx-auto mb-2'} />
+                                <p className="font-medium text-body-lg">Pay Full Amount</p>
+                                <p className="text-2xl font-bold mt-2">₹{amount.toLocaleString('en-IN')}</p>
+                                <p className="text-body-sm text-success mt-1">3% discount applied</p>
+                            </div>
+                            {!showEmi && (
+                                <CheckCircle size={20} className="absolute top-3 right-3 text-secondary" />
+                            )}
+                        </label>
+
+                        {/* EMI Option */}
+                        <label
+                            className={`relative p-5 border-2 rounded-lg cursor-pointer transition-all ${showEmi
+                                ? 'border-secondary bg-secondary/5 shadow-md'
+                                : 'border-primary/20 bg-white hover:border-primary/40'
+                                }`}
+                        >
+                            <input
+                                type="radio"
+                                name="paymentType"
+                                checked={showEmi}
+                                onChange={() => setShowEmi(true)}
+                                className="sr-only"
+                            />
+                            <div className="text-center">
+                                <Calendar size={32} className={showEmi ? 'text-secondary mx-auto mb-2' : 'text-primary/40 mx-auto mb-2'} />
+                                <p className="font-medium text-body-lg">Pay with EMI</p>
+                                <p className="text-2xl font-bold mt-2">₹{Math.ceil(amount / 3).toLocaleString('en-IN')}<span className="text-sm font-normal">/mo</span></p>
+                                <p className="text-body-sm text-text-secondary mt-1">Credit Cards Only</p>
+                            </div>
+                            {showEmi && (
+                                <CheckCircle size={20} className="absolute top-3 right-3 text-secondary" />
+                            )}
+                        </label>
+                    </div>
+
+                    {/* EMI Plans - Show only when EMI is selected */}
+                    {showEmi && (
+                        <div className="bg-cream-light border border-primary/10 rounded-lg p-5 mt-4">
+                            <h4 className="text-body-lg font-medium mb-4">Select EMI Plan</h4>
+                            <div className="space-y-3">
+                                {emiOptions.map((emi) => {
+                                    const isSelected = selectedEmiLocal?.tenure === emi.tenure;
+                                    return (
+                                        <div
+                                            key={emi.tenure}
+                                            onClick={() => handleEmiSelect(emi)}
+                                            className={`flex items-center gap-4 p-4 border-2 rounded-lg cursor-pointer transition-all ${isSelected
+                                                    ? 'border-secondary bg-white shadow-sm'
+                                                    : 'border-primary/10 bg-white hover:border-primary/30'
+                                                }`}
+                                        >
+                                            {/* Custom Radio Circle */}
+                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-primary' : 'border-gray-400'
+                                                }`}>
+                                                {isSelected && (
+                                                    <div className="w-3 h-3 rounded-full bg-primary"></div>
+                                                )}
+                                            </div>
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium">{emi.tenure} Months</span>
+                                                    {emi.noCost && (
+                                                        <span className="text-xs font-bold bg-success text-white px-2 py-0.5 rounded">
+                                                            NO COST
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-body-sm text-text-secondary">
+                                                    {emi.noCost
+                                                        ? `₹${emi.monthlyAmount?.toLocaleString('en-IN')}/month × ${emi.tenure} = ₹${emi.totalAmount?.toLocaleString('en-IN')}`
+                                                        : `₹${emi.monthlyAmount?.toLocaleString('en-IN')}/month × ${emi.tenure} = ₹${emi.totalAmount?.toLocaleString('en-IN')} (incl. ₹${emi.interestAmount?.toLocaleString('en-IN')} interest)`
+                                                    }
+                                                </p>
+                                            </div>
+                                            <span className="text-xl font-bold text-secondary">
+                                                ₹{emi.monthlyAmount?.toLocaleString('en-IN')}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {!selectedEmiLocal && (
+                                <p className="text-body-sm text-amber-600 mt-3 flex items-center gap-2">
+                                    <span className="text-lg">👆</span> Please select an EMI plan to continue
+                                </p>
+                            )}
+
+                            {selectedEmi?.noCost && (
+                                <div className="bg-success/10 border border-success/20 p-3 rounded-lg mt-4">
+                                    <p className="text-body-sm text-success">
+                                        ✓ No-Cost EMI - You pay exactly ₹{selectedEmi.totalAmount?.toLocaleString('en-IN')} with 0% interest
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+
             {/* UPI QR Code Section */}
             {selectedMethod === 'upi' && (
                 <div className="mt-6 p-6 bg-cream-light border border-primary/10 rounded-lg">
@@ -189,96 +390,7 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                 </div>
             )}
 
-            {/* Card Payment Form */}
-            {selectedMethod === 'card' && (
-                <div className="mt-6 p-6 bg-cream-light border border-primary/10 rounded-lg">
-                    <h3 className="text-xl font-light mb-4 flex items-center gap-2">
-                        <CreditCard size={24} className="text-secondary" />
-                        Card Details
-                    </h3>
-                    <div className="space-y-4">
-                        <div>
-                            <label className="text-caption text-text-secondary mb-2 block">
-                                Cardholder Name *
-                            </label>
-                            <input
-                                type="text"
-                                value={cardData.cardholderName}
-                                onChange={(e) => setCardData({ ...cardData, cardholderName: e.target.value })}
-                                placeholder="John Doe"
-                                className="w-full p-4 border border-primary/20 bg-white text-primary rounded-lg focus:outline-none focus:border-secondary transition-colors"
-                            />
-                        </div>
-                        <div>
-                            <label className="text-caption text-text-secondary mb-2 block">
-                                Card Number *
-                            </label>
-                            <input
-                                type="text"
-                                value={cardData.cardNumber}
-                                onChange={(e) => setCardData({ ...cardData, cardNumber: formatCardNumber(e.target.value) })}
-                                placeholder="1234 5678 9012 3456"
-                                maxLength={19}
-                                className="w-full p-4 border border-primary/20 bg-white text-primary rounded-lg focus:outline-none focus:border-secondary transition-colors font-mono"
-                            />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="text-caption text-text-secondary mb-2 block">
-                                    Expiry Date *
-                                </label>
-                                <input
-                                    type="text"
-                                    value={cardData.expiryDate}
-                                    onChange={(e) => {
-                                        const formatted = formatExpiryDate(e.target.value);
-                                        if (formatted.length <= 5) {
-                                            setCardData({ ...cardData, expiryDate: formatted });
-                                        }
-                                    }}
-                                    placeholder="MM/YY"
-                                    maxLength={5}
-                                    className="w-full p-4 border border-primary/20 bg-white text-primary rounded-lg focus:outline-none focus:border-secondary transition-colors font-mono"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-caption text-text-secondary mb-2 block">
-                                    CVV *
-                                </label>
-                                <input
-                                    type="text"
-                                    value={cardData.cvv}
-                                    onChange={(e) => {
-                                        const v = e.target.value.replace(/\D/g, '');
-                                        if (v.length <= 4) {
-                                            setCardData({ ...cardData, cvv: v });
-                                        }
-                                    }}
-                                    placeholder="123"
-                                    maxLength={4}
-                                    className="w-full p-4 border border-primary/20 bg-white text-primary rounded-lg focus:outline-none focus:border-secondary transition-colors font-mono"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2 pt-2">
-                            <div className="flex gap-2">
-                                <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center">
-                                    <span className="text-white text-xs font-bold">V</span>
-                                </div>
-                                <div className="w-8 h-5 bg-red-600 rounded flex items-center justify-center">
-                                    <span className="text-white text-xs font-bold">MC</span>
-                                </div>
-                                <div className="w-8 h-5 bg-orange-600 rounded flex items-center justify-center">
-                                    <span className="text-white text-xs font-bold">R</span>
-                                </div>
-                            </div>
-                            <p className="text-body-sm text-text-secondary ml-2">
-                                We accept Visa, Mastercard, RuPay, and Amex
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Card details are collected on Easebuzz payment page - no need to collect here */}
 
             {/* Net Banking Info */}
             {/* {selectedMethod === 'netbanking' && (

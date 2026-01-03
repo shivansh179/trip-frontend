@@ -310,19 +310,32 @@ function CheckoutContent() {
                                 <h2 className="text-2xl font-light mb-6">Order Summary</h2>
 
                                 <div className="space-y-4 mb-6">
-                                    <div className="flex justify-between text-body-lg">
-                                        <span className="text-text-secondary">Trip Price</span>
-                                        <span>{formatPrice(trip.price)} × {formData.numberOfGuests}</span>
-                                    </div>
-                                    {trip.originalPrice && (
-                                        <div className="flex justify-between text-body-sm text-text-secondary line-through">
-                                            <span>Original Price</span>
-                                            <span>{formatPrice(trip.originalPrice)} × {formData.numberOfGuests}</span>
+                                    {/* Original Price (if exists) - shown first with strikethrough */}
+                                    {trip.originalPrice && trip.originalPrice > trip.price && (
+                                        <div className="flex justify-between text-body-lg text-text-secondary">
+                                            <span className="line-through">Original Price</span>
+                                            <span className="line-through">{formatPrice(trip.originalPrice)} × {formData.numberOfGuests}</span>
                                         </div>
                                     )}
+
+                                    {/* Current Trip Price */}
+                                    <div className="flex justify-between text-body-lg">
+                                        <span>Trip Price</span>
+                                        <span className="font-medium">{formatPrice(trip.price)} × {formData.numberOfGuests}</span>
+                                    </div>
+
+                                    {/* Show savings if original price was higher */}
+                                    {trip.originalPrice && trip.originalPrice > trip.price && (
+                                        <div className="flex justify-between text-body-sm text-success">
+                                            <span>You Save</span>
+                                            <span>-{formatPrice((trip.originalPrice - trip.price) * formData.numberOfGuests)}</span>
+                                        </div>
+                                    )}
+
+                                    {/* Payment Method Discount */}
                                     {discountPercent > 0 && (
                                         <div className="flex justify-between text-body-lg text-success">
-                                            <span>Discount ({discountPercent}%)</span>
+                                            <span>Payment Discount ({discountPercent}%)</span>
                                             <span>-{formatPrice(discountAmount)}</span>
                                         </div>
                                     )}
