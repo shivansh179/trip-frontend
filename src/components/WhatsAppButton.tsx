@@ -1,0 +1,37 @@
+'use client';
+
+import { MessageCircle } from 'lucide-react';
+
+interface WhatsAppButtonProps {
+    phoneNumber?: string;
+    message?: string;
+}
+
+export default function WhatsAppButton({
+    phoneNumber = '919876543210', // Replace with actual WhatsApp number
+    message = 'Hi! I am interested in booking a trip. Can you help me?'
+}: WhatsAppButtonProps) {
+    const handleClick = () => {
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+        window.open(whatsappUrl, '_blank');
+    };
+
+    return (
+        <button
+            onClick={handleClick}
+            className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
+            aria-label="Chat on WhatsApp"
+        >
+            <MessageCircle size={28} className="fill-white" />
+
+            {/* Tooltip */}
+            <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white text-gray-800 px-3 py-2 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                Chat with us
+            </span>
+
+            {/* Pulse animation */}
+            <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-25"></span>
+        </button>
+    );
+}

@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { Trip } from '@/types';
 import { formatPrice } from '@/lib/utils';
 import PaymentMethods from '@/components/PaymentMethods';
+import TrustBadges from '@/components/TrustBadges';
 
 function CheckoutContent() {
     const router = useRouter();
@@ -287,6 +288,7 @@ function CheckoutContent() {
                                         amount={totalPrice}
                                         bookingReference={bookingReference}
                                     />
+                                    <TrustBadges />
                                 </section>
 
                                 <div className="flex items-center gap-4 pt-6">
