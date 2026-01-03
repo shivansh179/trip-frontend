@@ -21,6 +21,16 @@ function CheckoutContent() {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [bookingReference, setBookingReference] = useState<string | undefined>(undefined);
+    const [selectedEmi, setSelectedEmi] = useState<{
+        tenure: number;
+        monthlyAmount: number;
+        totalAmount: number;
+        interestRate: number;
+        interestAmount: number;
+        noCost: boolean;
+        label: string;
+        description: string;
+    } | null>(null);
 
     const [formData, setFormData] = useState({
         customerName: '',
@@ -29,7 +39,7 @@ function CheckoutContent() {
         numberOfGuests: guests,
         travelDate: date,
         specialRequests: '',
-        paymentMethod: 'card',
+        paymentMethod: 'credit_card',
     });
 
     useEffect(() => {
@@ -80,6 +90,12 @@ function CheckoutContent() {
                 travelDate: formData.travelDate,
                 specialRequests: formData.specialRequests,
                 paymentMethod: formData.paymentMethod,
+                // EMI details
+                emiEnabled: selectedEmi !== null,
+                emiTenure: selectedEmi?.tenure || null,
+                emiMonthlyAmount: selectedEmi?.monthlyAmount || null,
+                emiTotalAmount: selectedEmi?.totalAmount || null,
+                emiInterestRate: selectedEmi?.interestRate || null,
             };
 
             const bookingResponse = await api.createBooking(bookingData);
@@ -122,7 +138,7 @@ function CheckoutContent() {
     };
 
     const basePrice = trip ? (typeof trip.price === 'number' ? trip.price : parseFloat(trip.price.toString())) * formData.numberOfGuests : 0;
-    const discountPercent = formData.paymentMethod === 'upi' ? 5 : formData.paymentMethod === 'card' ? 3 : formData.paymentMethod === 'netbanking' ? 0 : 0;
+    const discountPercent = formData.paymentMethod === 'upi' ? 5 : (formData.paymentMethod === 'credit_card' || formData.paymentMethod === 'debit_card') ? 3 : 0;
     const discountAmount = (basePrice * discountPercent) / 100;
     const totalPrice = basePrice - discountAmount;
 
@@ -284,9 +300,17 @@ function CheckoutContent() {
                                 <section>
                                     <PaymentMethods
                                         selectedMethod={formData.paymentMethod}
-                                        onMethodChange={(method) => setFormData({ ...formData, paymentMethod: method })}
+                                        onMethodChange={(method) => {
+                                            setFormData({ ...formData, paymentMethod: method });
+                                            // Clear EMI if switching away from credit card
+                                            if (method !== 'credit_card') {
+                                                setSelectedEmi(null);
+                                            }
+                                        }}
                                         amount={totalPrice}
                                         bookingReference={bookingReference}
+                                        selectedEmi={selectedEmi}
+                                        onEmiChange={(emi) => setSelectedEmi(emi)}
                                     />
                                     <TrustBadges />
                                 </section>
