@@ -22,13 +22,15 @@ interface PaymentMethodsProps {
     bookingReference?: string;
     selectedEmi?: EmiOption | null;
     onEmiChange?: (emi: EmiOption | null) => void;
+    onHalfPaymentCardTypeChange?: (cardType: 'credit' | 'debit') => void;
 }
 
-export default function PaymentMethods({ selectedMethod, onMethodChange, amount, bookingReference, selectedEmi, onEmiChange }: PaymentMethodsProps) {
+export default function PaymentMethods({ selectedMethod, onMethodChange, amount, bookingReference, selectedEmi, onEmiChange, onHalfPaymentCardTypeChange }: PaymentMethodsProps) {
     const [showQRCode, setShowQRCode] = useState(false);
     const [emiOptions, setEmiOptions] = useState<EmiOption[]>([]);
     const [showEmi, setShowEmi] = useState(false);
     const [selectedEmiLocal, setSelectedEmiLocal] = useState<EmiOption | null>(null);
+    const [halfPaymentCardType, setHalfPaymentCardType] = useState<'credit' | 'debit'>('credit');
     const [cardData, setCardData] = useState({
         cardNumber: '',
         expiryDate: '',
@@ -118,6 +120,14 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
             discount: 3,
             description: 'Visa, Mastercard, RuPay',
         },
+        {
+            id: 'half_payment',
+            name: 'Pay 50% Now',
+            icon: CreditCard,
+            discount: 0,
+            description: 'Reserve your trip • Pay rest before travel',
+            badge: 'Flexible',
+        },
     ];
 
     const formatCardNumber = (value: string) => {
@@ -206,6 +216,70 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                     );
                 })}
             </div>
+
+            {/* Half Payment Notice */}
+            {selectedMethod === 'half_payment' && (
+                <div className="mt-4 space-y-4">
+                    <div className="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                        <div className="flex items-start gap-3">
+                            <div className="text-amber-500 text-2xl">⚠️</div>
+                            <div>
+                                <h4 className="font-semibold text-amber-800">Pay 50% Now, Complete Later</h4>
+                                <p className="text-sm text-amber-700 mt-1">
+                                    You'll pay <strong>₹{(amount / 2).toLocaleString('en-IN')}</strong> now to reserve your trip.
+                                </p>
+                                <p className="text-sm text-amber-700 mt-1">
+                                    Remaining <strong>₹{(amount / 2).toLocaleString('en-IN')}</strong> must be paid <strong>2 hours before your travel date</strong>.
+                                </p>
+                                <p className="text-xs text-amber-600 mt-2">
+                                    We'll send you a reminder email before the due date.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Card Type Selection for Half Payment */}
+                    <div className="p-4 bg-white border border-primary/20 rounded-lg">
+                        <h4 className="font-medium text-primary mb-3">Select Card Type for Payment</h4>
+                        <div className="grid grid-cols-2 gap-3">
+                            <label className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${halfPaymentCardType === 'credit'
+                                ? 'border-secondary bg-secondary/5'
+                                : 'border-primary/20 hover:border-primary/40'
+                                }`}>
+                                <input
+                                    type="radio"
+                                    name="halfPaymentCardType"
+                                    value="credit"
+                                    checked={halfPaymentCardType === 'credit'}
+                                    onChange={() => { setHalfPaymentCardType('credit'); onHalfPaymentCardTypeChange?.('credit'); }}
+                                    className="text-secondary"
+                                />
+                                <div>
+                                    <CreditCard size={20} className={halfPaymentCardType === 'credit' ? 'text-secondary' : 'text-primary/60'} />
+                                </div>
+                                <span className="font-medium">Credit Card</span>
+                            </label>
+                            <label className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${halfPaymentCardType === 'debit'
+                                ? 'border-secondary bg-secondary/5'
+                                : 'border-primary/20 hover:border-primary/40'
+                                }`}>
+                                <input
+                                    type="radio"
+                                    name="halfPaymentCardType"
+                                    value="debit"
+                                    checked={halfPaymentCardType === 'debit'}
+                                    onChange={() => { setHalfPaymentCardType('debit'); onHalfPaymentCardTypeChange?.('debit'); }}
+                                    className="text-secondary"
+                                />
+                                <div>
+                                    <CreditCard size={20} className={halfPaymentCardType === 'debit' ? 'text-secondary' : 'text-primary/60'} />
+                                </div>
+                                <span className="font-medium">Debit Card</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Payment Type Selection - Full Payment vs EMI (Credit Card Only) */}
             {selectedMethod === 'credit_card' && emiOptions.length > 0 && (

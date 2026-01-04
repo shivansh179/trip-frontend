@@ -67,6 +67,23 @@ export default function Home() {
     const fetchData = async () => {
       try {
         setLoading(true);
+
+        // Try combined endpoint first (single request - much faster)
+        try {
+          const homepageRes = await api.getHomepageData();
+          const data = homepageRes.data;
+
+          setContent(data.content);
+          setDestinations(data.featuredDestinations || []);
+          setTrips(data.featuredTrips || []);
+          setTestimonials(data.featuredTestimonials || []);
+          setError(null);
+          return;
+        } catch (combinedErr) {
+          console.warn('Combined endpoint failed, falling back to individual calls:', combinedErr);
+        }
+
+        // Fallback to individual calls if combined endpoint fails
         const [contentRes, destRes, tripRes, testRes] = await Promise.all([
           api.getPageContent('home'),
           api.getFeaturedDestinations(),

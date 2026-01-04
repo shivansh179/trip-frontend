@@ -1,6 +1,6 @@
 // API Configuration
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
-// export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+// export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 // API Client
 import axios from 'axios';
@@ -29,6 +29,9 @@ export const api = {
   getPageSections: (pageKey: string) => apiClient.get(`/content/page/${pageKey}/sections`),
   getPageStats: (pageKey: string) => apiClient.get(`/content/page/${pageKey}/stats`),
   getPageFeatures: (pageKey: string) => apiClient.get(`/content/page/${pageKey}/features`),
+
+  // Combined Homepage Data (single request for all homepage data)
+  getHomepageData: () => apiClient.get('/homepage'),
 
   // Destinations
   getDestinations: () => apiClient.get('/destinations'),

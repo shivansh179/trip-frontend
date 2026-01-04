@@ -21,6 +21,7 @@ function CheckoutContent() {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [bookingReference, setBookingReference] = useState<string | undefined>(undefined);
+    const [halfPaymentCardType, setHalfPaymentCardType] = useState<'credit' | 'debit'>('credit');
     const [selectedEmi, setSelectedEmi] = useState<{
         tenure: number;
         monthlyAmount: number;
@@ -81,6 +82,14 @@ function CheckoutContent() {
         setSubmitting(true);
 
         try {
+            // Determine payment type
+            let paymentType = 'FULL';
+            if (selectedEmi !== null) {
+                paymentType = 'EMI';
+            } else if (formData.paymentMethod === 'half_payment') {
+                paymentType = 'HALF_PAYMENT';
+            }
+
             const bookingData = {
                 trip: { id: trip.id },
                 customerName: formData.customerName,
@@ -89,7 +98,10 @@ function CheckoutContent() {
                 numberOfGuests: formData.numberOfGuests,
                 travelDate: formData.travelDate,
                 specialRequests: formData.specialRequests,
-                paymentMethod: formData.paymentMethod,
+                paymentMethod: formData.paymentMethod === 'half_payment'
+                    ? (halfPaymentCardType === 'credit' ? 'credit_card' : 'debit_card')
+                    : formData.paymentMethod,
+                paymentType: paymentType,
                 // EMI details
                 emiEnabled: selectedEmi !== null,
                 emiTenure: selectedEmi?.tenure || null,
@@ -311,6 +323,7 @@ function CheckoutContent() {
                                         bookingReference={bookingReference}
                                         selectedEmi={selectedEmi}
                                         onEmiChange={(emi) => setSelectedEmi(emi)}
+                                        onHalfPaymentCardTypeChange={(cardType) => setHalfPaymentCardType(cardType)}
                                     />
                                     <TrustBadges />
                                 </section>

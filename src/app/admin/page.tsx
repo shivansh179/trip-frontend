@@ -1893,7 +1893,27 @@ export default function AdminDashboard() {
 
                     {activeTab === 'bookings' && (
                         <div className="space-y-6">
-                            <h2 className="text-xl font-medium text-primary">Bookings</h2>
+                            <div className="flex justify-between items-center">
+                                <h2 className="text-xl font-medium text-primary">Bookings</h2>
+                                <div className="flex gap-2">
+                                    <select
+                                        className="px-4 py-2 border border-primary/20 bg-cream text-sm"
+                                        onChange={(e) => {
+                                            // Filter bookings by payment type
+                                            const value = e.target.value;
+                                            if (value === 'all') {
+                                                fetchAllData();
+                                            }
+                                            // Local filter for now
+                                        }}
+                                    >
+                                        <option value="all">All Payments</option>
+                                        <option value="FULL">Full Payment</option>
+                                        <option value="EMI">EMI Payment</option>
+                                        <option value="HALF_PAYMENT">Half Payment</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div className="space-y-4">
                                 {bookings.map((booking: any) => (
                                     <div
@@ -1907,6 +1927,13 @@ export default function AdminDashboard() {
                                                     {!booking.adminReviewed && (
                                                         <span className="ml-2 text-xs bg-secondary text-cream px-2 py-1 rounded">New</span>
                                                     )}
+                                                    {/* Payment Type Badge */}
+                                                    {booking.paymentType === 'EMI' && (
+                                                        <span className="ml-2 text-xs bg-purple-500 text-white px-2 py-1 rounded">EMI</span>
+                                                    )}
+                                                    {booking.paymentType === 'HALF_PAYMENT' && (
+                                                        <span className="ml-2 text-xs bg-amber-500 text-white px-2 py-1 rounded">50% Paid</span>
+                                                    )}
                                                 </h3>
                                                 <p className="text-sm text-text-secondary">
                                                     {booking.customerName} • {booking.customerEmail}
@@ -1914,10 +1941,12 @@ export default function AdminDashboard() {
                                             </div>
                                             <div className="text-right">
                                                 <div className={`inline-flex items-center gap-2 px-3 py-1 rounded text-sm ${booking.paymentStatus === 'PAID' ? 'bg-success/20 text-success' :
-                                                    booking.paymentStatus === 'FAILED' ? 'bg-error/20 text-error' :
-                                                        'bg-warning/20 text-warning'
+                                                    booking.paymentStatus === 'HALF_PAID' ? 'bg-amber-100 text-amber-700' :
+                                                        booking.paymentStatus === 'FAILED' ? 'bg-error/20 text-error' :
+                                                            'bg-warning/20 text-warning'
                                                     }`}>
                                                     {booking.paymentStatus === 'PAID' && <CheckCircle size={16} />}
+                                                    {booking.paymentStatus === 'HALF_PAID' && <Clock size={16} />}
                                                     {booking.paymentStatus === 'FAILED' && <XCircle size={16} />}
                                                     {booking.paymentStatus === 'PENDING' && <Clock size={16} />}
                                                     {booking.paymentStatus}
@@ -1939,10 +1968,57 @@ export default function AdminDashboard() {
                                                 <p className="text-body-lg">{booking.numberOfGuests}</p>
                                             </div>
                                             <div>
-                                                <p className="text-caption text-text-secondary">Amount</p>
+                                                <p className="text-caption text-text-secondary">Total Amount</p>
                                                 <p className="text-body-lg font-medium">{formatPrice(booking.finalAmount || booking.totalAmount)}</p>
                                             </div>
                                         </div>
+
+                                        {/* Half Payment Info */}
+                                        {booking.paymentType === 'HALF_PAYMENT' && (
+                                            <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded">
+                                                <div className="grid grid-cols-3 gap-4">
+                                                    <div>
+                                                        <p className="text-caption text-amber-700">Amount Paid</p>
+                                                        <p className="text-body-lg font-medium text-green-600">{formatPrice(booking.amountPaid)}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-caption text-amber-700">Remaining Amount</p>
+                                                        <p className="text-body-lg font-medium text-red-600">{formatPrice(booking.remainingAmount)}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-caption text-amber-700">Due By</p>
+                                                        <p className="text-body-lg font-medium">
+                                                            {booking.remainingPaymentDue
+                                                                ? new Date(booking.remainingPaymentDue).toLocaleString()
+                                                                : '2 hrs before travel'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                {booking.remainingPaymentStatus === 'OVERDUE' && (
+                                                    <p className="mt-2 text-sm font-bold text-red-600">⚠️ OVERDUE - Follow up required!</p>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* EMI Info */}
+                                        {booking.emiEnabled && (
+                                            <div className="mb-4 p-4 bg-purple-50 border border-purple-200 rounded">
+                                                <div className="grid grid-cols-3 gap-4">
+                                                    <div>
+                                                        <p className="text-caption text-purple-700">EMI Tenure</p>
+                                                        <p className="text-body-lg font-medium">{booking.emiTenure} months</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-caption text-purple-700">Monthly EMI</p>
+                                                        <p className="text-body-lg font-medium">{formatPrice(booking.emiMonthlyAmount)}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-caption text-purple-700">EMI Total</p>
+                                                        <p className="text-body-lg font-medium">{formatPrice(booking.emiTotalAmount)}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {booking.discountAmount > 0 && (
                                             <div className="mb-4 p-3 bg-success/10 rounded">
@@ -2048,9 +2124,9 @@ export default function AdminDashboard() {
                                                         }
                                                     }}
                                                     className={`px-3 py-1 text-sm border rounded cursor-pointer ${inquiry.status === 'NEW' ? 'bg-blue-50 border-blue-200 text-blue-700' :
-                                                            inquiry.status === 'CONTACTED' ? 'bg-yellow-50 border-yellow-200 text-yellow-700' :
-                                                                inquiry.status === 'CONVERTED' ? 'bg-green-50 border-green-200 text-green-700' :
-                                                                    'bg-gray-50 border-gray-200 text-gray-700'
+                                                        inquiry.status === 'CONTACTED' ? 'bg-yellow-50 border-yellow-200 text-yellow-700' :
+                                                            inquiry.status === 'CONVERTED' ? 'bg-green-50 border-green-200 text-green-700' :
+                                                                'bg-gray-50 border-gray-200 text-gray-700'
                                                         }`}
                                                 >
                                                     <option value="NEW">New</option>
