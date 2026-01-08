@@ -56,7 +56,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
-        <WhatsAppButton phoneNumber="919876543210" />
+        <WhatsAppButton phoneNumber="918427831127" />
         <MobileStickyCTA />
       </body>
     </html>
