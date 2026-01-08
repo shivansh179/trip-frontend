@@ -2279,9 +2279,9 @@ export default function AdminDashboard() {
                                                 imageUrl={ad.imageUrl as string || ''}
                                                 className="w-full h-40 rounded"
                                             />
-                                            {ad.discountText && (
+                                            {typeof ad.discountText === 'string' && ad.discountText && (
                                                 <div className="mt-2 inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                                                    🔥 {String(ad.discountText)}
+                                                    🔥 {ad.discountText}
                                                 </div>
                                             )}
                                         </div>
