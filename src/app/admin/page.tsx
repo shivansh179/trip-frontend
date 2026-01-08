@@ -68,73 +68,97 @@ export default function AdminDashboard() {
             router.push('/');
         });
 
-        fetchAllData();
+        // Load only destinations on initial load for fast startup
+        fetchTabData('destinations');
     }, [router]);
 
-    const fetchAllData = async () => {
-        setLoading(true);
+    // Track which tabs have been loaded
+    const [loadedTabs, setLoadedTabs] = useState<Record<string, boolean>>({ destinations: false });
+    const [tabLoading, setTabLoading] = useState<Record<string, boolean>>({});
+
+    // Pagination
+    const ITEMS_PER_PAGE = 10;
+    const [currentPage, setCurrentPage] = useState<Record<string, number>>({});
+
+    // Fetch data for a specific tab
+    const fetchTabData = async (tab: string, forceRefresh = false) => {
+        if (loadedTabs[tab] && !forceRefresh) return;
+
+        setTabLoading(prev => ({ ...prev, [tab]: true }));
+
         try {
-            const [pagesRes, statsRes, destRes, tripsRes, hotelsRes, testsRes, blogsRes, bookingsRes, inquiriesRes, adsRes] = await Promise.all([
-                api.admin.getPages().catch(() => ({ data: [] })),
-                api.admin.getStats().catch(() => ({ data: [] })),
-                api.admin.getDestinations().catch(() => ({ data: [] })),
-                api.admin.getTrips().catch(() => ({ data: [] })),
-                api.admin.getHotels().catch(() => ({ data: [] })),
-                api.admin.getTestimonials().catch(() => ({ data: [] })),
-                api.admin.getBlogs().catch(() => ({ data: [] })),
-                api.admin.getBookings().catch(() => ({ data: [] })),
-                api.admin.getInquiries().catch(() => ({ data: [] })),
-                api.admin.getAds().catch(() => ({ data: [] })),
-            ]);
-            setPages(Array.isArray(pagesRes.data) ? pagesRes.data : []);
-            setStats(Array.isArray(statsRes.data) ? statsRes.data : []);
-            setDestinations(Array.isArray(destRes.data) ? destRes.data : []);
-            setTrips(Array.isArray(tripsRes.data) ? tripsRes.data : []);
-            setHotels(Array.isArray(hotelsRes.data) ? hotelsRes.data : []);
-            setTestimonials(Array.isArray(testsRes.data) ? testsRes.data : []);
-            setBlogs(Array.isArray(blogsRes.data) ? blogsRes.data : []);
-            setBookings(Array.isArray(bookingsRes.data) ? bookingsRes.data : []);
-            setInquiries(Array.isArray(inquiriesRes.data) ? inquiriesRes.data : []);
-            setAds(Array.isArray(adsRes.data) ? adsRes.data : []);
-
-            // Fetch destination details and trip itineraries
-            const destDetails: Record<number, Record<string, unknown>> = {};
-            const tripItins: Record<number, Record<string, unknown>[]> = {};
-
-            for (const dest of Array.isArray(destRes.data) ? destRes.data : []) {
-                try {
-                    const detailRes = await api.admin.getDestinationDetails(dest.id as number);
-                    if (detailRes?.data) {
-                        destDetails[dest.id as number] = detailRes.data;
-                    }
-                } catch (err: any) {
-                    // Silently handle errors - destination might not have details yet
-                    if (err.response?.status !== 404) {
-                        console.error('Error fetching destination details:', err);
-                    }
-                }
+            switch (tab) {
+                case 'destinations':
+                    const destRes = await api.admin.getDestinations();
+                    setDestinations(Array.isArray(destRes.data) ? destRes.data : []);
+                    break;
+                case 'experiences':
+                    const tripsRes = await api.admin.getTrips();
+                    setTrips(Array.isArray(tripsRes.data) ? tripsRes.data : []);
+                    break;
+                case 'stays':
+                    const hotelsRes = await api.admin.getHotels();
+                    setHotels(Array.isArray(hotelsRes.data) ? hotelsRes.data : []);
+                    break;
+                case 'journals':
+                    const blogsRes = await api.admin.getBlogs();
+                    setBlogs(Array.isArray(blogsRes.data) ? blogsRes.data : []);
+                    break;
+                case 'pages':
+                    const pagesRes = await api.admin.getPages();
+                    setPages(Array.isArray(pagesRes.data) ? pagesRes.data : []);
+                    break;
+                case 'stats':
+                    const statsRes = await api.admin.getStats();
+                    setStats(Array.isArray(statsRes.data) ? statsRes.data : []);
+                    break;
+                case 'testimonials':
+                    const testsRes = await api.admin.getTestimonials();
+                    setTestimonials(Array.isArray(testsRes.data) ? testsRes.data : []);
+                    break;
+                case 'bookings':
+                    const bookingsRes = await api.admin.getBookings();
+                    setBookings(Array.isArray(bookingsRes.data) ? bookingsRes.data : []);
+                    break;
+                case 'inquiries':
+                    const inquiriesRes = await api.admin.getInquiries();
+                    setInquiries(Array.isArray(inquiriesRes.data) ? inquiriesRes.data : []);
+                    break;
+                case 'ads':
+                    const adsRes = await api.admin.getAds();
+                    setAds(Array.isArray(adsRes.data) ? adsRes.data : []);
+                    break;
             }
-
-            for (const trip of Array.isArray(tripsRes.data) ? tripsRes.data : []) {
-                try {
-                    const itinRes = await api.admin.getTripItineraries(trip.id as number);
-                    if (Array.isArray(itinRes.data)) {
-                        tripItins[trip.id as number] = itinRes.data;
-                    }
-                } catch (err: any) {
-                    // Silently handle errors - trip might not have itineraries yet
-                    if (err.response?.status !== 404) {
-                        console.error('Error fetching trip itineraries:', err);
-                    }
-                }
-            }
-
-            setDestinationDetails(destDetails);
-            setTripItineraries(tripItins);
+            setLoadedTabs(prev => ({ ...prev, [tab]: true }));
+            setCurrentPage(prev => ({ ...prev, [tab]: 1 }));
         } catch (error) {
-            setMessage({ type: 'error', text: 'Failed to load data. Make sure the backend is running and data is seeded.' });
+            setMessage({ type: 'error', text: `Failed to load ${tab} data` });
         }
+
+        setTabLoading(prev => ({ ...prev, [tab]: false }));
         setLoading(false);
+    };
+
+    // Handle tab change - lazy load data
+    const handleTabChange = (tab: string) => {
+        setActiveTab(tab);
+        fetchTabData(tab);
+    };
+
+    // Pagination helper
+    const getPaginatedData = <T,>(data: T[], tab: string): T[] => {
+        const page = currentPage[tab] || 1;
+        const start = (page - 1) * ITEMS_PER_PAGE;
+        return data.slice(start, start + ITEMS_PER_PAGE);
+    };
+
+    const getTotalPages = (dataLength: number): number => {
+        return Math.ceil(dataLength / ITEMS_PER_PAGE);
+    };
+
+    // Refresh current tab
+    const refreshCurrentTab = () => {
+        fetchTabData(activeTab, true);
     };
 
     const handleLogout = () => {
@@ -250,7 +274,7 @@ export default function AdminDashboard() {
                 await api.admin.createTripItinerary(tripId, itinerary);
             }
             setMessage({ type: 'success', text: 'Itinerary saved!' });
-            fetchAllData();
+            refreshCurrentTab();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
             setMessage({ type: 'error', text: 'Failed to save itinerary' });
@@ -264,7 +288,7 @@ export default function AdminDashboard() {
         try {
             await api.admin.deleteTripItinerary(id);
             setMessage({ type: 'success', text: 'Itinerary deleted!' });
-            fetchAllData();
+            refreshCurrentTab();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
             setMessage({ type: 'error', text: 'Failed to delete itinerary' });
@@ -319,7 +343,7 @@ export default function AdminDashboard() {
             };
             await api.admin.createDestination(newDest);
             setMessage({ type: 'success', text: 'Destination created!' });
-            fetchAllData();
+            refreshCurrentTab();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
             setMessage({ type: 'error', text: 'Failed to create destination' });
@@ -350,7 +374,7 @@ export default function AdminDashboard() {
             };
             await api.admin.createTrip(newTrip);
             setMessage({ type: 'success', text: 'Trip created!' });
-            fetchAllData();
+            refreshCurrentTab();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
             setMessage({ type: 'error', text: 'Failed to create trip' });
@@ -377,7 +401,7 @@ export default function AdminDashboard() {
             };
             await api.admin.createHotel(newHotel);
             setMessage({ type: 'success', text: 'Hotel created!' });
-            fetchAllData();
+            refreshCurrentTab();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
             setMessage({ type: 'error', text: 'Failed to create hotel' });
@@ -397,7 +421,7 @@ export default function AdminDashboard() {
             };
             await api.admin.createTestimonial(newTest);
             setMessage({ type: 'success', text: 'Testimonial created!' });
-            fetchAllData();
+            refreshCurrentTab();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
             setMessage({ type: 'error', text: 'Failed to create testimonial' });
@@ -411,7 +435,7 @@ export default function AdminDashboard() {
         try {
             await api.admin.deleteDestination(id);
             setMessage({ type: 'success', text: 'Destination deleted!' });
-            fetchAllData();
+            refreshCurrentTab();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
             setMessage({ type: 'error', text: 'Failed to delete destination' });
@@ -425,7 +449,7 @@ export default function AdminDashboard() {
         try {
             await api.admin.deleteTrip(id);
             setMessage({ type: 'success', text: 'Trip deleted!' });
-            fetchAllData();
+            refreshCurrentTab();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
             setMessage({ type: 'error', text: 'Failed to delete trip' });
@@ -439,7 +463,7 @@ export default function AdminDashboard() {
         try {
             await api.admin.deleteHotel(id);
             setMessage({ type: 'success', text: 'Hotel deleted!' });
-            fetchAllData();
+            refreshCurrentTab();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
             setMessage({ type: 'error', text: 'Failed to delete hotel' });
@@ -453,7 +477,7 @@ export default function AdminDashboard() {
         try {
             await api.admin.deleteTestimonial(id);
             setMessage({ type: 'success', text: 'Testimonial deleted!' });
-            fetchAllData();
+            refreshCurrentTab();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
             setMessage({ type: 'error', text: 'Failed to delete testimonial' });
@@ -490,7 +514,7 @@ export default function AdminDashboard() {
             };
             await api.admin.createBlog(newBlog);
             setMessage({ type: 'success', text: 'Blog created!' });
-            fetchAllData();
+            refreshCurrentTab();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
             setMessage({ type: 'error', text: 'Failed to create blog' });
@@ -504,7 +528,7 @@ export default function AdminDashboard() {
         try {
             await api.admin.deleteBlog(id);
             setMessage({ type: 'success', text: 'Blog deleted!' });
-            fetchAllData();
+            refreshCurrentTab();
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
             setMessage({ type: 'error', text: 'Failed to delete blog' });
@@ -549,7 +573,7 @@ export default function AdminDashboard() {
                     {sidebarItems.map((item) => (
                         <button
                             key={item.id}
-                            onClick={() => setActiveTab(item.id)}
+                            onClick={() => handleTabChange(item.id)}
                             className={`w-full flex items-center gap-3 px-4 py-3 mb-1 transition-colors ${activeTab === item.id
                                 ? 'bg-accent text-primary'
                                 : 'text-cream/60 hover:bg-white/5 hover:text-cream'
@@ -557,7 +581,8 @@ export default function AdminDashboard() {
                         >
                             <item.icon className="w-5 h-5" />
                             <span className="text-sm">{item.label}</span>
-                            {activeTab === item.id && <ChevronRight className="w-4 h-4 ml-auto" />}
+                            {tabLoading[item.id] && <RefreshCw className="w-4 h-4 ml-auto animate-spin" />}
+                            {activeTab === item.id && !tabLoading[item.id] && <ChevronRight className="w-4 h-4 ml-auto" />}
                         </button>
                     ))}
                 </nav>
@@ -582,7 +607,7 @@ export default function AdminDashboard() {
                         <p className="text-primary/50 text-sm mt-1">Manage your {activeTab} content</p>
                     </div>
                     <button
-                        onClick={fetchAllData}
+                        onClick={refreshCurrentTab}
                         className="flex items-center gap-2 px-4 py-2 bg-cream text-primary hover:bg-white transition-colors"
                     >
                         <RefreshCw className="w-4 h-4" />
@@ -1907,7 +1932,7 @@ export default function AdminDashboard() {
                                             // Filter bookings by payment type
                                             const value = e.target.value;
                                             if (value === 'all') {
-                                                fetchAllData();
+                                                refreshCurrentTab();
                                             }
                                             // Local filter for now
                                         }}
@@ -2255,7 +2280,7 @@ export default function AdminDashboard() {
                                             };
                                             await api.admin.createAd(newAd);
                                             setMessage({ type: 'success', text: 'Ad created!' });
-                                            fetchAllData();
+                                            refreshCurrentTab();
                                             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
                                         } catch {
                                             setMessage({ type: 'error', text: 'Failed to create ad' });
