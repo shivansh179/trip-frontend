@@ -241,14 +241,14 @@ export default function ContactPage() {
                     <Clock className="w-5 h-5 text-accent mt-1" />
                     <div>
                       <p className="text-caption uppercase tracking-widest text-cream/50 mb-1">Hours</p>
-                      <p className="text-lg">Mon - Fri: 9am - 6pm EST</p>
+                      <p className="text-lg">Mon - Sun: 9am - 6pm EST</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
                     <MapPin className="w-5 h-5 text-accent mt-1" />
                     <div>
                       <p className="text-caption uppercase tracking-widest text-cream/50 mb-1">Office</p>
-                      <p className="text-lg">123 Travel Street<br />New York, NY 10001</p>
+                      <p className="text-lg">130/131 Avenue 69, Sector 69<br />Gurugram</p>
                     </div>
                   </div>
                 </div>

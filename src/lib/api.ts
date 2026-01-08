@@ -50,6 +50,23 @@ export const api = {
   getTripById: (id: number) => apiClient.get(`/trips/${id}`),
   getTripItinerary: (id: number) => apiClient.get(`/trips/${id}/itinerary`),
 
+  // Paginated trips - for lazy loading
+  getTripsPaginated: (params: {
+    page?: number;
+    size?: number;
+    category?: string;
+    activityType?: string;
+    source?: string;
+    sortBy?: string;
+    sortDir?: string;
+  }) => apiClient.get('/trips/paginated', { params }),
+
+  // Get all categories with counts
+  getCategories: () => apiClient.get('/trips/categories'),
+
+  // Get all activity types
+  getActivityTypes: () => apiClient.get('/trips/activity-types'),
+
   // Hotels
   getHotels: (destinationId?: number) =>
     apiClient.get('/hotels', { params: destinationId ? { destinationId } : {} }),
