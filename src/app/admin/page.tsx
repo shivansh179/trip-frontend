@@ -7,7 +7,8 @@ import {
     LayoutDashboard, FileText, MapPin, Compass, Building,
     MessageSquare, BookOpen, Settings, LogOut, ChevronRight,
     Save, RefreshCw, Plus, Trash2, Eye, ChevronDown, ChevronUp,
-    ShoppingBag, CheckCircle, XCircle, Clock, Mail, User, Calendar, Phone
+    ShoppingBag, CheckCircle, XCircle, Clock, Mail, User, Calendar, Phone,
+    Megaphone
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import ImagePreview from '@/components/ImagePreview';
@@ -49,6 +50,7 @@ export default function AdminDashboard() {
     const [expandedHotels, setExpandedHotels] = useState<Record<number, boolean>>({});
     const [expandedBlogs, setExpandedBlogs] = useState<Record<number, boolean>>({});
     const [inquiries, setInquiries] = useState<Record<string, unknown>[]>([]);
+    const [ads, setAds] = useState<Record<string, unknown>[]>([]);
     const [message, setMessage] = useState({ type: '', text: '' });
 
     useEffect(() => {
@@ -72,7 +74,7 @@ export default function AdminDashboard() {
     const fetchAllData = async () => {
         setLoading(true);
         try {
-            const [pagesRes, statsRes, destRes, tripsRes, hotelsRes, testsRes, blogsRes, bookingsRes, inquiriesRes] = await Promise.all([
+            const [pagesRes, statsRes, destRes, tripsRes, hotelsRes, testsRes, blogsRes, bookingsRes, inquiriesRes, adsRes] = await Promise.all([
                 api.admin.getPages().catch(() => ({ data: [] })),
                 api.admin.getStats().catch(() => ({ data: [] })),
                 api.admin.getDestinations().catch(() => ({ data: [] })),
@@ -82,6 +84,7 @@ export default function AdminDashboard() {
                 api.admin.getBlogs().catch(() => ({ data: [] })),
                 api.admin.getBookings().catch(() => ({ data: [] })),
                 api.admin.getInquiries().catch(() => ({ data: [] })),
+                api.admin.getAds().catch(() => ({ data: [] })),
             ]);
             setPages(Array.isArray(pagesRes.data) ? pagesRes.data : []);
             setStats(Array.isArray(statsRes.data) ? statsRes.data : []);
@@ -92,6 +95,7 @@ export default function AdminDashboard() {
             setBlogs(Array.isArray(blogsRes.data) ? blogsRes.data : []);
             setBookings(Array.isArray(bookingsRes.data) ? bookingsRes.data : []);
             setInquiries(Array.isArray(inquiriesRes.data) ? inquiriesRes.data : []);
+            setAds(Array.isArray(adsRes.data) ? adsRes.data : []);
 
             // Fetch destination details and trip itineraries
             const destDetails: Record<number, Record<string, unknown>> = {};
@@ -518,6 +522,7 @@ export default function AdminDashboard() {
         { id: 'testimonials', icon: MessageSquare, label: 'Testimonials' },
         { id: 'bookings', icon: ShoppingBag, label: 'Bookings' },
         { id: 'inquiries', icon: Mail, label: 'Inquiries' },
+        { id: 'ads', icon: Megaphone, label: 'Ads' },
     ];
 
     if (loading) {
@@ -2225,6 +2230,193 @@ export default function AdminDashboard() {
                                     </div>
                                 )}
                             </div>
+                        </div>
+                    )}
+                    {/* Ads Tab */}
+                    {activeTab === 'ads' && (
+                        <div className="space-y-6">
+                            <div className="flex justify-between items-center mb-4">
+                                <div>
+                                    <h2 className="text-xl font-medium text-primary">Ads Management</h2>
+                                    <p className="text-sm text-primary/50 mt-1">Manage homepage carousel ads</p>
+                                </div>
+                                <button
+                                    onClick={async () => {
+                                        setSaving(true);
+                                        try {
+                                            const newAd = {
+                                                title: 'New Ad',
+                                                description: 'Ad description',
+                                                imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600',
+                                                redirectUrl: '/trips',
+                                                discountText: '10% OFF',
+                                                isActive: true,
+                                                displayOrder: ads.length + 1,
+                                            };
+                                            await api.admin.createAd(newAd);
+                                            setMessage({ type: 'success', text: 'Ad created!' });
+                                            fetchAllData();
+                                            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+                                        } catch {
+                                            setMessage({ type: 'error', text: 'Failed to create ad' });
+                                        }
+                                        setSaving(false);
+                                    }}
+                                    disabled={saving}
+                                    className="flex items-center gap-2 px-4 py-2 bg-secondary text-cream hover:bg-secondary-dark transition-colors disabled:opacity-50"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    <span>Create New Ad</span>
+                                </button>
+                            </div>
+                            {ads.map((ad) => (
+                                <div key={ad.id as number} className="p-6 border border-primary/10 bg-cream-light">
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                        {/* Image Preview */}
+                                        <div className="lg:col-span-1">
+                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Image Preview</label>
+                                            <ImagePreview
+                                                imageUrl={ad.imageUrl as string || ''}
+                                                className="w-full h-40 rounded"
+                                            />
+                                            {ad.discountText && (
+                                                <div className="mt-2 inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                                    🔥 {String(ad.discountText)}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Form Fields */}
+                                        <div className="lg:col-span-2 space-y-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Title</label>
+                                                    <input
+                                                        type="text"
+                                                        value={ad.title as string || ''}
+                                                        onChange={(e) => setAds(ads.map(a => a.id === ad.id ? { ...a, title: e.target.value } : a))}
+                                                        className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Discount Text</label>
+                                                    <input
+                                                        type="text"
+                                                        value={ad.discountText as string || ''}
+                                                        onChange={(e) => setAds(ads.map(a => a.id === ad.id ? { ...a, discountText: e.target.value } : a))}
+                                                        className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
+                                                        placeholder="e.g., 25% OFF, FLAT ₹5000 OFF"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Description</label>
+                                                <textarea
+                                                    value={ad.description as string || ''}
+                                                    onChange={(e) => setAds(ads.map(a => a.id === ad.id ? { ...a, description: e.target.value } : a))}
+                                                    rows={2}
+                                                    className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
+                                                />
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Image URL</label>
+                                                    <input
+                                                        type="text"
+                                                        value={ad.imageUrl as string || ''}
+                                                        onChange={(e) => setAds(ads.map(a => a.id === ad.id ? { ...a, imageUrl: e.target.value } : a))}
+                                                        className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
+                                                        placeholder="https://images.unsplash.com/..."
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Redirect URL</label>
+                                                    <input
+                                                        type="text"
+                                                        value={ad.redirectUrl as string || ''}
+                                                        onChange={(e) => setAds(ads.map(a => a.id === ad.id ? { ...a, redirectUrl: e.target.value } : a))}
+                                                        className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
+                                                        placeholder="/trips?category=Trekking"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Display Order</label>
+                                                    <input
+                                                        type="number"
+                                                        value={ad.displayOrder as number || 0}
+                                                        onChange={(e) => setAds(ads.map(a => a.id === ad.id ? { ...a, displayOrder: Number(e.target.value) } : a))}
+                                                        className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
+                                                    />
+                                                </div>
+                                                <div className="flex items-center gap-6 pt-6">
+                                                    <label className="flex items-center gap-2 cursor-pointer">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={ad.isActive as boolean || false}
+                                                            onChange={(e) => setAds(ads.map(a => a.id === ad.id ? { ...a, isActive: e.target.checked } : a))}
+                                                            className="w-5 h-5"
+                                                        />
+                                                        <span className="text-sm text-primary/70 font-medium">Active</span>
+                                                        {ad.isActive ? (
+                                                            <CheckCircle className="w-4 h-4 text-green-500" />
+                                                        ) : (
+                                                            <XCircle className="w-4 h-4 text-red-500" />
+                                                        )}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-4 pt-2">
+                                                <button
+                                                    onClick={async () => {
+                                                        setSaving(true);
+                                                        try {
+                                                            await api.admin.updateAd(ad.id as number, ad);
+                                                            setMessage({ type: 'success', text: 'Ad updated!' });
+                                                            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+                                                        } catch {
+                                                            setMessage({ type: 'error', text: 'Failed to update ad' });
+                                                        }
+                                                        setSaving(false);
+                                                    }}
+                                                    disabled={saving}
+                                                    className="flex items-center gap-2 px-6 py-2 bg-primary text-cream hover:bg-primary-light transition-colors disabled:opacity-50"
+                                                >
+                                                    <Save className="w-4 h-4" />
+                                                    <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+                                                </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        if (!confirm('Are you sure you want to delete this ad?')) return;
+                                                        setSaving(true);
+                                                        try {
+                                                            await api.admin.deleteAd(ad.id as number);
+                                                            setAds(ads.filter(a => a.id !== ad.id));
+                                                            setMessage({ type: 'success', text: 'Ad deleted!' });
+                                                            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+                                                        } catch {
+                                                            setMessage({ type: 'error', text: 'Failed to delete ad' });
+                                                        }
+                                                        setSaving(false);
+                                                    }}
+                                                    disabled={saving}
+                                                    className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                    <span>Delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {ads.length === 0 && (
+                                <div className="text-center py-12 text-primary/50">
+                                    <Megaphone className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                                    <p>No ads yet. Create your first ad!</p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

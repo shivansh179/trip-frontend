@@ -15,6 +15,18 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.captureatrip.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'd1zvcmhypeawxj.cloudfront.net',
+        port: '',
+        pathname: '/**',
+      },
     ],
     qualities: [75, 90],
   },

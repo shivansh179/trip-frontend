@@ -1,6 +1,6 @@
 // API Configuration
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
-// export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+// export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api';
 
 // API Client
 import axios from 'axios';
@@ -77,6 +77,9 @@ export const api = {
   // Testimonials
   getTestimonials: () => apiClient.get('/testimonials'),
   getFeaturedTestimonials: () => apiClient.get('/testimonials/featured'),
+
+  // Ads
+  getActiveAds: () => apiClient.get('/ads/active'),
 
   // Blogs
   getBlogs: () => apiClient.get('/blogs'),
@@ -194,6 +197,12 @@ export const api = {
     updateInquiryStatus: (id: number, status: string) => apiClient.put(`/admin/inquiries/${id}/status`, { status }),
     updateInquiryNotes: (id: number, notes: string) => apiClient.put(`/admin/inquiries/${id}/notes`, { notes }),
     deleteInquiry: (id: number) => apiClient.delete(`/admin/inquiries/${id}`),
+
+    // Ads
+    getAds: () => apiClient.get('/ads'),
+    updateAd: (id: number, data: Record<string, unknown>) => apiClient.put(`/ads/${id}`, data),
+    createAd: (data: Record<string, unknown>) => apiClient.post('/ads', data),
+    deleteAd: (id: number) => apiClient.delete(`/ads/${id}`),
   },
 
   // Contact Form (Public)

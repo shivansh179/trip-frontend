@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, ArrowRight, ChevronDown, Volume2, VolumeX } from 'lucide-react';
+import AdCarousel from '@/components/AdCarousel';
 
 interface HeroProps {
     content?: {
@@ -137,6 +138,9 @@ export default function Hero({ content, stats }: HeroProps) {
                 <div className="absolute inset-0 bg-linear-to-r from-primary/80 via-primary/50 to-transparent" />
                 <div className="absolute inset-0 bg-primary/30" />
             </div>
+
+            {/* Ad Carousel - Right Side */}
+            <AdCarousel />
 
             {/* Content */}
             <div className="relative z-10 h-full flex flex-col justify-center section-container">
