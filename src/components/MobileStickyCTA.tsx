@@ -7,8 +7,8 @@ import { Calendar } from 'lucide-react';
 export default function MobileStickyCTA() {
     const pathname = usePathname();
 
-    // Don't show on checkout or payment pages
-    if (pathname?.includes('/checkout') || pathname?.includes('/payment') || pathname?.includes('/admin')) {
+    // Don't show on checkout, payment, contact (user already there), or admin
+    if (pathname?.includes('/checkout') || pathname?.includes('/payment') || pathname === '/contact' || pathname?.includes('/admin')) {
         return null;
     }
 

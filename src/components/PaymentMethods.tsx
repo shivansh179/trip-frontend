@@ -410,7 +410,7 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
             {/* UPI QR Code Section */}
             {selectedMethod === 'upi' && (
                 <div className="mt-6 p-6 bg-cream-light border border-primary/10 rounded-lg">
-                    <div className="flex items-center justify-between mb-4">
+                    {/* <div className="flex items-center justify-between mb-4">
                         <h3 className="text-xl font-light flex items-center gap-2">
                             <QrCode size={24} className="text-secondary" />
                             UPI Payment
@@ -422,9 +422,9 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                         >
                             {showQRCode ? 'Hide QR Code' : 'Show QR Code'}
                         </button>
-                    </div>
+                    </div> */}
 
-                    {showQRCode ? (
+                    {/* {showQRCode ? (
                         <div className="space-y-4">
                             <div className="bg-white p-6 rounded-lg border-2 border-dashed border-primary/20 flex flex-col items-center">
                                 <div className="w-64 h-64 bg-white border-2 border-primary/10 rounded-lg flex items-center justify-center mb-4 p-4">
@@ -461,7 +461,7 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                                 Click "Show QR Code" to display the payment QR code, or proceed to pay via UPI gateway.
                             </p>
                         </div>
-                    )}
+                    )} */}
                 </div>
             )}
 

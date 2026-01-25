@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
 
@@ -9,6 +9,7 @@ export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
+    const searchParams = useSearchParams();
 
     // Pages that have a full-screen hero with dark overlay (navbar should be light)
     const pagesWithHero = ['/'];
@@ -33,12 +34,21 @@ export default function Header() {
     }, [isMobileMenuOpen]);
 
     const navLinks = [
-        { name: 'Destinations', href: '/destinations' },
-        { name: 'Experiences', href: '/trips' },
+        { name: 'Domestic', href: '/destinations?filter=domestic' },
+        { name: 'International', href: '/destinations?filter=international' },
         { name: 'Stays', href: '/hotels' },
-        { name: 'Journal', href: '/blogs' },
+        { name: 'Trips', href: '/trips' },
         { name: 'About', href: '/about' },
     ];
+
+    const isNavActive = (link: { name: string; href: string }) => {
+        if (pathname === link.href) return true;
+        if (pathname === '/destinations' && link.href.startsWith('/destinations')) {
+            const want = link.href.includes('filter=domestic') ? 'domestic' : link.href.includes('filter=international') ? 'international' : null;
+            return want !== null && searchParams.get('filter') === want;
+        }
+        return false;
+    };
 
     // Determine text color based on page type and scroll state
     const getTextColor = () => {
@@ -77,7 +87,7 @@ export default function Header() {
                                 <Link
                                     key={link.name}
                                     href={link.href}
-                                    className={`text-caption uppercase tracking-[0.15em] font-medium transition-all duration-500 hover-line ${pathname === link.href
+                                    className={`text-caption uppercase tracking-[0.15em] font-medium transition-all duration-500 hover-line ${isNavActive(link)
                                         ? 'text-secondary'
                                         : `${getTextColor()} hover:text-secondary`
                                         }`}
@@ -121,7 +131,7 @@ export default function Header() {
                                 key={link.name}
                                 href={link.href}
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className={`font-display text-4xl md:text-5xl transition-all duration-500 ${pathname === link.href ? 'text-secondary' : 'text-primary hover:text-secondary'
+                                className={`font-display text-4xl md:text-5xl transition-all duration-500 ${isNavActive(link) ? 'text-secondary' : 'text-primary hover:text-secondary'
                                     } ${isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
                                 style={{ transitionDelay: isMobileMenuOpen ? `${index * 100}ms` : '0ms' }}
                             >

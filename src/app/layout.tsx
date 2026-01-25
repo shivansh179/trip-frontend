@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Inter, Playfair_Display } from 'next/font/google';
 import "./globals.css";
 import Header from "@/components/Header";
@@ -51,13 +52,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning>
-        <Header />
+        <Suspense fallback={<div className="h-24 bg-cream" />}>
+          <Header />
+        </Suspense>
         <main className="min-h-screen pb-20 md:pb-0">
           {children}
         </main>
         <Footer />
-        <WhatsAppButton phoneNumber="918427831127
-        " />
+        <WhatsAppButton phoneNumber="918427831127" />
         <MobileStickyCTA />
       </body>
     </html>

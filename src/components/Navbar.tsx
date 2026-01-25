@@ -15,10 +15,11 @@ export default function Navbar() {
   }, []);
 
   const links = [
-    { name: 'Destinations', href: '/destinations' },
+    { name: 'Domestic', href: '/destinations?filter=domestic' },
+    { name: 'International', href: '/destinations?filter=international' },
     { name: 'Stays', href: '/hotels' },
+    { name: 'Trips', href: '/trips' },
     { name: 'About', href: '/about' },
-    { name: 'Journal', href: '/blogs' },
     { name: 'Contact', href: '/contact' },
   ];
 

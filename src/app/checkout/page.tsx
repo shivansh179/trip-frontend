@@ -256,7 +256,7 @@ function CheckoutContent() {
                                                     value={formData.customerPhone}
                                                     onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
                                                     className="w-full p-4 border border-primary/20 bg-white text-primary"
-                                                    placeholder="+1 234 567 8900"
+                                                    placeholder="912345678900"
                                                 />
                                             </div>
                                         </div>

@@ -125,24 +125,24 @@ export default function TripsContent() {
 
     return (
         <>
-            {/* Filters Section */}
-            <section className="py-8 border-b border-primary/10 bg-cream sticky top-20 z-30">
+            {/* Filters Section - compact on mobile so trip cards are visible */}
+            <section className="py-4 md:py-8 border-b border-primary/10 bg-cream md:sticky md:top-20 z-30">
                 <div className="section-container">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        {/* Categories - Scrollable on mobile */}
-                        <div className="flex flex-wrap gap-2 md:gap-3 max-w-full overflow-x-auto pb-2">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
+                        {/* Categories - single-row horizontal scroll on mobile, wrap on desktop */}
+                        <div className="flex flex-nowrap md:flex-wrap gap-2 md:gap-3 overflow-x-auto md:overflow-visible pb-1 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
                             {categories.map((category) => (
                                 <button
                                     key={category}
                                     onClick={() => handleCategoryClick(category)}
-                                    className={`px-4 py-2 md:px-5 md:py-2.5 text-xs md:text-caption uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${activeCategory === category
+                                    className={`shrink-0 px-3 py-1.5 md:px-5 md:py-2.5 text-xs md:text-caption uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-1.5 md:gap-2 ${activeCategory === category
                                         ? 'bg-primary text-cream'
                                         : 'bg-cream-dark text-primary hover:bg-primary/10'
                                         }`}
                                 >
                                     <span>{category}</span>
                                     {category !== 'All' && categoryCounts[category] !== undefined && (
-                                        <span className="text-xs opacity-60">
+                                        <span className="text-[10px] md:text-xs opacity-60">
                                             ({categoryCounts[category]})
                                         </span>
                                     )}
@@ -150,18 +150,18 @@ export default function TripsContent() {
                             ))}
                         </div>
 
-                        {/* Search */}
-                        <form onSubmit={handleSearch} className="flex items-center gap-4 shrink-0">
-                            <div className="relative">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/40" />
+                        {/* Search - compact row on mobile */}
+                        <form onSubmit={handleSearch} className="flex items-center gap-2 md:gap-4 shrink-0">
+                            <div className="relative flex-1 min-w-0 md:flex-none">
+                                <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/40" />
                                 <input
                                     type="text"
                                     name="search"
                                     placeholder="Search experiences..."
-                                    className="pl-11 pr-5 py-3 bg-cream-dark text-primary placeholder:text-primary/40 focus:outline-none focus:ring-1 focus:ring-secondary w-48 md:w-64"
+                                    className="pl-9 md:pl-11 pr-3 md:pr-5 py-2.5 md:py-3 bg-cream-dark text-primary text-sm md:text-base placeholder:text-primary/40 focus:outline-none focus:ring-1 focus:ring-secondary w-full md:w-64"
                                 />
                             </div>
-                            <button type="submit" className="flex items-center gap-2 px-5 py-3 bg-primary text-cream hover:bg-primary-light transition-colors">
+                            <button type="submit" className="flex items-center justify-center gap-2 px-4 md:px-5 py-2.5 md:py-3 bg-primary text-cream hover:bg-primary-light transition-colors shrink-0">
                                 <Filter className="w-4 h-4" />
                                 <span className="text-caption uppercase tracking-widest hidden md:inline">Search</span>
                             </button>

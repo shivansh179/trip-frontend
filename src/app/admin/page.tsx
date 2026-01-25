@@ -415,9 +415,10 @@ export default function AdminDashboard() {
             const newTest = {
                 userName: 'New User',
                 userTitle: '',
+                userImage: '',
                 comment: '',
-                rating: 5,
                 isFeatured: false,
+                displayOrder: 0,
             };
             await api.admin.createTestimonial(newTest);
             setMessage({ type: 'success', text: 'Testimonial created!' });
@@ -1241,6 +1242,30 @@ export default function AdminDashboard() {
                                                     ) : null}
                                                 </div>
                                             </div>
+                                            <EditableList
+                                                label="Gallery Images (URLs)"
+                                                items={Array.isArray(trip.images) ? trip.images : []}
+                                                onChange={(items) => setTrips(trips.map(t => t.id === trip.id ? { ...t, images: items } : t))}
+                                                placeholder="https://..."
+                                            />
+                                            <EditableList
+                                                label="Highlights"
+                                                items={Array.isArray(trip.highlights) ? trip.highlights : []}
+                                                onChange={(items) => setTrips(trips.map(t => t.id === trip.id ? { ...t, highlights: items } : t))}
+                                                placeholder="Add highlight..."
+                                            />
+                                            <EditableList
+                                                label="Includes"
+                                                items={Array.isArray(trip.includes) ? trip.includes : []}
+                                                onChange={(items) => setTrips(trips.map(t => t.id === trip.id ? { ...t, includes: items } : t))}
+                                                placeholder="Add include..."
+                                            />
+                                            <EditableList
+                                                label="Excludes"
+                                                items={Array.isArray(trip.excludes) ? trip.excludes : []}
+                                                onChange={(items) => setTrips(trips.map(t => t.id === trip.id ? { ...t, excludes: items } : t))}
+                                                placeholder="Add exclude..."
+                                            />
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={() => handleSaveTrip(trip)}
@@ -1857,23 +1882,21 @@ export default function AdminDashboard() {
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Title/Trip</label>
+                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Title / Role</label>
                                             <input
                                                 type="text"
                                                 value={test.userTitle as string || ''}
                                                 onChange={(e) => setTestimonials(testimonials.map(t => t.id === test.id ? { ...t, userTitle: e.target.value } : t))}
                                                 className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
+                                                placeholder="e.g. Adventure Traveler"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Rating</label>
+                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Display Order</label>
                                             <input
                                                 type="number"
-                                                step="0.1"
-                                                min="0"
-                                                max="5"
-                                                value={test.rating as number || 5}
-                                                onChange={(e) => setTestimonials(testimonials.map(t => t.id === test.id ? { ...t, rating: Number(e.target.value) } : t))}
+                                                value={test.displayOrder as number ?? 0}
+                                                onChange={(e) => setTestimonials(testimonials.map(t => t.id === test.id ? { ...t, displayOrder: Number(e.target.value) } : t))}
                                                 className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
                                             />
                                         </div>
@@ -1887,6 +1910,26 @@ export default function AdminDashboard() {
                                                 />
                                                 <span className="text-sm text-primary/70">Featured</span>
                                             </label>
+                                        </div>
+                                        <div className="md:col-span-2">
+                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">User Image URL</label>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    value={test.userImage as string || ''}
+                                                    onChange={(e) => setTestimonials(testimonials.map(t => t.id === test.id ? { ...t, userImage: e.target.value } : t))}
+                                                    className="flex-1 px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
+                                                    placeholder="https://..."
+                                                />
+                                                {(test.userImage && typeof test.userImage === 'string' && test.userImage.trim() !== '') ? (
+                                                    <a href={test.userImage as string} target="_blank" rel="noopener noreferrer" className="px-4 py-3 border border-primary/20 bg-cream hover:bg-cream-dark flex items-center"><Eye className="w-4 h-4" /></a>
+                                                ) : null}
+                                            </div>
+                                            {(test.userImage && typeof test.userImage === 'string' && test.userImage.trim() !== '') ? (
+                                                <div className="mt-2 w-24 h-24 rounded overflow-hidden border border-primary/10">
+                                                    <ImagePreview imageUrl={test.userImage as string} className="w-full h-full" />
+                                                </div>
+                                            ) : null}
                                         </div>
                                         <div className="md:col-span-2">
                                             <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Comment</label>
