@@ -64,9 +64,9 @@ export default function AboutPage() {
       />
 
       {/* Philosophy Section */}
-      <section className="py-24 md:py-32 bg-cream">
+      <section className="py-16 md:py-24 lg:py-32 bg-cream">
         <div className="section-container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
             <div className="space-y-8">
               <div>
                 <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-4">
@@ -89,7 +89,7 @@ export default function AboutPage() {
                 and sustainable operators who share our vision of responsible, immersive travel.
               </p>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 pt-6">
                 {[
                   { value: '12+', label: 'Years' },
                   { value: '150+', label: 'Destinations' },
@@ -97,14 +97,14 @@ export default function AboutPage() {
                   { value: '98%', label: 'Satisfaction' },
                 ].map((stat, index) => (
                   <div key={index} className="text-center">
-                    <div className="font-display text-3xl text-secondary">{stat.value}</div>
+                    <div className="font-display text-2xl md:text-3xl text-secondary">{stat.value}</div>
                     <div className="text-caption uppercase tracking-widest text-primary/50 mt-1">{stat.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="relative h-[600px]">
+            <div className="relative h-[380px] sm:h-[450px] md:h-[550px] lg:h-[600px]">
               <div className="absolute top-0 right-0 w-3/4 h-2/3 overflow-hidden">
                 <Image
                   src="https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=800&q=80"

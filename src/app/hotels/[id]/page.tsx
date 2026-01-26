@@ -111,7 +111,7 @@ export default function HotelDetailPage() {
     return (
         <div className="min-h-screen">
             {/* Hero Section */}
-            <section className="relative h-[60vh] min-h-[400px] overflow-hidden">
+            <section className="relative h-[50vh] min-h-[320px] sm:h-[55vh] sm:min-h-[360px] md:h-[60vh] md:min-h-[400px] overflow-hidden">
                 <Image
                     src={hotel.imageUrl || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=80'}
                     alt={hotel.name}
@@ -122,7 +122,7 @@ export default function HotelDetailPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30"></div>
                 
                 <div className="relative z-10 h-full flex items-end">
-                    <div className="section-container w-full pb-16">
+                    <div className="section-container w-full pb-8 md:pb-16">
                         <div className="max-w-4xl">
                             <Link 
                                 href="/hotels" 
@@ -140,9 +140,9 @@ export default function HotelDetailPage() {
                                 </div>
                             )}
                             
-                            <h1 className="text-display-xl text-white mb-4">{hotel.name}</h1>
+                            <h1 className="font-display text-2xl sm:text-3xl md:text-display-xl text-white mb-3 md:mb-4">{hotel.name}</h1>
                             
-                            <div className="flex flex-wrap items-center gap-6 text-white/80 mb-6">
+                            <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-white/80 text-sm sm:text-base mb-4 md:mb-6">
                                 <div className="flex items-center gap-2">
                                     <MapPin size={18} />
                                     <span>{hotel.location || `${hotel.city}, ${hotel.country}`}</span>
@@ -160,8 +160,8 @@ export default function HotelDetailPage() {
                 </div>
             </section>
 
-            <div className="section-container py-16">
-                <div className="grid lg:grid-cols-3 gap-12">
+            <div className="section-container py-10 md:py-16">
+                <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
                     {/* Main Content */}
                     <div className="lg:col-span-2 space-y-12">
                         {/* Description */}
@@ -207,10 +207,10 @@ export default function HotelDetailPage() {
                     {/* Booking Sidebar */}
                     <div className="space-y-8">
                         {/* Booking Card */}
-                        <div className="bg-cream-light p-8 border border-primary/10 sticky top-8">
+                        <div className="bg-cream-light p-6 md:p-8 border border-primary/10 lg:sticky lg:top-24">
                             <div className="mb-6">
                                 <div className="flex items-baseline gap-2 mb-2">
-                                    <span className="font-display text-4xl text-primary">
+                                    <span className="font-display text-2xl sm:text-3xl md:text-4xl text-primary">
                                         {formatPrice(hotel.pricePerNight)}
                                     </span>
                                     <span className="text-text-secondary">/ night</span>
@@ -306,9 +306,9 @@ export default function HotelDetailPage() {
                                         <Phone size={18} />
                                         <span>+91 8427831127</span>
                                     </a>
-                                    <a href="mailto:info@localhi.com" className="flex items-center gap-2 text-body-lg hover:text-secondary transition-colors">
+                                    <a href="mailto:connectylootrips@gmail.com" className="flex items-center gap-2 text-body-lg hover:text-secondary transition-colors">
                                         <Mail size={18} />
-                                        <span>info@localhi.com</span>
+                                        <span>connectylootrips@gmail.com</span>
                                     </a>
                                 </div>
                             </div>

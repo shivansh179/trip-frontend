@@ -3,260 +3,25 @@
 import { useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { ArrowUpRight, Send, Loader2, CheckCircle, AlertCircle, Compass } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import PageHero from '@/components/PageHero';
 import DestinationCard from '@/components/DestinationCard';
+import EmptyStateCustomPlan from '@/components/EmptyStateCustomPlan';
 import { api } from '@/lib/api';
 import { Destination } from '@/types';
 
 interface PageContent {
-  hero: {
-    eyebrow: string;
-    title: string;
-    subtitle: string;
-    imageUrl: string;
-  };
+  hero: { eyebrow: string; title: string; subtitle: string; imageUrl: string };
 }
 
 const regions = ['All Regions', 'Asia', 'Europe', 'Africa', 'Americas'];
-const scopeFilters = ['All', 'Domestic', 'International'] as const;
-type ScopeFilter = typeof scopeFilters[number];
-
-function EmptyStateCustomPlan({
-  scopeFilter,
-  activeRegion,
-  onViewAll,
-}: {
-  scopeFilter: ScopeFilter;
-  activeRegion: string;
-  onViewAll: () => void;
-}) {
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: '', email: '', phone: '', where: '', travelers: '', dates: '', details: '' });
-  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [statusMsg, setStatusMsg] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setStatus('idle');
-    const prefix = `[CUSTOM PLAN${scopeFilter !== 'All' ? ` - ${scopeFilter.toUpperCase()} destinations` : ''}${activeRegion !== 'All Regions' ? ` | Region: ${activeRegion}` : ''}]\n\n`;
-    const message = prefix + (form.details || 'No additional details.');
-    try {
-      const res = await api.submitContactInquiry({
-        name: form.name,
-        email: form.email,
-        phone: form.phone || undefined,
-        destination: form.where || undefined,
-        travelers: form.travelers || undefined,
-        preferredDates: form.dates || undefined,
-        message,
-      });
-      const data = res.data as { success?: boolean; message?: string; error?: string };
-      if (data.success) {
-        setStatus('success');
-        setStatusMsg(data.message || "We've received your request. We'll design a custom plan and email you within 24 hours.");
-        setForm({ name: '', email: '', phone: '', where: '', travelers: '', dates: '', details: '' });
-      } else {
-        setStatus('error');
-        setStatusMsg(data.error || 'Something went wrong. Please try again.');
-      }
-    } catch (err: unknown) {
-      setStatus('error');
-      const ax = err as { response?: { data?: { error?: string } } };
-      setStatusMsg(ax.response?.data?.error || 'Failed to submit. Please try again or email us directly.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  // Fun block: show when form is hidden (form only on click)
-  if (!showForm) {
-    return (
-      <div className="max-w-xl mx-auto text-center pt-4 pb-8">
-        {/* Animated travel buddy */}
-        <div
-          className="inline-flex justify-center mb-8"
-          style={{ animation: 'bounce-soft 2.5s ease-in-out infinite' }}
-          role="img"
-          aria-hidden
-        >
-          <span className="text-7xl md:text-8xl select-none">🧭</span>
-        </div>
-        <h2 className="font-display text-2xl md:text-3xl lg:text-4xl text-primary mb-4">
-          Ooh, you wanna go far!
-        </h2>
-        <p className="text-primary/70 text-lg mb-2">
-          Tell us where—we&apos;ll plan it for you. No really.
-        </p>
-        <p className="text-primary/50 text-sm mb-8">
-          Custom itinerary, zero stress. We&apos;ll slide into your inbox within 24 hours. ✨
-        </p>
-        <button
-          type="button"
-          onClick={() => setShowForm(true)}
-          className="btn-primary mb-6"
-        >
-          <span>Yeah, plan my trip</span>
-          <ArrowUpRight className="w-4 h-4" />
-        </button>
-        <button
-          type="button"
-          onClick={onViewAll}
-          className="block mx-auto text-caption text-secondary hover:underline"
-        >
-          View all destinations
-        </button>
-      </div>
-    );
-  }
-
-  // Form: shown on click, with smooth entrance
-  return (
-    <div
-      className="max-w-2xl mx-auto"
-      style={{ animation: 'fade-up 0.5s ease-out forwards' }}
-    >
-      <button
-        type="button"
-        onClick={() => setShowForm(false)}
-        className="flex items-center gap-2 text-caption text-primary/60 hover:text-primary mb-6"
-      >
-        ← Back
-      </button>
-
-      <div className="bg-cream border border-primary/10 p-8 md:p-10 rounded-sm shadow-sm">
-        <div className="flex items-center gap-3 mb-3">
-          <Compass className="w-6 h-6 text-secondary" style={{ animation: 'wave 2s ease-in-out infinite' }} />
-          <h3 className="font-display text-2xl text-primary">Alright, let&apos;s plan your trip</h3>
-        </div>
-        <p className="text-primary/60 text-sm mb-6">
-          Drop your details below—we&apos;ll craft a custom itinerary and get back to you within 24 hours. We&apos;re already excited. 🗺️
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="grid md:grid-cols-2 gap-5">
-            <div>
-              <label className="block text-caption uppercase tracking-widest text-primary/60 mb-1">Name *</label>
-              <input
-                required
-                value={form.name}
-                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                className="w-full px-4 py-3 bg-white border border-primary/10 text-primary focus:outline-none focus:border-secondary"
-                placeholder="Your name"
-              />
-            </div>
-            <div>
-              <label className="block text-caption uppercase tracking-widest text-primary/60 mb-1">Email *</label>
-              <input
-                required
-                type="email"
-                value={form.email}
-                onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                className="w-full px-4 py-3 bg-white border border-primary/10 text-primary focus:outline-none focus:border-secondary"
-                placeholder="you@example.com"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-caption uppercase tracking-widest text-primary/60 mb-1">Phone</label>
-            <input
-              type="tel"
-              value={form.phone}
-              onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-              className="w-full px-4 py-3 bg-white border border-primary/10 text-primary focus:outline-none focus:border-secondary"
-              placeholder="+91 ..."
-            />
-          </div>
-          <div>
-            <label className="block text-caption uppercase tracking-widest text-primary/60 mb-1">Where do you want to go? *</label>
-            <input
-              required
-              value={form.where}
-              onChange={e => setForm(f => ({ ...f, where: e.target.value }))}
-              className="w-full px-4 py-3 bg-white border border-primary/10 text-primary focus:outline-none focus:border-secondary"
-              placeholder="e.g. Ladakh, Spiti, Kerala or Dubai, Singapore"
-            />
-          </div>
-          <div className="grid md:grid-cols-2 gap-5">
-            <div>
-              <label className="block text-caption uppercase tracking-widest text-primary/60 mb-1">Travelers</label>
-              <select
-                value={form.travelers}
-                onChange={e => setForm(f => ({ ...f, travelers: e.target.value }))}
-                className="w-full px-4 py-3 bg-white border border-primary/10 text-primary focus:outline-none focus:border-secondary"
-              >
-                <option value="">Select</option>
-                <option value="1">Solo</option>
-                <option value="2">Couple</option>
-                <option value="3-4">3–4</option>
-                <option value="5+">5+</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-caption uppercase tracking-widest text-primary/60 mb-1">Preferred dates</label>
-              <input
-                value={form.dates}
-                onChange={e => setForm(f => ({ ...f, dates: e.target.value }))}
-                className="w-full px-4 py-3 bg-white border border-primary/10 text-primary focus:outline-none focus:border-secondary"
-                placeholder="e.g. March 2025, flexible"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-caption uppercase tracking-widest text-primary/60 mb-1">Tell us more</label>
-            <textarea
-              rows={3}
-              value={form.details}
-              onChange={e => setForm(f => ({ ...f, details: e.target.value }))}
-              className="w-full px-4 py-3 bg-white border border-primary/10 text-primary focus:outline-none focus:border-secondary resize-none"
-              placeholder="Interests, budget, duration, or any special requests"
-            />
-          </div>
-
-          {status === 'success' && (
-            <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 text-green-700">
-              <CheckCircle className="w-5 h-5 shrink-0" />
-              <p className="text-sm">{statusMsg}</p>
-            </div>
-          )}
-          {status === 'error' && (
-            <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 text-red-700">
-              <AlertCircle className="w-5 h-5 shrink-0" />
-              <p className="text-sm">{statusMsg}</p>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="btn-primary w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</> : <><span>Request custom plan</span><Send className="w-4 h-4" /></>}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
 
 function DestinationsContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
   const [pageContent, setPageContent] = useState<PageContent | null>(null);
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeRegion, setActiveRegion] = useState('All Regions');
-
-  const scopeFilter = (searchParams.get('filter') === 'domestic' ? 'Domestic' : searchParams.get('filter') === 'international' ? 'International' : 'All') as ScopeFilter;
-
-  const setScopeFilter = (s: ScopeFilter) => {
-    const q = s === 'Domestic' ? '?filter=domestic' : s === 'International' ? '?filter=international' : '';
-    router.replace('/destinations' + q);
-  };
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -275,7 +40,7 @@ function DestinationsContent() {
       try {
         setLoading(true);
         const response = await api.getDestinations();
-        setDestinations(response.data);
+        setDestinations(response.data || []);
         setError(null);
       } catch (err) {
         console.error('Error fetching destinations:', err);
@@ -285,67 +50,53 @@ function DestinationsContent() {
         setLoading(false);
       }
     };
-
     fetchDestinations();
   }, []);
 
-  // Filter by scope (Domestic = India, International = outside India) then by region
-  const byScope = scopeFilter === 'Domestic'
-    ? destinations.filter(d => (d.country || '').toLowerCase() === 'india')
-    : scopeFilter === 'International'
-      ? destinations.filter(d => (d.country || '').toLowerCase() !== 'india')
-      : destinations;
-  const filteredDestinations = activeRegion === 'All Regions'
-    ? byScope
-    : byScope.filter(d => d.region === activeRegion);
-
+  const filteredDestinations =
+    activeRegion === 'All Regions' ? destinations : destinations.filter((d) => d.region === activeRegion);
   const featuredDestination = filteredDestinations[0];
-
-  const heroTitle = scopeFilter === 'Domestic' ? 'Domestic Destinations' : scopeFilter === 'International' ? 'International Destinations' : (pageContent?.hero?.title || 'Explore Destinations');
-  const heroBreadcrumb = scopeFilter === 'Domestic' ? 'Domestic' : scopeFilter === 'International' ? 'International' : (pageContent?.hero?.eyebrow || 'Destinations');
 
   return (
     <>
-      {/* Hero Section - CMS Driven */}
       <PageHero
-        title={heroTitle}
+        title={pageContent?.hero?.title || 'Explore Destinations'}
         subtitle={pageContent?.hero?.subtitle || "From hidden gems to iconic landmarks, discover the world's most captivating places through our curated collection of destinations."}
-        breadcrumb={heroBreadcrumb}
+        breadcrumb={pageContent?.hero?.eyebrow || 'Destinations'}
         backgroundImage={pageContent?.hero?.imageUrl}
       />
 
-      {/* Scope: All | Domestic | International */}
-      <section className="py-6 border-b border-primary/10 bg-cream">
+      {/* Scope: All (stay) | Domestic | International (links to distinct pages) */}
+      <section className="py-4 md:py-6 border-b border-primary/10 bg-cream">
         <div className="section-container">
-          <div className="flex flex-wrap gap-3">
-            {scopeFilters.map((s) => (
-              <button
-                key={s}
-                onClick={() => setScopeFilter(s)}
-                className={`px-6 py-3 text-caption uppercase tracking-widest transition-all ${scopeFilter === s
-                  ? 'bg-primary text-cream'
-                  : 'bg-cream-dark text-primary hover:bg-primary/10'
-                }`}
-              >
-                {s}
-              </button>
-            ))}
+          <div className="flex flex-wrap gap-2 sm:gap-3">
+            <span className="px-4 py-2 md:px-6 md:py-3 text-xs md:text-caption uppercase tracking-widest bg-primary text-cream">
+              All
+            </span>
+            <Link
+              href="/destinations/domestic"
+              className="px-4 py-2 md:px-6 md:py-3 text-xs md:text-caption uppercase tracking-widest bg-cream-dark text-primary hover:bg-primary/10 transition-all"
+            >
+              Domestic
+            </Link>
+            <Link
+              href="/destinations/international"
+              className="px-4 py-2 md:px-6 md:py-3 text-xs md:text-caption uppercase tracking-widest bg-cream-dark text-primary hover:bg-primary/10 transition-all"
+            >
+              International
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Regions Filter */}
-      <section className="py-6 border-b border-primary/10 bg-cream-dark">
+      <section className="py-4 md:py-6 border-b border-primary/10 bg-cream-dark">
         <div className="section-container">
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             {regions.map((region) => (
               <button
                 key={region}
                 onClick={() => setActiveRegion(region)}
-                className={`px-6 py-3 text-caption uppercase tracking-widest transition-all ${activeRegion === region
-                    ? 'bg-primary text-cream'
-                    : 'bg-cream-dark text-primary hover:bg-primary/10'
-                  }`}
+                className={`px-4 py-2 md:px-6 md:py-3 text-xs md:text-caption uppercase tracking-widest transition-all ${activeRegion === region ? 'bg-primary text-cream' : 'bg-cream text-primary hover:bg-primary/10'}`}
               >
                 {region}
               </button>
@@ -354,7 +105,6 @@ function DestinationsContent() {
         </div>
       </section>
 
-      {/* Error Banner */}
       {error && (
         <div className="bg-terracotta/10 border-l-4 border-terracotta px-6 py-4">
           <div className="section-container">
@@ -363,13 +113,11 @@ function DestinationsContent() {
         </div>
       )}
 
-      {/* Featured Destination */}
       {!loading && featuredDestination && (
-        <section className="py-16 md:py-24 bg-cream">
+        <section className="py-10 md:py-16 lg:py-24 bg-cream">
           <div className="section-container">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-              {/* Featured Image */}
-              <div className="relative h-[500px] lg:h-[600px] overflow-hidden group">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-10 md:mb-16">
+              <div className="relative h-[320px] sm:h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden group">
                 <Image
                   src={featuredDestination.imageUrl || 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1200&q=80'}
                   alt={featuredDestination.name}
@@ -381,35 +129,23 @@ function DestinationsContent() {
                   <span className="inline-block px-4 py-2 bg-accent text-primary text-caption uppercase tracking-widest mb-4">
                     Featured Destination
                   </span>
-                  <h2 className="font-display text-4xl md:text-5xl text-cream mb-4">
-                    {featuredDestination.name}
-                  </h2>
-                  <p className="text-cream/70 text-lg mb-6 max-w-md">
-                    {featuredDestination.description}
-                  </p>
+                  <h2 className="font-display text-4xl md:text-5xl text-cream mb-4">{featuredDestination.name}</h2>
+                  <p className="text-cream/70 text-lg mb-6 max-w-md">{featuredDestination.description}</p>
                   <Link href={`/destinations/${featuredDestination.slug}`} className="btn-primary bg-cream text-primary hover:bg-cream-dark">
                     <span>Explore {featuredDestination.name}</span>
                     <ArrowUpRight className="w-4 h-4" />
                   </Link>
                 </div>
               </div>
-
-              {/* Stats & Info */}
               <div className="flex flex-col justify-center space-y-8 lg:pl-12">
                 <div>
-                  <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-3">
-                    Why {featuredDestination.name}?
-                  </p>
+                  <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-3">Why {featuredDestination.name}?</p>
                   <h3 className="font-display text-display-lg text-primary mb-4">
-                    A destination for the
-                    <span className="italic"> soul</span>
+                    A destination for the <span className="italic">soul</span>
                   </h3>
-                  <p className="text-primary/60 text-body-lg">
-                    {featuredDestination.description}
-                  </p>
+                  <p className="text-primary/60 text-body-lg">{featuredDestination.description}</p>
                 </div>
-
-                <div className="grid grid-cols-3 gap-6">
+                <div className="grid grid-cols-3 gap-6 align-center">
                   {[
                     { value: featuredDestination.tripCount || '0', label: 'Experiences' },
                     { value: '4.9', label: 'Avg Rating' },
@@ -427,20 +163,13 @@ function DestinationsContent() {
         </section>
       )}
 
-      {/* All Destinations Grid */}
-      <section className="py-16 md:py-24 bg-cream-dark">
+      <section className="py-10 md:py-16 lg:py-24 bg-cream-dark">
         <div className="section-container">
           {(loading || filteredDestinations.length > 0) && (
-            <div className="flex items-end justify-between mb-12">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-8 md:mb-12">
               <div>
-                <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-3">
-                  All Destinations
-                </p>
-                {filteredDestinations.length > 0 && (
-                  <h2 className="font-display text-display-lg text-primary">
-                    Where will you go?
-                  </h2>
-                )}
+                <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-3">All Destinations</p>
+                {filteredDestinations.length > 0 && <h2 className="font-display text-display-lg text-primary">Where will you go?</h2>}
               </div>
               <p className="text-primary/60 hidden md:block">
                 {loading ? 'Loading...' : `${filteredDestinations.length} destinations to explore`}
@@ -448,7 +177,6 @@ function DestinationsContent() {
             </div>
           )}
 
-          {/* Grid */}
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
@@ -456,27 +184,24 @@ function DestinationsContent() {
               ))}
             </div>
           ) : filteredDestinations.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               {filteredDestinations.map((destination, index) => (
                 <DestinationCard key={destination.id} destination={destination} index={index} />
               ))}
             </div>
           ) : (
             <EmptyStateCustomPlan
-              scopeFilter={scopeFilter}
+              scopeFilter="All"
               activeRegion={activeRegion}
-              onViewAll={() => { setActiveRegion('All Regions'); router.replace('/destinations'); }}
+              onViewAll={() => setActiveRegion('All Regions')}
             />
           )}
         </div>
       </section>
 
-      {/* Newsletter Section */}
       <section className="py-20 bg-secondary text-cream">
         <div className="section-container text-center">
-          <h2 className="font-display text-display-lg mb-4">
-            Get inspired
-          </h2>
+          <h2 className="font-display text-display-lg mb-4">Get inspired</h2>
           <p className="text-cream/60 text-body-lg max-w-xl mx-auto mb-10">
             Subscribe for destination guides, travel tips, and exclusive offers delivered to your inbox.
           </p>

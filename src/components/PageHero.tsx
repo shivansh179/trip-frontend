@@ -8,10 +8,13 @@ interface PageHeroProps {
     subtitle?: string;
     breadcrumb?: string;
     backgroundImage?: string;
+    overlayClassName?: string;
 }
 
 // Default background images for different pages
 const defaultBackgrounds: Record<string, string> = {
+    'Domestic': 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=1920&q=80',
+    'International': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&q=80',
     'Destinations': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80',
     'Experiences': 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1920&q=80',
     'Curated Experiences': 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1920&q=80',
@@ -25,13 +28,13 @@ const defaultBackgrounds: Record<string, string> = {
     'Plan Your Journey': 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1920&q=80',
 };
 
-export default function PageHero({ title, subtitle, breadcrumb, backgroundImage }: PageHeroProps) {
+export default function PageHero({ title, subtitle, breadcrumb, backgroundImage, overlayClassName }: PageHeroProps) {
     // Try to find a default background if none provided
     const imageUrl = backgroundImage || defaultBackgrounds[breadcrumb || ''] || defaultBackgrounds[title] ||
         'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80';
 
     return (
-        <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
+        <section className="relative pt-28 pb-16 md:pt-36 md:pb-24 lg:pt-40 lg:pb-28 overflow-hidden">
             {/* Background Image */}
             <div className="absolute inset-0">
                 <Image
@@ -41,14 +44,14 @@ export default function PageHero({ title, subtitle, breadcrumb, backgroundImage 
                     className="object-cover"
                     priority
                 />
-                <div className="absolute inset-0 bg-primary/70" />
+                <div className={`absolute inset-0 ${overlayClassName || 'bg-primary/70'}`} />
             </div>
 
             {/* Content */}
             <div className="relative z-10 section-container">
                 {/* Breadcrumb */}
                 {breadcrumb && (
-                    <div className="flex items-center gap-3 mb-6">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-4 md:mb-6">
                         <Link
                             href="/"
                             className="text-caption uppercase tracking-[0.2em] text-cream/60 hover:text-cream transition-colors"
@@ -63,13 +66,13 @@ export default function PageHero({ title, subtitle, breadcrumb, backgroundImage 
                 )}
 
                 {/* Title */}
-                <h1 className="font-display text-display-xl max-w-4xl text-cream">
+                <h1 className="font-display text-display-xl max-w-4xl text-cream text-balance">
                     {title}
                 </h1>
 
                 {/* Subtitle */}
                 {subtitle && (
-                    <p className="text-body-lg max-w-2xl mt-6 text-cream/70">
+                    <p className="text-base md:text-body-lg max-w-2xl mt-4 md:mt-6 text-cream/70">
                         {subtitle}
                     </p>
                 )}

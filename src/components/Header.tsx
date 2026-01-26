@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
 
@@ -9,7 +9,6 @@ export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
-    const searchParams = useSearchParams();
 
     // Pages that have a full-screen hero with dark overlay (navbar should be light)
     const pagesWithHero = ['/'];
@@ -34,21 +33,14 @@ export default function Header() {
     }, [isMobileMenuOpen]);
 
     const navLinks = [
-        { name: 'Domestic', href: '/destinations?filter=domestic' },
-        { name: 'International', href: '/destinations?filter=international' },
+        { name: 'Domestic', href: '/destinations/domestic' },
+        { name: 'International', href: '/destinations/international' },
         { name: 'Stays', href: '/hotels' },
         { name: 'Trips', href: '/trips' },
         { name: 'About', href: '/about' },
     ];
 
-    const isNavActive = (link: { name: string; href: string }) => {
-        if (pathname === link.href) return true;
-        if (pathname === '/destinations' && link.href.startsWith('/destinations')) {
-            const want = link.href.includes('filter=domestic') ? 'domestic' : link.href.includes('filter=international') ? 'international' : null;
-            return want !== null && searchParams.get('filter') === want;
-        }
-        return false;
-    };
+    const isNavActive = (link: { name: string; href: string }) => pathname === link.href;
 
     // Determine text color based on page type and scroll state
     const getTextColor = () => {

@@ -167,8 +167,8 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
 
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-light mb-6 flex items-center gap-3">
-                <CreditCard size={28} className="text-secondary" />
+            <h2 className="text-xl md:text-2xl font-light mb-4 md:mb-6 flex items-center gap-3">
+                <CreditCard size={28} className="text-secondary shrink-0" />
                 Payment Method
             </h2>
 
@@ -181,7 +181,7 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
                     return (
                         <label
                             key={method.id}
-                            className={`flex items-start gap-4 p-5 border-2 rounded-lg cursor-pointer transition-all ${isSelected
+                            className={`flex items-start gap-3 md:gap-4 p-4 md:p-5 border-2 rounded-lg cursor-pointer transition-all ${isSelected
                                 ? 'border-secondary bg-secondary/5'
                                 : 'border-primary/20 bg-white hover:border-primary/40'
                                 }`}

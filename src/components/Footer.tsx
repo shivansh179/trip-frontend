@@ -40,8 +40,8 @@ export default function Footer() {
     <>
       <footer className="bg-primary text-cream">
         {/* Main Footer */}
-        <div className="section-container py-20 md:py-28">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <div className="section-container py-12 md:py-20 lg:py-28">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
             {/* Brand Column */}
             <div className="lg:col-span-5 space-y-8">
               <Link href="/" className="inline-block">
@@ -57,15 +57,15 @@ export default function Footer() {
                 <p className="text-caption uppercase tracking-[0.2em] text-accent mb-4">
                   Join Our Newsletter
                 </p>
-                <form className="flex gap-0">
+                <form className="flex flex-col sm:flex-row gap-2 sm:gap-0">
                   <input
                     type="email"
                     placeholder="Your email address"
-                    className="flex-1 bg-white/5 border border-white/10 px-5 py-4 text-cream text-sm placeholder:text-cream/40 focus:outline-none focus:border-accent transition-colors"
+                    className="flex-1 min-w-0 bg-white/5 border border-white/10 px-5 py-4 text-cream text-sm placeholder:text-cream/40 focus:outline-none focus:border-accent transition-colors"
                   />
                   <button
                     type="submit"
-                    className="px-6 bg-accent text-primary hover:bg-accent-warm transition-colors"
+                    className="px-6 py-4 sm:py-0 bg-accent text-primary hover:bg-accent-warm transition-colors shrink-0"
                   >
                     <ArrowUpRight className="w-5 h-5" />
                   </button>
@@ -75,7 +75,7 @@ export default function Footer() {
 
             {/* Links Columns */}
             <div className="lg:col-span-7">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-12">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
                 <div>
                   <h4 className="text-caption uppercase tracking-[0.2em] text-accent mb-6">
                     Explore
@@ -136,8 +136,8 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-white/10">
-          <div className="section-container py-8">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="section-container py-6 md:py-8">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6 text-center sm:text-left">
               <p className="text-caption text-cream/40 uppercase tracking-widest">
                 © {currentYear} YlooTrips. All rights reserved.
               </p>

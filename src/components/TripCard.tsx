@@ -121,7 +121,7 @@ export default function TripCard({ trip, index = 0, variant = 'default' }: TripC
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-4">
+            <div className="p-4 md:p-6 space-y-3 md:space-y-4">
                 {/* Location */}
                 <div className="flex items-center gap-2 text-secondary/60">
                     <MapPin className="w-4 h-4" />
@@ -129,7 +129,7 @@ export default function TripCard({ trip, index = 0, variant = 'default' }: TripC
                 </div>
 
                 {/* Title */}
-                <h3 className="font-display text-2xl text-primary group-hover:text-secondary transition-colors line-clamp-2">
+                <h3 className="font-display text-xl md:text-2xl text-primary group-hover:text-secondary transition-colors line-clamp-2">
                     {trip.title}
                 </h3>
 
@@ -147,10 +147,10 @@ export default function TripCard({ trip, index = 0, variant = 'default' }: TripC
                 </div>
 
                 {/* Price Row */}
-                <div className="pt-4 border-t border-primary/10 flex items-center justify-between">
+                <div className="pt-3 md:pt-4 border-t border-primary/10 flex items-center justify-between">
                     <div>
                         <div className="flex items-baseline gap-2">
-                            <span className="font-display text-2xl text-primary">
+                            <span className="font-display text-xl md:text-2xl text-primary">
                                 {formatPrice(trip.price)}
                             </span>
                             {trip.originalPrice && (

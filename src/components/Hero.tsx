@@ -79,7 +79,7 @@ export default function Hero({ content, stats }: HeroProps) {
     };
 
     return (
-        <section ref={heroRef} className="relative h-screen min-h-[800px] overflow-hidden">
+        <section ref={heroRef} className="relative h-screen min-h-[600px] md:min-h-[700px] lg:min-h-[800px] overflow-hidden">
             {/* Background Music - Calm Ambient */}
             <audio
                 ref={audioRef}
@@ -91,7 +91,7 @@ export default function Hero({ content, stats }: HeroProps) {
             {/* Music Toggle Button */}
             <button
                 onClick={toggleAudio}
-                className="absolute bottom-24 right-8 z-30 p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-cream hover:bg-white/20 transition-all duration-300 group"
+                className="absolute bottom-20 md:bottom-24 right-4 md:right-8 z-30 p-2.5 md:p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-cream hover:bg-white/20 transition-all duration-300 group"
                 aria-label={isPlaying ? "Pause music" : "Play music"}
                 title={isPlaying ? "🔇 Pause calm music" : "🎵 Play calm music"}
             >
@@ -143,8 +143,8 @@ export default function Hero({ content, stats }: HeroProps) {
             <AdCarousel />
 
             {/* Content */}
-            <div className="relative z-10 h-full flex flex-col justify-center section-container">
-                <div className="max-w-3xl space-y-8">
+            <div className="relative z-10 h-full flex flex-col justify-center section-container pt-20 md:pt-0">
+                <div className="max-w-3xl space-y-5 md:space-y-8">
                     {/* Eyebrow */}
                     <p
                         className="text-caption uppercase tracking-[0.3em] text-accent animate-fade-up"
@@ -195,17 +195,17 @@ export default function Hero({ content, stats }: HeroProps) {
             </div>
 
             {/* Stats Bar */}
-            <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-primary/90 to-transparent pt-24 pb-8">
+            <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-primary/90 to-transparent pt-16 md:pt-24 pb-6 md:pb-8">
                 <div className="section-container">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
                         {displayStats.slice(0, 4).map((stat, index) => (
                             <div
                                 key={index}
                                 className="text-center md:text-left animate-fade-up"
                                 style={{ animationDelay: `${0.5 + index * 0.1}s` }}
                             >
-                                <div className="font-display text-3xl md:text-4xl text-cream">{stat.value}</div>
-                                <div className="text-caption text-cream/50 uppercase tracking-widest mt-1">{stat.label}</div>
+                                <div className="font-display text-2xl sm:text-3xl md:text-4xl text-cream">{stat.value}</div>
+                                <div className="text-[10px] sm:text-caption text-cream/50 uppercase tracking-widest mt-0.5 md:mt-1">{stat.label}</div>
                             </div>
                         ))}
                     </div>

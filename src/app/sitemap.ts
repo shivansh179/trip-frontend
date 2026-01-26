@@ -18,6 +18,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 0.9,
         },
         {
+            url: `${baseUrl}/destinations/domestic`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly' as const,
+            priority: 0.85,
+        },
+        {
+            url: `${baseUrl}/destinations/international`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly' as const,
+            priority: 0.85,
+        },
+        {
             url: `${baseUrl}/trips`,
             lastModified: new Date(),
             changeFrequency: 'daily' as const,

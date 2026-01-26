@@ -70,14 +70,14 @@ export default function BlogsPage() {
       />
 
       {/* Categories */}
-      <section className="py-6 border-b border-primary/10 bg-cream">
+      <section className="py-4 md:py-6 border-b border-primary/10 bg-cream">
         <div className="section-container">
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-5 py-2.5 text-caption uppercase tracking-widest transition-all ${activeCategory === category
+                className={`px-4 py-2 md:px-5 md:py-2.5 text-xs md:text-caption uppercase tracking-widest transition-all ${activeCategory === category
                     ? 'bg-primary text-cream'
                     : 'bg-cream-dark text-primary hover:bg-primary/10'
                   }`}

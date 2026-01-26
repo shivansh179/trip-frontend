@@ -179,16 +179,16 @@ function CheckoutContent() {
     }
 
     return (
-        <div className="min-h-screen bg-cream py-16">
+        <div className="min-h-screen bg-cream py-8 md:py-16">
             <div className="section-container">
                 <div className="max-w-5xl mx-auto">
-                    <h1 className="text-display-xl mb-8 mt-16">Complete Your Booking</h1>
+                    <h1 className="font-display text-2xl sm:text-3xl md:text-display-xl mb-6 md:mb-8 pt-6 md:pt-8">Complete Your Booking</h1>
 
-                    <div className="grid lg:grid-cols-3 gap-12">
+                    <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
                         <div className="lg:col-span-2">
                             <form onSubmit={handleSubmit} className="space-y-8">
-                                <section className="bg-cream-light p-6 border border-primary/10">
-                                    <h2 className="text-2xl font-light mb-4">Trip Summary</h2>
+                                <section className="bg-cream-light p-5 md:p-6 border border-primary/10">
+                                    <h2 className="text-xl md:text-2xl font-light mb-4">Trip Summary</h2>
                                     <div className="space-y-3">
                                         <div className="flex items-start gap-3">
                                             <MapPin size={20} className="text-secondary mt-1" />
@@ -215,7 +215,7 @@ function CheckoutContent() {
                                 </section>
 
                                 <section>
-                                    <h2 className="text-2xl font-light mb-6">Personal Information</h2>
+                                    <h2 className="text-xl md:text-2xl font-light mb-4 md:mb-6">Personal Information</h2>
                                     <div className="space-y-6">
                                         <div>
                                             <label className="text-caption text-text-secondary mb-2 block">
@@ -264,7 +264,7 @@ function CheckoutContent() {
                                 </section>
 
                                 <section>
-                                    <h2 className="text-2xl font-light mb-6">Travel Details</h2>
+                                    <h2 className="text-xl md:text-2xl font-light mb-4 md:mb-6">Travel Details</h2>
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="text-caption text-text-secondary mb-2 block">
@@ -299,7 +299,7 @@ function CheckoutContent() {
                                 </section>
 
                                 <section>
-                                    <h2 className="text-2xl font-light mb-6">Special Requests</h2>
+                                    <h2 className="text-xl md:text-2xl font-light mb-4 md:mb-6">Special Requests</h2>
                                     <textarea
                                         value={formData.specialRequests}
                                         onChange={(e) => setFormData({ ...formData, specialRequests: e.target.value })}
@@ -328,15 +328,15 @@ function CheckoutContent() {
                                     <TrustBadges />
                                 </section>
 
-                                <div className="flex items-center gap-4 pt-6">
+                                <div className="flex flex-col-reverse sm:flex-row sm:items-center gap-3 sm:gap-4 pt-6">
                                     <button
                                         type="submit"
                                         disabled={submitting}
-                                        className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="btn-primary flex-1 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {submitting ? 'Processing...' : 'Complete Booking'}
                                     </button>
-                                    <div className="flex items-center gap-2 text-body-sm text-text-secondary">
+                                    <div className="flex items-center justify-center sm:justify-start gap-2 text-body-sm text-text-secondary">
                                         <Lock size={16} />
                                         <span>Secure Payment</span>
                                     </div>
@@ -344,9 +344,9 @@ function CheckoutContent() {
                             </form>
                         </div>
 
-                        <div className="lg:sticky lg:top-24 h-fit">
-                            <div className="bg-cream-light p-8 border border-primary/10">
-                                <h2 className="text-2xl font-light mb-6">Order Summary</h2>
+                        <div className="lg:sticky lg:top-24 h-fit order-first lg:order-none">
+                            <div className="bg-cream-light p-6 md:p-8 border border-primary/10">
+                                <h2 className="text-xl md:text-2xl font-light mb-4 md:mb-6">Order Summary</h2>
 
                                 <div className="space-y-4 mb-6">
                                     {/* Original Price (if exists) - shown first with strikethrough */}
@@ -382,8 +382,8 @@ function CheckoutContent() {
 
                                 <div className="pt-6 border-t border-primary/10 mb-6">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-xl font-light">Total</span>
-                                        <span className="text-3xl font-light">{formatPrice(totalPrice)}</span>
+                                        <span className="text-lg md:text-xl font-light">Total</span>
+                                        <span className="text-2xl md:text-3xl font-light">{formatPrice(totalPrice)}</span>
                                     </div>
                                 </div>
 

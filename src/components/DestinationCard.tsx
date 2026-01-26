@@ -9,13 +9,26 @@ interface DestinationCardProps {
     destination: Destination;
     index?: number;
     variant?: 'default' | 'featured' | 'compact';
+    theme?: 'default' | 'domestic' | 'international';
 }
 
-export default function DestinationCard({ destination, index = 0, variant = 'default' }: DestinationCardProps) {
+const themeAccent = {
+    default: 'bg-accent',
+    domestic: 'bg-terracotta',
+    international: 'bg-secondary',
+};
+
+const themeExplore = {
+    default: 'text-accent',
+    domestic: 'text-terracotta',
+    international: 'text-secondary',
+};
+
+export default function DestinationCard({ destination, index = 0, variant = 'default', theme = 'default' }: DestinationCardProps) {
     const heights = {
-        default: 'h-[450px] md:h-[500px]',
-        featured: 'h-[550px] md:h-[650px]',
-        compact: 'h-[350px] md:h-[400px]',
+        default: 'h-[360px] sm:h-[400px] md:h-[500px]',
+        featured: 'h-[420px] sm:h-[500px] md:h-[650px]',
+        compact: 'h-[280px] sm:h-[320px] md:h-[400px]',
     };
 
     return (
@@ -38,7 +51,7 @@ export default function DestinationCard({ destination, index = 0, variant = 'def
             <div className="absolute inset-0 bg-linear-to-t from-primary via-primary/20 to-transparent opacity-70 group-hover:opacity-80 transition-opacity duration-500" />
 
             {/* Content */}
-            <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+            <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-8">
                 {/* Trip Count Badge */}
                 {destination.tripCount && (
                     <div className="absolute top-6 right-6 bg-cream/10 blur-overlay px-4 py-2 rounded-none">
@@ -49,7 +62,7 @@ export default function DestinationCard({ destination, index = 0, variant = 'def
                 )}
 
                 <div className="space-y-3 transform transition-transform duration-500 group-hover:translate-y-[-8px]">
-                    <h3 className="font-display text-3xl md:text-4xl text-cream">
+                    <h3 className="font-display text-2xl sm:text-3xl md:text-4xl text-cream">
                         {destination.name}
                     </h3>
 
@@ -60,14 +73,14 @@ export default function DestinationCard({ destination, index = 0, variant = 'def
                     )}
 
                     {/* Explore Link */}
-                    <div className="flex items-center gap-2 pt-2 text-accent transition-all duration-500 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0">
+                    <div className={`flex items-center gap-2 pt-2 ${themeExplore[theme]} transition-all duration-500 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0`}>
                         <span className="text-caption uppercase tracking-[0.2em]">Explore</span>
                         <ArrowUpRight className="w-4 h-4" />
                     </div>
                 </div>
 
                 {/* Animated Line */}
-                <div className="absolute bottom-0 left-0 w-full h-1 bg-accent origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-smooth" />
+                <div className={`absolute bottom-0 left-0 w-full h-1 ${themeAccent[theme]} origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-smooth`} />
             </div>
         </Link>
     );

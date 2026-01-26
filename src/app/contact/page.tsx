@@ -70,12 +70,12 @@ export default function ContactPage() {
         breadcrumb="Contact"
       />
 
-      <section className="py-16 md:py-24 bg-cream">
+      <section className="py-10 md:py-16 lg:py-24 bg-cream">
         <div className="section-container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
             {/* Contact Form */}
             <div>
-              <h2 className="font-display text-display-lg text-primary mb-8">
+              <h2 className="font-display text-display-lg text-primary mb-6 md:mb-8">
                 Tell us about your dream trip
               </h2>
 
@@ -214,8 +214,8 @@ export default function ContactPage() {
 
             {/* Contact Info */}
             <div className="lg:pl-12">
-              <div className="bg-primary text-cream p-10 md:p-12 mb-8">
-                <h3 className="font-display text-2xl mb-8">
+              <div className="bg-primary text-cream p-6 md:p-10 lg:p-12 mb-6 md:mb-8">
+                <h3 className="font-display text-xl md:text-2xl mb-6 md:mb-8">
                   Prefer to speak directly?
                 </h3>
                 <div className="space-y-6">
@@ -254,8 +254,8 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="bg-cream-dark p-10 md:p-12">
-                <h3 className="font-display text-2xl text-primary mb-4">
+              <div className="bg-cream-dark p-6 md:p-10 lg:p-12">
+                <h3 className="font-display text-xl md:text-2xl text-primary mb-4">
                   What happens next?
                 </h3>
                 <ul className="space-y-4 text-primary/70">
