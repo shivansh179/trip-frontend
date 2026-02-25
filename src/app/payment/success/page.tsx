@@ -76,7 +76,7 @@ function PaymentSuccessContent() {
 
             const { txnid: urlTxnid, status, type } = getUrlParams();
 
-            console.log('Payment success page - URL params:', { urlTxnid, status });
+            console.log('Payment success page - URL params:', { urlTxnid, status, type });
 
             if (!urlTxnid) {
                 console.error('Missing transaction ID in URL');
@@ -87,6 +87,9 @@ function PaymentSuccessContent() {
 
             setTxnid(urlTxnid);
 
+            // Event bookings: use event status API. Infer from type=event OR reference prefix EVT-
+            const isEvent = type === 'event' || (urlTxnid && urlTxnid.toUpperCase().startsWith('EVT-'));
+
             // Set a timeout to prevent infinite loading
             const timeoutId = setTimeout(() => {
                 console.error('API call timeout');
@@ -95,14 +98,12 @@ function PaymentSuccessContent() {
             }, 10000); // 10 second timeout
 
             try {
-                console.log('Calling API for booking:', urlTxnid);
+                console.log('Calling API for booking:', urlTxnid, isEvent ? '(event)' : '(trip)');
 
                 // Retry logic for 405 errors (might be a caching issue)
                 let response;
                 let retries = 0;
                 const maxRetries = 2;
-
-                const isEvent = type === 'event';
                 while (retries <= maxRetries) {
                     try {
                         response = isEvent

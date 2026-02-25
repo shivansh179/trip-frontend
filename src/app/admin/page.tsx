@@ -43,6 +43,7 @@ export default function AdminDashboard() {
     const [testimonials, setTestimonials] = useState<Record<string, unknown>[]>([]);
     const [blogs, setBlogs] = useState<Record<string, unknown>[]>([]); // Journals
     const [bookings, setBookings] = useState<Record<string, unknown>[]>([]);
+    const [eventBookings, setEventBookings] = useState<Record<string, unknown>[]>([]);
     const [destinationDetails, setDestinationDetails] = useState<Record<number, Record<string, unknown>>>({});
     const [tripItineraries, setTripItineraries] = useState<Record<number, Record<string, unknown>[]>>({});
     const [expandedDestinations, setExpandedDestinations] = useState<Record<number, boolean>>({});
@@ -117,8 +118,12 @@ export default function AdminDashboard() {
                     setTestimonials(Array.isArray(testsRes.data) ? testsRes.data : []);
                     break;
                 case 'bookings':
-                    const bookingsRes = await api.admin.getBookings();
+                    const [bookingsRes, eventBookingsRes] = await Promise.all([
+                        api.admin.getBookings(),
+                        api.admin.getEventBookings(),
+                    ]);
                     setBookings(Array.isArray(bookingsRes.data) ? bookingsRes.data : []);
+                    setEventBookings(Array.isArray(eventBookingsRes.data) ? eventBookingsRes.data : []);
                     break;
                 case 'inquiries':
                     const inquiriesRes = await api.admin.getInquiries();
@@ -1972,12 +1977,10 @@ export default function AdminDashboard() {
                                     <select
                                         className="px-4 py-2 border border-primary/20 bg-cream text-sm"
                                         onChange={(e) => {
-                                            // Filter bookings by payment type
                                             const value = e.target.value;
                                             if (value === 'all') {
                                                 refreshCurrentTab();
                                             }
-                                            // Local filter for now
                                         }}
                                     >
                                         <option value="all">All Payments</option>
@@ -1987,6 +1990,66 @@ export default function AdminDashboard() {
                                     </select>
                                 </div>
                             </div>
+
+                            {/* Event Bookings */}
+                            {eventBookings.length > 0 && (
+                                <div>
+                                    <h3 className="text-lg font-medium text-primary mb-3">Event Bookings</h3>
+                                    <div className="space-y-4 mb-8">
+                                        {eventBookings.map((booking: any) => (
+                                            <div
+                                                key={`evt-${booking.id}`}
+                                                className="p-6 border border-primary/10 bg-cream-light"
+                                            >
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div>
+                                                        <h3 className="text-lg font-medium text-primary mb-1">
+                                                            {booking.bookingReference}
+                                                            <span className="ml-2 text-xs bg-secondary text-cream px-2 py-1 rounded">Event</span>
+                                                        </h3>
+                                                        <p className="text-sm text-text-secondary">
+                                                            {booking.customerName} • {booking.customerEmail}
+                                                        </p>
+                                                    </div>
+                                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded text-sm ${booking.paymentStatus === 'PAID' ? 'bg-success/20 text-success' :
+                                                        booking.paymentStatus === 'FAILED' ? 'bg-error/20 text-error' :
+                                                            'bg-warning/20 text-warning'
+                                                    }`}>
+                                                        {booking.paymentStatus === 'PAID' && <CheckCircle size={16} />}
+                                                        {booking.paymentStatus === 'FAILED' && <XCircle size={16} />}
+                                                        {booking.paymentStatus === 'PENDING' && <Clock size={16} />}
+                                                        {booking.paymentStatus}
+                                                    </div>
+                                                </div>
+                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                                    <div>
+                                                        <p className="text-caption text-text-secondary">Event</p>
+                                                        <p className="text-body-lg">{booking.event?.title || 'N/A'}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-caption text-text-secondary">Event Date</p>
+                                                        <p className="text-body-lg">{booking.eventDate ? new Date(booking.eventDate).toLocaleDateString() : '—'}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-caption text-text-secondary">Tickets</p>
+                                                        <p className="text-body-lg">{booking.numberOfTickets ?? '—'}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-caption text-text-secondary">Amount</p>
+                                                        <p className="text-body-lg font-medium">{formatPrice(booking.finalAmount || booking.totalAmount)}</p>
+                                                    </div>
+                                                </div>
+                                                {booking.paymentMethod && (
+                                                    <p className="text-caption text-text-secondary mt-2">Payment: {String(booking.paymentMethod).toUpperCase()}</p>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Trip Bookings */}
+                            <h3 className="text-lg font-medium text-primary mb-3">Trip Bookings</h3>
                             <div className="space-y-4">
                                 {bookings.map((booking: any) => (
                                     <div
@@ -2144,7 +2207,7 @@ export default function AdminDashboard() {
                                         </div>
                                     </div>
                                 ))}
-                                {bookings.length === 0 && (
+                                {bookings.length === 0 && eventBookings.length === 0 && (
                                     <div className="text-center py-12 text-text-secondary">
                                         <ShoppingBag className="w-16 h-16 mx-auto mb-4 opacity-30" />
                                         <p>No bookings yet</p>

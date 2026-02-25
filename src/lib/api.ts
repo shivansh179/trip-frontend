@@ -203,6 +203,7 @@ export const api = {
     // Bookings
     getBookings: () => apiClient.get('/admin/bookings'),
     getBooking: (id: number) => apiClient.get(`/admin/bookings/${id}`),
+    getEventBookings: () => apiClient.get('/admin/event-bookings'),
     markBookingAsReviewed: (reference: string) => apiClient.put(`/admin/bookings/${reference}/review`),
     updateBookingStatus: (id: number, status: string) => apiClient.put(`/admin/bookings/${id}/status`, { status }),
 
