@@ -162,7 +162,8 @@ function PaymentSuccessContent() {
                 } else if (err.response?.status === 404 || err.message?.includes('not found') || err.message?.includes('Not Found')) {
                     setNotFound(true);
                 } else if (err.response?.status === 500) {
-                    setError('Server error. Please try again later.');
+                    const serverMsg = err.response?.data?.error ?? err.response?.data?.message ?? err.response?.data?.details;
+                    setError(serverMsg ? `Server error: ${serverMsg}` : 'Server error. Please try again later.');
                 } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
                     setError('Request timed out. Please try refreshing the page.');
                 } else {
