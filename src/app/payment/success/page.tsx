@@ -18,14 +18,15 @@ function PaymentSuccessContent() {
 
     // Get URL params - handle both Next.js searchParams and window.location for external redirects
     const getUrlParams = () => {
-        if (typeof window === 'undefined') return { txnid: null, status: null };
+        if (typeof window === 'undefined') return { txnid: null, status: null, type: null };
 
         // Try Next.js searchParams first
         try {
             const txnid = searchParams?.get('txnid');
             const status = searchParams?.get('status');
+            const type = searchParams?.get('type');
             if (txnid) {
-                return { txnid, status };
+                return { txnid, status, type };
             }
         } catch (e) {
             console.log('searchParams not ready, using window.location');
@@ -36,11 +37,12 @@ function PaymentSuccessContent() {
             const params = new URLSearchParams(window.location.search);
             return {
                 txnid: params.get('txnid'),
-                status: params.get('status')
+                status: params.get('status'),
+                type: params.get('type')
             };
         }
 
-        return { txnid: null, status: null };
+        return { txnid: null, status: null, type: null };
     };
 
     useEffect(() => {
@@ -72,7 +74,7 @@ function PaymentSuccessContent() {
             // Small delay to ensure URL params are available after external redirect
             await new Promise(resolve => setTimeout(resolve, 100));
 
-            const { txnid: urlTxnid, status } = getUrlParams();
+            const { txnid: urlTxnid, status, type } = getUrlParams();
 
             console.log('Payment success page - URL params:', { urlTxnid, status });
 
@@ -100,9 +102,12 @@ function PaymentSuccessContent() {
                 let retries = 0;
                 const maxRetries = 2;
 
+                const isEvent = type === 'event';
                 while (retries <= maxRetries) {
                     try {
-                        response = await api.getPaymentStatus(urlTxnid);
+                        response = isEvent
+                            ? await api.getEventPaymentStatus(urlTxnid)
+                            : await api.getPaymentStatus(urlTxnid);
                         break; // Success, exit retry loop
                     } catch (retryErr: any) {
                         if (retryErr.response?.status === 405 && retries < maxRetries) {
@@ -281,13 +286,33 @@ function PaymentSuccessContent() {
                                     </div>
                                 </>
                             )}
-                            {booking.travelDate && (
+                            {booking.event && (
+                                <>
+                                    <div className="flex justify-between">
+                                        <span className="text-text-secondary">Event</span>
+                                        <span className="font-medium">{booking.event.title}</span>
+                                    </div>
+                                    {booking.eventDate && (
+                                        <div className="flex justify-between">
+                                            <span className="text-text-secondary">Event Date</span>
+                                            <span className="font-medium">{new Date(booking.eventDate).toLocaleDateString()}</span>
+                                        </div>
+                                    )}
+                                    {booking.numberOfTickets != null && (
+                                        <div className="flex justify-between">
+                                            <span className="text-text-secondary">Tickets</span>
+                                            <span className="font-medium">{booking.numberOfTickets}</span>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                            {booking.travelDate && !booking.event && (
                                 <div className="flex justify-between">
                                     <span className="text-text-secondary">Travel Date</span>
                                     <span className="font-medium">{new Date(booking.travelDate).toLocaleDateString()}</span>
                                 </div>
                             )}
-                            {booking.numberOfGuests && (
+                            {booking.numberOfGuests != null && !booking.event && (
                                 <div className="flex justify-between">
                                     <span className="text-text-secondary">Number of Guests</span>
                                     <span className="font-medium">{booking.numberOfGuests}</span>
@@ -311,10 +336,10 @@ function PaymentSuccessContent() {
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <button
-                        onClick={() => router.push('/trips')}
+                        onClick={() => router.push(booking?.event ? '/events' : '/trips')}
                         className="btn-primary"
                     >
-                        Browse More Trips
+                        {booking?.event ? 'Browse more events' : 'Browse More Trips'}
                     </button>
                     <button
                         onClick={() => router.push('/')}

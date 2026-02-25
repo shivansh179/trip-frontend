@@ -1,6 +1,6 @@
 // API Configuration
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
-// export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api';
+// export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 // API Client
 import axios from 'axios';
@@ -94,8 +94,21 @@ export const api = {
   updatePaymentStatus: (reference: string, paymentData: any) =>
     apiClient.post(`/bookings/${reference}/payment`, paymentData),
 
+  // Events
+  getEvents: () => apiClient.get('/events'),
+  getFeaturedEvents: () => apiClient.get('/events/featured'),
+  getEventById: (id: number) => apiClient.get(`/events/${id}`),
+  getEventBySlug: (slug: string) => apiClient.get(`/events/slug/${slug}`),
+  getEventsByCategory: (category: string) => apiClient.get(`/events/category/${category}`),
+  getEventsByCity: (city: string) => apiClient.get(`/events/city/${city}`),
+
+  // Event Bookings
+  createEventBooking: (data: any) => apiClient.post('/event-bookings', data),
+  getEventBooking: (reference: string) => apiClient.get(`/event-bookings/${reference}`),
+
   // Payment
   initiatePayment: (bookingReference: string) => apiClient.post(`/payment/initiate/${bookingReference}`),
+  initiateEventPayment: (bookingReference: string) => apiClient.post(`/payment/event/initiate/${bookingReference}`),
   getPaymentStatus: (bookingReference: string) => apiClient.get(`/payment/status/${bookingReference}`, {
     headers: {
       'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -106,6 +119,10 @@ export const api = {
     params: {
       _t: Date.now()
     }
+  }),
+  getEventPaymentStatus: (bookingReference: string) => apiClient.get(`/payment/event/status/${bookingReference}`, {
+    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0' },
+    params: { _t: Date.now() },
   }),
 
   // Seed Data

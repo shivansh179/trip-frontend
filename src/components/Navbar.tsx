@@ -19,6 +19,7 @@ export default function Navbar() {
     { name: 'International', href: '/destinations/international' },
     { name: 'Stays', href: '/hotels' },
     { name: 'Trips', href: '/trips' },
+    { name: 'Events', href: '/events' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ];

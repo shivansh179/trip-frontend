@@ -145,7 +145,7 @@ function DestinationsContent() {
                   </h3>
                   <p className="text-primary/60 text-body-lg">{featuredDestination.description}</p>
                 </div>
-                <div className="grid grid-cols-3 gap-6 align-center">
+                <div className="grid grid-cols-3 gap-6">
                   {[
                     { value: featuredDestination.tripCount || '0', label: 'Experiences' },
                     { value: '4.9', label: 'Avg Rating' },

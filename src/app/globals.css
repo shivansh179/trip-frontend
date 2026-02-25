@@ -241,6 +241,16 @@ h6 {
   }
 }
 
+/* Content below fixed navbar (use on page wrappers) */
+.pt-below-nav {
+  padding-top: 5rem; /* 80px - below typical fixed header */
+}
+@media (min-width: 768px) {
+  .pt-below-nav {
+    padding-top: 6rem;
+  }
+}
+
 /* Safe area for notched devices (e.g. iPhone) */
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0);

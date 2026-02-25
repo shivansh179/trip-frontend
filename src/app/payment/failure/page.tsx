@@ -1,11 +1,15 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { XCircle } from 'lucide-react';
 
-export default function PaymentFailurePage() {
+function PaymentFailureContent() {
     const router = useRouter();
-    
+    const searchParams = useSearchParams();
+    const type = searchParams?.get('type');
+    const isEvent = type === 'event';
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-cream">
             <div className="text-center max-w-md">
@@ -14,12 +18,12 @@ export default function PaymentFailurePage() {
                 <p className="text-text-secondary mb-6">
                     Your payment could not be processed. Please try again or contact support.
                 </p>
-                <div className="flex gap-4 justify-center">
+                <div className="flex flex-wrap gap-4 justify-center">
                     <button
-                        onClick={() => router.push('/trips')}
+                        onClick={() => router.push(isEvent ? '/events' : '/trips')}
                         className="btn-secondary"
                     >
-                        Back to Trips
+                        {isEvent ? 'Back to Events' : 'Back to Trips'}
                     </button>
                     <button
                         onClick={() => router.push('/')}
@@ -30,6 +34,20 @@ export default function PaymentFailurePage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function PaymentFailurePage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-cream">
+                <div className="text-center">
+                    <p className="text-primary/70">Loading...</p>
+                </div>
+            </div>
+        }>
+            <PaymentFailureContent />
+        </Suspense>
     );
 }
 

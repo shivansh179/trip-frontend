@@ -74,3 +74,88 @@ export interface Review {
     date: string;
     helpful?: number;
 }
+
+export interface EventTicketType {
+    id: number;
+    name: string;
+    description?: string;
+    price: number | string;
+    originalPrice?: number | string;
+    capacity?: number | null;
+    sortOrder: number;
+    isActive?: boolean;
+}
+
+export interface Event {
+    id: number;
+    title: string;
+    slug: string;
+    description?: string;
+    shortDescription?: string;
+    longDescription?: string;
+    imageUrl?: string;
+    venueName?: string;
+    venueAddress?: string;
+    city?: string;
+    eventDate: string;
+    eventTime?: string;
+    price: number | string;
+    originalPrice?: number | string;
+    category?: string;
+    capacity?: number;
+    isFeatured?: boolean;
+    status?: string;
+    /** JSON string array */
+    highlights?: string | string[];
+    /** JSON string */
+    termsAndConditions?: string;
+    /** JSON string */
+    faq?: string | { question: string; answer: string }[];
+    /** JSON string array */
+    galleryUrls?: string | string[];
+    ageRestriction?: string;
+    /** JSON string array */
+    includes?: string | string[];
+    importantInfo?: string;
+    ticketTypes?: EventTicketType[];
+    duration?: string;
+    languages?: string;
+    bannerHighlights?: string;
+    aboutTagline?: string;
+}
+
+export interface TicketLineItem {
+    ticketTypeId: number;
+    quantity: number;
+}
+
+export interface CreateEventBookingRequest {
+    eventId: number;
+    customerName: string;
+    customerEmail: string;
+    customerPhone?: string;
+    eventDate: string;
+    paymentMethod: string;
+    specialRequests?: string;
+    ticketLines?: TicketLineItem[];
+    numberOfTickets?: number;
+}
+
+export interface EventBooking {
+    id?: number;
+    bookingReference?: string;
+    event: Event;
+    customerName: string;
+    customerEmail: string;
+    customerPhone?: string;
+    numberOfTickets: number;
+    eventDate: string;
+    totalAmount: number | string;
+    finalAmount?: number | string;
+    status?: string;
+    paymentStatus?: string;
+    paymentMethod?: string;
+    cardSurchargeAmount?: number | string;
+    cardSurchargePercentage?: number;
+    bookingTickets?: { ticketTypeName: string; quantity: number; unitPrice: number | string; lineTotal: number | string }[];
+}
