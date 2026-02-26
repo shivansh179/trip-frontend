@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import {
     Calendar, MapPin, Clock, ChevronDown, ChevronUp,
-    AlertCircle, Share2, ThumbsUp, ChevronLeft
+    AlertCircle, Share2, ThumbsUp, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Event as EventType } from '@/types';
@@ -143,7 +143,23 @@ export default function EventDetailPage() {
     };
 
     const imageUrl = event?.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&q=80';
-    const allImages = galleryUrls.length > 0 ? [imageUrl, ...galleryUrls.filter(u => u !== imageUrl)] : [imageUrl];
+    const allImages = useMemo(() => {
+        const base = galleryUrls.length > 0 ? [imageUrl, ...galleryUrls.filter(u => u && u !== imageUrl)] : [imageUrl];
+        return base.filter(Boolean);
+    }, [imageUrl, galleryUrls]);
+    const hasMultipleImages = allImages.length > 1;
+
+    // Auto-advance carousel every 5s
+    useEffect(() => {
+        if (!hasMultipleImages) return;
+        const t = setInterval(() => {
+            setGalleryIndex(prev => (prev + 1) % allImages.length);
+        }, 5000);
+        return () => clearInterval(t);
+    }, [hasMultipleImages, allImages.length]);
+
+    const goPrev = () => setGalleryIndex(prev => (prev - 1 + allImages.length) % allImages.length);
+    const goNext = () => setGalleryIndex(prev => (prev + 1) % allImages.length);
 
     // Format date like BMS: "Wed 4 Mar 2026"
     const formatBmsDate = (dateStr: string) => {
@@ -212,35 +228,92 @@ export default function EventDetailPage() {
                 </div>
             </div>
 
-            {/* ─── Hero Image Carousel ─── */}
-            <div className="relative overflow-hidden section-container" style={{ maxWidth: '960px', margin: '0 auto' }}>
-                <div className="relative aspect-video bg-gray-200 overflow-hidden">
-                    <Image
-                        src={allImages[galleryIndex] || imageUrl}
-                        alt={event.title}
-                        fill
-                        className="object-cover"
-                        priority
-                    />
+            {/* ─── Hero Image Carousel (BMS-style sliding gallery) ─── */}
+            <div className="relative section-container" style={{ maxWidth: '960px', margin: '0 auto' }}>
+                <div className="relative aspect-video bg-gray-200 overflow-hidden rounded-xl">
+                    {/* Sliding track */}
+                    <div
+                        className="flex h-full transition-transform duration-300 ease-out"
+                        style={{ transform: `translateX(-${galleryIndex * 100}%)` }}
+                    >
+                        {allImages.map((url, i) => (
+                            <div key={i} className="relative w-full flex-shrink-0 h-full">
+                                <Image
+                                    src={url}
+                                    alt={`${event.title} – image ${i + 1}`}
+                                    fill
+                                    className="object-cover"
+                                    priority={i === 0}
+                                    sizes="(max-width: 960px) 100vw, 960px"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                    {/* Banner strip */}
                     {bannerStrip && (
                         <div className="absolute bottom-0 left-0 right-0 bg-black/75 text-white text-[11px] font-semibold py-2 px-4 text-center tracking-wide uppercase">
                             {bannerStrip}
                         </div>
                     )}
-                    {/* Gallery dots */}
-                    {allImages.length > 1 && (
-                        <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-1.5">
+                    {/* Prev / Next arrows */}
+                    {hasMultipleImages && (
+                        <>
+                            <button
+                                type="button"
+                                onClick={goPrev}
+                                className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors shadow-lg"
+                                aria-label="Previous image"
+                            >
+                                <ChevronLeft className="w-5 h-5" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={goNext}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors shadow-lg"
+                                aria-label="Next image"
+                            >
+                                <ChevronRight className="w-5 h-5" />
+                            </button>
+                        </>
+                    )}
+                    {/* Dots */}
+                    {hasMultipleImages && (
+                        <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-1.5">
                             {allImages.map((_, i) => (
                                 <button
                                     key={i}
                                     type="button"
                                     onClick={() => setGalleryIndex(i)}
-                                    className={`w-1.5 h-1.5 rounded-full transition-all ${galleryIndex === i ? 'bg-white w-4' : 'bg-white/50'}`}
+                                    className={`h-1.5 rounded-full transition-all ${galleryIndex === i ? 'bg-white w-6' : 'bg-white/50 w-1.5'}`}
+                                    aria-label={`Go to image ${i + 1}`}
                                 />
                             ))}
                         </div>
                     )}
                 </div>
+                {/* Thumbnail strip (BMS-style gallery) */}
+                {hasMultipleImages && allImages.length <= 8 && (
+                    <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+                        {allImages.map((url, i) => (
+                            <button
+                                key={i}
+                                type="button"
+                                onClick={() => setGalleryIndex(i)}
+                                className={`relative flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-colors ${galleryIndex === i ? 'border-red-500 ring-1 ring-red-500' : 'border-transparent hover:border-gray-300'}`}
+                            >
+                                <span className="absolute inset-0 block">
+                                    <Image
+                                        src={url}
+                                        alt=""
+                                        fill
+                                        className="object-cover"
+                                        sizes="64px"
+                                    />
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* ─── Category pill + Interested ─── */}
