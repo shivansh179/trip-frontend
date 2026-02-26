@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { XCircle } from 'lucide-react';
+import PaintSplashBg from '@/components/PaintSplashBg';
 
 function PaymentFailureContent() {
     const router = useRouter();
@@ -12,7 +13,7 @@ function PaymentFailureContent() {
     const isEvent = type === 'event' || (txnid && txnid.startsWith('EVT-'));
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-cream">
+        <PaintSplashBg className="min-h-screen flex items-center justify-center">
             <div className="text-center max-w-md">
                 <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
                 <h1 className="text-3xl font-light mb-4">Payment Failed</h1>
@@ -34,7 +35,7 @@ function PaymentFailureContent() {
                     </button>
                 </div>
             </div>
-        </div>
+        </PaintSplashBg>
     );
 }
 

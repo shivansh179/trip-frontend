@@ -7,6 +7,7 @@ import PageHero from '@/components/PageHero';
 import { api } from '@/lib/api';
 import { Event as EventType } from '@/types';
 import { formatPrice } from '@/lib/utils';
+import PaintSplashBg from '@/components/PaintSplashBg';
 
 export default function EventsPage() {
     const [events, setEvents] = useState<EventType[]>([]);
@@ -41,7 +42,7 @@ export default function EventsPage() {
                 backgroundImage="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&q=80"
             />
 
-            <section className="py-8 sm:py-10 md:py-16 bg-cream">
+            <PaintSplashBg className="py-8 sm:py-10 md:py-16">
                 <div className="section-container">
                     {loading && (
                         <div className="text-center py-16">
@@ -81,7 +82,7 @@ export default function EventsPage() {
                                 return (
                                     <article
                                         key={event.id}
-                                        className="bg-white border border-primary/10 overflow-hidden hover:shadow-lg transition-shadow"
+                                        className="bg-white/80 backdrop-blur-sm border border-primary/10 rounded-xl overflow-hidden hover:shadow-lg transition-shadow"
                                     >
                                         <Link href={`/events/${event.slug || event.id}`} className="block">
                                             <div className="aspect-[4/3] bg-primary/5 relative overflow-hidden">
@@ -97,7 +98,7 @@ export default function EventsPage() {
                                                     </div>
                                                 )}
                                                 {event.isFeatured && (
-                                                    <span className="absolute top-3 left-3 px-2 py-1 text-xs font-medium bg-primary text-cream">
+                                                    <span className="absolute top-3 left-3 px-2 py-1 text-xs font-medium bg-primary text-cream rounded">
                                                         Featured
                                                     </span>
                                                 )}
@@ -165,7 +166,7 @@ export default function EventsPage() {
                         </div>
                     )}
                 </div>
-            </section>
+            </PaintSplashBg>
         </>
     );
 }

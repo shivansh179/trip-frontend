@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ChevronLeft, MapPin, Minus, Plus } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Event as EventType, EventTicketType } from '@/types';
+import PaintSplashBg from '@/components/PaintSplashBg';
 
 function formatPrice(amount: number): string {
     return '₹' + amount.toLocaleString('en-IN');
@@ -96,9 +97,9 @@ export default function EventTicketsPage() {
     const dateStr = typeof event.eventDate === 'string' ? event.eventDate : '';
 
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col pt-below-nav">
+        <PaintSplashBg className="min-h-screen flex flex-col pt-below-nav">
             {/* ─── Top Header (sticks below main navbar) ─── */}
-            <div className="bg-white border-b border-gray-200 sticky top-20 md:top-24 z-30">
+            <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-20 md:top-24 z-30">
                 {/* Title bar */}
                 <div className="flex items-center px-4 sm:px-6 py-3 gap-3">
                     <button
@@ -131,7 +132,7 @@ export default function EventTicketsPage() {
 
             {/* ─── Venue / Date Banner ─── */}
             {(event.venueName || dateStr) && (
-                <div className="bg-gray-200 px-4 sm:px-6 py-2.5 flex items-center gap-2">
+                <div className="bg-white/50 backdrop-blur-sm px-4 sm:px-6 py-2.5 flex items-center gap-2 border-b border-gray-100">
                     <MapPin className="w-3.5 h-3.5 text-gray-500 shrink-0" />
                     <p className="text-[13px] text-gray-700 font-medium">
                         {event.venueName}
@@ -164,7 +165,7 @@ export default function EventTicketsPage() {
                                 return (
                                     <div
                                         key={t.id}
-                                        className="bg-white rounded-lg shadow-sm border border-gray-100 p-4"
+                                        className="bg-white/85 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100 p-4"
                                     >
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="flex-1 min-w-0">
@@ -237,7 +238,7 @@ export default function EventTicketsPage() {
 
             {/* ─── Bottom Sticky Bar ─── */}
             {totalQty > 0 && (
-                <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] safe-area-bottom">
+                <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] safe-area-bottom">
                     <div className="flex items-center justify-between px-4 sm:px-6 py-3 md:py-4">
                         <div>
                             <p className="text-[11px] text-gray-500 uppercase tracking-wide font-medium">Subtotal</p>
@@ -256,6 +257,6 @@ export default function EventTicketsPage() {
                     </div>
                 </div>
             )}
-        </div>
+        </PaintSplashBg>
     );
 }

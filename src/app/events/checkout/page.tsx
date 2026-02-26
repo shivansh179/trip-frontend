@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { Event as EventType, TicketLineItem } from '@/types';
 import { formatPrice } from '@/lib/utils';
 import TrustBadges from '@/components/TrustBadges';
+import PaintSplashBg from '@/components/PaintSplashBg';
 
 const PAYMENT_OPTIONS = [
     { id: 'upi', label: 'UPI', note: 'No extra charges' },
@@ -158,9 +159,9 @@ function EventCheckoutContent() {
     const dateStr = typeof event.eventDate === 'string' ? event.eventDate : '';
 
     return (
-        <div className="min-h-screen bg-gray-50 pt-below-nav">
+        <PaintSplashBg className="min-h-screen pt-below-nav">
             {/* ─── BMS-style step indicator header ─── */}
-            <div className="bg-white border-b border-gray-200 sticky top-20 md:top-24 z-30 section-container">
+            <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-20 md:top-24 z-30 section-container">
                 <div className="flex items-center py-3 gap-3 max-w-5xl mx-auto">
                     <button
                         type="button"
@@ -194,7 +195,7 @@ function EventCheckoutContent() {
                     <div className="grid lg:grid-cols-3 gap-6 md:gap-8 lg:gap-12">
                         <div className="lg:col-span-2">
                             <form onSubmit={handleSubmit} className="space-y-8">
-                                <section className="bg-cream-light p-5 md:p-6 border border-primary/10">
+                                <section className="bg-white/60 backdrop-blur-sm p-5 md:p-6 border border-primary/10 rounded-xl">
                                     <h2 className="text-xl md:text-2xl font-light mb-4">Event summary</h2>
                                     <div className="space-y-3">
                                         <div className="flex items-start gap-3">
@@ -367,7 +368,7 @@ function EventCheckoutContent() {
                         </div>
 
                         <div className="lg:sticky lg:top-[7.5rem] h-fit order-first lg:order-0">
-                            <div className="bg-cream-light p-6 md:p-8 border border-primary/10">
+                            <div className="bg-white/60 backdrop-blur-sm p-6 md:p-8 border border-primary/10 rounded-xl">
                                 <h2 className="text-xl md:text-2xl font-light mb-4 md:mb-6">Order summary</h2>
                                 <div className="space-y-4 mb-6">
                                     {hasTicketLines && event.ticketTypes ? (
@@ -418,7 +419,7 @@ function EventCheckoutContent() {
                     </div>
                 </div>
             </div>
-        </div>
+        </PaintSplashBg>
     );
 }
 

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Event as EventType } from '@/types';
+import PaintSplashBg from '@/components/PaintSplashBg';
 
 function parseJsonArray<T>(val: string | string[] | T[] | undefined): T[] {
     if (val == null) return [];
@@ -197,9 +198,9 @@ export default function EventDetailPage() {
     const bannerStrip = event.bannerHighlights || (highlights.length > 0 ? highlights.join(' | ') : '');
 
     return (
-        <div className="min-h-screen bg-white pt-below-nav">
+        <PaintSplashBg className="min-h-screen pt-below-nav">
             {/* ─── Back navigation ─── */}
-            <div className="bg-white border-b border-gray-100 section-container py-3 flex items-center gap-2">
+            <div className="bg-white/70 backdrop-blur-sm border-b border-gray-100 section-container py-3 flex items-center gap-2">
                 <button
                     type="button"
                     onClick={() => router.back()}
@@ -573,6 +574,6 @@ export default function EventDetailPage() {
 
             {/* Add bottom padding on mobile for the fixed bar */}
             <div className="lg:hidden h-20" />
-        </div>
+        </PaintSplashBg>
     );
 }

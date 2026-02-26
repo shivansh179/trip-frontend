@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { formatPrice } from '@/lib/utils';
+import PaintSplashBg from '@/components/PaintSplashBg';
 
 function PaymentSuccessContent() {
     const searchParams = useSearchParams();
@@ -180,18 +181,18 @@ function PaymentSuccessContent() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-cream">
+            <PaintSplashBg className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
                     <Loader2 className="w-16 h-16 animate-spin text-secondary mx-auto mb-4" />
                     <p className="text-text-secondary">Verifying payment...</p>
                 </div>
-            </div>
+            </PaintSplashBg>
         );
     }
 
     if (notFound) {
         return (
-            <div className="min-h-screen flex items-center justify-center  bg-cream">
+            <PaintSplashBg className="min-h-screen flex items-center justify-center">
                 <div className="text-center max-w-md">
                     <XCircle className="w-16 h-16 text-error mx-auto mb-4" />
                     <h1 className="text-3xl font-light mb-4">Booking Not Found</h1>
@@ -213,13 +214,13 @@ function PaymentSuccessContent() {
                         </button>
                     </div>
                 </div>
-            </div>
+            </PaintSplashBg>
         );
     }
 
     if (error) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-cream">
+            <PaintSplashBg className="min-h-screen flex items-center justify-center">
                 <div className="text-center max-w-md">
                     <XCircle className="w-16 h-16 text-error mx-auto mb-4" />
                     <h1 className="text-3xl font-light mb-4">Payment Verification Failed</h1>
@@ -234,7 +235,6 @@ function PaymentSuccessContent() {
                             onClick={() => {
                                 setLoading(true);
                                 setError(null);
-                                // Force reload the page to retry
                                 window.location.reload();
                             }}
                             className="btn-primary"
@@ -255,21 +255,21 @@ function PaymentSuccessContent() {
                         </button>
                     </div>
                 </div>
-            </div>
+            </PaintSplashBg>
         );
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center mt-20 bg-cream py-16">
+        <PaintSplashBg className="min-h-screen flex items-center justify-center mt-20 py-16">
             <div className="text-center max-w-2xl mx-auto px-4">
-                <CheckCircle className="w-20 h-20 text-success  text-green-600 mx-auto mb-6" />
+                <CheckCircle className="w-20 h-20 text-success text-green-600 mx-auto mb-6" />
                 <h1 className="text-display-xl mb-4">Payment Successful!</h1>
                 <p className="text-body-lg text-text-secondary mb-8">
                     Your booking has been confirmed. You will receive a confirmation email shortly.
                 </p>
 
                 {booking && (
-                    <div className="bg-cream-light p-8 border border-primary/10 mb-8 text-left">
+                    <div className="bg-white/60 backdrop-blur-sm p-8 border border-primary/10 rounded-xl mb-8 text-left">
                         <h2 className="text-2xl font-light mb-6">Booking Details</h2>
                         <div className="space-y-4">
                             <div className="flex justify-between">
@@ -351,7 +351,7 @@ function PaymentSuccessContent() {
                     </button>
                 </div>
             </div>
-        </div>
+        </PaintSplashBg>
     );
 }
 
