@@ -6,25 +6,36 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
-        port: '',
         pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
-        port: '',
         pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'www.captureatrip.com',
-        port: '',
         pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'd1zvcmhypeawxj.cloudfront.net',
-        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'assets-in.bmscdn.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.bmscdn.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'in.bmscdn.com',
         pathname: '/**',
       },
     ],
