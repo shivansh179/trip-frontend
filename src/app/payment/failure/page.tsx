@@ -8,7 +8,8 @@ function PaymentFailureContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const type = searchParams?.get('type');
-    const isEvent = type === 'event';
+    const txnid = searchParams?.get('txnid');
+    const isEvent = type === 'event' || (txnid && txnid.startsWith('EVT-'));
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-cream">

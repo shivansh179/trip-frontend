@@ -50,6 +50,18 @@ export default function EventDetailPage() {
     const [error, setError] = useState<string | null>(null);
     const [faqOpen, setFaqOpen] = useState<number | null>(null);
     const [galleryIndex, setGalleryIndex] = useState(0);
+    const [interested, setInterested] = useState(false);
+    const [shareFeedback, setShareFeedback] = useState<string | null>(null);
+
+    // Persist interested in localStorage by event id
+    useEffect(() => {
+        if (typeof window === 'undefined' || !event?.id) return;
+        try {
+            const key = `event-interested-${event.id}`;
+            const stored = localStorage.getItem(key);
+            if (stored === '1') setInterested(true);
+        } catch { /* ignore */ }
+    }, [event?.id]);
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -89,6 +101,45 @@ export default function EventDetailPage() {
         } else {
             router.push(`/events/checkout?eventId=${event.id}&date=${encodeURIComponent(event.eventDate)}`);
         }
+    };
+
+    const handleShare = async () => {
+        if (!event) return;
+        const url = typeof window !== 'undefined' ? `${window.location.origin}/events/${event.slug || event.id}` : '';
+        const title = event.title;
+        const text = event.shortDescription || `${event.title} on YlooTrips`;
+
+        try {
+            if (typeof navigator !== 'undefined' && navigator.share) {
+                await navigator.share({ title, text, url });
+                setShareFeedback('Shared!');
+            } else {
+                await navigator.clipboard?.writeText(url);
+                setShareFeedback('Link copied!');
+            }
+        } catch (err) {
+            if ((err as Error).name !== 'AbortError') {
+                try {
+                    await navigator.clipboard?.writeText(url);
+                    setShareFeedback('Link copied!');
+                } catch {
+                    setShareFeedback('Could not share');
+                }
+            }
+        }
+        setTimeout(() => setShareFeedback(null), 2500);
+    };
+
+    const handleInterested = () => {
+        setInterested(prev => {
+            const next = !prev;
+            if (event?.id && typeof window !== 'undefined') {
+                try {
+                    localStorage.setItem(`event-interested-${event.id}`, next ? '1' : '0');
+                } catch { /* ignore */ }
+            }
+            return next;
+        });
     };
 
     const imageUrl = event?.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&q=80';
@@ -146,13 +197,19 @@ export default function EventDetailPage() {
             {/* ─── Event Title ─── */}
             <div className="section-container pt-4 pb-2 flex items-start justify-between gap-3 max-w-5xl mx-auto">
                 <h1 className="text-[22px] font-bold text-gray-900 leading-tight flex-1">{event.title}</h1>
-                <button
-                    type="button"
-                    className="mt-1 w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors shrink-0"
-                    aria-label="Share"
-                >
-                    <Share2 className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                    {shareFeedback && (
+                        <span className="text-xs text-green-600 font-medium animate-in fade-in duration-200">{shareFeedback}</span>
+                    )}
+                    <button
+                        type="button"
+                        onClick={handleShare}
+                        className="mt-1 w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors"
+                        aria-label="Share"
+                    >
+                        <Share2 className="w-4 h-4" />
+                    </button>
+                </div>
             </div>
 
             {/* ─── Hero Image Carousel ─── */}
@@ -197,10 +254,12 @@ export default function EventDetailPage() {
                 </div>
                 <button
                     type="button"
-                    className="flex items-center gap-1.5 text-[13px] text-blue-600 font-medium hover:text-blue-700 transition-colors"
+                    onClick={handleInterested}
+                    className={`flex items-center gap-1.5 text-[13px] font-medium transition-colors ${interested ? 'text-blue-600' : 'text-blue-600 hover:text-blue-700'}`}
+                    aria-pressed={interested}
                 >
-                    <ThumbsUp className="w-3.5 h-3.5" />
-                    <span>Interested</span>
+                    <ThumbsUp className={`w-3.5 h-3.5 ${interested ? 'fill-current' : ''}`} />
+                    <span>{interested ? "You're interested" : 'Interested'}</span>
                 </button>
             </div>
 
