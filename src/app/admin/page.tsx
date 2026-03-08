@@ -9,6 +9,7 @@ import {
     Save, RefreshCw, Plus, Trash2, Eye, ChevronDown, ChevronUp,
     ShoppingBag, CheckCircle, XCircle, Clock, Mail, User, Calendar, Phone,
     Megaphone
+    , Upload, Copy, Link2
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import ImagePreview from '@/components/ImagePreview';
@@ -53,6 +54,10 @@ export default function AdminDashboard() {
     const [expandedBlogs, setExpandedBlogs] = useState<Record<number, boolean>>({});
     const [inquiries, setInquiries] = useState<Record<string, unknown>[]>([]);
     const [ads, setAds] = useState<Record<string, unknown>[]>([]);
+    const [uploadingImage, setUploadingImage] = useState(false);
+    const [uploadFile, setUploadFile] = useState<File | null>(null);
+    const [uploadFolder, setUploadFolder] = useState('admin');
+    const [uploadedImageUrl, setUploadedImageUrl] = useState('');
     const [message, setMessage] = useState({ type: '', text: '' });
 
     useEffect(() => {
@@ -549,6 +554,23 @@ export default function AdminDashboard() {
         setSaving(false);
     };
 
+    const handleAdminImageUpload = async () => {
+        if (!uploadFile) {
+            setMessage({ type: 'error', text: 'Please choose an image file first.' });
+            return;
+        }
+        setUploadingImage(true);
+        try {
+            const res = await api.admin.uploadImage(uploadFile, uploadFolder || 'admin');
+            const url = res.data?.url || '';
+            setUploadedImageUrl(url);
+            setMessage({ type: 'success', text: 'Image uploaded successfully. Copy URL and paste in any image field.' });
+        } catch (err: any) {
+            setMessage({ type: 'error', text: err?.response?.data?.error || 'Image upload failed' });
+        }
+        setUploadingImage(false);
+    };
+
     const parseListField = (value: unknown): string => {
         if (Array.isArray(value)) return value.join('\n');
         if (typeof value !== 'string') return '';
@@ -728,6 +750,57 @@ export default function AdminDashboard() {
                         {message.text}
                     </div>
                 )}
+
+                {/* Global Image Upload Tool */}
+                <div className="mb-6 p-4 border border-primary/10 bg-cream-light">
+                    <div className="flex items-center gap-2 mb-3">
+                        <Upload className="w-4 h-4 text-secondary" />
+                        <h3 className="text-sm font-medium text-primary">Upload Image to Cloud Bucket</h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                            className="px-3 py-2 border border-primary/20 bg-cream"
+                        />
+                        <input
+                            type="text"
+                            value={uploadFolder}
+                            onChange={(e) => setUploadFolder(e.target.value)}
+                            placeholder="Folder (e.g. trips, events, testimonials)"
+                            className="px-3 py-2 border border-primary/20 bg-cream"
+                        />
+                        <button
+                            onClick={handleAdminImageUpload}
+                            disabled={uploadingImage}
+                            className="px-4 py-2 bg-secondary text-cream hover:bg-secondary-dark disabled:opacity-50"
+                        >
+                            {uploadingImage ? 'Uploading...' : 'Upload Image'}
+                        </button>
+                        <button
+                            onClick={async () => {
+                                if (!uploadedImageUrl) return;
+                                await navigator.clipboard.writeText(uploadedImageUrl);
+                                setMessage({ type: 'success', text: 'Image URL copied to clipboard.' });
+                            }}
+                            disabled={!uploadedImageUrl}
+                            className="px-4 py-2 bg-primary text-cream hover:bg-primary-light disabled:opacity-50 flex items-center justify-center gap-2"
+                        >
+                            <Copy className="w-4 h-4" />
+                            <span>Copy URL</span>
+                        </button>
+                    </div>
+                    {uploadedImageUrl && (
+                        <div className="mt-3 p-3 border border-primary/10 bg-cream">
+                            <div className="flex items-center gap-2 text-xs text-primary/70 mb-2">
+                                <Link2 className="w-3 h-3" />
+                                Uploaded URL
+                            </div>
+                            <div className="text-xs break-all text-primary">{uploadedImageUrl}</div>
+                        </div>
+                    )}
+                </div>
 
                 {/* Content */}
                 <div className="bg-cream p-6 shadow-sm">

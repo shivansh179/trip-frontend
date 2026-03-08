@@ -206,6 +206,16 @@ export const api = {
     createEvent: (data: Record<string, unknown>) => apiClient.post('/admin/events', data),
     deleteEvent: (id: number) => apiClient.delete(`/admin/events/${id}`),
 
+    // Media upload
+    uploadImage: (file: File, folder = 'admin') => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', folder);
+      return apiClient.post('/admin/uploads/image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    },
+
     // Bookings
     getBookings: () => apiClient.get('/admin/bookings'),
     getBooking: (id: number) => apiClient.get(`/admin/bookings/${id}`),
