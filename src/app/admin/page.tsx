@@ -42,6 +42,7 @@ export default function AdminDashboard() {
     const [hotels, setHotels] = useState<Record<string, unknown>[]>([]); // Stays
     const [testimonials, setTestimonials] = useState<Record<string, unknown>[]>([]);
     const [blogs, setBlogs] = useState<Record<string, unknown>[]>([]); // Journals
+    const [events, setEvents] = useState<Record<string, unknown>[]>([]);
     const [bookings, setBookings] = useState<Record<string, unknown>[]>([]);
     const [eventBookings, setEventBookings] = useState<Record<string, unknown>[]>([]);
     const [destinationDetails, setDestinationDetails] = useState<Record<number, Record<string, unknown>>>({});
@@ -104,6 +105,10 @@ export default function AdminDashboard() {
                 case 'journals':
                     const blogsRes = await api.admin.getBlogs();
                     setBlogs(Array.isArray(blogsRes.data) ? blogsRes.data : []);
+                    break;
+                case 'events':
+                    const eventsRes = await api.admin.getEvents();
+                    setEvents(Array.isArray(eventsRes.data) ? eventsRes.data : []);
                     break;
                 case 'pages':
                     const pagesRes = await api.admin.getPages();
@@ -246,6 +251,7 @@ export default function AdminDashboard() {
         setSaving(true);
         try {
             await api.admin.updateTrip(trip.id as number, trip);
+            await fetchTabData('experiences', true);
             setMessage({ type: 'success', text: 'Trip updated!' });
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
@@ -325,6 +331,7 @@ export default function AdminDashboard() {
         setSaving(true);
         try {
             await api.admin.updateTestimonial(test.id as number, test);
+            await fetchTabData('testimonials', true);
             setMessage({ type: 'success', text: 'Testimonial updated!' });
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch {
@@ -542,11 +549,104 @@ export default function AdminDashboard() {
         setSaving(false);
     };
 
+    const parseListField = (value: unknown): string => {
+        if (Array.isArray(value)) return value.join('\n');
+        if (typeof value !== 'string') return '';
+        const trimmed = value.trim();
+        if (!trimmed) return '';
+        try {
+            const parsed = JSON.parse(trimmed);
+            if (Array.isArray(parsed)) return parsed.join('\n');
+            return trimmed;
+        } catch {
+            return trimmed;
+        }
+    };
+
+    const toJsonListString = (value: string): string => {
+        const items = value
+            .split('\n')
+            .map((x) => x.trim())
+            .filter(Boolean);
+        return JSON.stringify(items);
+    };
+
+    const handleSaveEvent = async (event: Record<string, unknown>) => {
+        setSaving(true);
+        try {
+            await api.admin.updateEvent(event.id as number, event);
+            setMessage({ type: 'success', text: 'Event updated!' });
+            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+        } catch {
+            setMessage({ type: 'error', text: 'Failed to update event' });
+        }
+        setSaving(false);
+    };
+
+    const handleCreateEvent = async () => {
+        setSaving(true);
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            const newEvent = {
+                title: 'New Event',
+                slug: `new-event-${Date.now()}`,
+                description: '',
+                shortDescription: '',
+                longDescription: '',
+                imageUrl: '',
+                venueName: '',
+                venueAddress: '',
+                city: '',
+                eventDate: today,
+                eventTime: '18:00',
+                price: 0,
+                originalPrice: 0,
+                category: '',
+                capacity: 100,
+                isFeatured: false,
+                status: 'ACTIVE',
+                highlights: '[]',
+                faq: '[]',
+                galleryUrls: '[]',
+                includes: '[]',
+                ageRestriction: '',
+                importantInfo: '',
+                duration: '',
+                languages: '',
+                bannerHighlights: '',
+                aboutTagline: '',
+                ticketTypes: [],
+            };
+            await api.admin.createEvent(newEvent);
+            setMessage({ type: 'success', text: 'Event created!' });
+            refreshCurrentTab();
+            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+        } catch {
+            setMessage({ type: 'error', text: 'Failed to create event' });
+        }
+        setSaving(false);
+    };
+
+    const handleDeleteEvent = async (id: number) => {
+        if (!confirm('Are you sure you want to delete this event?')) return;
+        setSaving(true);
+        try {
+            await api.admin.deleteEvent(id);
+            setMessage({ type: 'success', text: 'Event deleted!' });
+            refreshCurrentTab();
+            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+        } catch {
+            setMessage({ type: 'error', text: 'Failed to delete event' });
+        }
+        setSaving(false);
+    };
+
     const sidebarItems = [
         { id: 'destinations', icon: MapPin, label: 'Destinations' },
         { id: 'experiences', icon: Compass, label: 'Experiences' },
         { id: 'stays', icon: Building, label: 'Stays' },
         { id: 'journals', icon: BookOpen, label: 'Journals' },
+        { id: 'events', icon: Calendar, label: 'Events' },
         { id: 'pages', icon: FileText, label: 'Page Content' },
         { id: 'stats', icon: LayoutDashboard, label: 'Statistics' },
         { id: 'testimonials', icon: MessageSquare, label: 'Testimonials' },
@@ -1860,6 +1960,215 @@ export default function AdminDashboard() {
                         </div>
                     )}
 
+                    {/* Events Tab */}
+                    {activeTab === 'events' && (
+                        <div className="space-y-6">
+                            <div className="flex justify-between items-center mb-4">
+                                <div>
+                                    <h2 className="text-xl font-medium text-primary">Events</h2>
+                                    <p className="text-sm text-primary/50 mt-1">Create and manage event page content and ticket types</p>
+                                </div>
+                                <button
+                                    onClick={handleCreateEvent}
+                                    disabled={saving}
+                                    className="flex items-center gap-2 px-4 py-2 bg-secondary text-cream hover:bg-secondary-dark transition-colors disabled:opacity-50"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    <span>Create New Event</span>
+                                </button>
+                            </div>
+                            {events.map((event) => (
+                                <div key={event.id as number} className="p-6 border border-primary/10 bg-cream-light space-y-4">
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                        <div className="lg:col-span-1">
+                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Image Preview</label>
+                                            <ImagePreview imageUrl={event.imageUrl as string || ''} className="w-full h-48 rounded" />
+                                        </div>
+                                        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="md:col-span-2">
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Title</label>
+                                                <input type="text" value={event.title as string || ''} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, title: e.target.value } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Slug</label>
+                                                <input type="text" value={event.slug as string || ''} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, slug: e.target.value } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Category</label>
+                                                <input type="text" value={event.category as string || ''} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, category: e.target.value } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Event Date</label>
+                                                <input type="date" value={(event.eventDate as string || '').split('T')[0]} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, eventDate: e.target.value } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Event Time</label>
+                                                <input type="text" value={event.eventTime as string || ''} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, eventTime: e.target.value } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Price</label>
+                                                <input type="number" value={event.price as number || 0} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, price: Number(e.target.value) } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Original Price</label>
+                                                <input type="number" value={event.originalPrice as number || 0} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, originalPrice: Number(e.target.value) } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Capacity</label>
+                                                <input type="number" value={event.capacity as number || 0} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, capacity: Number(e.target.value) } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Status</label>
+                                                <select value={event.status as string || 'ACTIVE'} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, status: e.target.value } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary">
+                                                    <option value="ACTIVE">ACTIVE</option>
+                                                    <option value="SOLD_OUT">SOLD_OUT</option>
+                                                    <option value="CANCELLED">CANCELLED</option>
+                                                    <option value="COMPLETED">COMPLETED</option>
+                                                </select>
+                                            </div>
+                                            <div className="md:col-span-2">
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Image URL</label>
+                                                <input type="text" value={event.imageUrl as string || ''} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, imageUrl: e.target.value } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Venue Name</label>
+                                                <input type="text" value={event.venueName as string || ''} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, venueName: e.target.value } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">City</label>
+                                                <input type="text" value={event.city as string || ''} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, city: e.target.value } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                            </div>
+                                            <div className="md:col-span-2">
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Venue Address</label>
+                                                <input type="text" value={event.venueAddress as string || ''} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, venueAddress: e.target.value } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Short Description</label>
+                                        <textarea value={event.shortDescription as string || ''} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, shortDescription: e.target.value } : ev))} rows={2} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Description</label>
+                                        <textarea value={event.description as string || ''} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, description: e.target.value } : ev))} rows={3} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Long Description</label>
+                                        <textarea value={event.longDescription as string || ''} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, longDescription: e.target.value } : ev))} rows={5} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Highlights (one per line)</label>
+                                            <textarea
+                                                value={parseListField(event.highlights)}
+                                                onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, highlights: toJsonListString(e.target.value) } : ev))}
+                                                rows={4}
+                                                className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Includes (one per line)</label>
+                                            <textarea
+                                                value={parseListField(event.includes)}
+                                                onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, includes: toJsonListString(e.target.value) } : ev))}
+                                                rows={4}
+                                                className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Gallery URLs (one per line)</label>
+                                            <textarea
+                                                value={parseListField(event.galleryUrls)}
+                                                onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, galleryUrls: toJsonListString(e.target.value) } : ev))}
+                                                rows={4}
+                                                className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">FAQ (JSON)</label>
+                                            <textarea
+                                                value={event.faq as string || '[]'}
+                                                onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, faq: e.target.value } : ev))}
+                                                rows={4}
+                                                className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Ticket Types</label>
+                                        <div className="space-y-3">
+                                            {(Array.isArray(event.ticketTypes) ? event.ticketTypes : []).map((tt: any, idx: number) => (
+                                                <div key={tt.id || idx} className="grid grid-cols-1 md:grid-cols-6 gap-2 p-3 border border-primary/10 bg-cream">
+                                                    <input type="text" placeholder="Name" value={tt.name || ''} onChange={(e) => setEvents(events.map(ev => {
+                                                        if (ev.id !== event.id) return ev;
+                                                        const arr = Array.isArray(ev.ticketTypes) ? [...ev.ticketTypes] : [];
+                                                        arr[idx] = { ...arr[idx], name: e.target.value };
+                                                        return { ...ev, ticketTypes: arr };
+                                                    }))} className="px-3 py-2 border border-primary/20 bg-white" />
+                                                    <input type="number" placeholder="Price" value={tt.price || 0} onChange={(e) => setEvents(events.map(ev => {
+                                                        if (ev.id !== event.id) return ev;
+                                                        const arr = Array.isArray(ev.ticketTypes) ? [...ev.ticketTypes] : [];
+                                                        arr[idx] = { ...arr[idx], price: Number(e.target.value) };
+                                                        return { ...ev, ticketTypes: arr };
+                                                    }))} className="px-3 py-2 border border-primary/20 bg-white" />
+                                                    <input type="number" placeholder="Orig." value={tt.originalPrice || 0} onChange={(e) => setEvents(events.map(ev => {
+                                                        if (ev.id !== event.id) return ev;
+                                                        const arr = Array.isArray(ev.ticketTypes) ? [...ev.ticketTypes] : [];
+                                                        arr[idx] = { ...arr[idx], originalPrice: Number(e.target.value) };
+                                                        return { ...ev, ticketTypes: arr };
+                                                    }))} className="px-3 py-2 border border-primary/20 bg-white" />
+                                                    <input type="number" placeholder="Capacity" value={tt.capacity ?? 0} onChange={(e) => setEvents(events.map(ev => {
+                                                        if (ev.id !== event.id) return ev;
+                                                        const arr = Array.isArray(ev.ticketTypes) ? [...ev.ticketTypes] : [];
+                                                        arr[idx] = { ...arr[idx], capacity: Number(e.target.value) };
+                                                        return { ...ev, ticketTypes: arr };
+                                                    }))} className="px-3 py-2 border border-primary/20 bg-white" />
+                                                    <input type="number" placeholder="Sort" value={tt.sortOrder ?? idx} onChange={(e) => setEvents(events.map(ev => {
+                                                        if (ev.id !== event.id) return ev;
+                                                        const arr = Array.isArray(ev.ticketTypes) ? [...ev.ticketTypes] : [];
+                                                        arr[idx] = { ...arr[idx], sortOrder: Number(e.target.value) };
+                                                        return { ...ev, ticketTypes: arr };
+                                                    }))} className="px-3 py-2 border border-primary/20 bg-white" />
+                                                    <button onClick={() => setEvents(events.map(ev => {
+                                                        if (ev.id !== event.id) return ev;
+                                                        const arr = (Array.isArray(ev.ticketTypes) ? [...ev.ticketTypes] : []).filter((_: any, i: number) => i !== idx);
+                                                        return { ...ev, ticketTypes: arr };
+                                                    }))} className="px-3 py-2 bg-red-500 text-white hover:bg-red-600">Remove</button>
+                                                </div>
+                                            ))}
+                                            <button
+                                                onClick={() => setEvents(events.map(ev => {
+                                                    if (ev.id !== event.id) return ev;
+                                                    const arr = Array.isArray(ev.ticketTypes) ? [...ev.ticketTypes] : [];
+                                                    arr.push({ name: '', description: '', price: 0, originalPrice: 0, capacity: 0, sortOrder: arr.length, isActive: true });
+                                                    return { ...ev, ticketTypes: arr };
+                                                }))}
+                                                className="flex items-center gap-2 px-4 py-2 bg-secondary text-cream hover:bg-secondary-dark transition-colors"
+                                            >
+                                                <Plus className="w-4 h-4" />
+                                                <span>Add Ticket Type</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-2">
+                                        <button onClick={() => handleSaveEvent(event)} disabled={saving} className="flex items-center gap-2 px-6 py-2 bg-primary text-cream hover:bg-primary-light transition-colors disabled:opacity-50">
+                                            <Save className="w-4 h-4" />
+                                            <span>Save</span>
+                                        </button>
+                                        <button onClick={() => handleDeleteEvent(event.id as number)} disabled={saving} className="flex items-center gap-2 px-6 py-2 bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50">
+                                            <Trash2 className="w-4 h-4" />
+                                            <span>Delete</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                     {/* Testimonials Tab */}
                     {activeTab === 'testimonials' && (
                         <div className="space-y-6">
@@ -2555,4 +2864,3 @@ export default function AdminDashboard() {
         </div>
     );
 }
-

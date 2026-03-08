@@ -6,6 +6,7 @@ interface Testimonial {
     id: number;
     userName: string;
     userTitle?: string;
+    userImage?: string;
     userAvatar?: string;
     comment: string;
     isFeatured?: boolean;
@@ -62,15 +63,24 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
                                 {testimonial.comment}
                             </p>
                             
-                            <div>
+                            <div className="flex items-center gap-3">
+                                {(testimonial.userImage || testimonial.userAvatar) && (
+                                    <img
+                                        src={(testimonial.userImage || testimonial.userAvatar) as string}
+                                        alt={testimonial.userName}
+                                        className="w-12 h-12 rounded-full object-cover border border-border"
+                                    />
+                                )}
                                 <div className="font-medium text-foreground mb-1">
                                     {testimonial.userName}
                                 </div>
-                                {testimonial.userTitle && (
-                                    <div className="text-sm text-text-secondary font-light">
-                                        {testimonial.userTitle}
-                                    </div>
-                                )}
+                                <div>
+                                    {testimonial.userTitle && (
+                                        <div className="text-sm text-text-secondary font-light">
+                                            {testimonial.userTitle}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -86,4 +96,3 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
         </section>
     );
 }
-

@@ -200,6 +200,12 @@ export const api = {
     createBlog: (data: Record<string, unknown>) => apiClient.post('/admin/blogs', data),
     deleteBlog: (id: number) => apiClient.delete(`/admin/blogs/${id}`),
 
+    // Events
+    getEvents: () => apiClient.get('/admin/events'),
+    updateEvent: (id: number, data: Record<string, unknown>) => apiClient.put(`/admin/events/${id}`, data),
+    createEvent: (data: Record<string, unknown>) => apiClient.post('/admin/events', data),
+    deleteEvent: (id: number) => apiClient.delete(`/admin/events/${id}`),
+
     // Bookings
     getBookings: () => apiClient.get('/admin/bookings'),
     getBooking: (id: number) => apiClient.get(`/admin/bookings/${id}`),
