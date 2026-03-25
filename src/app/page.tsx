@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Quote, Compass, Heart, Shield, Star, LucideIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Quote, Compass, Heart, Shield, Star, LucideIcon, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Hero from '@/components/Hero';
 import DestinationCard from '@/components/DestinationCard';
 import TripCard from '@/components/TripCard';
@@ -42,8 +42,10 @@ interface CmsContent {
 interface Testimonial {
   id: number;
   userName: string;
-  userTitle: string;
-  userImage: string;
+  userTitle?: string;
+  userImage?: string;
+  photoGallery?: string[] | string;
+  galleryImages?: string[] | string;
   comment: string;
 }
 
@@ -60,6 +62,9 @@ export default function Home() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [trips, setTrips] = useState<Trip[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0);
+  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -115,6 +120,45 @@ export default function Home() {
   const experiencesSection = getSection('experiences');
   const testimonialsSection = getSection('testimonials');
   const ctaSection = getSection('cta');
+  const parseGalleryImages = (value: Testimonial['photoGallery'] | Testimonial['galleryImages']): string[] => {
+    if (Array.isArray(value)) return value.map((item) => String(item).trim()).filter(Boolean);
+    if (typeof value !== 'string' || !value.trim()) return [];
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed.map((item) => String(item).trim()).filter(Boolean) : [];
+    } catch {
+      return value.split(',').map((item) => item.trim()).filter(Boolean);
+    }
+  };
+
+  const visibleTestimonials = testimonials.filter((item) => item.comment?.trim()).slice(0, 8);
+  const activeTestimonial = visibleTestimonials[activeTestimonialIndex] || null;
+  const activeSlides = activeTestimonial
+    ? Array.from(
+      new Set(
+        parseGalleryImages(activeTestimonial.photoGallery ?? activeTestimonial.galleryImages)
+          .filter(Boolean) as string[]
+      )
+    )
+    : [];
+  const safeActiveGalleryIndex = activeSlides.length > 0 ? activeGalleryIndex % activeSlides.length : 0;
+
+  useEffect(() => {
+    if (visibleTestimonials.length <= 1) return;
+    const timer = setInterval(() => {
+      setActiveTestimonialIndex((prev) => (prev + 1) % visibleTestimonials.length);
+      setActiveGalleryIndex(0);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [visibleTestimonials.length]);
+
+  useEffect(() => {
+    if (activeSlides.length <= 1) return;
+    const timer = setInterval(() => {
+      setActiveGalleryIndex((prev) => (prev + 1) % activeSlides.length);
+    }, 2600);
+    return () => clearInterval(timer);
+  }, [activeSlides.length, activeTestimonialIndex]);
 
   return (
     <>
@@ -333,36 +377,216 @@ export default function Home() {
               {testimonialsSection?.title || <>Stories from our<span className="italic"> travelers</span></>}
             </h2>
           </div>
+          {activeTestimonial ? (
+            <div className="relative overflow-hidden border border-white/15 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-4 sm:p-6 md:p-10">
+              <div className="absolute -top-16 -right-16 h-48 w-48 bg-secondary/20 blur-3xl" />
+              <div className="absolute -bottom-16 -left-16 h-56 w-56 bg-accent/20 blur-3xl" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={testimonial.id || index}
-                className="relative p-6 md:p-8 lg:p-12 border border-white/10 bg-white/5"
-              >
-                <Quote className="w-8 h-8 md:w-10 md:h-10 text-accent/30 mb-4 md:mb-6" />
-                <blockquote className="font-display text-xl md:text-2xl lg:text-3xl leading-relaxed mb-6 md:mb-8 text-cream/90">
-                  &ldquo;{testimonial.comment}&rdquo;
-                </blockquote>
-                <div className="flex items-center gap-4">
-                  <div className="relative w-14 h-14 rounded-full overflow-hidden">
-                    <Image
-                      src={testimonial.userImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80'}
-                      alt={testimonial.userName}
-                      fill
-                      className="object-cover"
-                    />
+              <div className="relative grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8 md:gap-10 items-stretch">
+                <div className="space-y-6 md:space-y-8">
+                  <Quote className="w-10 h-10 md:w-12 md:h-12 text-accent/40" />
+                  <blockquote className="font-display text-xl md:text-3xl leading-snug text-cream/95 min-h-[120px]">
+                    &ldquo;{activeTestimonial.comment}&rdquo;
+                  </blockquote>
+                  <div className="flex items-center gap-4 pt-2">
+                    <div className="relative w-14 h-14 rounded-full overflow-hidden ring-2 ring-accent/40">
+                      <Image
+                        src={activeTestimonial.userImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80'}
+                        alt={activeTestimonial.userName || 'Traveler'}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div>
+                      <div className="font-medium text-cream">{activeTestimonial.userName || 'Happy Traveler'}</div>
+                      {activeTestimonial.userTitle ? (
+                        <div className="text-caption text-cream/60">{activeTestimonial.userTitle}</div>
+                      ) : null}
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-medium text-cream">{testimonial.userName}</div>
-                    <div className="text-caption text-cream/50">{testimonial.userTitle}</div>
+                </div>
+
+                <div>
+                  <div className="relative h-[280px] sm:h-[320px] lg:h-full min-h-[280px] overflow-hidden">
+                    {activeSlides.length > 0 ? (
+                      activeSlides.length === 1 ? (
+                        <button
+                          type="button"
+                          className="relative h-full w-full group rounded-xl overflow-hidden"
+                          onClick={() => setIsGalleryOpen(true)}
+                        >
+                          <Image
+                            src={activeSlides[0]}
+                            alt={`${activeTestimonial.userName || 'Traveler'} memory`}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            unoptimized
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs text-white/90">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" /></svg>
+                            1 photo
+                          </div>
+                        </button>
+                      ) : activeSlides.length === 2 ? (
+                        <div className="grid h-full grid-cols-2 gap-1.5 rounded-xl overflow-hidden">
+                          {activeSlides.map((img, idx) => (
+                            <button
+                              key={`${activeTestimonial.id}-${idx}`}
+                              type="button"
+                              className="relative overflow-hidden group"
+                              onClick={() => { setActiveGalleryIndex(idx); setIsGalleryOpen(true); }}
+                            >
+                              <Image src={img} alt={`Photo ${idx + 1}`} fill className="object-cover transition-transform duration-500 group-hover:scale-105" unoptimized />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </button>
+                          ))}
+                          <div className="absolute bottom-3 left-3 z-10 flex items-center gap-2 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs text-white/90">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" /></svg>
+                            {activeSlides.length} photos
+                          </div>
+                        </div>
+                      ) : activeSlides.length === 3 ? (
+                        <div className="grid h-full grid-cols-2 gap-1.5 rounded-xl overflow-hidden">
+                          <button
+                            type="button"
+                            className="relative row-span-2 overflow-hidden group"
+                            onClick={() => { setActiveGalleryIndex(0); setIsGalleryOpen(true); }}
+                          >
+                            <Image src={activeSlides[0]} alt="Photo 1" fill className="object-cover transition-transform duration-500 group-hover:scale-105" unoptimized />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </button>
+                          {activeSlides.slice(1, 3).map((img, idx) => (
+                            <button
+                              key={`${activeTestimonial.id}-${idx + 1}`}
+                              type="button"
+                              className="relative overflow-hidden group"
+                              onClick={() => { setActiveGalleryIndex(idx + 1); setIsGalleryOpen(true); }}
+                            >
+                              <Image src={img} alt={`Photo ${idx + 2}`} fill className="object-cover transition-transform duration-500 group-hover:scale-105" unoptimized />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </button>
+                          ))}
+                          <div className="absolute bottom-3 left-3 z-10 flex items-center gap-2 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs text-white/90">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" /></svg>
+                            {activeSlides.length} photos
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="grid h-full grid-cols-3 grid-rows-2 gap-1.5 rounded-xl overflow-hidden">
+                          <button
+                            type="button"
+                            className="relative col-span-2 row-span-2 overflow-hidden group"
+                            onClick={() => { setActiveGalleryIndex(0); setIsGalleryOpen(true); }}
+                          >
+                            <Image src={activeSlides[0]} alt="Photo 1" fill className="object-cover transition-transform duration-500 group-hover:scale-105" unoptimized />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </button>
+                          {activeSlides.slice(1, 3).map((img, idx) => {
+                            const remaining = activeSlides.length - 3;
+                            const isLast = idx === 1;
+                            return (
+                              <button
+                                key={`${activeTestimonial.id}-${idx + 1}`}
+                                type="button"
+                                className="relative overflow-hidden group"
+                                onClick={() => { setActiveGalleryIndex(idx + 1); setIsGalleryOpen(true); }}
+                              >
+                                <Image src={img} alt={`Photo ${idx + 2}`} fill className="object-cover transition-transform duration-500 group-hover:scale-105" unoptimized />
+                                {isLast && remaining > 0 ? (
+                                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                    <span className="text-xl font-semibold text-white">+{remaining}</span>
+                                  </div>
+                                ) : (
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                )}
+                              </button>
+                            );
+                          })}
+                          <div className="absolute bottom-3 left-3 z-10 flex items-center gap-2 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs text-white/90">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" /></svg>
+                            {activeSlides.length} photos
+                          </div>
+                        </div>
+                      )
+                    ) : (
+                      <div className="h-full w-full rounded-xl bg-white/5 border border-dashed border-white/20 flex flex-col items-center justify-center gap-3 text-cream/40">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" /></svg>
+                        <span className="text-sm">No travel photos shared</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+
+              {visibleTestimonials.length > 1 ? (
+                <div className="relative mt-8 md:mt-10 flex flex-wrap items-center gap-2">
+                  {visibleTestimonials.map((item, idx) => (
+                    <button
+                      key={item.id || idx}
+                      type="button"
+                      onClick={() => {
+                        setActiveTestimonialIndex(idx);
+                        setActiveGalleryIndex(0);
+                      }}
+                      className={`h-2 transition-all ${idx === activeTestimonialIndex ? 'w-10 bg-accent' : 'w-4 bg-white/30 hover:bg-white/60'}`}
+                      aria-label={`Show testimonial ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-cream/60">No testimonials available.</div>
+          )}
         </div>
       </section>
+
+      {isGalleryOpen && activeSlides.length > 0 ? (
+        <div className="fixed inset-0 z-50 bg-black/90 p-4 sm:p-8">
+          <button
+            type="button"
+            onClick={() => setIsGalleryOpen(false)}
+            className="absolute right-4 top-4 p-2 text-white/80 hover:text-white"
+          >
+            <X className="h-6 w-6" />
+          </button>
+
+          <div className="mx-auto flex h-full max-w-6xl items-center justify-center gap-3">
+            {activeSlides.length > 1 ? (
+              <button
+                type="button"
+                onClick={() => setActiveGalleryIndex((prev) => (prev - 1 + activeSlides.length) % activeSlides.length)}
+                className="p-3 border border-white/30 text-white hover:bg-white/10"
+                aria-label="Previous photo"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+            ) : null}
+
+            <div className="relative h-[70vh] w-full max-w-5xl">
+              <Image
+                src={activeSlides[safeActiveGalleryIndex]}
+                alt={`${activeTestimonial?.userName || 'Traveler'} photo ${safeActiveGalleryIndex + 1}`}
+                fill
+                className="object-contain"
+                unoptimized
+              />
+            </div>
+
+            {activeSlides.length > 1 ? (
+              <button
+                type="button"
+                onClick={() => setActiveGalleryIndex((prev) => (prev + 1) % activeSlides.length)}
+                className="p-3 border border-white/30 text-white hover:bg-white/10"
+                aria-label="Next photo"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
 
       {/* CTA Section - CMS Driven */}
       <section className="relative py-20 md:py-32 lg:py-40 overflow-hidden">

@@ -9,7 +9,7 @@ import {
     Save, RefreshCw, Plus, Trash2, Eye, ChevronDown, ChevronUp,
     ShoppingBag, CheckCircle, XCircle, Clock, Mail, User, Calendar, Phone,
     Megaphone
-    , Upload, Copy, Link2
+    , Upload, Copy, Link2, X
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import ImagePreview from '@/components/ImagePreview';
@@ -433,6 +433,7 @@ export default function AdminDashboard() {
                 userName: 'New User',
                 userTitle: '',
                 userImage: '',
+                photoGallery: '[]',
                 comment: '',
                 isFeatured: false,
                 displayOrder: 0,
@@ -569,6 +570,76 @@ export default function AdminDashboard() {
             setMessage({ type: 'error', text: err?.response?.data?.error || 'Image upload failed' });
         }
         setUploadingImage(false);
+    };
+
+    const parseStringArrayField = (value: unknown): string[] => {
+        if (Array.isArray(value)) {
+            return value
+                .map((item) => String(item).trim())
+                .filter(Boolean);
+        }
+        if (typeof value !== 'string') return [];
+        const trimmed = value.trim();
+        if (!trimmed) return [];
+        try {
+            const parsed = JSON.parse(trimmed);
+            if (Array.isArray(parsed)) {
+                return parsed
+                    .map((item) => String(item).trim())
+                    .filter(Boolean);
+            }
+            return [];
+        } catch {
+            return trimmed
+                .split(',')
+                .map((item) => item.trim())
+                .filter(Boolean);
+        }
+    };
+
+    const serializeStringArrayField = (items: string[]): string =>
+        JSON.stringify(items.map((item) => item.trim()).filter(Boolean));
+
+    const handleUploadTestimonialImages = async (testimonialId: number, files: FileList | null) => {
+        if (!files || files.length === 0) return;
+        setSaving(true);
+        try {
+            const uploadResults = await Promise.all(
+                Array.from(files).map((file) => api.admin.uploadImage(file, 'testimonials'))
+            );
+            const newUrls = uploadResults
+                .map((res) => (typeof res.data?.url === 'string' ? res.data.url.trim() : ''))
+                .filter(Boolean);
+
+            setTestimonials((prev) =>
+                prev.map((testimonial) => {
+                    if ((testimonial.id as number) !== testimonialId) return testimonial;
+                    const existingUrls = parseStringArrayField(testimonial.photoGallery);
+                    const merged = Array.from(new Set([...existingUrls, ...newUrls]));
+                    const currentUserImage =
+                        typeof testimonial.userImage === 'string' ? testimonial.userImage.trim() : '';
+
+                    return {
+                        ...testimonial,
+                        photoGallery: serializeStringArrayField(merged),
+                        userImage: currentUserImage || merged[0] || '',
+                    };
+                })
+            );
+            setMessage({ type: 'success', text: `${newUrls.length} image(s) uploaded for testimonial.` });
+            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+        } catch (err: unknown) {
+            const errorText =
+                typeof err === 'object' &&
+                err !== null &&
+                'response' in err &&
+                typeof (err as { response?: { data?: { error?: string } } }).response?.data?.error === 'string'
+                    ? (err as { response?: { data?: { error?: string } } }).response?.data?.error
+                    : 'Failed to upload testimonial images';
+            setMessage({ type: 'error', text: errorText || 'Failed to upload testimonial images' });
+        } finally {
+            setSaving(false);
+        }
     };
 
     const parseListField = (value: unknown): string => {
@@ -2317,6 +2388,96 @@ export default function AdminDashboard() {
                                                     <ImagePreview imageUrl={test.userImage as string} className="w-full h-full" />
                                                 </div>
                                             ) : null}
+                                        </div>
+                                        <div className="md:col-span-2">
+                                            <div className="border border-primary/10 rounded-lg bg-cream/50 p-4">
+                                                <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                                                    <div>
+                                                        <label className="block text-caption uppercase tracking-widest text-primary/70">Travel Photos</label>
+                                                        <p className="text-xs text-primary/50 mt-1">Upload photos shared by this traveler. These will be displayed in their testimonial.</p>
+                                                    </div>
+                                                    <label className="flex items-center gap-2 px-4 py-2.5 text-xs font-medium bg-secondary text-cream hover:bg-secondary-dark transition-colors cursor-pointer rounded">
+                                                        <Upload className="w-3.5 h-3.5" />
+                                                        Upload Photos
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            multiple
+                                                            className="hidden"
+                                                            disabled={saving}
+                                                            onChange={(e) => {
+                                                                void handleUploadTestimonialImages(test.id as number, e.target.files);
+                                                                e.target.value = '';
+                                                            }}
+                                                        />
+                                                    </label>
+                                                </div>
+
+                                                {parseStringArrayField(test.photoGallery).length > 0 ? (
+                                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                                                        {parseStringArrayField(test.photoGallery).map((imageUrl, imageIdx) => (
+                                                            <div key={`${test.id as number}-gallery-${imageIdx}`} className="relative group aspect-square rounded-lg overflow-hidden border border-primary/10 bg-cream">
+                                                                <ImagePreview imageUrl={imageUrl} className="w-full h-full object-cover" />
+                                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
+                                                                <button
+                                                                    type="button"
+                                                                    className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                                                    title="Remove photo"
+                                                                    onClick={() => {
+                                                                        const nextImages = parseStringArrayField(test.photoGallery).filter((_, idx) => idx !== imageIdx);
+                                                                        setTestimonials(testimonials.map(t => t.id === test.id ? { ...t, photoGallery: serializeStringArrayField(nextImages) } : t));
+                                                                    }}
+                                                                >
+                                                                    <X className="w-3.5 h-3.5" />
+                                                                </button>
+                                                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                    <span className="text-[10px] text-white/80">Photo {imageIdx + 1}</span>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                        <label className="aspect-square rounded-lg border-2 border-dashed border-primary/20 hover:border-secondary/50 bg-cream flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors">
+                                                            <Plus className="w-6 h-6 text-primary/30" />
+                                                            <span className="text-[10px] text-primary/40 font-medium">Add More</span>
+                                                            <input
+                                                                type="file"
+                                                                accept="image/*"
+                                                                multiple
+                                                                className="hidden"
+                                                                disabled={saving}
+                                                                onChange={(e) => {
+                                                                    void handleUploadTestimonialImages(test.id as number, e.target.files);
+                                                                    e.target.value = '';
+                                                                }}
+                                                            />
+                                                        </label>
+                                                    </div>
+                                                ) : (
+                                                    <label className="flex flex-col items-center justify-center gap-3 py-10 border-2 border-dashed border-primary/15 rounded-lg bg-cream hover:border-secondary/40 cursor-pointer transition-colors">
+                                                        <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center">
+                                                            <Upload className="w-5 h-5 text-primary/30" />
+                                                        </div>
+                                                        <div className="text-center">
+                                                            <p className="text-sm font-medium text-primary/50">No travel photos yet</p>
+                                                            <p className="text-xs text-primary/35 mt-1">Click to upload or drag photos here</p>
+                                                        </div>
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            multiple
+                                                            className="hidden"
+                                                            disabled={saving}
+                                                            onChange={(e) => {
+                                                                void handleUploadTestimonialImages(test.id as number, e.target.files);
+                                                                e.target.value = '';
+                                                            }}
+                                                        />
+                                                    </label>
+                                                )}
+
+                                                {parseStringArrayField(test.photoGallery).length > 0 ? (
+                                                    <p className="text-[11px] text-primary/40 mt-3">{parseStringArrayField(test.photoGallery).length} photo{parseStringArrayField(test.photoGallery).length !== 1 ? 's' : ''} uploaded</p>
+                                                ) : null}
+                                            </div>
                                         </div>
                                         <div className="md:col-span-2">
                                             <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Comment</label>
