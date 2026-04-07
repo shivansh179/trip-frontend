@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ArrowLeft, Star, MapPin, Check, Calendar, Users, Phone, Mail, Share2 } from 'lucide-react';
 import { api } from '@/lib/api';
+import { useCurrency } from '@/context/CurrencyContext';
+import { formatPriceWithCurrency } from '@/lib/utils';
 
 interface Hotel {
     id: number;
@@ -32,7 +34,8 @@ interface Hotel {
 export default function HotelDetailPage() {
     const params = useParams();
     const id = params?.id as string;
-    
+    const { currency } = useCurrency();
+
     const [hotel, setHotel] = useState<Hotel | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -61,12 +64,7 @@ export default function HotelDetailPage() {
 
     const formatPrice = (price: number | { value: string }) => {
         const numPrice = typeof price === 'object' ? parseFloat(price.value) : price;
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(numPrice);
+        return formatPriceWithCurrency(numPrice, currency);
     };
 
     const calculateTotal = () => {

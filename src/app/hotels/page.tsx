@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { ArrowUpRight, Star, MapPin } from 'lucide-react';
 import PageHero from '@/components/PageHero';
 import { api } from '@/lib/api';
+import { useCurrency } from '@/context/CurrencyContext';
+import { formatPriceWithCurrency } from '@/lib/utils';
 
 interface Hotel {
   id: number;
@@ -23,6 +25,7 @@ interface Hotel {
 }
 
 export default function HotelsPage() {
+  const { currency } = useCurrency();
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,12 +50,7 @@ export default function HotelsPage() {
 
   const formatPrice = (price: number | { value: string }) => {
     const numPrice = typeof price === 'object' ? parseFloat(price.value) : price;
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(numPrice);
+    return formatPriceWithCurrency(numPrice, currency);
   };
 
   return (

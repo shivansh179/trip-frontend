@@ -8,7 +8,8 @@ import { MapPin, Calendar, DollarSign, Globe, Clock, Shield, Utensils, Camera, A
 import { api } from '@/lib/api';
 import TripCard from '@/components/TripCard';
 import { Trip } from '@/types';
-import { formatPrice } from '@/lib/utils';
+import { formatPriceWithCurrency } from '@/lib/utils';
+import { useCurrency } from '@/context/CurrencyContext';
 import { BreadcrumbJsonLd } from '@/components/JsonLd';
 
 interface DestinationDetail {
@@ -40,6 +41,7 @@ interface DestinationDetail {
 
 export default function DestinationDetailPage() {
     const params = useParams();
+    const { currency } = useCurrency();
     const slug = params?.slug as string;
     
     const [detail, setDetail] = useState<DestinationDetail | null>(null);
@@ -310,7 +312,7 @@ export default function DestinationDetailPage() {
                                                 <h4 className="text-xl font-light mb-2">{trip.title}</h4>
                                                 <p className="text-body-sm text-text-secondary mb-4 line-clamp-2">{trip.shortDescription}</p>
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-2xl font-light">{trip.price ? formatPrice(trip.price) : 'N/A'}</span>
+                                                    <span className="text-2xl font-light">{trip.price ? formatPriceWithCurrency(trip.price, currency) : 'N/A'}</span>
                                                     <ArrowRight size={20} className="text-secondary" />
                                                 </div>
                                             </div>

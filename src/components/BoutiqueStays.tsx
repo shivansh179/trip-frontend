@@ -3,7 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, MapPin } from 'lucide-react';
-import { formatPrice } from '@/lib/utils';
+import { formatPriceWithCurrency } from '@/lib/utils';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface Hotel {
     id: number;
@@ -25,6 +26,7 @@ interface BoutiqueStaysProps {
 }
 
 export default function BoutiqueStays({ hotels }: BoutiqueStaysProps) {
+    const { currency } = useCurrency();
     return (
         <section className="section-padding bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -81,7 +83,7 @@ export default function BoutiqueStays({ hotels }: BoutiqueStaysProps) {
                                     
                                     {hotel.pricePerNight && (
                                         <div className="text-lg font-light">
-                                            From {formatPrice(hotel.pricePerNight)}/night
+                                            From {formatPriceWithCurrency(hotel.pricePerNight, currency)}/night
                                         </div>
                                     )}
                                 </div>
