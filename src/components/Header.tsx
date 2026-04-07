@@ -36,15 +36,17 @@ export default function Header() {
 
     return (
         <>
-            <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 flex flex-col ${
+            <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
                 isScrolled
-                    ? 'bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm py-3'
+                    ? 'bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm'
                     : hasHero
-                        ? 'bg-transparent py-6'
-                        : 'bg-white/95 backdrop-blur-lg border-b border-gray-100 py-4'
+                        ? 'bg-transparent'
+                        : 'bg-white/95 backdrop-blur-lg border-b border-gray-100'
             }`}>
                 <FlashSaleBanner />
-                <div className="section-container">
+                <div className={`section-container transition-all duration-500 ${
+                    isScrolled ? 'py-3' : hasHero ? 'py-6' : 'py-4'
+                }`}>
                     <div className="flex justify-between items-center">
                         {/* Logo */}
                         <Link href="/" className="relative z-10 group">
