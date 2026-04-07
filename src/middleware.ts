@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// In-memory rate limiter (per Vercel instance, resets on cold start — good enough for edge protection)
+// In-memory rate limiter — only blocks extreme abuse
 const rateMap = new Map<string, { count: number; ts: number }>();
-const WINDOW_MS = 60_000; // 1 minute
-const MAX_REQUESTS = 120;  // per IP per minute
-const STRICT_MAX = 30;     // for API routes
+const WINDOW_MS = 60_000;
+const MAX_REQUESTS = 600;  // 10 req/sec sustained — very generous for real users
+const STRICT_MAX = 200;    // API routes
 
 // Suspicious URL patterns — path traversal, SQL injection, common exploit probes
 const ATTACK_PATTERNS = [
