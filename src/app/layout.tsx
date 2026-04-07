@@ -113,7 +113,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://images.unsplash.com" />
         <OrganizationJsonLd />
       </head>
-      <body className="antialiased overflow-x-hidden" suppressHydrationWarning>
+      <body className="antialiased" suppressHydrationWarning>
         {/* Google Analytics 4 */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}

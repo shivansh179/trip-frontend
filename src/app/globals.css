@@ -168,10 +168,6 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Prevent horizontal scroll on all devices */
-  overflow-x: hidden;
-  /* iOS rubber-band fix */
-  -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -184,15 +180,14 @@ body {
   padding-right: env(safe-area-inset-right);
 }
 
-/* Prevent all children from causing horizontal overflow */
-* {
-  max-width: 100%;
+/* Box sizing - only on non-layout elements to avoid breaking hero/sections */
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
-img, video, iframe, embed, object {
+/* Prevent images/media from overflowing their container */
+img, video, embed, object {
   max-width: 100%;
-  height: auto;
 }
 
 /* Touch tap highlight removal */
