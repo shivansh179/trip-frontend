@@ -9,6 +9,7 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import MobileStickyCTA from "@/components/MobileStickyCTA";
 import Providers from "@/components/Providers";
 import { OrganizationJsonLd } from "@/components/JsonLd";
+import SecurityShield from "@/components/SecurityShield";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -126,6 +127,7 @@ export default function RootLayout({
         </Script>
 
         <Providers>
+          <SecurityShield />
           <Suspense fallback={<div className="h-24 bg-cream" />}>
             <Header />
           </Suspense>
