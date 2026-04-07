@@ -1,13 +1,117 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Compass, Search, CheckCircle, Clock, Plane, Calendar, Users,
   MapPin, Ticket, Copy, MessageCircle, ArrowRight, AlertCircle,
-  RefreshCw, Home
+  RefreshCw, Home, Receipt, Shield, Download, Star
 } from 'lucide-react';
 import Link from 'next/link';
+
+function fmt(n: number) { return new Intl.NumberFormat('en-IN').format(Math.round(n)); }
+
+function PaymentReceipt({ lines, total, paymentMethod, paymentStatus, paidAt, receiptId }: {
+  lines: { label: string; amount: number; sub?: boolean }[];
+  total: number;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  paidAt?: string;
+  receiptId: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const isPaid = ['PAID', 'SUCCESS', 'CONFIRMED'].includes((paymentStatus || '').toUpperCase());
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      {/* Receipt header */}
+      <div className="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Receipt size={16} className="text-amber-400" />
+          <span className="text-white font-bold text-sm">Payment Receipt</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${isPaid ? 'bg-green-500 text-white' : 'bg-amber-400 text-gray-900'}`}>
+            {isPaid ? '✓ PAID' : 'PENDING'}
+          </span>
+        </div>
+      </div>
+
+      <div className="px-6 py-5 space-y-4">
+        {/* Receipt meta */}
+        <div className="flex justify-between text-xs text-gray-500">
+          <div>
+            <p className="text-gray-400">Receipt No.</p>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <p className="font-mono font-bold text-gray-700">{receiptId}</p>
+              <button
+                onClick={() => { navigator.clipboard.writeText(receiptId); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+                className="text-gray-400 hover:text-amber-500 transition-colors"
+                title="Copy"
+              >
+                <Copy size={11} />
+              </button>
+            </div>
+            {copied && <p className="text-green-500 text-[10px] mt-0.5">Copied!</p>}
+          </div>
+          <div className="text-right">
+            <p className="text-gray-400">Issued</p>
+            <p className="font-medium text-gray-700 mt-0.5">
+              {paidAt ? new Date(paidAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+            </p>
+          </div>
+        </div>
+
+        <div className="h-px bg-gray-100" />
+
+        {/* Line items */}
+        <div className="space-y-2">
+          {lines.map((line) => (
+            <div key={line.label} className={`flex justify-between ${line.sub ? 'text-xs text-gray-500 pl-3' : 'text-sm text-gray-700'}`}>
+              <span>{line.label}</span>
+              <span className={line.sub ? '' : 'font-medium'}>₹{fmt(line.amount)}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="h-px bg-gray-100" />
+
+        {/* Total */}
+        <div className="flex justify-between items-center">
+          <span className="font-bold text-gray-900">Total Paid</span>
+          <span className="text-2xl font-bold text-amber-600">₹{fmt(total)}</span>
+        </div>
+
+        {/* Payment method */}
+        {paymentMethod && (
+          <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-4 py-3">
+            <Shield size={14} className="text-green-500 shrink-0" />
+            <div className="text-xs">
+              <span className="text-gray-500">Paid via </span>
+              <span className="font-semibold text-gray-700 capitalize">{paymentMethod.replace('_', ' ')}</span>
+              <span className="text-gray-400"> · Secured by Easebuzz</span>
+            </div>
+          </div>
+        )}
+
+        {/* Trust badges */}
+        <div className="flex items-center justify-between pt-1">
+          <div className="flex items-center gap-1.5">
+            <Star size={12} className="text-amber-400 fill-amber-400" />
+            <span className="text-xs text-gray-400">YlooTrips Official Receipt</span>
+          </div>
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-amber-600 transition-colors"
+          >
+            <Download size={12} />
+            Print
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface BookingResult {
   type: 'trip' | 'event' | 'flight';
@@ -131,6 +235,16 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
           ))}
         </div>
       </div>
+
+      {/* Payment Receipt */}
+      <PaymentReceipt
+        receiptId={ref}
+        lines={[{ label: 'Trip Package', amount: Number(data.finalAmount || data.totalAmount || 0) }]}
+        total={Number(data.finalAmount || data.totalAmount || 0)}
+        paymentMethod={data.paymentMode as string | undefined}
+        paymentStatus={(data.paymentStatus as string) || 'PENDING'}
+        paidAt={(data.createdAt || data.bookingDate) as string | undefined}
+      />
     </div>
   );
 }
@@ -196,6 +310,29 @@ function EventBookingCard({ data }: { data: Record<string, unknown> }) {
           <StatusBadge status={(data.paymentStatus as string) || 'PENDING'} />
         </div>
       </div>
+
+      {/* Payment Receipt */}
+      {(() => {
+        const ticketCount = Number(data.numberOfTickets || 1);
+        const total = Number(data.finalAmount || data.totalAmount || 0);
+        const perTicket = ticketCount > 0 ? Math.round(total / ticketCount) : total;
+        const lines = ticketCount > 1
+          ? [
+              { label: `Ticket × ${ticketCount}`, amount: total },
+              { label: `  ₹${fmt(perTicket)} per ticket`, amount: perTicket * ticketCount, sub: true },
+            ]
+          : [{ label: 'Ticket', amount: total }];
+        return (
+          <PaymentReceipt
+            receiptId={(data.bookingReference as string) || ''}
+            lines={lines}
+            total={total}
+            paymentMethod={data.paymentMode as string | undefined}
+            paymentStatus={(data.paymentStatus as string) || 'PENDING'}
+            paidAt={data.createdAt as string | undefined}
+          />
+        );
+      })()}
     </div>
   );
 }
@@ -331,6 +468,29 @@ function FlightBookingCard({ data }: { data: Record<string, unknown> }) {
         </div>
       </div>
 
+      {/* Payment Receipt */}
+      {(() => {
+        const total = Number((flight as Record<string, unknown> | undefined)?.price || 0);
+        const baseFare = Math.round(total * 0.82);
+        const taxes = Math.round(total * 0.18);
+        const convFee = 249;
+        const receiptTotal = total + convFee;
+        return (
+          <PaymentReceipt
+            receiptId={ref}
+            lines={[
+              { label: 'Base Fare', amount: baseFare },
+              { label: 'Taxes & Fees', amount: taxes },
+              { label: 'Convenience Fee', amount: convFee },
+            ]}
+            total={receiptTotal}
+            paymentMethod={data.paymentMethod as string | undefined}
+            paymentStatus={(data.status as string) || 'CONFIRMED'}
+            paidAt={data.savedAt as string | undefined}
+          />
+        );
+      })()}
+
       {/* Download boarding pass visual */}
       <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 flex items-center justify-between">
         <div>
@@ -402,7 +562,7 @@ function MyBookingContent() {
         }
         // Regular event booking
         const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-        const res = await fetch(`${apiUrl}/api/event-bookings/${encodeURIComponent(ref)}`);
+        const res = await fetch(`${apiUrl}/event-bookings/${encodeURIComponent(ref)}`);
         if (!res.ok) { setError('Booking not found. Please check your reference.'); return; }
         const booking = await res.json();
         const bookingEmail = (booking.customerEmail as string || '').toLowerCase();
