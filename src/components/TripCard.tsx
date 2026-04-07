@@ -2,11 +2,12 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { MapPin, Clock, Star, ArrowUpRight, ShoppingCart } from 'lucide-react';
+import { MapPin, Clock, Star, ArrowUpRight, ShoppingCart, Eye } from 'lucide-react';
 import { Trip } from '@/types';
 import { formatPriceWithCurrency, calculateDiscount } from '@/lib/utils';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useVisitor } from '@/context/VisitorContext';
+import WishlistButton from '@/components/WishlistButton';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80';
 
@@ -28,6 +29,11 @@ function getSpotsLeft(id: number): number | null {
     return val <= 5 ? val : null;
 }
 
+// Deterministic viewers count: 4–23
+function getViewers(id: number): number {
+    return ((id * 13 + 7) % 20) + 4;
+}
+
 export default function TripCard({ trip, index = 0, variant = 'default' }: TripCardProps) {
     const { currency } = useCurrency();
     const { visitor } = useVisitor();
@@ -37,6 +43,7 @@ export default function TripCard({ trip, index = 0, variant = 'default' }: TripC
         : 0;
     const fp = (p: typeof trip.price) => formatPriceWithCurrency(p, currency);
     const spotsLeft = getSpotsLeft(trip.id);
+    const viewers = getViewers(trip.id);
 
     if (variant === 'horizontal') {
         return (
@@ -133,10 +140,19 @@ export default function TripCard({ trip, index = 0, variant = 'default' }: TripC
                     )}
                 </div>
 
-                {/* Rating */}
-                <div className="absolute top-4 right-4 bg-cream/95 px-3 py-1.5 flex items-center gap-1">
-                    <Star className="w-4 h-4 text-accent fill-accent" />
-                    <span className="text-sm font-medium">{trip.rating}</span>
+                {/* Rating + Wishlist */}
+                <div className="absolute top-4 right-4 flex flex-col items-end gap-2">
+                    <div className="bg-cream/95 px-3 py-1.5 flex items-center gap-1">
+                        <Star className="w-4 h-4 text-accent fill-accent" />
+                        <span className="text-sm font-medium">{trip.rating}</span>
+                    </div>
+                    <WishlistButton tripId={trip.id} tripTitle={trip.title} className="relative" />
+                </div>
+
+                {/* Live viewers */}
+                <div className="absolute bottom-4 right-4 flex items-center gap-1 bg-black/50 backdrop-blur-sm text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">
+                    <Eye className="w-3 h-3" />
+                    <span>{viewers} viewing</span>
                 </div>
 
                 {/* Category */}

@@ -13,6 +13,7 @@ import HowItWorks from '@/components/HowItWorks';
 import TrustBanner from '@/components/TrustBanner';
 import HolidayPlanner from '@/components/HolidayPlanner';
 import MyBookingSection from '@/components/MyBookingSection';
+import ReferAndEarn from '@/components/ReferAndEarn';
 import HiddenSpots from '@/components/HiddenSpots';
 import { api } from '@/lib/api';
 import { Destination } from '@/types';
@@ -299,6 +300,9 @@ export default function Home() {
 
       {/* How It Works */}
       <HowItWorks />
+
+      {/* Refer & Earn */}
+      <ReferAndEarn />
 
       {/* My Booking Portal */}
       <MyBookingSection />
