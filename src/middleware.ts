@@ -91,10 +91,10 @@ export function middleware(req: NextRequest) {
     });
   }
 
-  // ── 3. Block headless browser / scraper bots ─────────────────────────────
+  // ── 3. Block obvious scraper bots (not API routes, not static assets) ────
   const ua = req.headers.get('user-agent') || '';
-  const botPatterns = /headlesschrome|phantomjs|python-requests|scrapy|wget|curl\/|go-http-client|python\/|java\/|ruby\//i;
-  if (botPatterns.test(ua) && !pathname.startsWith('/api/')) {
+  const botPatterns = /python-requests|scrapy|wget\/|go-http-client\/|libwww-perl/i;
+  if (botPatterns.test(ua) && !pathname.startsWith('/api/') && !pathname.startsWith('/_next/')) {
     return new NextResponse('Forbidden', { status: 403, headers: securityHeaders() });
   }
 
@@ -118,6 +118,7 @@ function securityHeaders(): Record<string, string> {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https: http:",
+      "media-src 'self' https: blob:",
       "connect-src 'self' https: wss:",
       "frame-src 'self' https://*.easebuzz.in https://pay.easebuzz.in",
       "object-src 'none'",
