@@ -10,7 +10,6 @@ import MobileStickyCTA from "@/components/MobileStickyCTA";
 import Providers from "@/components/Providers";
 import { OrganizationJsonLd } from "@/components/JsonLd";
 import SecurityShield from "@/components/SecurityShield";
-import FlashSaleBanner from "@/components/FlashSaleBanner";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
 
 const inter = Inter({
@@ -133,7 +132,6 @@ export default function RootLayout({
         <Providers>
           <SecurityShield />
           <ExitIntentPopup />
-          <FlashSaleBanner />
           <Suspense fallback={<div className="h-24 bg-cream" />}>
             <Header />
           </Suspense>

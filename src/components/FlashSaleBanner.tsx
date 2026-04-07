@@ -58,7 +58,7 @@ export default function FlashSaleBanner() {
   const bannerText = `🔥 Flash Sale — Flat ₹5,000 off all trips · Use code YLOO5000 · Ends in ${countdownStr}`;
 
   return (
-    <div className="bg-gradient-to-r from-rose-600 via-orange-500 to-amber-500 text-white relative z-40">
+    <div className="bg-gradient-to-r from-rose-600 via-orange-500 to-amber-500 text-white w-full">
       {/* Desktop */}
       <div className="hidden sm:flex items-center justify-center px-4 py-2 text-sm font-medium gap-4">
         <span>
@@ -93,7 +93,7 @@ export default function FlashSaleBanner() {
       {/* Mobile — scrolling marquee */}
       <div className="flex sm:hidden items-center overflow-hidden py-2 px-3 text-sm font-medium">
         <div className="flex-1 overflow-hidden">
-          <div className="whitespace-nowrap animate-marquee inline-block">
+          <div className="whitespace-nowrap inline-block" style={{ animation: 'marquee 18s linear infinite' }}>
             {bannerText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{bannerText}
           </div>
         </div>
@@ -118,19 +118,6 @@ export default function FlashSaleBanner() {
         </button>
       </div>
 
-      <style jsx>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        .animate-marquee {
-          animation: marquee 18s linear infinite;
-        }
-      `}</style>
     </div>
   );
 }

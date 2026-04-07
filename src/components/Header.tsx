@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Menu, X, Sparkles, Ticket } from 'lucide-react';
+import FlashSaleBanner from '@/components/FlashSaleBanner';
 
 export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -35,13 +36,14 @@ export default function Header() {
 
     return (
         <>
-            <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+            <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 flex flex-col ${
                 isScrolled
                     ? 'bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm py-3'
                     : hasHero
                         ? 'bg-transparent py-6'
                         : 'bg-white/95 backdrop-blur-lg border-b border-gray-100 py-4'
             }`}>
+                <FlashSaleBanner />
                 <div className="section-container">
                     <div className="flex justify-between items-center">
                         {/* Logo */}
