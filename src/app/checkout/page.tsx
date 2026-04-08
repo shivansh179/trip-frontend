@@ -11,12 +11,14 @@ import TrustBadges from '@/components/TrustBadges';
 import CheckoutStepper from '@/components/CheckoutStepper';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useVisitor } from '@/context/VisitorContext';
+import { useWallet } from '@/context/WalletContext';
 
 function CheckoutContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { currency } = useCurrency();
     const { visitor } = useVisitor();
+    const { balance: walletBalance, addCashback, deductBalance } = useWallet();
     const fp = (p: number) => formatPriceWithCurrency(p, currency);
 
     const tripId = searchParams.get('tripId');
@@ -30,6 +32,7 @@ function CheckoutContent() {
     const [bookingReference, setBookingReference] = useState<string | undefined>(undefined);
     const [halfPaymentCardType, setHalfPaymentCardType] = useState<'credit' | 'debit'>('credit');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [applyWallet, setApplyWallet] = useState(false);
     const [selectedEmi, setSelectedEmi] = useState<{
         tenure: number;
         monthlyAmount: number;
@@ -130,6 +133,9 @@ function CheckoutContent() {
             }
 
             if (paymentData.paymentUrl) {
+                // Apply wallet deduction and credit 10% cashback
+                if (walletDeduction > 0) deductBalance(walletDeduction, booking.bookingReference);
+                addCashback(totalPrice, booking.bookingReference, trip.title);
                 window.location.href = paymentData.paymentUrl;
             } else {
                 throw new Error(paymentData.error || 'Failed to get payment URL from Easebuzz. Please check your payment gateway configuration.');
@@ -158,7 +164,10 @@ function CheckoutContent() {
     const basePrice = trip ? (typeof trip.price === 'number' ? trip.price : parseFloat(trip.price.toString())) * formData.numberOfGuests : 0;
     const discountPercent = formData.paymentMethod === 'upi' ? 5 : (formData.paymentMethod === 'credit_card' || formData.paymentMethod === 'debit_card') ? 3 : 0;
     const discountAmount = (basePrice * discountPercent) / 100;
-    const totalPrice = basePrice - discountAmount;
+    const priceAfterDiscount = basePrice - discountAmount;
+    const walletDeduction = applyWallet ? Math.min(walletBalance, priceAfterDiscount) : 0;
+    const totalPrice = priceAfterDiscount - walletDeduction;
+    const cashbackAmount = Math.round(totalPrice * 0.10);
 
     if (loading) {
         return (
@@ -350,6 +359,38 @@ function CheckoutContent() {
                                     <TrustBadges isInternational={visitor === 'foreigner'} />
                                 </section>
 
+                                {/* Wallet balance section */}
+                                {walletBalance > 0 && (
+                                    <section className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                                        <div className="flex items-center justify-between gap-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-9 h-9 bg-amber-500 rounded-full flex items-center justify-center shrink-0">
+                                                    <span className="text-white text-sm">₹</span>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-semibold text-amber-900">LocalHi Wallet</p>
+                                                    <p className="text-xs text-amber-700">Available: {fp(walletBalance)}</p>
+                                                </div>
+                                            </div>
+                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={applyWallet}
+                                                    onChange={(e) => setApplyWallet(e.target.checked)}
+                                                    className="w-4 h-4 accent-amber-500"
+                                                />
+                                                <span className="text-xs font-semibold text-amber-800">Apply</span>
+                                            </label>
+                                        </div>
+                                        {applyWallet && walletDeduction > 0 && (
+                                            <div className="mt-3 pt-3 border-t border-amber-200 flex items-center justify-between text-sm">
+                                                <span className="text-amber-800">Wallet deduction</span>
+                                                <span className="font-semibold text-green-700">−{fp(walletDeduction)}</span>
+                                            </div>
+                                        )}
+                                    </section>
+                                )}
+
                                 {errorMessage && (
                                     <div className="p-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded">
                                         {errorMessage}
@@ -415,11 +456,19 @@ function CheckoutContent() {
                                             <span>-{fp(discountAmount)}</span>
                                         </div>
                                     )}
+
+                                    {/* Wallet deduction */}
+                                    {walletDeduction > 0 && (
+                                        <div className="flex justify-between text-body-lg text-amber-600">
+                                            <span>💰 Wallet Balance</span>
+                                            <span>-{fp(walletDeduction)}</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="pt-6 border-t border-primary/10 mb-3">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-lg md:text-xl font-light">Total</span>
+                                        <span className="text-lg md:text-xl font-light">Total Payable</span>
                                         <span className="text-2xl md:text-3xl font-light">{fp(totalPrice)}</span>
                                     </div>
                                     <p className="text-xs text-green-700 font-medium mt-1 flex items-center gap-1">
@@ -427,6 +476,14 @@ function CheckoutContent() {
                                         No hidden fees · all taxes included
                                     </p>
                                 </div>
+
+                                {/* Cashback preview */}
+                                {cashbackAmount > 0 && (
+                                    <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-2 text-xs text-amber-800">
+                                        <span>🎉</span>
+                                        <span>You'll earn <strong>{fp(cashbackAmount)}</strong> cashback (10%) on this booking!</span>
+                                    </div>
+                                )}
 
                                 <div className="space-y-2 text-body-sm text-text-secondary mb-3">
                                     <div className="flex items-start gap-2">

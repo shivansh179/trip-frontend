@@ -2,15 +2,18 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { Menu, X, Ticket } from 'lucide-react';
+import { Menu, X, Ticket, Wallet } from 'lucide-react';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useVisitor } from '@/context/VisitorContext';
+import { useWallet } from '@/context/WalletContext';
+import { formatPriceWithCurrency } from '@/lib/utils';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { currency, toggle: toggleCurrency, setCurrency } = useCurrency();
-  const { visitor, setVisitor, hasChosen } = useVisitor();
+  const { visitor, setVisitor } = useVisitor();
+  const { balance } = useWallet();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -29,6 +32,7 @@ export default function Navbar() {
         { name: 'Events', href: '/events' },
         { name: 'India Guide', href: '/india-travel-guide' },
         { name: 'Blogs', href: '/blogs' },
+        { name: 'Cashback & Offers', href: '/cashback' },
         { name: 'About', href: '/about' },
         { name: 'Contact', href: '/contact' },
       ]
@@ -38,6 +42,7 @@ export default function Navbar() {
         { name: 'Flights', href: '/#flight-search' },
         { name: 'Events', href: '/events' },
         { name: 'Blogs', href: '/blogs' },
+        { name: 'Cashback & Offers', href: '/cashback' },
         { name: 'About', href: '/about' },
         { name: 'Contact', href: '/contact' },
       ];
@@ -61,15 +66,31 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex gap-8 items-center">
+        <div className="hidden md:flex gap-6 lg:gap-8 items-center">
           {links.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className="text-sm uppercase tracking-widest font-medium hover-underline"
-            >
-              {link.name}
-            </Link>
+            link.name === 'Cashback & Offers' ? (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="flex items-center gap-1.5 text-sm uppercase tracking-widest font-medium hover-underline text-amber-600 relative"
+              >
+                <Wallet size={13} />
+                {link.name}
+                {balance > 0 && (
+                  <span className="absolute -top-2 -right-3 bg-amber-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                    {formatPriceWithCurrency(balance, currency)}
+                  </span>
+                )}
+              </Link>
+            ) : (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="text-sm uppercase tracking-widest font-medium hover-underline"
+              >
+                {link.name}
+              </Link>
+            )
           ))}
 
           {/* Track Booking CTA */}
@@ -114,14 +135,31 @@ export default function Navbar() {
         {/* Mobile full-screen menu */}
         <div className={`fixed inset-0 bg-[#F4F1EA] z-40 flex flex-col items-center justify-center gap-6 overflow-y-auto py-20 transition-transform duration-500 ease-in-out ${isOpen ? 'translate-y-0' : '-translate-y-full'}`}>
           {links.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setIsOpen(false)}
-              className="font-serif text-4xl text-primary hover:text-accent transition-colors"
-            >
-              {link.name}
-            </Link>
+            link.name === 'Cashback & Offers' ? (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 font-serif text-4xl text-amber-600 hover:text-amber-500 transition-colors"
+              >
+                <Wallet size={28} />
+                {link.name}
+                {balance > 0 && (
+                  <span className="bg-amber-500 text-white text-sm font-bold px-3 py-1 rounded-full">
+                    {formatPriceWithCurrency(balance, currency)}
+                  </span>
+                )}
+              </Link>
+            ) : (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="font-serif text-4xl text-primary hover:text-accent transition-colors"
+              >
+                {link.name}
+              </Link>
+            )
           ))}
 
           {/* Track Booking — mobile */}

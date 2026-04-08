@@ -6,11 +6,13 @@ import { ArrowUpRight, MapPin } from 'lucide-react';
 import { Destination } from '@/types';
 
 // Destination-specific images keyed by slug or normalised name.
-// Used as fallback when the backend hasn't set a unique image.
+// These ALWAYS take priority over backend imageUrl to ensure correct, working images.
 const DEST_IMAGES: Record<string, string> = {
+  // ── India (generic) ────────────────────────────────────────
+  'india':                'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80',
   // ── Rajasthan ──────────────────────────────────────────────
-  'rajasthan':            'https://images.unsplash.com/photo-1477587458883-47145ed94245?w=800&q=80',
-  'jaipur':               'https://images.unsplash.com/photo-1477587458883-47145ed94245?w=800&q=80',
+  'rajasthan':            'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?w=800&q=80',
+  'jaipur':               'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?w=800&q=80',
   'jodhpur':              'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800&q=80',
   'udaipur':              'https://images.unsplash.com/photo-1586187786830-a8b30e2093b7?w=800&q=80',
   'jaisalmer':            'https://images.unsplash.com/photo-1519923041107-2f76fc43efad?w=800&q=80',
@@ -27,11 +29,13 @@ const DEST_IMAGES: Record<string, string> = {
   // ── Himalayas / Hill Stations ──────────────────────────────
   'leh':                  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
   'ladakh':               'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+  'leh-ladakh':           'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
   'manali':               'https://images.unsplash.com/photo-1605640840605-14ac1855827b?w=800&q=80',
-  'spiti':                'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
-  'spiti-valley':         'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+  'spiti':                'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
+  'spiti-valley':         'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
   'shimla':               'https://images.unsplash.com/photo-1598077540161-9218a1b26fb2?w=800&q=80',
   'dharamsala':           'https://images.unsplash.com/photo-1604928141064-207cea6f571f?w=800&q=80',
+  'dharamshala':          'https://images.unsplash.com/photo-1604928141064-207cea6f571f?w=800&q=80',
   'mcleod-ganj':          'https://images.unsplash.com/photo-1604928141064-207cea6f571f?w=800&q=80',
   'himachal-pradesh':     'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
   'uttarakhand':          'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
@@ -39,6 +43,12 @@ const DEST_IMAGES: Record<string, string> = {
   'haridwar':             'https://images.unsplash.com/photo-1592820487765-54de6041af07?w=800&q=80',
   'mussoorie':            'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
   'nainital':             'https://images.unsplash.com/photo-1605640840605-14ac1855827b?w=800&q=80',
+  'dehradun':             'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
+  'auli':                 'https://images.unsplash.com/photo-1605640840605-14ac1855827b?w=800&q=80',
+  'chopta':               'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
+  'joshimath':            'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
+  'jibhi':                'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
+  'kasol':                'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
   // ── Kashmir ────────────────────────────────────────────────
   'kashmir':              'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&q=80',
   'srinagar':             'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&q=80',
@@ -74,7 +84,7 @@ const DEST_IMAGES: Record<string, string> = {
   'tamil-nadu':           'https://images.unsplash.com/photo-1600100397608-f7a4d5e3046e?w=800&q=80',
   'hyderabad':            'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?w=800&q=80',
   // ── West India ─────────────────────────────────────────────
-  'mumbai':               'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800&q=80',
+  'mumbai':               'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80',
   'gujarat':              'https://images.unsplash.com/photo-1558618047-f4e90c90d9c1?w=800&q=80',
   'rann-of-kutch':        'https://images.unsplash.com/photo-1558618047-f4e90c90d9c1?w=800&q=80',
   'somnath':              'https://images.unsplash.com/photo-1600100397608-f7a4d5e3046e?w=800&q=80',
@@ -88,7 +98,7 @@ const DEST_IMAGES: Record<string, string> = {
   'thailand':             'https://images.unsplash.com/photo-1506665531195-3566af2b4dfa?w=800&q=80',
   'singapore':            'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&q=80',
   'dubai':                'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80',
-  'nepal':                'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+  'nepal':                'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80',
   'bhutan':               'https://images.unsplash.com/photo-1490077476659-095159692ab5?w=800&q=80',
   'sri-lanka':            'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&q=80',
   'maldives':             'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80',
@@ -116,9 +126,11 @@ function getDestinationImage(destination: Destination): string {
   const byName = destination.name ? DEST_IMAGES[normalise(destination.name)] : undefined;
   const mapped = bySlug || byName;
 
-  // If backend image is real (non-generic), prefer it; else use our map; else generic mountain
+  // Always prefer our curated map — ensures correct destination-specific photos
+  if (mapped) return mapped;
+  // Fall back to backend URL only if it's not a known generic placeholder
   if (!isGeneric(destination.imageUrl)) return destination.imageUrl;
-  return mapped || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80';
+  return 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80';
 }
 
 interface DestinationCardProps {

@@ -96,6 +96,7 @@ export default function GoldenTriangleTour() {
           <div>
             <p className="text-caption text-primary/50 uppercase tracking-wider">Starting from</p>
             <p className="font-display text-2xl text-primary">$1,400 <span className="text-sm font-sans text-primary/50">/ person</span></p>
+            <p className="text-sm text-primary/40">≈ ₹1,17,600 for Indian travelers</p>
           </div>
           <div className="flex gap-2 shrink-0">
             <a
@@ -268,6 +269,7 @@ export default function GoldenTriangleTour() {
             <div className="border border-primary/15 bg-cream-light p-6 sticky top-24">
               <p className="text-caption uppercase tracking-wider text-secondary mb-2">Starting from</p>
               <div className="font-display text-4xl text-primary mb-1">$1,400</div>
+              <p className="text-xs text-primary/40 mb-1">≈ ₹1,17,600 for Indian travelers</p>
               <p className="text-caption text-primary/50 mb-1">per person · private tour</p>
               <p className="text-xs text-secondary font-medium mb-5">💳 EMI from $467/mo · Intl. cards accepted</p>
 

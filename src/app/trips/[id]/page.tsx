@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { Calendar, Users, MapPin, Clock, Star, Check, X, ArrowRight, Utensils, Hotel, ChevronDown, Shield, RefreshCw } from 'lucide-react';
+import { Calendar, Users, MapPin, Clock, Star, Check, X, ArrowRight, Utensils, Hotel, ChevronDown, Shield, RefreshCw, Globe, CreditCard, Phone, BadgeCheck, MessageCircle } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Trip } from '@/types';
 import { formatPriceWithCurrency } from '@/lib/utils';
@@ -82,12 +82,14 @@ export default function TripDetailPage() {
     const spotsLeft = trip ? (((trip.id * 7) % 9) + 1 <= 5 ? ((trip.id * 7) % 9) + 1 : null) : null;
 
     const tripFaqs = [
-        { q: 'Is this trip suitable for first-time visitors to India?', a: 'Absolutely! Our expert guides are experienced with international travelers. We provide detailed pre-trip briefings, handle all logistics, and are available 24/7 throughout your journey.' },
-        { q: 'What is the cancellation policy?', a: 'We offer free cancellation up to 7 days before departure for a full refund. Cancellations 3–7 days before departure receive a 50% refund. Within 3 days, the booking is non-refundable but can be transferred to another date.' },
-        { q: 'Do I need a visa to travel to India?', a: 'Most nationalities can apply for an Indian e-Visa online at indianvisaonline.gov.in. Processing takes 2–4 business days. We recommend applying at least 2 weeks before travel.' },
-        { q: 'Are international credit/debit cards accepted?', a: 'Yes — we accept all major international cards (Visa, Mastercard, Amex) and process payments securely. Prices can be displayed in USD, INR, or other currencies.' },
-        { q: 'What languages do your guides speak?', a: 'All our guides are fluent in English. Several also speak French, German, Spanish, and Japanese. Please mention your preference and we\'ll do our best to match you.' },
-        { q: 'What\'s included in the trip price?', a: 'All prices are per person and include accommodation, ground transportation, guided excursions, and meals as specified in the itinerary. International flights are not included unless stated.' },
+        { q: 'Is this trip suitable for first-time visitors to India?', a: 'Absolutely! All our tours are designed with international first-timers in mind. Your private guide handles all logistics, briefs you daily on what to expect, and is available 24/7. We\'ll also send you a complete pre-trip India guide after booking.' },
+        { q: 'Is India safe for tourists from the USA / UK / Australia?', a: 'India is very welcoming to international tourists — especially on the major tourist circuits. We take extra precautions: vetted accommodation, licensed guides with national guide cards, pre-booked transport, and 24/7 reachable support team. Millions of international travelers visit India every year without incident.' },
+        { q: 'Do I need a visa? How do I apply?', a: 'Most nationalities (USA, UK, Australia, Canada, EU) can apply for an Indian e-Visa online at indianvisaonline.gov.in. Processing is 2–4 business days. Cost is $25–$80 depending on nationality. We send you a step-by-step application guide after booking. Apply at least 2 weeks before travel.' },
+        { q: 'What is the cancellation policy?', a: 'Free cancellation up to 7 days before departure for a full refund. Cancellations 3–7 days before get a 50% refund. Within 3 days the booking is non-refundable but can be transferred to another date. We also allow one free date change per booking.' },
+        { q: 'Are international cards accepted? Can I pay in USD?', a: 'Yes — Visa, Mastercard, and Amex are all accepted. Payment is processed via our secure Easebuzz gateway (PCI-DSS compliant). The charge appears in INR on your statement but your bank converts at the live exchange rate — no surcharges from our end. You can view prices in USD on our website.' },
+        { q: 'What languages do your guides speak?', a: 'All our guides are fluent in English. Several also speak French, German, Spanish, Italian, and Japanese. Mention your preference when booking and we\'ll do our best to match you with the right guide.' },
+        { q: 'What\'s included — and what\'s not?', a: 'Included: private air-conditioned vehicle, dedicated English-speaking guide, all accommodation as stated, meals as per itinerary, all entry tickets, airport/station transfers, and a local SIM card. Not included: international flights, travel insurance, personal expenses, and tips for guides (appreciated but optional).' },
+        { q: 'Do you provide travel insurance?', a: 'We don\'t sell insurance directly, but we strongly recommend purchasing comprehensive travel insurance before departure. World Nomads and Allianz are popular with international travelers to India. Your guide will be briefed on your insurance details.' },
     ];
 
     if (loading) {
@@ -178,6 +180,51 @@ export default function TripDetailPage() {
                     </div>
                 </div>
             </section>
+
+            {/* ── INTERNATIONAL TRUST BAR ── */}
+            {visitor === 'foreigner' && (
+                <div className="bg-amber-500 text-white py-3">
+                    <div className="section-container">
+                        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-xs font-semibold uppercase tracking-wider">
+                            {[
+                                '🔒 Secure Payment · Visa · MC · Amex',
+                                '🗣️ English-Speaking Private Guide',
+                                '🆓 Free Cancellation — 7 Days',
+                                '📞 24/7 WhatsApp Support',
+                                '🏛️ Ministry of Tourism Registered',
+                            ].map((item) => (
+                                <span key={item} className="whitespace-nowrap">{item}</span>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ── PRIVATE GUIDE HIGHLIGHT (foreigner) ── */}
+            {visitor === 'foreigner' && (
+                <div className="bg-white border-b border-primary/8 py-6">
+                    <div className="section-container">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {[
+                                { icon: Users, label: 'Private Tour', sub: 'Your group only — no strangers', color: 'text-amber-600' },
+                                { icon: Globe, label: 'English Guide', sub: 'Fluent · Licensed · Local expert', color: 'text-blue-600' },
+                                { icon: Shield, label: 'Fully Insured', sub: 'Govt. licensed · Travel insured', color: 'text-green-600' },
+                                { icon: CreditCard, label: 'Pay in USD', sub: 'Visa · Mastercard · Amex', color: 'text-purple-600' },
+                            ].map(({ icon: Icon, label, sub, color }) => (
+                                <div key={label} className="flex items-start gap-3 p-3 rounded-xl bg-cream/50">
+                                    <div className={`w-9 h-9 rounded-lg bg-primary/5 flex items-center justify-center shrink-0`}>
+                                        <Icon className={`w-4 h-4 ${color}`} />
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold text-primary text-sm">{label}</div>
+                                        <div className="text-xs text-primary/50 mt-0.5">{sub}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="section-container py-16">
                 <div className="grid lg:grid-cols-3 gap-12">
@@ -386,8 +433,23 @@ export default function TripDetailPage() {
                                 {visitor === 'foreigner' ? 'Book & Pay Online' : 'Proceed to Checkout'}
                             </button>
 
-                            {/* International card note for foreigners */}
-                            {visitor === 'foreigner' && (
+                            {/* International trust block */}
+                            {visitor === 'foreigner' ? (
+                                <div className="mt-3 space-y-2">
+                                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                        <p className="text-blue-800 font-semibold text-xs mb-1">💳 International Payment</p>
+                                        <p className="text-blue-700 text-xs">Visa · Mastercard · Amex accepted · Charged in INR, your bank converts at live rate. No surcharges.</p>
+                                    </div>
+                                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                                        <p className="text-amber-800 font-semibold text-xs mb-1">🗣️ Private English-Speaking Guide</p>
+                                        <p className="text-amber-700 text-xs">Dedicated guide throughout — no group tour. Licensed, insured, and hand-picked by our team.</p>
+                                    </div>
+                                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                                        <p className="text-green-800 font-semibold text-xs mb-1">📞 24/7 WhatsApp Support</p>
+                                        <p className="text-green-700 text-xs">Our team is reachable around the clock during your trip. Response within minutes.</p>
+                                    </div>
+                                </div>
+                            ) : (
                                 <div className="mt-3 p-3 bg-secondary/5 border border-secondary/20 rounded text-sm text-center">
                                     <p className="text-secondary font-medium">💳 International cards accepted</p>
                                     <p className="text-primary/50 text-xs mt-1">Visa · Mastercard · Amex · Pay in USD</p>
@@ -424,7 +486,26 @@ export default function TripDetailPage() {
                                     <Shield size={15} className="text-blue-600 mt-0.5 shrink-0" />
                                     <span className="text-primary/70">Secure payment · instant confirmation</span>
                                 </div>
+                                {visitor === 'foreigner' && (
+                                    <div className="flex items-start gap-2 text-sm">
+                                        <BadgeCheck size={15} className="text-amber-600 mt-0.5 shrink-0" />
+                                        <span className="text-primary/70">Ministry of Tourism registered operator</span>
+                                    </div>
+                                )}
                             </div>
+
+                            {/* WhatsApp contact */}
+                            {visitor === 'foreigner' && (
+                                <a
+                                    href={`https://wa.me/918427831127?text=Hi!%20I%27m%20interested%20in%20booking%20${encodeURIComponent(trip.title || 'your tour')}.`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="mt-4 flex items-center justify-center gap-2 w-full py-3 bg-[#25D366] hover:bg-[#1ebe5d] text-white text-sm font-semibold rounded transition-colors"
+                                >
+                                    <MessageCircle size={16} />
+                                    Ask a Question on WhatsApp
+                                </a>
+                            )}
                         </div>
                     </div>
                 </div>
