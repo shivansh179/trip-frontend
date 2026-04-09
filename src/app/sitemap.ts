@@ -84,7 +84,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ? eventsData
     : (eventsData as any)?.content ?? [];
 
-  const eventPages: MetadataRoute.Sitemap = eventItems.map((e) => ({
+  // Filter out internal/test/payment events
+  const INTERNAL_SLUGS = ['flight-payment-internal', 'internal', 'test', 'payment-internal'];
+  const publicEvents = eventItems.filter((e) => {
+    const slug = String(e.slug || e.id).toLowerCase();
+    return !INTERNAL_SLUGS.some((s) => slug.includes(s));
+  });
+
+  const eventPages: MetadataRoute.Sitemap = publicEvents.map((e) => ({
     url: `${BASE_URL}/events/${e.slug || e.id}`,
     lastModified: now,
     changeFrequency: 'weekly' as const,
