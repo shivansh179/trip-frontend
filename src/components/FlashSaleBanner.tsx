@@ -90,33 +90,6 @@ export default function FlashSaleBanner() {
         </button>
       </div>
 
-      {/* Mobile — scrolling marquee */}
-      <div className="flex sm:hidden items-center overflow-hidden py-2 px-3 text-sm font-medium">
-        <div className="flex-1 overflow-hidden">
-          <div className="whitespace-nowrap inline-block" style={{ animation: 'marquee 18s linear infinite' }}>
-            {bannerText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{bannerText}
-          </div>
-        </div>
-        <button
-          onClick={handleDismiss}
-          aria-label="Dismiss banner"
-          className="flex-shrink-0 ml-2 hover:bg-white/20 rounded-full p-0.5 transition-colors"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      </div>
 
     </div>
   );

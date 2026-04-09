@@ -43,7 +43,7 @@ export default function Header() {
                         ? 'bg-transparent'
                         : 'bg-white/95 backdrop-blur-lg border-b border-gray-100'
             }`}>
-                <FlashSaleBanner />
+                <div className="hidden sm:block"><FlashSaleBanner /></div>
                 <div className={`section-container transition-all duration-500 ${
                     isScrolled ? 'py-3' : hasHero ? 'py-6' : 'py-4'
                 }`}>

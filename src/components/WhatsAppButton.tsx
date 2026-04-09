@@ -20,7 +20,7 @@ export default function WhatsAppButton({
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp — we reply within 1 hour"
-      className="fixed bottom-24 right-5 z-50 group flex flex-col items-end gap-2"
+      className="hidden md:flex fixed bottom-8 right-5 z-50 group flex-col items-end gap-2"
     >
       {/* Reply-time badge — shows on hover */}
       <div className="flex items-center gap-1.5 bg-white text-gray-700 text-xs font-medium px-3 py-1.5 rounded-full shadow-lg border border-gray-100 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 pointer-events-none whitespace-nowrap">

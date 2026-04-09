@@ -195,6 +195,36 @@ a, button, [role="button"] {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* ── App-like page enter animation (mobile) ─────────────────────── */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 767px) {
+  main > * {
+    animation: page-enter 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Tap feedback — press scale down on all interactive elements */
+  a:active, button:active, [role="button"]:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+
+  /* Smooth momentum scroll in scrollable areas */
+  .overflow-x-auto, .overflow-y-auto, .overflow-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+}
+
 /* Fluid typography helpers */
 @media (max-width: 380px) {
   html { font-size: 14px; }
