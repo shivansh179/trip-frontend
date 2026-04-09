@@ -179,7 +179,7 @@ export default function IndiaBudgetGuide() {
           <h3 className="font-display text-2xl text-primary mb-6">Continue Reading</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              { title: 'First Time in India? Complete 2025 Guide', href: '/blogs/first-time-india-guide' },
+              { title: 'First Time in India? Complete 2026 Guide', href: '/blogs/first-time-india-guide' },
               { title: 'Best Time to Visit India — Month by Month', href: '/blogs/best-time-to-visit-india' },
             ].map(({ title, href }) => (
               <Link key={href} href={href} className="border border-primary/10 bg-cream-light p-5 hover:border-secondary transition-colors">

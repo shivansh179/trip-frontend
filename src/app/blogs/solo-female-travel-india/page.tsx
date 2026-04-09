@@ -4,11 +4,11 @@ import Image from 'next/image';
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
-  title: "Solo Female Travel in India: Honest Safety Guide 2025",
+  title: "Solo Female Travel in India: Honest Safety Guide 2026",
   description: "Is India safe for solo female travelers? An honest, practical guide covering safe cities, transport tips, dress code, accommodation, and how to handle unwanted attention.",
   keywords: "solo female travel India, is India safe for solo female travelers, India solo female safety guide, women traveling alone India tips",
   openGraph: {
-    title: "Solo Female Travel in India: Honest Safety Guide 2025 | YlooTrips",
+    title: "Solo Female Travel in India: Honest Safety Guide 2026 | YlooTrips",
     description: "An honest guide to solo female travel in India — practical safety tips, best cities for women, and how to have an extraordinary trip.",
     url: "https://www.ylootrips.com/blogs/solo-female-travel-india",
     type: "article",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Solo Female Travel in India: Honest Safety Guide 2025",
+    title: "Solo Female Travel in India: Honest Safety Guide 2026",
     description: "Safe cities, transport tips, dress code, accommodation advice and how to have an amazing solo trip in India.",
     images: ["https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?w=1200&q=80"],
   },
@@ -39,7 +39,7 @@ export default function SoloFemaleTravelIndia() {
         { name: 'Solo Female Travel in India', url: 'https://www.ylootrips.com/blogs/solo-female-travel-india' },
       ]} />
       <ArticleJsonLd
-        headline="Solo Female Travel in India: Honest Safety Guide 2025"
+        headline="Solo Female Travel in India: Honest Safety Guide 2026"
         description="Is India safe for solo female travelers? Practical guide covering safe cities, transport, dress code, accommodation, and how to have an extraordinary trip."
         url="https://www.ylootrips.com/blogs/solo-female-travel-india"
         image="https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?w=1200&q=80"
@@ -62,7 +62,7 @@ export default function SoloFemaleTravelIndia() {
         </div>
 
         <h1 className="font-display text-display-lg text-primary mb-6">
-          Solo Female Travel in India: Honest Safety Guide 2025
+          Solo Female Travel in India: Honest Safety Guide 2026
         </h1>
         <p className="text-body-lg text-primary/70 mb-10 leading-relaxed">
           Thousands of women travel solo in India every year and have transformative, safe, joyful experiences. This guide won&apos;t sugarcoat the challenges — but it will give you the tools to navigate them confidently.
@@ -154,7 +154,7 @@ export default function SoloFemaleTravelIndia() {
           <h3 className="font-display text-2xl text-primary mb-6">Continue Reading</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              { title: 'First Time in India? Complete 2025 Guide', href: '/blogs/first-time-india-guide' },
+              { title: 'First Time in India? Complete 2026 Guide', href: '/blogs/first-time-india-guide' },
               { title: 'How to Plan a 2-Week India Trip on a $2,000 Budget', href: '/blogs/2-week-india-trip-budget' },
             ].map(({ title, href }) => (
               <Link key={href} href={href} className="border border-primary/10 bg-cream-light p-5 hover:border-secondary transition-colors">

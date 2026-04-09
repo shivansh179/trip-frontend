@@ -4,11 +4,11 @@ import Image from 'next/image';
 import { ArticleJsonLd, FaqJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
-  title: "First Time in India? Complete 2025 Guide for International Travelers",
-  description: "Everything you need to know before visiting India for the first time. Visa, safety, money, food, transport, cultural tips, and the best places to start. Updated 2025.",
+  title: "First Time in India? Complete 2026 Guide for International Travelers",
+  description: "Everything you need to know before visiting India for the first time. Visa, safety, money, food, transport, cultural tips, and the best places to start. Updated 2026.",
   keywords: "first time India travel guide, India for beginners, India travel tips for first timers, visiting India for the first time, India travel advice",
   openGraph: {
-    title: "First Time in India? Complete 2025 Guide for International Travelers",
+    title: "First Time in India? Complete 2026 Guide for International Travelers",
     description: "The honest, practical guide to your first India trip — from visa to street food, safety to culture shock.",
     url: "https://www.ylootrips.com/blogs/first-time-india-guide",
     type: "article",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "First Time in India? Complete 2025 Guide",
+    title: "First Time in India? Complete 2026 Guide",
     description: "Everything you need before visiting India — visa, safety, money, food, transport and the best places to start.",
     images: ["https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1200&q=80"],
   },
@@ -39,7 +39,7 @@ export default function FirstTimeIndiaGuide() {
         { name: 'First Time India Guide', url: 'https://www.ylootrips.com/blogs/first-time-india-guide' },
       ]} />
       <ArticleJsonLd
-        headline="First Time in India? Complete 2025 Guide for International Travelers"
+        headline="First Time in India? Complete 2026 Guide for International Travelers"
         description="Everything you need to know before visiting India for the first time. Visa, safety, money, food, transport, cultural tips, and the best places to start."
         url="https://www.ylootrips.com/blogs/first-time-india-guide"
         image="https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1200&q=80"
@@ -75,7 +75,7 @@ export default function FirstTimeIndiaGuide() {
         </div>
 
         <h1 className="font-display text-display-lg text-primary mb-6">
-          First Time in India? Complete 2025 Guide for International Travelers
+          First Time in India? Complete 2026 Guide for International Travelers
         </h1>
         <p className="text-body-lg text-primary/70 mb-10 leading-relaxed">
           India is not a destination — it&apos;s an experience that rewires you. It&apos;s also one of the most logistically complex trips you&apos;ll plan. This guide covers everything you genuinely need to know before landing in India for the first time.

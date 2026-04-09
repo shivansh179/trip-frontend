@@ -94,8 +94,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    // Add your Google Search Console verification token here
-    // google: 'your-token',
+    google: 'YhlqkMVnZAan5NIH6n4B3zfBTiZeWMc2H1eiqAAnECE',
   },
 };
 

@@ -20,10 +20,21 @@ function CheckoutSuccessContent() {
                 router.push('/trips');
                 return;
             }
-            
+
             try {
                 const response = await api.getBooking(reference);
-                setBooking(response.data);
+                const bookingData = response.data;
+                setBooking(bookingData);
+
+                // Send confirmation email to customer
+                const customerEmail = bookingData.userEmail || bookingData.email || bookingData.contactEmail;
+                if (customerEmail) {
+                    fetch('/api/send-confirmation', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ to: customerEmail, booking: bookingData }),
+                    }).catch(() => { /* non-fatal — email failure shouldn't break the page */ });
+                }
             } catch {
                 // booking fetch failed, show generic confirmation
             } finally {

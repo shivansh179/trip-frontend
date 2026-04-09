@@ -1,5 +1,7 @@
 'use client';
 
+import { useRef } from 'react';
+import type { MouseEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Clock, Star, ArrowUpRight, ShoppingCart, Eye } from 'lucide-react';
@@ -9,6 +11,35 @@ import { useCurrency } from '@/context/CurrencyContext';
 import { useVisitor } from '@/context/VisitorContext';
 import WishlistButton from '@/components/WishlistButton';
 import { getDestinationImageUrl } from '@/lib/destinationImages';
+
+/* ── 3-D tilt wrapper ─────────────────────────────────────────────── */
+function Tilt3D({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+    const ref = useRef<HTMLDivElement>(null);
+    const onMove = (e: MouseEvent<HTMLDivElement>) => {
+        const el = ref.current; if (!el) return;
+        const r = el.getBoundingClientRect();
+        const rx = ((e.clientY - r.top - r.height / 2) / r.height) * -8;
+        const ry = ((e.clientX - r.left - r.width / 2) / r.width) * 8;
+        el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.025,1.025,1.025)`;
+        const shine = el.querySelector<HTMLElement>('[data-shine]');
+        if (shine) {
+            shine.style.opacity = '1';
+            shine.style.background = `radial-gradient(circle at ${((e.clientX - r.left) / r.width) * 100}% ${((e.clientY - r.top) / r.height) * 100}%, rgba(255,255,255,0.14) 0%, transparent 65%)`;
+        }
+    };
+    const onLeave = () => {
+        const el = ref.current; if (!el) return;
+        el.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
+        const shine = el.querySelector<HTMLElement>('[data-shine]');
+        if (shine) shine.style.opacity = '0';
+    };
+    return (
+        <div ref={ref} onMouseMove={onMove} onMouseLeave={onLeave} className={className}
+            style={{ transition: 'transform 0.18s ease-out', transformStyle: 'preserve-3d' }}>
+            {children}
+        </div>
+    );
+}
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80';
 
@@ -113,10 +144,12 @@ export default function TripCard({ trip, index = 0, variant = 'default' }: TripC
     }
 
     return (
-        <div
-            className="group bg-cream-light overflow-hidden transition-all duration-500 hover:shadow-xl flex flex-col"
-            style={{ animationDelay: `${index * 100}ms` }}
+        <Tilt3D
+            className="group bg-cream-light overflow-hidden transition-all duration-500 hover:shadow-xl flex flex-col relative"
         >
+            {/* Shine overlay */}
+            <div data-shine className="absolute inset-0 z-20 pointer-events-none opacity-0 transition-opacity duration-200 rounded-none" />
+
             {/* Image Container — clicking image goes to detail */}
             <Link href={`/trips/${trip.id}`} className="block relative aspect-portrait overflow-hidden shrink-0">
                 <Image
@@ -235,6 +268,6 @@ export default function TripCard({ trip, index = 0, variant = 'default' }: TripC
                     Free cancellation available
                 </div>
             </div>
-        </div>
+        </Tilt3D>
     );
 }

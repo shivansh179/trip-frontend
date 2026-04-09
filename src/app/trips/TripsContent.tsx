@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { ArrowUpRight, Filter, Search, Loader2, Sparkles, X, SlidersHorizontal, MessageCircle, Globe, Star, MapPin, Clock, Check, Lock, Shield } from 'lucide-react';
+import { ArrowUpRight, Filter, Search, Loader2, Sparkles, X, SlidersHorizontal, MessageCircle, Globe, Star, MapPin, Clock, Check, Lock, Shield, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import TripCard from '@/components/TripCard';
@@ -152,6 +152,26 @@ function CuratedTourCard({ tour }: { tour: typeof CURATED_TOURS[0] }) {
 
 const defaultCategories = ['All', 'Trekking', 'Tour', 'Adventure', 'Camping', 'International', 'Beach', 'Honeymoon'];
 
+// Keywords that identify international destinations — used to catch trips
+// that go abroad but are miscategorised (e.g. category="Adventure", dest="Dubai")
+const INTERNATIONAL_DEST_KEYWORDS = [
+    'japan', 'bhutan', 'sri lanka', 'dubai', 'uae', 'bali', 'indonesia',
+    'vietnam', 'georgia', 'singapore', 'thailand', 'maldives', 'nepal',
+    'malaysia', 'cambodia', 'laos', 'myanmar', 'philippines', 'europe',
+    'paris', 'london', 'turkey', 'istanbul', 'egypt', 'africa',
+    'australia', 'new zealand', 'korea', 'china', 'hong kong', 'taiwan',
+    'oman', 'bahrain', 'qatar', 'saudi', 'jordan', 'israel',
+    'phu quoc', 'gili', 'langkawi', 'pattaya', 'phuket', 'bangkok',
+    'kathmandu', 'pokhara', 'colombo', 'male', 'doha', 'abu dhabi',
+];
+
+function isInternationalTrip(trip: { category?: string; activityType?: string; destination?: string }): boolean {
+    if ((trip.category || '').toLowerCase() === 'international') return true;
+    if ((trip.activityType || '').toLowerCase() === 'international') return true;
+    const dest = (trip.destination || '').toLowerCase();
+    return INTERNATIONAL_DEST_KEYWORDS.some(k => dest.includes(k));
+}
+
 type SortOption = 'featured' | 'price-asc' | 'price-desc' | 'rating' | 'duration-asc';
 
 const sortOptions: { value: SortOption; label: string }[] = [
@@ -207,6 +227,28 @@ export default function TripsContent() {
     const [categories, setCategories] = useState<string[]>(defaultCategories);
     const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
 
+    // Budget filter: null = no filter, else max price in INR
+    const BUDGET_OPTIONS = [
+        { label: 'All Budgets', max: null },
+        { label: 'Under ₹10K', max: 10000 },
+        { label: '₹10K – ₹25K', min: 10000, max: 25000 },
+        { label: '₹25K – ₹50K', min: 25000, max: 50000 },
+        { label: '₹50K – ₹1L', min: 50000, max: 100000 },
+        { label: '₹1L+', min: 100000, max: null },
+    ] as const;
+    const DURATION_OPTIONS = [
+        { label: 'Any Duration', min: null, max: null },
+        { label: '1–3 Days', min: 1, max: 3 },
+        { label: '4–7 Days', min: 4, max: 7 },
+        { label: '8–14 Days', min: 8, max: 14 },
+        { label: '15+ Days', min: 15, max: null },
+    ] as const;
+
+    const [budgetIdx, setBudgetIdx] = useState(0);
+    const [durationIdx, setDurationIdx] = useState(0);
+    const [showBudgetMenu, setShowBudgetMenu] = useState(false);
+    const [showDurationMenu, setShowDurationMenu] = useState(false);
+
     const PAGE_SIZE = 12;
 
     useEffect(() => {
@@ -236,6 +278,14 @@ export default function TripsContent() {
                 setTrips(response.data);
                 setHasMore(false);
                 setTotalElements(response.data.length);
+            } else if (activeCategory === 'International') {
+                // Fetch all trips then filter client-side so we catch trips that
+                // go to international destinations but are stored under other categories
+                response = await api.getTripsPaginated({ page: 0, size: 500 });
+                const intlTrips = (response.data.content as Trip[]).filter(isInternationalTrip);
+                setTrips(intlTrips);
+                setHasMore(false);
+                setTotalElements(intlTrips.length);
             } else {
                 const params: Record<string, unknown> = { page: pageNum, size: PAGE_SIZE };
                 if (activeCategory !== 'All') params.category = activeCategory;
@@ -294,13 +344,32 @@ export default function TripsContent() {
         fetchTrips(nextPage, true);
     };
 
-    // Visitor filter
+    // Visitor filter — hide all international-destination trips from foreigners
     const visitorFiltered = visitor === 'foreigner'
-        ? trips.filter((t) => (t.category || '').toLowerCase() !== 'international')
+        ? trips.filter((t) => !isInternationalTrip(t))
         : trips;
 
+    // Budget filter
+    const budgetOpt = BUDGET_OPTIONS[budgetIdx];
+    const budgetFiltered = visitorFiltered.filter(t => {
+        const price = typeof t.price === 'number' ? t.price : parseFloat(String(t.price));
+        if ('min' in budgetOpt && budgetOpt.min !== null && price < budgetOpt.min) return false;
+        if (budgetOpt.max !== null && price > budgetOpt.max) return false;
+        return true;
+    });
+
+    // Duration filter
+    const durationOpt = DURATION_OPTIONS[durationIdx];
+    const durationFiltered = budgetFiltered.filter(t => {
+        if (durationOpt.min === null && durationOpt.max === null) return true;
+        const days = parseInt(String(t.duration || '0'));
+        if (durationOpt.min !== null && days < durationOpt.min) return false;
+        if (durationOpt.max !== null && days > durationOpt.max) return false;
+        return true;
+    });
+
     // Sort
-    const displayedTrips = sortTrips(visitorFiltered, sortBy);
+    const displayedTrips = sortTrips(durationFiltered, sortBy);
 
     const displayedCategories = visitor === 'foreigner'
         ? categories.filter((c) => c.toLowerCase() !== 'international')
@@ -383,7 +452,7 @@ export default function TripsContent() {
                                 { icon: '🔒', text: '256-bit SSL · PCI-DSS' },
                                 { icon: '💳', text: 'Visa · Mastercard · Amex' },
                                 { icon: '🗣️', text: 'English-Speaking Guides' },
-                                { icon: '🆓', text: 'Free Cancellation — 7 Days' },
+                                { icon: '🆓', text: 'Free Cancellation — 14 Days' },
                                 { icon: '🏛️', text: 'Ministry of Tourism Registered' },
                             ].map(({ icon, text }) => (
                                 <span key={text} className="flex items-center gap-1.5 text-xs text-primary/60 font-medium whitespace-nowrap">
@@ -434,7 +503,68 @@ export default function TripsContent() {
                         ))}
                     </div>
 
-                    {/* Row 2: Search + Sort */}
+                    {/* Row 2: Budget + Duration filters */}
+                    <div className="flex items-center gap-2 overflow-x-auto pb-0.5 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-none">
+                        {/* Budget */}
+                        <div className="relative shrink-0">
+                            <button
+                                onClick={() => { setShowBudgetMenu(v => !v); setShowDurationMenu(false); setShowSortMenu(false); }}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 border text-xs uppercase tracking-widest transition-colors rounded-sm ${budgetIdx !== 0 ? 'bg-secondary text-cream border-secondary' : 'bg-cream border-primary/15 text-primary hover:border-primary/40'}`}
+                            >
+                                💰 {BUDGET_OPTIONS[budgetIdx].label}
+                                <ChevronDown className="w-3 h-3" />
+                            </button>
+                            {showBudgetMenu && (
+                                <div className="absolute left-0 top-full mt-1 w-44 bg-white border border-primary/10 shadow-xl z-50 rounded-sm">
+                                    {BUDGET_OPTIONS.map((opt, i) => (
+                                        <button
+                                            key={opt.label}
+                                            onClick={() => { setBudgetIdx(i); setShowBudgetMenu(false); }}
+                                            className={`w-full text-left px-4 py-2.5 text-xs uppercase tracking-widest transition-colors ${budgetIdx === i ? 'bg-primary text-cream' : 'text-primary hover:bg-cream-dark'}`}
+                                        >
+                                            {opt.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Duration */}
+                        <div className="relative shrink-0">
+                            <button
+                                onClick={() => { setShowDurationMenu(v => !v); setShowBudgetMenu(false); setShowSortMenu(false); }}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 border text-xs uppercase tracking-widest transition-colors rounded-sm ${durationIdx !== 0 ? 'bg-secondary text-cream border-secondary' : 'bg-cream border-primary/15 text-primary hover:border-primary/40'}`}
+                            >
+                                🗓️ {DURATION_OPTIONS[durationIdx].label}
+                                <ChevronDown className="w-3 h-3" />
+                            </button>
+                            {showDurationMenu && (
+                                <div className="absolute left-0 top-full mt-1 w-44 bg-white border border-primary/10 shadow-xl z-50 rounded-sm">
+                                    {DURATION_OPTIONS.map((opt, i) => (
+                                        <button
+                                            key={opt.label}
+                                            onClick={() => { setDurationIdx(i); setShowDurationMenu(false); }}
+                                            className={`w-full text-left px-4 py-2.5 text-xs uppercase tracking-widest transition-colors ${durationIdx === i ? 'bg-primary text-cream' : 'text-primary hover:bg-cream-dark'}`}
+                                        >
+                                            {opt.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Clear filters */}
+                        {(budgetIdx !== 0 || durationIdx !== 0) && (
+                            <button
+                                onClick={() => { setBudgetIdx(0); setDurationIdx(0); }}
+                                className="shrink-0 flex items-center gap-1 px-3 py-1.5 text-xs text-terracotta border border-terracotta/30 hover:bg-terracotta/10 transition-colors rounded-sm uppercase tracking-widest"
+                            >
+                                <X className="w-3 h-3" /> Clear
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Row 3: Search + Sort */}
                     <div className="flex items-center gap-2">
                         {/* Search */}
                         <form onSubmit={handleSearch} className="flex items-center gap-2 flex-1 min-w-0">
@@ -469,7 +599,7 @@ export default function TripsContent() {
                         {/* Sort */}
                         <div className="relative shrink-0">
                             <button
-                                onClick={() => setShowSortMenu(v => !v)}
+                                onClick={() => { setShowSortMenu(v => !v); setShowBudgetMenu(false); setShowDurationMenu(false); }}
                                 className="flex items-center gap-1.5 px-3 py-2.5 border border-primary/15 bg-cream text-primary text-xs uppercase tracking-widest hover:border-primary/40 transition-colors"
                             >
                                 <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -527,7 +657,7 @@ export default function TripsContent() {
             )}
 
             {/* Trips Grid */}
-            <section className="py-12 md:py-20 bg-cream" onClick={() => showSortMenu && setShowSortMenu(false)}>
+            <section className="py-12 md:py-20 bg-cream" onClick={() => { setShowSortMenu(false); setShowBudgetMenu(false); setShowDurationMenu(false); }}>
                 <div className="section-container">
 
                     {/* Results count */}

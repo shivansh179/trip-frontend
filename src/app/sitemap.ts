@@ -44,6 +44,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/blogs/india-vs-thailand`, lastModified: now, changeFrequency: 'monthly', priority: 0.82 },
     { url: `${BASE_URL}/blogs/solo-female-travel-india`, lastModified: now, changeFrequency: 'monthly', priority: 0.88 },
     { url: `${BASE_URL}/blogs/2-week-india-trip-budget`, lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
+    // New high-traffic SEO blog pages
+    { url: `${BASE_URL}/blogs/best-time-to-visit-bali`, lastModified: now, changeFrequency: 'monthly', priority: 0.92 },
+    { url: `${BASE_URL}/blogs/dubai-trip-cost-from-india`, lastModified: now, changeFrequency: 'monthly', priority: 0.92 },
+    { url: `${BASE_URL}/blogs/thailand-itinerary-5-days`, lastModified: now, changeFrequency: 'monthly', priority: 0.92 },
+
+    // International package landing pages (high-conversion SEO)
+    { url: `${BASE_URL}/dubai-tour-package-from-delhi`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${BASE_URL}/bali-honeymoon-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${BASE_URL}/thailand-budget-trip`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${BASE_URL}/maldives-luxury-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
   ];
 
   // ── Dynamic: trip detail pages ────────────────────────────────

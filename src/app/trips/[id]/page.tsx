@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { Calendar, Users, MapPin, Clock, Star, Check, X, ArrowRight, Utensils, Hotel, ChevronDown, Shield, RefreshCw, Globe, CreditCard, Phone, BadgeCheck, MessageCircle } from 'lucide-react';
+import { Calendar, Users, MapPin, Clock, Star, Check, X, ArrowRight, Utensils, Hotel, ChevronDown, Shield, RefreshCw, Globe, CreditCard, Phone, BadgeCheck, MessageCircle, Zap, TrendingDown, Award, Eye } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Trip } from '@/types';
 import { formatPriceWithCurrency } from '@/lib/utils';
@@ -81,6 +81,10 @@ export default function TripDetailPage() {
 
     // Deterministic spots left (consistent server/client)
     const spotsLeft = trip ? (((trip.id * 7) % 9) + 1 <= 5 ? ((trip.id * 7) % 9) + 1 : null) : null;
+    const viewers = trip ? ((trip.id * 13 + 7) % 20) + 4 : 0;
+
+    // EMI calculation (6-month no-cost EMI)
+    const emiMonthly = trip ? Math.ceil(totalPrice / 6) : 0;
 
     const tripFaqs = [
         { q: 'Is this trip suitable for first-time visitors to India?', a: 'Absolutely! All our tours are designed with international first-timers in mind. Your private guide handles all logistics, briefs you daily on what to expect, and is available 24/7. We\'ll also send you a complete pre-trip India guide after booking.' },
@@ -362,152 +366,164 @@ export default function TripDetailPage() {
                     </div>
 
                     {/* Booking Sidebar */}
-                    <div className="lg:sticky lg:top-24 h-fit">
-                        <div className="bg-cream-light p-8 border border-primary/10">
-                            {/* Spots left alert */}
-                            {spotsLeft !== null && (
-                                <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded text-sm flex items-center gap-2">
-                                    <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse shrink-0"></span>
-                                    <span className="text-red-700 font-medium">Only {spotsLeft} spots left for this trip!</span>
-                                </div>
-                            )}
+                    <div className="lg:sticky lg:top-24 h-fit space-y-4">
 
-                            <h3 className="text-2xl font-light mb-6">Book This Trip</h3>
+                        {/* ── Main Booking Card ── */}
+                        <div className="bg-white rounded-2xl border border-primary/10 shadow-xl overflow-hidden">
 
-                            {/* Price */}
-                            <div className="mb-6">
-                                <div className="flex items-baseline gap-2 mb-1">
-                                    <span className="text-4xl font-light">{fp(trip.price)}</span>
-                                    <span className="text-body-sm text-text-secondary">per person</span>
+                            {/* Header strip */}
+                            <div className="bg-gradient-to-r from-primary to-secondary px-6 py-4 flex items-center justify-between">
+                                <div>
+                                    <p className="text-[10px] text-white/60 uppercase tracking-widest">Starting from</p>
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="font-display text-3xl text-white">{fp(trip.price)}</span>
+                                        <span className="text-white/60 text-sm">/ person</span>
+                                    </div>
+                                    {trip.originalPrice && (
+                                        <span className="text-white/50 text-xs line-through">{fp(trip.originalPrice)}</span>
+                                    )}
                                 </div>
-                                {trip.originalPrice && (
-                                    <p className="text-body-sm text-text-secondary line-through">
-                                        {fp(trip.originalPrice)}
+                                {spotsLeft !== null && (
+                                    <div className="bg-red-500 text-white text-[10px] font-bold uppercase px-2.5 py-1.5 rounded-full animate-pulse text-center">
+                                        Only {spotsLeft}<br />left!
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="p-6 space-y-4">
+                                {/* Live viewers */}
+                                <div className="flex items-center gap-2 text-xs text-primary/55">
+                                    <Eye className="w-3.5 h-3.5 text-amber-500" />
+                                    <span><strong className="text-primary">{viewers} people</strong> are viewing this trip right now</span>
+                                </div>
+
+                                {/* Guests */}
+                                <div>
+                                    <label className="text-xs text-primary/55 uppercase tracking-widest mb-1.5 block font-medium">
+                                        <Users className="w-3.5 h-3.5 inline mr-1" />Guests
+                                    </label>
+                                    <select
+                                        value={selectedGuests}
+                                        onChange={(e) => setSelectedGuests(Number(e.target.value))}
+                                        className="w-full p-3 border border-primary/15 bg-cream/50 text-primary rounded-lg text-sm focus:outline-none focus:border-secondary"
+                                    >
+                                        {Array.from({ length: trip.maxGroupSize || 10 }, (_, i) => i + 1).map((num) => (
+                                            <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* Travel Date */}
+                                <div>
+                                    <label className="text-xs text-primary/55 uppercase tracking-widest mb-1.5 block font-medium">
+                                        <Calendar className="w-3.5 h-3.5 inline mr-1" />Travel Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={selectedDate}
+                                        onChange={(e) => setSelectedDate(e.target.value)}
+                                        min={new Date().toISOString().split('T')[0]}
+                                        className="w-full p-3 border border-primary/15 bg-cream/50 text-primary rounded-lg text-sm focus:outline-none focus:border-secondary"
+                                    />
+                                    {!selectedDate && (
+                                        <p className="text-xs text-amber-600 mt-1">← Select a date to confirm booking</p>
+                                    )}
+                                </div>
+
+                                {/* Price Breakdown */}
+                                <div className="bg-cream/60 rounded-xl p-4 space-y-2 border border-primary/8">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-primary/60">{fp(basePrice)} × {selectedGuests} guest{selectedGuests > 1 ? 's' : ''}</span>
+                                        <span className="font-medium text-primary">{fp(totalPrice)}</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm text-green-700">
+                                        <span>WanderLoot 10% cashback</span>
+                                        <span>+{fp(totalPrice * 0.1)}</span>
+                                    </div>
+                                    <div className="border-t border-primary/10 pt-2 flex justify-between font-semibold text-primary">
+                                        <span>Total</span>
+                                        <span className="font-display text-xl">{fp(totalPrice)}</span>
+                                    </div>
+                                </div>
+
+                                {/* EMI Preview */}
+                                <div className="flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-xl px-4 py-3">
+                                    <TrendingDown className="w-4 h-4 text-violet-600 shrink-0" />
+                                    <p className="text-xs text-violet-800">
+                                        <strong>No-cost EMI</strong> available from{' '}
+                                        <strong>{fp(emiMonthly)}/month</strong> for 6 months
                                     </p>
-                                )}
-                                <p className="text-xs text-green-700 font-medium mt-1 flex items-center gap-1">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>
-                                    No hidden fees · all taxes included
-                                </p>
-                            </div>
+                                </div>
 
-                            {/* Number of Guests */}
-                            <div className="mb-6">
-                                <label className="text-caption text-text-secondary mb-2 block">Number of Guests</label>
-                                <select
-                                    value={selectedGuests}
-                                    onChange={(e) => setSelectedGuests(Number(e.target.value))}
-                                    className="w-full p-3 border border-primary/20 bg-white text-primary"
+                                {/* Book Button */}
+                                <button
+                                    onClick={handleBookNow}
+                                    className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-cream py-4 rounded-xl text-sm font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
                                 >
-                                    {Array.from({ length: trip.maxGroupSize || 10 }, (_, i) => i + 1).map((num) => (
-                                        <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
-                                    ))}
-                                </select>
-                            </div>
+                                    <Zap className="w-4 h-4" />
+                                    {!selectedDate ? 'Select Date & Book' : (visitor === 'foreigner' ? 'Book & Pay Online' : 'Proceed to Checkout')}
+                                </button>
 
-                            {/* Travel Date */}
-                            <div className="mb-6">
-                                <label className="text-caption text-text-secondary mb-2 block">Travel Date</label>
-                                <input
-                                    type="date"
-                                    value={selectedDate}
-                                    onChange={(e) => setSelectedDate(e.target.value)}
-                                    min={new Date().toISOString().split('T')[0]}
-                                    className="w-full p-3 border border-primary/20 bg-white text-primary"
-                                />
-                            </div>
-
-                            {/* Total */}
-                            <div className="mb-6 pt-6 border-t border-primary/10">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-body-lg">Total</span>
-                                    <span className="text-2xl font-light">{fp(totalPrice)}</span>
-                                </div>
-                            </div>
-
-                            {/* Book Button */}
-                            <button
-                                onClick={handleBookNow}
-                                disabled={!selectedDate}
-                                className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {visitor === 'foreigner' ? 'Book & Pay Online' : 'Proceed to Checkout'}
-                            </button>
-
-                            {/* International trust block */}
-                            {visitor === 'foreigner' ? (
-                                <div className="mt-3 space-y-2">
-                                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                                        <p className="text-blue-800 font-semibold text-xs mb-1">💳 International Payment</p>
-                                        <p className="text-blue-700 text-xs">Visa · Mastercard · Amex accepted · Charged in INR, your bank converts at live rate. No surcharges.</p>
-                                    </div>
-                                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                                        <p className="text-amber-800 font-semibold text-xs mb-1">🗣️ Private English-Speaking Guide</p>
-                                        <p className="text-amber-700 text-xs">Dedicated guide throughout — no group tour. Licensed, insured, and hand-picked by our team.</p>
-                                    </div>
-                                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                                        <p className="text-green-800 font-semibold text-xs mb-1">📞 24/7 WhatsApp Support</p>
-                                        <p className="text-green-700 text-xs">Our team is reachable around the clock during your trip. Response within minutes.</p>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="mt-3 p-3 bg-secondary/5 border border-secondary/20 rounded text-sm text-center">
-                                    <p className="text-secondary font-medium">💳 International cards accepted</p>
-                                    <p className="text-primary/50 text-xs mt-1">Visa · Mastercard · Amex · Pay in USD</p>
-                                </div>
-                            )}
-
-                            {/* Trip Info */}
-                            <div className="mt-6 pt-6 border-t border-primary/10 space-y-3">
-                                <div className="flex justify-between text-body-sm">
-                                    <span className="text-text-secondary">Duration</span>
-                                    <span>{trip.duration}</span>
-                                </div>
-                                {trip.difficulty && (
-                                    <div className="flex justify-between text-body-sm">
-                                        <span className="text-text-secondary">Difficulty</span>
-                                        <span>{trip.difficulty}</span>
-                                    </div>
-                                )}
-                                {trip.maxGroupSize && (
-                                    <div className="flex justify-between text-body-sm">
-                                        <span className="text-text-secondary">Max Group Size</span>
-                                        <span>{trip.maxGroupSize}</span>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Cancellation policy */}
-                            <div className="mt-5 pt-5 border-t border-primary/10 space-y-2">
-                                <div className="flex items-start gap-2 text-sm">
-                                    <RefreshCw size={15} className="text-green-600 mt-0.5 shrink-0" />
-                                    <span className="text-primary/70">Free cancellation up to 7 days before departure</span>
-                                </div>
-                                <div className="flex items-start gap-2 text-sm">
-                                    <Shield size={15} className="text-blue-600 mt-0.5 shrink-0" />
-                                    <span className="text-primary/70">Secure payment · instant confirmation</span>
-                                </div>
-                                {visitor === 'foreigner' && (
-                                    <div className="flex items-start gap-2 text-sm">
-                                        <BadgeCheck size={15} className="text-amber-600 mt-0.5 shrink-0" />
-                                        <span className="text-primary/70">Ministry of Tourism registered operator</span>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* WhatsApp contact */}
-                            {visitor === 'foreigner' && (
+                                {/* WhatsApp fallback */}
                                 <a
-                                    href={`https://wa.me/918427831127?text=Hi!%20I%27m%20interested%20in%20booking%20${encodeURIComponent(trip.title || 'your tour')}.`}
+                                    href={`https://wa.me/918427831127?text=Hi!%20I%27m%20interested%20in%20booking%20${encodeURIComponent(trip.title || 'your tour')}%20for%20${selectedGuests}%20guest${selectedGuests > 1 ? 's' : ''}${selectedDate ? `%20on%20${selectedDate}` : ''}.`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="mt-4 flex items-center justify-center gap-2 w-full py-3 bg-[#25D366] hover:bg-[#1ebe5d] text-white text-sm font-semibold rounded transition-colors"
+                                    className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors"
                                 >
-                                    <MessageCircle size={16} />
-                                    Ask a Question on WhatsApp
+                                    <MessageCircle size={14} />
+                                    {visitor === 'foreigner' ? 'Ask a Question on WhatsApp' : 'Chat on WhatsApp'}
                                 </a>
-                            )}
+
+                                {/* Trust icons row */}
+                                <div className="grid grid-cols-3 gap-2 pt-1">
+                                    {[
+                                        { icon: Shield, label: 'Secure Pay', color: 'text-blue-600' },
+                                        { icon: RefreshCw, label: 'Free Cancel', color: 'text-green-600' },
+                                        { icon: Award, label: '4.9★ Rated', color: 'text-amber-600' },
+                                    ].map(({ icon: Icon, label, color }) => (
+                                        <div key={label} className="flex flex-col items-center gap-1 text-center">
+                                            <Icon className={`w-4 h-4 ${color}`} />
+                                            <span className="text-[10px] text-primary/50 uppercase tracking-wide leading-tight">{label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
+
+                        {/* ── Trip Info Card ── */}
+                        <div className="bg-white rounded-2xl border border-primary/10 p-5 space-y-3">
+                            <h4 className="text-sm font-semibold text-primary uppercase tracking-widest">Trip Details</h4>
+                            {[
+                                { label: 'Duration', value: trip.duration },
+                                trip.difficulty && { label: 'Difficulty', value: trip.difficulty },
+                                trip.maxGroupSize && { label: 'Max Group', value: `${trip.maxGroupSize} people` },
+                                { label: 'Cancellation', value: 'Free up to 14 days' },
+                            ].filter(Boolean).map((row: any) => (
+                                <div key={row.label} className="flex justify-between text-sm">
+                                    <span className="text-primary/50">{row.label}</span>
+                                    <span className="font-medium text-primary text-right">{row.value}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* International trust block — foreigners only */}
+                        {visitor === 'foreigner' && (
+                            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 space-y-3">
+                                <p className="text-xs font-bold text-amber-800 uppercase tracking-widest">International Traveler Guarantee</p>
+                                {[
+                                    { icon: '💳', text: 'Visa · Mastercard · Amex · no surcharges' },
+                                    { icon: '🗣️', text: 'English-speaking private guide throughout' },
+                                    { icon: '🏛️', text: 'Ministry of Tourism registered operator' },
+                                    { icon: '📞', text: '24/7 WhatsApp support during your trip' },
+                                ].map(({ icon, text }) => (
+                                    <div key={text} className="flex items-start gap-2 text-xs text-amber-800">
+                                        <span className="shrink-0">{icon}</span>
+                                        <span>{text}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

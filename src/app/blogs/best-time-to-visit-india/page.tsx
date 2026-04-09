@@ -4,11 +4,11 @@ import Image from 'next/image';
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
-  title: "Best Time to Visit India — Month by Month Guide 2025",
+  title: "Best Time to Visit India — Month by Month Guide 2026",
   description: "When is the best time to visit India? Month-by-month breakdown of weather, festivals, crowds, and prices. Find your perfect India travel window.",
   keywords: "best time to visit India, India travel seasons, India weather month by month, India monsoon season, India peak tourist season, when to visit Rajasthan Kerala",
   openGraph: {
-    title: "Best Time to Visit India — Month by Month Guide 2025",
+    title: "Best Time to Visit India — Month by Month Guide 2026",
     description: "When should you travel to India? Our month-by-month breakdown covers weather, festivals, crowds, and prices for every region.",
     url: "https://www.ylootrips.com/blogs/best-time-to-visit-india",
     type: "article",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Best Time to Visit India — Month by Month Guide 2025",
+    title: "Best Time to Visit India — Month by Month Guide 2026",
     description: "Month-by-month India weather, festivals, crowds, and prices. Find your perfect travel window.",
     images: ["https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1200&q=80"],
   },
@@ -54,7 +54,7 @@ export default function BestTimeToVisitIndia() {
         { name: 'Best Time to Visit India', url: 'https://www.ylootrips.com/blogs/best-time-to-visit-india' },
       ]} />
       <ArticleJsonLd
-        headline="Best Time to Visit India — Month by Month Guide 2025"
+        headline="Best Time to Visit India — Month by Month Guide 2026"
         description="When is the best time to visit India? Month-by-month breakdown of weather, festivals, crowds, and prices."
         url="https://www.ylootrips.com/blogs/best-time-to-visit-india"
         image="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1200&q=80"
@@ -77,7 +77,7 @@ export default function BestTimeToVisitIndia() {
         </div>
 
         <h1 className="font-display text-display-lg text-primary mb-6">
-          Best Time to Visit India — Month by Month Guide 2025
+          Best Time to Visit India — Month by Month Guide 2026
         </h1>
         <p className="text-body-lg text-primary/70 mb-10 leading-relaxed">
           India is a subcontinent — its size means that what&apos;s true for one region is completely false for another. Here&apos;s your definitive month-by-month breakdown.
@@ -150,7 +150,7 @@ export default function BestTimeToVisitIndia() {
           <h3 className="font-display text-2xl text-primary mb-6">Continue Reading</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              { title: 'First Time in India? Complete 2025 Guide', href: '/blogs/first-time-india-guide' },
+              { title: 'First Time in India? Complete 2026 Guide', href: '/blogs/first-time-india-guide' },
               { title: 'Solo Female Travel in India: Honest Safety Guide', href: '/blogs/solo-female-travel-india' },
             ].map(({ title, href }) => (
               <Link key={href} href={href} className="border border-primary/10 bg-cream-light p-5 hover:border-secondary transition-colors">

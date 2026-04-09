@@ -4,11 +4,11 @@ import { Shield, Sun, Heart, Backpack, Syringe, CreditCard, ChevronRight } from 
 import { ArticleJsonLd, FaqJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
-  title: "India Travel Guide for International Tourists 2025",
+  title: "India Travel Guide for International Tourists 2026",
   description: "Complete India travel guide for first-time international visitors. Visa requirements, best time to visit, safety tips, what to pack, health & vaccinations, and currency advice.",
   keywords: "India travel guide, India visa for Americans, is India safe for tourists, India travel tips for first timers, best time to visit India, India packing list, India health tips",
   openGraph: {
-    title: "India Travel Guide 2025 — Everything International Tourists Need to Know",
+    title: "India Travel Guide 2026 — Everything International Tourists Need to Know",
     description: "Visa, safety, health, packing, currency — the complete guide to visiting India for first-time international travelers.",
     url: "https://www.ylootrips.com/india-travel-guide",
     type: "article",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "India Travel Guide 2025 | YlooTrips",
+    title: "India Travel Guide 2026 | YlooTrips",
     description: "Visa, safety, health, packing, currency — the complete India guide for international visitors.",
     images: ["https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1200&q=80"],
   },
@@ -85,12 +85,12 @@ export default function IndiaTravelGuide() {
         { name: 'India Travel Guide', url: 'https://www.ylootrips.com/india-travel-guide' },
       ]} />
       <ArticleJsonLd
-        headline="India Travel Guide for International Tourists 2025"
+        headline="India Travel Guide for International Tourists 2026"
         description="Complete India travel guide for first-time international visitors. Visa requirements, best time to visit, safety tips, what to pack, health & vaccinations, and currency advice."
         url="https://www.ylootrips.com/india-travel-guide"
         image="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1200&q=80"
         datePublished="2024-08-01"
-        dateModified="2025-04-01"
+        dateModified="2026-04-09"
         keywords={['India travel guide', 'India visa', 'India safety', 'India health tips', 'India packing list', 'India for tourists']}
       />
       <FaqJsonLd faqs={[

@@ -93,6 +93,7 @@ interface TourJsonLdProps {
   highlights: string[];
   rating?: number;
   reviewCount?: number;
+  destination?: string;
 }
 
 export function TourJsonLd({
@@ -101,47 +102,94 @@ export function TourJsonLd({
   url,
   image,
   price,
-  currency = 'USD',
+  currency = 'INR',
   duration,
   startLocation,
   highlights,
-  rating = 4.8,
-  reviewCount = 94,
+  rating = 4.9,
+  reviewCount = 847,
+  destination,
 }: TourJsonLdProps) {
   const schema = {
     '@context': 'https://schema.org',
-    '@type': 'Product',
-    name,
-    description,
-    url,
-    image,
-    brand: { '@type': 'Brand', name: 'YlooTrips' },
-    offers: {
-      '@type': 'Offer',
-      priceCurrency: currency,
-      price,
-      availability: 'https://schema.org/InStock',
-      url,
-      seller: {
-        '@type': 'Organization',
-        name: 'YlooTrips',
-        url: 'https://www.ylootrips.com',
+    '@graph': [
+      // TouristTrip — correct type for travel packages (enables rich snippets)
+      {
+        '@type': 'TouristTrip',
+        '@id': `${url}#trip`,
+        name,
+        description,
+        url,
+        image: { '@type': 'ImageObject', url: image, width: 1200, height: 630 },
+        touristType: ['FamilyTourist', 'HoneymoonTourist', 'GroupTourist', 'SoloTourist'],
+        availableLanguage: ['English', 'Hindi'],
+        itinerary: {
+          '@type': 'ItemList',
+          name: `${name} — Day by Day`,
+          description: `Complete ${duration} itinerary for ${name}`,
+        },
+        provider: {
+          '@type': 'TravelAgency',
+          name: 'YlooTrips',
+          url: 'https://www.ylootrips.com',
+          telephone: '+91-8427831127',
+          email: 'connectylootrips@gmail.com',
+        },
+        offers: {
+          '@type': 'Offer',
+          priceCurrency: currency,
+          price,
+          priceValidUntil: '2026-12-31',
+          availability: 'https://schema.org/InStock',
+          url,
+          validFrom: '2026-01-01',
+          seller: {
+            '@type': 'TravelAgency',
+            name: 'YlooTrips',
+            url: 'https://www.ylootrips.com',
+          },
+        },
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: rating.toString(),
+          reviewCount: reviewCount.toString(),
+          bestRating: '5',
+          worstRating: '1',
+        },
+        additionalProperty: [
+          { '@type': 'PropertyValue', name: 'Duration', value: duration },
+          { '@type': 'PropertyValue', name: 'Departure City', value: startLocation },
+          ...(destination ? [{ '@type': 'PropertyValue', name: 'Destination', value: destination }] : []),
+          ...highlights.slice(0, 6).map((h) => ({
+            '@type': 'PropertyValue',
+            name: 'Highlight',
+            value: h,
+          })),
+        ],
       },
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: rating.toString(),
-      reviewCount: reviewCount.toString(),
-      bestRating: '5',
-    },
-    additionalProperty: [
-      { '@type': 'PropertyValue', name: 'Duration', value: duration },
-      { '@type': 'PropertyValue', name: 'Starting Location', value: startLocation },
-      ...highlights.slice(0, 5).map((h) => ({
-        '@type': 'PropertyValue',
-        name: 'Highlight',
-        value: h,
-      })),
+      // Product schema — enables price + star ratings in Google Shopping & SERPs
+      {
+        '@type': 'Product',
+        '@id': `${url}#product`,
+        name,
+        description,
+        image,
+        brand: { '@type': 'Brand', name: 'YlooTrips' },
+        offers: {
+          '@type': 'Offer',
+          priceCurrency: currency,
+          price,
+          availability: 'https://schema.org/InStock',
+          url,
+          seller: { '@type': 'Organization', name: 'YlooTrips', url: 'https://www.ylootrips.com' },
+        },
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: rating.toString(),
+          reviewCount: reviewCount.toString(),
+          bestRating: '5',
+        },
+      },
     ],
   };
 

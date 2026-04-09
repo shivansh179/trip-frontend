@@ -15,6 +15,10 @@ import HolidayPlanner from '@/components/HolidayPlanner';
 import MyBookingSection from '@/components/MyBookingSection';
 import ReferAndEarn from '@/components/ReferAndEarn';
 import HiddenSpots from '@/components/HiddenSpots';
+import TrendingPackages from '@/components/TrendingPackages';
+import LimitedOffersBanner from '@/components/LimitedOffersBanner';
+import MediaPress from '@/components/MediaPress';
+import GuaranteeSection from '@/components/GuaranteeSection';
 import { api } from '@/lib/api';
 import { Destination } from '@/types';
 import { useVisitor } from '@/context/VisitorContext';
@@ -126,8 +130,14 @@ export default function Home() {
         stats={content?.stats}
       />
 
+      {/* Limited-Time Offers Banner */}
+      <LimitedOffersBanner />
+
       {/* Trust Banner — payment methods + badges */}
       <TrustBanner />
+
+      {/* Press coverage + partner logos */}
+      <MediaPress />
 
       {/* ── Cashback & Wallet Banner ── */}
       <section className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 py-8 md:py-10">
@@ -186,6 +196,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Trending Packages — 3D cards with direct Book Now */}
+      <TrendingPackages />
 
       {/* Trusted Partner Hotels */}
       <TrustedHotels />
@@ -355,6 +368,9 @@ export default function Home() {
       {/* Holiday & Weekend Planner */}
       <HolidayPlanner />
 
+
+      {/* Guarantees — zero-risk booking promise */}
+      <GuaranteeSection />
 
       {/* International Testimonials — static, from real traveler countries */}
       <InternationalTestimonials />

@@ -26,7 +26,7 @@ const categories = ['All', 'Destinations', 'Philosophy', 'Responsible Travel', '
 
 const staticGuides = [
   {
-    title: 'Best Time to Visit India — Month by Month Guide 2025',
+    title: 'Best Time to Visit India — Month by Month Guide 2026',
     description: 'When is the best time to visit India? Month-by-month breakdown of weather, festivals, crowds, and prices. Find your perfect travel window.',
     href: '/blogs/best-time-to-visit-india',
     image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600&q=80',
@@ -34,7 +34,7 @@ const staticGuides = [
     read: '8 min read',
   },
   {
-    title: 'First Time in India? Complete 2025 Guide for International Travelers',
+    title: 'First Time in India? Complete 2026 Guide for International Travelers',
     description: 'Everything you need before visiting India — visa, safety, money, food, transport, and the best places to start.',
     href: '/blogs/first-time-india-guide',
     image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600&q=80',
@@ -50,7 +50,7 @@ const staticGuides = [
     read: '7 min read',
   },
   {
-    title: 'Solo Female Travel in India: Honest Safety Guide 2025',
+    title: 'Solo Female Travel in India: Honest Safety Guide 2026',
     description: 'Safe cities, transport tips, dress code, accommodation advice, and how to handle unwanted attention — the guide no one else writes.',
     href: '/blogs/solo-female-travel-india',
     image: 'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?w=600&q=80',
@@ -97,7 +97,7 @@ export default function BlogsPage() {
     : blogs.filter(b => b.category === activeCategory);
 
   const featuredPost = filteredBlogs.find(b => b.isFeatured);
-  const regularPosts = filteredBlogs.filter(b => !b.isFeatured);
+  const regularPosts = filteredBlogs.filter(b => b !== featuredPost);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
