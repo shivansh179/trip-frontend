@@ -267,25 +267,35 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
     }
   };
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Modal */}
-      <div className="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+      {/* Modal — uses dvh for correct height on mobile with keyboard */}
+      <div
+        className="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col"
+        style={{ maxHeight: 'min(90dvh, 90vh)', overflow: 'hidden' }}
+      >
+        {/* Header — sticky, never scrolls away */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
           <div>
-            <h3 className="font-bold text-gray-900 text-lg">Share Your Experience</h3>
+            <h3 className="font-bold text-gray-900 text-base">Share Your Experience</h3>
             <p className="text-xs text-gray-500 mt-0.5">Your review will be visible after admin approval</p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500">
+          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500 shrink-0">
             <X size={18} />
           </button>
         </div>
 
-        <div className="overflow-y-auto flex-1">
+        {/* Scrollable body */}
+        <div className="overflow-y-auto flex-1 overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
           {done ? (
             <div className="flex flex-col items-center justify-center py-12 px-6 text-center gap-3">
               <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
@@ -300,7 +310,7 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="p-5 space-y-4">
+            <form onSubmit={handleSubmit} className="p-5 space-y-4 pb-8">
               {/* Star rating */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Overall Rating *</label>
@@ -312,35 +322,35 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
                 )}
               </div>
 
-              {/* Name + Country in 2 cols */}
-              <div className="grid grid-cols-2 gap-3">
+              {/* Name + Country — single col on mobile, 2 col on sm+ */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">Your Name *</label>
                   <input required type="text" placeholder="Full name" maxLength={100}
                     value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
+                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">City / Country *</label>
                   <input required type="text" placeholder="e.g. Delhi, India" maxLength={100}
                     value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })}
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
+                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
                 </div>
               </div>
 
-              {/* Email + Phone */}
-              <div className="grid grid-cols-2 gap-3">
+              {/* Email + Phone — single col on mobile */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">Email *</label>
                   <input required type="email" placeholder="your@email.com"
                     value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
+                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">Phone</label>
                   <input type="tel" placeholder="+91 98765…"
                     value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
+                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
                 </div>
               </div>
 
@@ -349,7 +359,7 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
                 <label className="block text-xs font-semibold text-gray-700 mb-1">Which Trip / Package? *</label>
                 <input required type="text" placeholder="e.g. Bali Honeymoon Package, 5-Day Manali Trip"
                   value={form.trip} onChange={(e) => setForm({ ...form, trip: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
+                  className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
               </div>
 
               {/* Review text */}
@@ -357,10 +367,10 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
                   Your Review * <span className="text-gray-400 font-normal">({form.text.length}/1000)</span>
                 </label>
-                <textarea required rows={4} placeholder="Tell us about your experience — what made it special?"
+                <textarea required rows={3} placeholder="Tell us about your experience — what made it special?"
                   maxLength={1000}
                   value={form.text} onChange={(e) => setForm({ ...form, text: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400 resize-none leading-relaxed" />
+                  className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400 resize-none leading-relaxed" />
               </div>
 
               {err && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{err}</p>}
