@@ -293,14 +293,16 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: 'origin, destination and date required' }, { status: 400 });
     }
 
+    const cacheHeaders = { 'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=1800' };
+
     // 1. Try SerpAPI Google Flights (live)
     const serpResult = await fetchSerpApi(origin, dest, date, adults);
-    if (serpResult) return NextResponse.json(serpResult);
+    if (serpResult) return NextResponse.json(serpResult, { headers: cacheHeaders });
 
     // 2. Try Amadeus (live fallback)
     const amadeusResult = await fetchAmadeus(origin, dest, date, adults);
-    if (amadeusResult) return NextResponse.json(amadeusResult);
+    if (amadeusResult) return NextResponse.json(amadeusResult, { headers: cacheHeaders });
 
     // 3. Demo data
-    return NextResponse.json(buildDemo(origin, dest, adults));
+    return NextResponse.json(buildDemo(origin, dest, adults), { headers: cacheHeaders });
 }

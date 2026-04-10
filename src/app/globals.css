@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* Custom Theme - Using Tailwind v4 @theme directive */
 @theme {
@@ -193,6 +194,22 @@ img, video, embed, object {
 /* Touch tap highlight removal */
 a, button, [role="button"] {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Scrollbar hide utility ──────────────────────────────────────── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Prevent iOS zoom on form inputs (font-size must be ≥16px) ───── */
+@media (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
 }
 
 /* ── App-like page enter animation (mobile) ─────────────────────── */
@@ -683,4 +700,12 @@ h6 {
 .paint-splash-bg > *:not(.holi-splat):not(.holi-mini):not(.holi-drip):not(.holi-dots) {
   position: relative;
   z-index: 1;
+}
+/* ── TipTap Editor ─────────────────────────────────────────────────────────── */
+.tiptap p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }

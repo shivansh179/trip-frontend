@@ -15,6 +15,7 @@ import HolidayPlanner from '@/components/HolidayPlanner';
 import MyBookingSection from '@/components/MyBookingSection';
 import ReferAndEarn from '@/components/ReferAndEarn';
 import HiddenSpots from '@/components/HiddenSpots';
+import TripPlannerPromo from '@/components/TripPlannerPromo';
 import TrendingPackages from '@/components/TrendingPackages';
 import LimitedOffersBanner from '@/components/LimitedOffersBanner';
 import MediaPress from '@/components/MediaPress';
@@ -400,6 +401,9 @@ export default function Home() {
 
       {/* Hidden Gems section */}
       <HiddenSpots />
+
+      {/* AI Trip Planner Promo */}
+      <TripPlannerPromo />
 
       {/* Holiday & Weekend Planner */}
       <HolidayPlanner />

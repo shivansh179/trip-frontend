@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { Trip } from '@/types';
 import { formatPriceWithCurrency } from '@/lib/utils';
 import PaymentMethods from '@/components/PaymentMethods';
+import PaymentOptions from '@/components/PaymentOptions';
 import TrustBadges from '@/components/TrustBadges';
 import CheckoutStepper from '@/components/CheckoutStepper';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -345,22 +346,53 @@ function CheckoutContent() {
                                             <p className="text-blue-700">Payment is processed securely in INR via our payment gateway. Your bank will automatically convert to your local currency at the current exchange rate. No surcharges from our side — Visa, Mastercard, and Amex accepted.</p>
                                         </div>
                                     )}
-                                    <PaymentMethods
-                                        selectedMethod={formData.paymentMethod}
-                                        onMethodChange={(method) => {
-                                            setFormData({ ...formData, paymentMethod: method });
-                                            // Clear EMI if switching away from credit card
-                                            if (method !== 'credit_card') {
+
+                                    {/* EMI + Flexible Payment Options */}
+                                    <PaymentOptions
+                                        tripPrice={totalPrice}
+                                        tripTitle={trip.title}
+                                        onProceed={(payload) => {
+                                            // Map PaymentOptions selection → existing checkout state
+                                            if (payload.mode === 'emi' && payload.emiPlan) {
+                                                setSelectedEmi({
+                                                    tenure: payload.emiPlan.months,
+                                                    monthlyAmount: payload.emiPlan.monthlyAmount,
+                                                    totalAmount: payload.emiPlan.totalAmount,
+                                                    interestRate: 0,
+                                                    interestAmount: 0,
+                                                    noCost: true,
+                                                    label: `${payload.emiPlan.months} Months`,
+                                                    description: `No-cost EMI · ${payload.emiPlan.months} months`,
+                                                });
+                                                setFormData(f => ({ ...f, paymentMethod: 'credit_card' }));
+                                            } else if (payload.mode === 'partial') {
+                                                setFormData(f => ({ ...f, paymentMethod: 'half_payment' }));
                                                 setSelectedEmi(null);
+                                            } else {
+                                                setSelectedEmi(null);
+                                                setFormData(f => ({ ...f, paymentMethod: 'credit_card' }));
                                             }
                                         }}
-                                        amount={totalPrice}
-                                        bookingReference={bookingReference}
-                                        selectedEmi={selectedEmi}
-                                        onEmiChange={(emi) => setSelectedEmi(emi)}
-                                        onHalfPaymentCardTypeChange={(cardType) => setHalfPaymentCardType(cardType)}
-                                        isInternational={visitor === 'foreigner'}
                                     />
+
+                                    {/* Legacy method picker — shown for international or fallback */}
+                                    {visitor === 'foreigner' && (
+                                        <div className="mt-4">
+                                            <PaymentMethods
+                                                selectedMethod={formData.paymentMethod}
+                                                onMethodChange={(method) => {
+                                                    setFormData({ ...formData, paymentMethod: method });
+                                                    if (method !== 'credit_card') setSelectedEmi(null);
+                                                }}
+                                                amount={totalPrice}
+                                                bookingReference={bookingReference}
+                                                selectedEmi={selectedEmi}
+                                                onEmiChange={(emi) => setSelectedEmi(emi)}
+                                                onHalfPaymentCardTypeChange={(cardType) => setHalfPaymentCardType(cardType)}
+                                                isInternational={true}
+                                            />
+                                        </div>
+                                    )}
                                     <TrustBadges isInternational={visitor === 'foreigner'} />
                                 </section>
 
