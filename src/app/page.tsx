@@ -9,7 +9,6 @@ import MobileCategories from '@/components/MobileCategories';
 import DestinationCard from '@/components/DestinationCard';
 import InternationalTestimonials from '@/components/InternationalTestimonials';
 import TrustHub from '@/components/TrustHub';
-import WhyChooseUs from '@/components/WhyChooseUs';
 import PlanningHub from '@/components/PlanningHub';
 import HiddenSpots from '@/components/HiddenSpots';
 import TrendingPackages from '@/components/TrendingPackages';
@@ -690,9 +689,6 @@ export default function Home() {
 
       {/* International Testimonials — static, from real traveler countries */}
       <InternationalTestimonials />
-
-      {/* Why Choose YlooTrips */}
-      <WhyChooseUs />
 
 
 
