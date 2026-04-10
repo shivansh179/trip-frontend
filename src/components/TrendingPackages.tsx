@@ -88,7 +88,12 @@ function TrendingCard({ trip, rank }: { trip: Trip; rank: number }) {
   const { currency } = useCurrency();
   const { visitor } = useVisitor();
   const fp = (p: typeof trip.price) => formatPriceWithCurrency(p, currency);
-  const discount = trip.originalPrice ? calculateDiscount(trip.originalPrice, trip.price) : 0;
+  // Always show higher number as MRP (crossed out) and lower as offer price
+  const rawPrice = Number(trip.price) || 0;
+  const rawOrig = trip.originalPrice ? Number(trip.originalPrice) || 0 : 0;
+  const offerPrice = rawOrig > 0 && rawOrig < rawPrice ? trip.originalPrice! : trip.price;
+  const mrpPrice = rawOrig > 0 && rawOrig < rawPrice ? trip.price : trip.originalPrice;
+  const discount = mrpPrice ? calculateDiscount(mrpPrice, offerPrice) : 0;
   const spotsLeft = getSpotsLeft(trip.id);
   const viewers = getViewers(trip.id);
   const bookHref = visitor === 'foreigner' ? '/tours' : `/checkout?tripId=${trip.id}`;
@@ -186,9 +191,9 @@ function TrendingCard({ trip, rank }: { trip: Trip; rank: number }) {
           <div className="flex items-end justify-between mb-3">
             <div>
               <div className="flex items-baseline gap-2">
-                <span className="font-display text-2xl text-primary">{fp(trip.price)}</span>
-                {trip.originalPrice && (
-                  <span className="text-sm text-primary/35 line-through">{fp(trip.originalPrice)}</span>
+                <span className="font-display text-2xl text-primary">{fp(offerPrice)}</span>
+                {mrpPrice && Number(mrpPrice) !== Number(offerPrice) && (
+                  <span className="text-sm text-primary/35 line-through">{fp(mrpPrice)}</span>
                 )}
               </div>
               <span className="text-[10px] text-primary/40 uppercase tracking-widest">per person · no hidden fees</span>
@@ -235,7 +240,7 @@ export default function TrendingPackages() {
   }, []);
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-cream to-cream-dark overflow-hidden">
+    <section className="py-10 md:py-16 bg-gradient-to-b from-cream to-cream-dark overflow-hidden">
       <div className="section-container">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">

@@ -23,7 +23,7 @@ export default function ReelToTripTeaser() {
   };
 
   return (
-    <section className="py-10 px-4 bg-gradient-to-br from-[#0e0e18] via-[#12101e] to-[#0e0e18]">
+    <section className="py-10 px-4 bg-[#0d0d14]">
       <div className="max-w-4xl mx-auto">
 
         {/* Label */}

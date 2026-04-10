@@ -574,7 +574,7 @@ export default function Home() {
       )}
 
       {/* Philosophy Section - CMS Driven */}
-      <section className="py-16 md:py-24 lg:py-32 bg-cream">
+      <section className="py-10 md:py-16 bg-cream">
         <div className="section-container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 lg:gap-24 items-center">
             {/* Content */}
@@ -680,8 +680,6 @@ export default function Home() {
         </div>
       </section>
 
-
-
       {/* Hidden Gems section */}
       <HiddenSpots />
 
@@ -693,8 +691,6 @@ export default function Home() {
 
       {/* International Testimonials — static, from real traveler countries */}
       <InternationalTestimonials />
-
-
 
       {/* Home package booking drawer */}
       {activePackage && <HomeBookingDrawer pkg={activePackage} onClose={() => setActivePackage(null)} />}

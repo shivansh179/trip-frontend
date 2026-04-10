@@ -19,7 +19,7 @@ const categoryLabel: Record<string, string> = {
 
 export default function HiddenSpots() {
   return (
-    <section className="py-16 md:py-24 bg-[#0f1a12] text-cream overflow-hidden">
+    <section className="py-10 md:py-16 bg-[#0f1a12] text-cream overflow-hidden">
       <div className="section-container">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">

@@ -157,9 +157,9 @@ export default function MobileStickyCTA() {
                         {isPlannerActive && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-amber-500" />}
                         <div className={`flex flex-col items-center justify-center w-14 h-14 -mt-6 rounded-2xl shadow-lg transition-all duration-150 ${isPlannerActive ? 'bg-amber-600 shadow-amber-500/40' : 'bg-gradient-to-br from-amber-500 to-orange-500 shadow-amber-500/30'}`}>
                             <Sparkles size={20} strokeWidth={2} className="text-white" />
-                            <span className="text-white text-[9px] font-bold mt-0.5 leading-none">Plan AI</span>
+                            <span className="text-white text-[9px] font-bold mt-0.5 leading-none">Yloo</span>
                         </div>
-                        <span className={`mt-1 ${isPlannerActive ? 'text-amber-600' : 'text-gray-400'}`}>AI Trip</span>
+                        <span className={`mt-1 ${isPlannerActive ? 'text-amber-600' : 'text-gray-400'}`}>Yloo AI</span>
                     </Link>
 
                     {/* Wallet — WanderLoot cashback */}

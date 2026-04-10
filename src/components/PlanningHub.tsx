@@ -89,7 +89,7 @@ export default function PlanningHub() {
       {/* ══════════════════════════════════════════════════════════════════
           PART 1 — How It Works  (light)
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="bg-gray-50 relative py-14 md:py-20">
+      <section className="bg-gray-50 relative py-10 md:py-16">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-50 via-transparent to-transparent pointer-events-none" />
 
         <div className="section-container relative">
@@ -165,7 +165,7 @@ export default function PlanningHub() {
       {/* ══════════════════════════════════════════════════════════════════
           PART 2 — AI Trip Planner  (dark)
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="relative bg-[#0f0f14] py-12 md:py-16 overflow-hidden">
+      <section className="relative bg-[#0d0d14] py-12 md:py-16 overflow-hidden">
         <div className="absolute inset-0 opacity-10 pointer-events-none"
           style={{ backgroundImage: 'radial-gradient(circle at 20% 50%,#C4A77D 0%,transparent 50%),radial-gradient(circle at 80% 20%,#C17F59 0%,transparent 50%)' }} />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -231,7 +231,7 @@ export default function PlanningHub() {
       {/* ══════════════════════════════════════════════════════════════════
           PART 3 — Holiday & Weekend Planner  (cream)
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="py-14 md:py-20 bg-[#f5f0e8]">
+      <section className="py-10 md:py-16 bg-[#f5f0e8]">
         <div className="section-container">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
