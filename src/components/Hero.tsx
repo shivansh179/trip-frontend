@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -125,14 +125,19 @@ export default function Hero({ content, stats }: HeroProps) {
         return () => clearInterval(t);
     }, [ads.length]);
 
-    const swapFlightCities = () => { setFlightFrom(flightTo); setFlightTo(flightFrom); setFlightResults(null); };
-    const swapTourCities = () => { setFromCity(toCity); setToCity(fromCity); };
-    const filterSuggestions = (val: string) =>
-        val.length > 0 ? CITY_SUGGESTIONS.filter(c => c.toLowerCase().includes(val.toLowerCase())).slice(0, 5) : [];
+    const swapFlightCities = useCallback(() => {
+        setFlightFrom(flightTo);
+        setFlightTo(flightFrom);
+        setFlightResults(null);
+    }, [flightFrom, flightTo]);
+    const swapTourCities = useCallback(() => { setFromCity(toCity); setToCity(fromCity); }, [fromCity, toCity]);
+    const filterSuggestions = useCallback((val: string) =>
+        val.length > 0 ? CITY_SUGGESTIONS.filter(c => c.toLowerCase().includes(val.toLowerCase())).slice(0, 5) : []
+    , []);
 
-    const cityName = (code: string) => CITIES.find(c => c.code === code)?.name ?? code;
+    const cityName = useCallback((code: string) => CITIES.find(c => c.code === code)?.name ?? code, []);
 
-    const handleFlightSearch = async () => {
+    const handleFlightSearch = useCallback(async () => {
         if (!flightDate) return;
         setFlightLoading(true);
         setFlightError(null);
@@ -152,14 +157,13 @@ export default function Hero({ content, stats }: HeroProps) {
         } finally {
             setFlightLoading(false);
         }
-    };
+    }, [flightDate, flightFrom, flightTo, flightPax]);
 
-    const handleTourSearch = () => {
+    const handleTourSearch = useCallback(() => {
         const to = toCity.trim();
         const from = fromCity.trim();
         if (!to && !from) return;
 
-        // Keywords from our listed trips — if matched, go to /search; else AI planner
         const OUR_KEYWORDS = [
             'manali','goa','kashmir','kerala','bali','dubai','thailand','singapore','maldives',
             'auli','jibhi','tirthan','kedarnath','lakshadweep','coorg','spiti','chopta',
@@ -179,32 +183,32 @@ export default function Hero({ content, stats }: HeroProps) {
             if (checkIn) params.set('date', checkIn);
             router.push(`/search?${params.toString()}`);
         } else {
-            // Not in our catalogue — let Yloo AI plan it
-            const q = to || from;
-            router.push(`/trip-planner?q=${encodeURIComponent(q)}`);
+            router.push(`/trip-planner?q=${encodeURIComponent(to || from)}`);
         }
-    };
+    }, [toCity, fromCity, guests, checkIn, router]);
 
-    const handleHotelSearch = () => {
+    const handleHotelSearch = useCallback(() => {
         router.push(`/hotels${toCity ? `?q=${encodeURIComponent(toCity)}` : ''}`);
-    };
+    }, [toCity, router]);
 
-    const handleSearch = () => {
+    const handleSearch = useCallback(() => {
         if (activeTab === 'flights') handleFlightSearch();
         else if (activeTab === 'trips') handleTourSearch();
         else handleHotelSearch();
-    };
+    }, [activeTab, handleFlightSearch, handleTourSearch, handleHotelSearch]);
 
-    const chooseVisitor = (type: 'indian' | 'foreigner') => {
+    const chooseVisitor = useCallback((type: 'indian' | 'foreigner') => {
         setVisitor(type);
         setCurrency(type === 'indian' ? 'INR' : 'USD');
-    };
+    }, [setVisitor, setCurrency]);
 
-    const sorted = flightResults
-        ? [...flightResults].sort((a, b) => sortBy === 'price' ? a.totalPrice - b.totalPrice : a.durationMinutes - b.durationMinutes)
-        : null;
+    const sorted = useMemo(() =>
+        flightResults
+            ? [...flightResults].sort((a, b) => sortBy === 'price' ? a.totalPrice - b.totalPrice : a.durationMinutes - b.durationMinutes)
+            : null
+    , [flightResults, sortBy]);
 
-    const buildBookingUrl = (f: FlightResult) => {
+    const buildBookingUrl = useCallback((f: FlightResult) => {
         const p = new URLSearchParams({
             airline: f.airline, code: f.airlineCode, flightNum: f.flightNumber,
             from: f.departure.airport, to: f.arrival.airport,
@@ -213,7 +217,7 @@ export default function Hero({ content, stats }: HeroProps) {
             stops: String(f.stops), pax: String(flightPax), price: String(f.totalPrice),
         });
         return `/flights/book?${p}`;
-    };
+    }, [flightDate, flightPax]);
 
     const currentAd = ads[adIndex];
 
@@ -245,16 +249,19 @@ export default function Hero({ content, stats }: HeroProps) {
             <div className="relative z-10 flex flex-col justify-center flex-1 px-4 sm:px-6 lg:px-8 pt-24 pb-10">
                 <div className="max-w-7xl mx-auto w-full">
 
-                    {/* Visitor toggle */}
+                    {/* Visitor / Currency toggle */}
                     <div className="flex justify-end mb-5">
                         <div className="flex items-center gap-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full p-1">
                             <button onClick={() => chooseVisitor('indian')}
                                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${visitor === 'indian' ? 'bg-amber-400 text-gray-900' : 'text-white/70 hover:text-white'}`}>
-                                🇮🇳 <span className="hidden sm:inline">Indian</span>
+                                🇮🇳
+                                <span className="sm:hidden font-bold">INR</span>
+                                <span className="hidden sm:inline">Indian</span>
                             </button>
                             <button onClick={() => chooseVisitor('foreigner')}
                                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${visitor === 'foreigner' ? 'bg-amber-400 text-gray-900' : 'text-white/70 hover:text-white'}`}>
-                                🌍 <span className="hidden sm:inline">International</span>
+                                <span className="sm:hidden font-bold">$ USD</span>
+                                <span className="hidden sm:inline">🌍 International</span>
                             </button>
                         </div>
                     </div>
@@ -516,7 +523,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                     <div className="relative">
                                                         <MapPin size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                         <input type="text" placeholder="Your city / origin" value={fromCity}
-                                                            onChange={e => { setFromCity(e.target.value); setFromSuggestions(filterSuggestions(e.target.value)); setShowFromSug(true); }}
+                                                            onChange={e => { const v = e.target.value; setFromCity(v); setFromSuggestions(filterSuggestions(v)); setShowFromSug(v.length > 0); }}
                                                             onFocus={() => setShowFromSug(fromCity.length > 0)}
                                                             onBlur={() => setTimeout(() => setShowFromSug(false), 150)}
                                                             className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100" />
@@ -544,7 +551,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                     <div className="relative">
                                                         <MapPin size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-500" />
                                                         <input type="text" placeholder="Where do you want to go?" value={toCity}
-                                                            onChange={e => { setToCity(e.target.value); setToSuggestions(filterSuggestions(e.target.value)); setShowToSug(true); }}
+                                                            onChange={e => { const v = e.target.value; setToCity(v); setToSuggestions(filterSuggestions(v)); setShowToSug(v.length > 0); }}
                                                             onFocus={() => setShowToSug(toCity.length > 0)}
                                                             onBlur={() => setTimeout(() => setShowToSug(false), 150)}
                                                             className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100" />

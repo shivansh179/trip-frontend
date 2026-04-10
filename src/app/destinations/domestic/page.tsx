@@ -42,7 +42,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     nights: 4,
     priceINR: 7349,
     originalPriceINR: 6999,
-    image: 'https://images.unsplash.com/photo-1610631787813-9eeb1a2386cc?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800&q=80',
     badge: 'Winter Favourite',
     highlights: ["Asia's longest cable car / ropeway", 'Views of Nanda Devi (India\'s 2nd highest peak)', 'Gorson Bugyal trek with a professional guide', 'Optional snow skiing'],
     includes: ['Hotel accommodation', 'All meals (dinner D1; breakfast+dinner D2–D3; breakfast D4)', 'Professional guide', 'Transport', 'Bonfire & local sightseeing'],
@@ -64,7 +64,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     nights: 4,
     priceINR: 7349,
     originalPriceINR: 6999,
-    image: 'https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=800&q=80',
     badge: 'Hidden Gem',
     highlights: ['Jalori Pass at 10,800 ft', 'Sarolsar Lake trek with 360° Himalayan views', 'Jibhi Waterfall & Thailand Pool', '"Yeh Jawaani Hai Deewani" filming location'],
     includes: ['Resort/camp accommodation', 'All meals (breakfast, lunch & dinner)', 'Local guide', 'Private vehicle with driver', 'Trek activities & bonfire'],
@@ -86,7 +86,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     nights: 4,
     priceINR: 6999,
     originalPriceINR: 6500,
-    image: 'https://images.unsplash.com/photo-1542401886-65d6c61db217?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?w=800&q=80',
     badge: 'Best Seller',
     highlights: ['Solang Valley adventure activities', 'Atal Tunnel & Sissu', 'Hidimba Temple, Club House, Old Manali', 'Kasol, Chalal Village & Manikaran Sahib; DJ nights'],
     includes: ['Hotel accommodation', 'Daily breakfast & dinner', 'Bonfire & music nights', 'DJ entertainment', 'Adventure activity access'],
@@ -108,7 +108,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     nights: 4,
     priceINR: 8399,
     originalPriceINR: 7999,
-    image: 'https://images.unsplash.com/photo-1607166452427-7e4477079cb9?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80',
     highlights: ['One of 12 Jyotirlingas — sacred to Lord Shiva', '16 km trek Gaurikund → Kedarnath Temple (11,755 ft)', 'Devprayag confluence of Bhagirathi & Alaknanda', 'Route via Haridwar, Rishikesh, Guptkashi'],
     includes: ['AC bus Delhi–Haridwar', 'Hotel accommodation', 'All meals per itinerary', 'Professional tour guide'],
     itinerary: [
@@ -129,7 +129,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     nights: 4,
     priceINR: 23100,
     originalPriceINR: 22000,
-    image: 'https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&q=80',
     badge: 'Luxury Pick',
     highlights: ['Snorkeling, scuba, kayaking & windsurfing', 'Bangaram Island — dolphins & turtles', 'Glass boat rides & island hopping', 'Thinnakara Island sandbank'],
     includes: ['AC rooms with beach views', 'Agatti Island entry permit', 'All meals (breakfast, lunch & dinner)', 'Airport transfers', 'Expert guide & water activity access'],
@@ -151,7 +151,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     nights: 2,
     priceINR: 3499,
     originalPriceINR: 3287,
-    image: 'https://images.unsplash.com/photo-1604228741639-a9f66a5a30f4?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80',
     highlights: ['Mandalpatti Viewpoint', 'Abbey Falls', "Raja's Seat sunset", 'Elephant interaction at Harangi Camp', 'Namdroling Monastery (Golden Temple)'],
     includes: ['1 night accommodation', 'Breakfast (D2–D3) & dinner (D2)', 'Non-AC bus transport', 'Professional driver & tour guide'],
     itinerary: [
@@ -170,7 +170,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     nights: 7,
     priceINR: 15749,
     originalPriceINR: 14999,
-    image: 'https://images.unsplash.com/photo-1597074866923-dc0589150358?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
     badge: 'Epic Journey',
     highlights: ['Chicham Bridge — world\'s highest suspension bridge', 'Hikkim — world\'s highest post office (14,567 ft)', 'Key Monastery & Tabo Monastery', 'Chitkul — India\'s last village before Tibet'],
     includes: ['Homestay accommodation', 'All meals (breakfast, lunch & dinner)', 'Transportation throughout', 'Professional guide'],
@@ -197,7 +197,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     originalPriceINR: 4899,
     badge: 'Best Seller',
     difficulty: 'Easy',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80',
     highlights: ['Tungnath Temple — 1,000+ yrs old, highest Shiva temple', 'Chandrashila Peak at 13,000 ft', 'Deoriatal Lake with panoramic Himalayan views', 'Beginner-friendly weekend trek'],
     includes: ['AC group transport from Delhi/Rishikesh', 'Swiss tent accommodation & sleeping bags', 'All meals (breakfast, lunch & dinner)', 'Professional trek guide', 'Campfire'],
     itinerary: [
@@ -217,7 +217,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 4799,
     originalPriceINR: 4499,
     difficulty: 'Easy to Moderate',
-    image: 'https://images.unsplash.com/photo-1622911208006-54aea5f1e693?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?w=800&q=80',
     highlights: ['360° panoramic views at 12,500 ft', 'Juda Ka Talab — frozen lake camping', 'Views of Kalanag, Swargarohini & Bandarpoonch peaks', 'Dense rhododendron & oak forests'],
     includes: ['4 nights campsite accommodation', 'All meals (breakfast, lunch & dinner)', 'Professional trek guides & camping gear', 'Transport Dehradun–Sankri return', 'Forest permits'],
     itinerary: [
@@ -239,7 +239,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 1299,
     originalPriceINR: 1150,
     difficulty: 'Easy to Moderate',
-    image: 'https://images.unsplash.com/photo-1580310614729-ccd69652491d?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?w=800&q=80',
     highlights: ['Natural hot water springs at Kheerganga', 'Ideal first-timer trek (18 km round trip)', 'Apple orchards & pine forest trail', 'Bonfire & music sessions at camp'],
     includes: ['Professional guide (Barshaini to Barshaini)', 'Tea & dinner D1, breakfast D2', 'Twin/triple sharing tent', 'Music session & bonfire'],
     itinerary: [
@@ -258,7 +258,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 5599,
     originalPriceINR: 5299,
     difficulty: 'Easy',
-    image: 'https://images.unsplash.com/photo-1566803400-13feab85b6d9?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?w=800&q=80',
     highlights: ['28 sq km meadow at 12,000 ft — one of India\'s finest', 'Best winter trek in Himalayas', 'Panoramic Himalayan views', 'Beginner-friendly; accessible year-round'],
     includes: ['All permits & professional trek leader', '3 nights accommodation (tent/guesthouse)', 'All vegetarian meals D1 dinner to D4 breakfast', 'Transport Dehradun–Raithal return'],
     itinerary: [
@@ -279,7 +279,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 1599,
     originalPriceINR: 1499,
     difficulty: 'Easy',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80',
     highlights: ['Summit at 9,915 ft — closest high-altitude trek from Delhi', 'Views of Kedarnath, Chaukamba & Gangotri peaks', 'Rhododendron & deodar forest trails', 'Ideal weekend getaway'],
     includes: ['Tea & dinner D1, breakfast D2', 'Professional trek guide', 'Shared dome tent & campfire', 'Transport (varies by variant) & permits'],
     itinerary: [
@@ -298,7 +298,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 7349,
     originalPriceINR: 6999,
     difficulty: 'Moderate',
-    image: 'https://images.unsplash.com/photo-1543489822-c49534f3271f?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1526772662000-3f88f10405ff?w=800&q=80',
     highlights: ['Cross Hampta Pass at 14,039 ft (Manali to Spiti)', 'Chandratal Lake at 14,100 ft — Himalayan reflections', '4 nights camping through meadows & alpine forests', 'Oxygen cylinders & first aid included'],
     includes: ['Professional trek leader & support team', '4 nights camping', 'All vegetarian meals D1 lunch to D5 breakfast', 'Round-trip transport from Manali', 'Permits, first aid & oxygen cylinders'],
     itinerary: [
@@ -320,7 +320,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 6299,
     originalPriceINR: 5899,
     difficulty: 'Moderate',
-    image: 'https://images.unsplash.com/photo-1566977776052-6e61e35bf9be?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80',
     highlights: ['Cross Sar Pass at 13,799 ft through snow terrain', 'Frozen lakes & snow-capped Parvati Valley', '48 km total trekking distance', 'Trekking shoes & safety coverage included'],
     includes: ['Dome tent accommodation (shared)', 'Experienced guide & permits', 'All meals (breakfast, lunch, snacks & dinner)', 'Camping gear & safety coverage', 'Free trekking gear'],
     itinerary: [
@@ -342,7 +342,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 2799,
     originalPriceINR: 2640,
     difficulty: 'Easy',
-    image: 'https://images.unsplash.com/photo-1543393470-b2ec9e6eaa47?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?w=800&q=80',
     highlights: ['Sacred Prashar Lake at 2,730 m (8,900 ft)', '360° panoramic Himalayan views (Dhauladhars)', 'Sunrise & sunset experiences at the lake', 'Suitable for complete beginners'],
     includes: ['Professional trek guide', 'All meals (breakfast, lunch & dinner)', 'Camping accommodation', 'Night lamps'],
     itinerary: [
@@ -361,7 +361,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 8399,
     originalPriceINR: 7999,
     difficulty: 'Moderate',
-    image: 'https://images.unsplash.com/photo-1574948493174-24aa5a7e4ea1?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80',
     highlights: ['Glacial valley of Jaundhar at 11,800 ft', 'Views of Swargarohini I/II/III, Bandarpooch & Black Peak', 'Mahabharata-era historical villages', 'Accessible in both winter & summer'],
     includes: ['All vegetarian meals', 'Professional trek guide', 'Camping tents & sleeping bags', '1 night guesthouse/homestay in Sankri', 'Transport Dehradun–Sankri return', 'First aid & safety equipment'],
     itinerary: [
@@ -385,7 +385,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 12599,
     originalPriceINR: 11999,
     difficulty: 'Difficult',
-    image: 'https://images.unsplash.com/photo-1567961877371-6dd51cc16462?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1526772662000-3f88f10405ff?w=800&q=80',
     highlights: ['Mystery Lake at 16,499 ft in shadow of Mt. Trishul', '~200 preserved skeletal remains from 9th-century', 'Ali Bugyal & Bedni Bugyal alpine meadows', 'One of India\'s most iconic high-altitude treks'],
     includes: ['3 vegetarian meals daily', 'First aid kits & oxygen cylinders', 'Experienced trek leader', 'Tent camping accommodation'],
     itinerary: [
@@ -411,7 +411,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     originalPriceINR: 16999,
     badge: 'Bucket List',
     difficulty: 'Difficult',
-    image: 'https://images.unsplash.com/photo-1609151162840-6d36e82b0a63?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
     highlights: ['Trek on frozen Zanskar River (11,400 ft)', 'Nerak Waterfall frozen 56 ft mid-air', 'Temperatures as low as −30°C', 'Cold desert landscapes & Zanskari culture'],
     includes: ['All meals during trek (vegetarian & Jain options)', 'Guesthouse in Leh + camping during trek', 'Transport Leh–Chilling return', 'Experienced trek leader & staff', 'Medical check-up at SNM Hospital', 'Wildlife permits'],
     itinerary: [
@@ -427,8 +427,8 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
 ];
 
 // ── Domestic Booking Drawer ───────────────────────────────────────────────────
-function DomesticBookingDrawer({ trip, onClose }: { trip: DomesticTrip; onClose: () => void }) {
-  const [tab, setTab] = useState<'pay' | 'callback'>('pay');
+function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: DomesticTrip; onClose: () => void; initialTab?: 'pay' | 'callback' }) {
+  const [tab, setTab] = useState<'pay' | 'callback'>(initialTab);
   const [guests, setGuests] = useState('2');
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [paying, setPaying] = useState(false);
@@ -485,9 +485,9 @@ function DomesticBookingDrawer({ trip, onClose }: { trip: DomesticTrip; onClose:
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
         {/* Header */}
         <div className="flex items-start justify-between px-5 py-4 border-b border-gray-100">
           <div>
@@ -652,8 +652,8 @@ function DomesticBookingDrawer({ trip, onClose }: { trip: DomesticTrip; onClose:
 function TripCard({ trip }: { trip: DomesticTrip }) {
   const [showItinerary, setShowItinerary] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [drawerTab, setDrawerTab] = useState<'pay' | 'callback'>('pay');
   const discount = Math.round(((trip.priceINR - trip.originalPriceINR) / trip.originalPriceINR) * 100);
-  const contactUrl = `/contact?destination=${encodeURIComponent(trip.title)}&message=Hi! I'd like to know more about the ${trip.title} (${trip.duration}). Please share availability and pricing.`;
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-primary/8 shadow-sm hover:shadow-lg transition-shadow flex flex-col">
@@ -754,23 +754,21 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
         {/* CTA */}
         <div className="grid grid-cols-2 gap-2 pt-3 border-t border-primary/8">
           <button
-            onClick={() => setShowDrawer(true)}
+            onClick={() => { setDrawerTab('pay'); setShowDrawer(true); }}
             className="flex items-center justify-center gap-1.5 bg-accent text-primary text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl hover:bg-accent/90 transition-colors"
           >
             <CreditCard size={12} /> Book Now
           </button>
-          <a
-            href={`https://wa.me/918427831127?text=${encodeURIComponent(`Hi! I'm interested in the ${trip.title} (${trip.duration}, ₹${trip.priceINR.toLocaleString('en-IN')}/person). Please share availability.`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => { setDrawerTab('callback'); setShowDrawer(true); }}
             className="flex items-center justify-center gap-1.5 border border-primary/20 text-primary text-xs font-medium uppercase tracking-wide py-2.5 rounded-xl hover:bg-primary hover:text-cream transition-all"
           >
-            <Phone size={12} /> WhatsApp
-          </a>
+            📋 Enquiry
+          </button>
         </div>
       </div>
 
-      {showDrawer && <DomesticBookingDrawer trip={trip} onClose={() => setShowDrawer(false)} />}
+      {showDrawer && <DomesticBookingDrawer trip={trip} initialTab={drawerTab} onClose={() => setShowDrawer(false)} />}
     </div>
   );
 }

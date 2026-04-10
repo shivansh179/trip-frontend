@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, Sparkles, Ticket } from 'lucide-react';
+import { Menu, X, Sparkles, Ticket, ChevronRight } from 'lucide-react';
 import FlashSaleBanner from '@/components/FlashSaleBanner';
 
 export default function Header() {
@@ -109,50 +109,87 @@ export default function Header() {
                 </div>
             </header>
 
-            {/* Mobile Menu — full screen with glassmorphism */}
+            {/* Mobile Menu — full-screen luxury dark overlay */}
             <div className={`fixed inset-0 z-40 lg:hidden transition-all duration-500 ${
                 isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
             }`}>
-                {/* Backdrop */}
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-xl" onClick={() => setIsMobileMenuOpen(false)} />
+                {/* Full-screen dark panel slides up */}
+                <div
+                    className={`absolute inset-0 transition-transform duration-500 ease-out ${
+                        isMobileMenuOpen ? 'translate-y-0' : 'translate-y-full'
+                    }`}
+                    style={{
+                        background: 'linear-gradient(160deg,#0d0d14 0%,#151520 50%,#0d0d14 100%)',
+                    }}
+                >
+                    {/* Ambient glows */}
+                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
-                {/* Slide-in panel */}
-                <div className={`absolute right-0 top-0 bottom-0 w-72 bg-white/95 backdrop-blur-xl shadow-2xl transition-transform duration-500 ${
-                    isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-                }`}>
-                    <div className="flex flex-col h-full pt-20 pb-8 px-6">
-                        <nav className="flex flex-col gap-1 flex-1">
+                    {/* Subtle grid */}
+                    <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
+                        style={{ backgroundImage:'linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px)', backgroundSize:'40px 40px' }} />
+
+                    <div className="relative flex flex-col h-full px-6 pt-5 pb-8"
+                         style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 2rem)' }}>
+
+                        {/* Top bar — logo + close */}
+                        <div className="flex items-center justify-between mb-10">
+                            <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
+                                <img src="/logo.png" alt="YlooTrips" className="h-9 w-auto object-contain brightness-0 invert" />
+                            </Link>
+                            <button onClick={() => setIsMobileMenuOpen(false)}
+                                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-white/10 transition-colors active:scale-90">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Nav links */}
+                        <nav className="flex flex-col flex-1">
                             {navLinks.map((link, i) => (
-                                <Link key={link.name} href={link.href}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className={`px-4 py-3 rounded-2xl text-base font-semibold transition-all duration-300 ${
-                                        isMobileMenuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
-                                    } ${isActive(link.href)
-                                        ? 'bg-amber-50 text-amber-600'
-                                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                                    }`}
-                                    style={{ transitionDelay: isMobileMenuOpen ? `${i * 60 + 100}ms` : '0ms' }}>
-                                    {link.name}
-                                </Link>
+                                <div key={link.name}>
+                                    <Link href={link.href}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className={`flex items-center justify-between py-4 transition-all duration-300 active:scale-[0.98] ${
+                                            isMobileMenuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'
+                                        } ${isActive(link.href) ? 'text-amber-400' : 'text-white/85 hover:text-white'}`}
+                                        style={{ transitionDelay: isMobileMenuOpen ? `${i * 55 + 80}ms` : '0ms' }}>
+                                        <span className="font-semibold text-xl tracking-tight">{link.name}</span>
+                                        <ChevronRight size={18} className={isActive(link.href) ? 'text-amber-400' : 'text-white/20'} />
+                                    </Link>
+                                    {i < navLinks.length - 1 && (
+                                        <div className="h-px bg-white/5" />
+                                    )}
+                                </div>
                             ))}
                         </nav>
 
-                        <Link href="/my-booking" onClick={() => setIsMobileMenuOpen(false)}
-                            className={`flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold border border-amber-400 text-amber-600 transition-all duration-500 ${
-                                isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                            }`}
-                            style={{ transitionDelay: '400ms' }}>
-                            <Ticket size={15} />
-                            Track My Booking
-                        </Link>
-                        <Link href="/trip-planner" onClick={() => setIsMobileMenuOpen(false)}
-                            className={`flex items-center justify-center gap-2 py-4 rounded-2xl text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white transition-all duration-500 shadow-lg shadow-amber-500/30 ${
-                                isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                            }`}
-                            style={{ transitionDelay: '480ms' }}>
-                            <Sparkles size={16} />
-                            Plan Your Journey
-                        </Link>
+                        {/* Trust micro-line */}
+                        <div className="flex items-center gap-2 mb-5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                            <span className="text-[10px] text-white/25 uppercase tracking-widest">4.9★ · 25,000+ trips · MSME certified</span>
+                        </div>
+
+                        {/* Bottom CTAs */}
+                        <div className="flex flex-col gap-3"
+                            style={{ transitionDelay: isMobileMenuOpen ? '380ms' : '0ms' }}>
+                            <Link href="/my-booking" onClick={() => setIsMobileMenuOpen(false)}
+                                className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold border border-white/15 text-white/70 bg-white/5 transition-all duration-500 ${
+                                    isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                                }`}
+                                style={{ transitionDelay: isMobileMenuOpen ? '360ms' : '0ms' }}>
+                                <Ticket size={15} />
+                                Track My Booking
+                            </Link>
+                            <Link href="/trip-planner" onClick={() => setIsMobileMenuOpen(false)}
+                                className={`flex items-center justify-center gap-2.5 py-4 rounded-2xl text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25 transition-all duration-500 ${
+                                    isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                                }`}
+                                style={{ transitionDelay: isMobileMenuOpen ? '430ms' : '0ms' }}>
+                                <Sparkles size={16} />
+                                Plan Your Journey
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>

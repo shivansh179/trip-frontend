@@ -7,7 +7,8 @@ import Link from 'next/link';
 import {
   Clock, Users, Star, MapPin, Check, X, ChevronDown, Shield,
   RefreshCw, MessageCircle, Zap, Award, Eye, TrendingDown,
-  Calendar, ChevronRight, Quote, Phone,
+  Calendar, ChevronRight, Quote, Phone, CreditCard, Loader2,
+  CheckCircle, BadgePercent, ShieldCheck,
 } from 'lucide-react';
 import { TourJsonLd, BreadcrumbJsonLd, FaqJsonLd } from '@/components/JsonLd';
 
@@ -118,7 +119,264 @@ function viewers(slug: string) {
 /* ─────────────────────────────────────────────────────────────────── */
 /*  Sticky Booking Sidebar                                             */
 /* ─────────────────────────────────────────────────────────────────── */
-function BookingSidebar({ pkg }: { pkg: PackageData }) {
+/* ─────────────────────────────────────────────────────────────────── */
+/*  Package Booking Drawer                                             */
+/* ─────────────────────────────────────────────────────────────────── */
+function PackageBookingDrawer({ pkg, onClose }: { pkg: PackageData; onClose: () => void }) {
+  const [tab, setTab] = useState<'pay' | 'callback'>('pay');
+  const [guests, setGuests] = useState('2');
+  const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [cbName, setCbName] = useState('');
+  const [cbPhone, setCbPhone] = useState('');
+  const [cbSent, setCbSent] = useState(false);
+  const [cbSending, setCbSending] = useState(false);
+
+  const totalPrice = pkg.priceINR * Number(guests || 2);
+  const discountAmt = Math.round(totalPrice * 0.05);
+  const finalPrice = totalPrice - discountAmt;
+  const emi = Math.ceil(finalPrice / 3);
+
+  const handlePay = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPaying(true);
+    setPayError('');
+    try {
+      const res = await fetch('/api/market/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          guests,
+          packageTitle: pkg.heroTitle,
+          destination: pkg.heroTitle,
+          sourceUrl: pkg.canonicalUrl,
+          ourPrice: finalPrice,
+          marketPrice: totalPrice,
+          priceDiff: discountAmt,
+        }),
+      });
+      const data = await res.json();
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      } else {
+        setPayError(data.error || 'Payment failed. Please try again.');
+      }
+    } catch {
+      setPayError('Network error. Please try again.');
+    } finally {
+      setPaying(false);
+    }
+  };
+
+  const handleCallback = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCbSending(true);
+    try {
+      await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: cbName,
+          email: 'not-provided@ylootrips.com',
+          phone: cbPhone,
+          destination: pkg.heroTitle,
+          message: `Callback request for: ${pkg.heroTitle} (${pkg.duration}). Price: ₹${pkg.priceINR.toLocaleString('en-IN')}/person. Guests: ${guests}. Client wants custom price + EMI options.`,
+        }),
+      });
+    } catch { /* non-fatal */ }
+    setCbSent(true);
+    setCbSending(false);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[92dvh] flex flex-col">
+        {/* Header */}
+        <div className="flex items-start justify-between px-5 py-4 border-b border-gray-100">
+          <div>
+            <h3 className="font-bold text-gray-900 text-base leading-tight">{pkg.heroTitle}</h3>
+            <p className="text-xs text-gray-500 mt-0.5">{pkg.duration} · {pkg.groupSize}</p>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500 shrink-0 ml-3">
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Tab switcher */}
+        <div className="flex border-b border-gray-100">
+          <button onClick={() => setTab('pay')}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold transition-colors ${tab === 'pay' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>
+            <CreditCard size={15} /> Book & Pay Now
+          </button>
+          <button onClick={() => setTab('callback')}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold transition-colors ${tab === 'callback' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>
+            📞 Free Callback
+          </button>
+        </div>
+
+        <div className="overflow-y-auto flex-1 overscroll-contain">
+          {/* PAY TAB */}
+          {tab === 'pay' && (
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Number of Guests</label>
+                <div className="flex gap-2">
+                  {['1','2','3','4','5','6'].map(n => (
+                    <button key={n} onClick={() => setGuests(n)}
+                      className={`w-10 h-10 rounded-xl text-sm font-bold border transition-all ${guests === n ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'}`}>{n}</button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price breakdown */}
+              <div className="bg-gray-50 rounded-2xl p-4 space-y-2.5">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">₹{pkg.priceINR.toLocaleString('en-IN')} × {guests} guest{Number(guests) > 1 ? 's' : ''}</span>
+                  <span className="text-gray-700 font-medium">₹{totalPrice.toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex justify-between text-sm text-green-700">
+                  <span className="flex items-center gap-1"><BadgePercent size={13} /> Early bird 5% off</span>
+                  <span className="font-semibold">− ₹{discountAmt.toLocaleString('en-IN')}</span>
+                </div>
+                <div className="border-t border-gray-200 pt-2 flex justify-between">
+                  <span className="font-bold text-gray-900">Total payable</span>
+                  <span className="font-display text-xl text-gray-900">₹{finalPrice.toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+
+              {/* EMI */}
+              <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-bold text-blue-800">No-cost EMI available</p>
+                  <p className="text-[11px] text-blue-500 mt-0.5">3 easy monthly installments</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-display text-blue-800">₹{emi.toLocaleString('en-IN')}</p>
+                  <p className="text-[10px] text-blue-400">/month × 3</p>
+                </div>
+              </div>
+
+              {/* Trust badges */}
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { icon: <ShieldCheck size={14} className="text-green-600" />, label: '100% Refund', sub: 'if unavailable' },
+                  { icon: <CreditCard size={14} className="text-blue-600" />, label: 'Secure PG', sub: 'Easebuzz' },
+                  { icon: <BadgePercent size={14} className="text-amber-600" />, label: '5% Off', sub: 'early bird' },
+                ].map(({ icon, label, sub }) => (
+                  <div key={label} className="bg-gray-50 rounded-xl p-2.5 text-center">
+                    <div className="flex justify-center mb-1">{icon}</div>
+                    <p className="text-[11px] font-bold text-gray-800">{label}</p>
+                    <p className="text-[9px] text-gray-400">{sub}</p>
+                  </div>
+                ))}
+              </div>
+
+              {!showForm ? (
+                <button onClick={() => setShowForm(true)}
+                  className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white font-bold text-sm py-3.5 rounded-xl hover:bg-gray-800 transition-colors">
+                  <CreditCard size={15} /> Proceed to Pay ₹{finalPrice.toLocaleString('en-IN')}
+                </button>
+              ) : (
+                <form onSubmit={handlePay} className="space-y-2.5">
+                  <p className="text-xs font-semibold text-gray-700">Enter your details to continue</p>
+                  <input required type="text" placeholder="Full name"
+                    value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
+                  <input required type="email" placeholder="Email address"
+                    value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
+                  <input required type="tel" placeholder="Phone number"
+                    value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
+                  {payError && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{payError}</p>}
+                  <div className="flex gap-2">
+                    <button type="submit" disabled={paying}
+                      className="flex-1 flex items-center justify-center gap-2 bg-gray-900 text-white font-bold text-sm py-3 rounded-xl hover:bg-gray-800 disabled:opacity-60 transition-colors">
+                      {paying ? <Loader2 size={14} className="animate-spin" /> : <CreditCard size={14} />}
+                      {paying ? 'Redirecting…' : `Pay ₹${finalPrice.toLocaleString('en-IN')} via Easebuzz`}
+                    </button>
+                    <button type="button" onClick={() => { setShowForm(false); setPayError(''); }}
+                      className="px-4 text-sm text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50">Back</button>
+                  </div>
+                  <p className="text-[10px] text-gray-400 text-center">🔒 Secured by Easebuzz · No hidden charges · Full refund policy</p>
+                </form>
+              )}
+            </div>
+          )}
+
+          {/* CALLBACK TAB */}
+          {tab === 'callback' && (
+            <div className="p-5 bg-[#1a2535] min-h-full">
+              {cbSent ? (
+                <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
+                  <div className="w-14 h-14 rounded-full bg-amber-400/20 flex items-center justify-center">
+                    <CheckCircle className="w-7 h-7 text-amber-400" />
+                  </div>
+                  <p className="font-display text-xl text-white">You're all set! 🎉</p>
+                  <p className="text-white/60 text-sm max-w-xs">Our Yloo travel expert will call you within <span className="text-amber-400 font-bold">1 hour</span> with a custom package price, itinerary & flexible EMI plan.</p>
+                  <p className="text-white/30 text-[11px] mt-2">📱 Expect a call from +91 84278 31127</p>
+                  <button onClick={onClose} className="mt-3 px-6 py-2.5 bg-amber-400 text-gray-900 font-bold rounded-xl text-sm">Done</button>
+                </div>
+              ) : (
+                <form onSubmit={handleCallback} className="space-y-4">
+                  <div className="flex items-start gap-3 mb-1">
+                    <div className="w-10 h-10 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0">
+                      <span className="text-xl">✈️</span>
+                    </div>
+                    <div>
+                      <p className="text-white font-bold text-sm">Yloo Concierge Callback</p>
+                      <p className="text-white/60 text-xs mt-0.5">Get a personal call with custom price, detailed itinerary & flexible EMI — no advance needed.</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[['📞', 'Free call'], ['💳', 'EMI plans'], ['🔒', 'No advance']].map(([icon, label]) => (
+                      <div key={label} className="bg-white/8 rounded-xl py-2 text-center">
+                        <p className="text-lg">{icon}</p>
+                        <p className="text-white/60 text-[10px] font-medium mt-0.5">{label}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-3 space-y-1.5">
+                    {[
+                      `Custom itinerary for ${pkg.heroTitle}`,
+                      'Best price + exclusive discount',
+                      'Visa assistance & travel tips',
+                      'Flexible 3/6/12 month EMI options',
+                    ].map(item => (
+                      <p key={item} className="text-white/70 text-xs flex items-center gap-2">
+                        <span className="text-amber-400 text-[10px]">✓</span> {item}
+                      </p>
+                    ))}
+                  </div>
+                  <input required type="text" placeholder="Your name"
+                    value={cbName} onChange={e => setCbName(e.target.value)}
+                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-amber-400" />
+                  <input required type="tel" placeholder="Phone number (we'll call you)"
+                    value={cbPhone} onChange={e => setCbPhone(e.target.value)}
+                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-amber-400" />
+                  <button type="submit" disabled={cbSending}
+                    className="w-full flex items-center justify-center gap-2 bg-amber-400 text-gray-900 font-bold text-sm py-3.5 rounded-xl hover:bg-amber-300 disabled:opacity-60 transition-colors">
+                    {cbSending ? <Loader2 size={14} className="animate-spin" /> : '📞'}
+                    {cbSending ? 'Booking callback…' : 'Get Free Callback + EMI Options'}
+                  </button>
+                  <p className="text-white/25 text-[10px] text-center">We reply within 1 hour · No spam · No obligation</p>
+                </form>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BookingSidebar({ pkg, onOpenDrawer }: { pkg: PackageData; onOpenDrawer: () => void }) {
   const [guests, setGuests] = useState(1);
   const [date, setDate] = useState('');
   const slots = spotsLeft(pkg.slug);
@@ -220,13 +478,13 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
           </div>
 
           {/* Book button */}
-          <Link
-            href={`${pkg.bookingHref}${date ? `&date=${date}` : ''}&guests=${guests}`}
+          <button
+            onClick={onOpenDrawer}
             className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-cream py-4 rounded-xl text-sm font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
           >
             <Zap className="w-4 h-4" />
-            {date ? 'Proceed to Booking' : 'Book Now'}
-          </Link>
+            Book Now
+          </button>
 
           {/* WhatsApp */}
           <a
@@ -292,7 +550,7 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
 /* ─────────────────────────────────────────────────────────────────── */
 /*  Mobile Sticky Bar                                                  */
 /* ─────────────────────────────────────────────────────────────────── */
-function MobileBar({ pkg }: { pkg: PackageData }) {
+function MobileBar({ pkg, onOpenDrawer }: { pkg: PackageData; onOpenDrawer: () => void }) {
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-primary/10 shadow-2xl px-4 py-3 flex items-center gap-3">
       <div className="flex-1 min-w-0">
@@ -306,13 +564,13 @@ function MobileBar({ pkg }: { pkg: PackageData }) {
       >
         WhatsApp
       </a>
-      <Link
-        href={pkg.bookingHref}
+      <button
+        onClick={onOpenDrawer}
         className="shrink-0 flex items-center gap-1.5 bg-primary text-cream px-4 py-2.5 text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-secondary transition-colors"
       >
         <Zap className="w-3.5 h-3.5" />
         Book Now
-      </Link>
+      </button>
     </div>
   );
 }
@@ -323,6 +581,7 @@ function MobileBar({ pkg }: { pkg: PackageData }) {
 export default function PackagePageLayout({ pkg }: { pkg: PackageData }) {
   const [openDay, setOpenDay] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const slots = spotsLeft(pkg.slug);
 
@@ -408,9 +667,9 @@ export default function PackagePageLayout({ pkg }: { pkg: PackageData }) {
           >
             WhatsApp
           </a>
-          <Link href={pkg.bookingHref} className="flex items-center gap-1.5 bg-primary text-cream px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-secondary transition-colors">
+          <button onClick={() => setDrawerOpen(true)} className="flex items-center gap-1.5 bg-primary text-cream px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-secondary transition-colors">
             <Zap className="w-3 h-3" /> Book
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -592,9 +851,9 @@ export default function PackagePageLayout({ pkg }: { pkg: PackageData }) {
                 Secure your spot today. Only {slots ?? 8} slots available this season.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link href={pkg.bookingHref} className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-accent-warm text-primary px-8 py-3.5 text-sm font-bold uppercase tracking-widest rounded-xl transition-all">
+                <button onClick={() => setDrawerOpen(true)} className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-accent-warm text-primary px-8 py-3.5 text-sm font-bold uppercase tracking-widest rounded-xl transition-all">
                   <Zap className="w-4 h-4" /> Book Now — {fmt(pkg.priceINR)}/person
-                </Link>
+                </button>
                 <a
                   href={`https://wa.me/918427831127?text=${encodeURIComponent(pkg.whatsappMsg)}`}
                   target="_blank" rel="noopener noreferrer"
@@ -654,14 +913,17 @@ export default function PackagePageLayout({ pkg }: { pkg: PackageData }) {
           {/* ── Right: Sidebar ── */}
           <div className="hidden lg:block">
             <div className="sticky top-6">
-              <BookingSidebar pkg={pkg} />
+              <BookingSidebar pkg={pkg} onOpenDrawer={() => setDrawerOpen(true)} />
             </div>
           </div>
         </div>
       </div>
 
       {/* Mobile sticky bottom bar */}
-      <MobileBar pkg={pkg} />
+      <MobileBar pkg={pkg} onOpenDrawer={() => setDrawerOpen(true)} />
+
+      {/* Booking Drawer */}
+      {drawerOpen && <PackageBookingDrawer pkg={pkg} onClose={() => setDrawerOpen(false)} />}
     </>
   );
 }
