@@ -169,6 +169,13 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Force light mode — prevent OS dark mode from darkening inputs/backgrounds */
+  color-scheme: light;
+}
+
+/* Ensure all native form controls stay light regardless of OS theme */
+input, textarea, select, button {
+  color-scheme: light;
 }
 
 body {

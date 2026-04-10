@@ -328,13 +328,13 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
                   <label className="block text-xs font-semibold text-gray-700 mb-1">Your Name *</label>
                   <input required type="text" placeholder="Full name" maxLength={100}
                     value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
+                    className="w-full px-3 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400 placeholder:text-gray-400" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">City / Country *</label>
                   <input required type="text" placeholder="e.g. Delhi, India" maxLength={100}
                     value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
+                    className="w-full px-3 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400 placeholder:text-gray-400" />
                 </div>
               </div>
 
@@ -344,13 +344,13 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
                   <label className="block text-xs font-semibold text-gray-700 mb-1">Email *</label>
                   <input required type="email" placeholder="your@email.com"
                     value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
+                    className="w-full px-3 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400 placeholder:text-gray-400" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">Phone</label>
                   <input type="tel" placeholder="+91 98765…"
                     value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
+                    className="w-full px-3 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400 placeholder:text-gray-400" />
                 </div>
               </div>
 
@@ -359,7 +359,7 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
                 <label className="block text-xs font-semibold text-gray-700 mb-1">Which Trip / Package? *</label>
                 <input required type="text" placeholder="e.g. Bali Honeymoon Package, 5-Day Manali Trip"
                   value={form.trip} onChange={(e) => setForm({ ...form, trip: e.target.value })}
-                  className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400" />
+                  className="w-full px-3 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400 placeholder:text-gray-400" />
               </div>
 
               {/* Review text */}
@@ -370,7 +370,7 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
                 <textarea required rows={3} placeholder="Tell us about your experience — what made it special?"
                   maxLength={1000}
                   value={form.text} onChange={(e) => setForm({ ...form, text: e.target.value })}
-                  className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400 resize-none leading-relaxed" />
+                  className="w-full px-3 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400 resize-none leading-relaxed placeholder:text-gray-400" />
               </div>
 
               {err && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{err}</p>}
