@@ -109,8 +109,8 @@ export default function Header() {
                 </div>
             </header>
 
-            {/* Mobile Menu — full-screen luxury dark overlay */}
-            <div className={`fixed inset-0 z-40 lg:hidden transition-all duration-500 ${
+            {/* Mobile Menu — full-screen luxury dark overlay (z-[60] > header z-50, eliminates double logo) */}
+            <div className={`fixed inset-0 z-[60] lg:hidden transition-all duration-500 ${
                 isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
             }`}>
                 {/* Full-screen dark panel slides up */}
