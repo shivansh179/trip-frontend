@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Search, Star, Wifi, Waves, Dumbbell, UtensilsCrossed, Car, MapPin,
@@ -229,6 +229,7 @@ export default function HotelSearch() {
   const [error, setError] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>('rating');
   const [searched, setSearched] = useState(false);
+  const didAutoSearch = useRef(false);
 
   const search = useCallback(async () => {
     if (!query.trim() || !checkIn || !checkOut) return;
@@ -260,6 +261,15 @@ export default function HotelSearch() {
   }, [query, checkIn, checkOut, adults, rooms]);
 
   const sorted = useMemo(() => sortHotels(results, sortKey), [results, sortKey]);
+
+  // Auto-search when ?q= is present in the URL
+  useEffect(() => {
+    if (didAutoSearch.current) return;
+    if (query.trim() && checkIn && checkOut) {
+      didAutoSearch.current = true;
+      search();
+    }
+  }, [query, checkIn, checkOut, search]);
 
   return (
     <div className="min-h-screen bg-cream-light">
