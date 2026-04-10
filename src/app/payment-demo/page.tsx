@@ -1,3 +1,5 @@
+'use client';
+
 import PaymentOptions from '@/components/PaymentOptions';
 
 export default function PaymentDemoPage() {
