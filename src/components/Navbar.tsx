@@ -27,6 +27,7 @@ export default function Navbar() {
   const links = visitor === 'foreigner'
     ? [
         { name: 'India Trips', href: '/trips' },
+        { name: 'Daycations ⚡', href: '/daycations' },
         { name: 'Destinations', href: '/destinations' },
         { name: 'Flights', href: '/#flight-search' },
         { name: 'Events', href: '/events' },
@@ -39,6 +40,7 @@ export default function Navbar() {
     : [
         { name: 'Domestic', href: '/destinations/domestic' },
         { name: 'International', href: '/destinations/international' },
+        { name: 'Daycations ⚡', href: '/daycations' },
         { name: 'Flights', href: '/#flight-search' },
         { name: 'Events', href: '/events' },
         { name: 'Blogs', href: '/blogs' },

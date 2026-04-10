@@ -1,7 +1,6 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { USD_TO_INR } from '@/lib/currency';
 import type { Currency } from '@/lib/currency';
 
 // Re-export so existing imports still work
@@ -21,16 +20,18 @@ const CurrencyContext = createContext<CurrencyContextValue>({
 });
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
-  // Read visitor preference from localStorage to set correct default currency
-  const [currency, setCurrencyState] = useState<Currency>(() => {
-    if (typeof window === 'undefined') return 'INR';
+  // Always start with 'INR' to match server render, then hydrate from localStorage
+  const [currency, setCurrencyState] = useState<Currency>('INR');
+
+  // Hydrate from localStorage after mount to avoid SSR/client mismatch
+  useEffect(() => {
     try {
       const visitor = localStorage.getItem('ylootrips-visitor');
-      return visitor === 'foreigner' ? 'USD' : 'INR';
+      if (visitor === 'foreigner') setCurrencyState('USD');
     } catch {
-      return 'INR';
+      // ignore
     }
-  });
+  }, []);
 
   // Keep currency in sync when visitor changes (VisitorContext writes to localStorage
   // and dispatches a 'visitorchange' event)

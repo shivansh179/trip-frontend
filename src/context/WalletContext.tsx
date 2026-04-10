@@ -4,6 +4,8 @@ import { createContext, useContext, useState, useEffect, ReactNode, useCallback 
 
 const BALANCE_KEY = 'ylootrips-wallet-balance';
 const TRANSACTIONS_KEY = 'ylootrips-wallet-transactions';
+const WELCOME_BONUS_KEY = 'ylootrips-wallet-welcome-bonus';
+const WELCOME_BONUS_AMOUNT = 500;
 
 export const CASHBACK_RATE = 0.10; // 10% on every booking
 
@@ -39,10 +41,29 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      const savedBalance = parseFloat(localStorage.getItem(BALANCE_KEY) || '0') || 0;
       const savedTxns = JSON.parse(localStorage.getItem(TRANSACTIONS_KEY) || '[]') as WalletTransaction[];
+      const txns = Array.isArray(savedTxns) ? savedTxns : [];
+      let savedBalance = parseFloat(localStorage.getItem(BALANCE_KEY) || '0') || 0;
+
+      // Grant welcome bonus to new users (only once)
+      if (!localStorage.getItem(WELCOME_BONUS_KEY)) {
+        const welcomeTxn: WalletTransaction = {
+          id: `welcome-${Date.now()}`,
+          date: new Date().toISOString(),
+          type: 'cashback',
+          amount: WELCOME_BONUS_AMOUNT,
+          bookingRef: 'WELCOME',
+          description: `🎁 Welcome bonus — ₹${WELCOME_BONUS_AMOUNT} WanderLoot credits`,
+        };
+        savedBalance += WELCOME_BONUS_AMOUNT;
+        txns.unshift(welcomeTxn);
+        localStorage.setItem(WELCOME_BONUS_KEY, '1');
+        localStorage.setItem(BALANCE_KEY, String(savedBalance));
+        localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(txns));
+      }
+
       setBalance(savedBalance);
-      setTransactions(Array.isArray(savedTxns) ? savedTxns : []);
+      setTransactions(txns);
     } catch {
       /* ignore */
     }
