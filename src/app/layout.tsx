@@ -11,6 +11,7 @@ import Providers from "@/components/Providers";
 import { OrganizationJsonLd } from "@/components/JsonLd";
 import SecurityShield from "@/components/SecurityShield";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
+import ActiveUserPing from "@/components/ActiveUserPing";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -132,6 +133,7 @@ export default function RootLayout({
         </Script>
 
         <Providers>
+          <ActiveUserPing />
           <SecurityShield />
           <ExitIntentPopup />
           <Suspense fallback={<div className="h-24 bg-cream" />}>
