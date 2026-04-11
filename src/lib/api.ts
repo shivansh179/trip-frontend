@@ -12,6 +12,18 @@ export const apiClient = axios.create({
   },
 });
 
+// Attach admin token automatically for /admin/* routes (client-side only)
+apiClient.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined' && config.url?.startsWith('/admin')) {
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      config.headers = config.headers ?? {};
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
 // API Response interceptor for error handling
 apiClient.interceptors.response.use(
   (response) => response,

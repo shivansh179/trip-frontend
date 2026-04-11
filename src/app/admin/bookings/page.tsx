@@ -55,17 +55,31 @@ export default function AdminBookingsPage() {
         loadAll();
     }, [router]);
 
+    // Normalize backend response — handles [], { data: [] }, { data: { data: [] } }
+    function extractList(raw: unknown): Record<string, unknown>[] {
+        if (Array.isArray(raw)) return raw;
+        if (raw && typeof raw === 'object') {
+            const r = raw as Record<string, unknown>;
+            if (Array.isArray(r.data)) return r.data as Record<string, unknown>[];
+            if (r.data && typeof r.data === 'object') {
+                const inner = r.data as Record<string, unknown>;
+                if (Array.isArray(inner.data)) return inner.data as Record<string, unknown>[];
+            }
+        }
+        return [];
+    }
+
     const loadAll = async () => {
         setLoading(true);
         try {
             const [flightRes, tripRes, eventRes] = await Promise.allSettled([
                 fetch('/api/admin/flight-bookings').then(r => r.json()),
-                api.admin.getBookings().catch(() => ({ data: { data: [] } })),
-                api.admin.getEventBookings().catch(() => ({ data: { data: [] } })),
+                api.admin.getBookings(),
+                api.admin.getEventBookings(),
             ]);
             if (flightRes.status === 'fulfilled') setFlightBookings(flightRes.value.data || []);
-            if (tripRes.status === 'fulfilled') setTripBookings((tripRes.value as { data: { data: Record<string, unknown>[] } }).data?.data || []);
-            if (eventRes.status === 'fulfilled') setEventBookings((eventRes.value as { data: { data: Record<string, unknown>[] } }).data?.data || []);
+            if (tripRes.status === 'fulfilled') setTripBookings(extractList(tripRes.value));
+            if (eventRes.status === 'fulfilled') setEventBookings(extractList(eventRes.value));
         } finally {
             setLoading(false);
         }
