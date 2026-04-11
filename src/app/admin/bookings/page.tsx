@@ -6,7 +6,8 @@ import Link from 'next/link';
 import {
     Plane, Hotel, Calendar, Users, Mail, Phone, Clock, CheckCircle,
     XCircle, AlertCircle, RefreshCw, Search, Download, Eye, Filter,
-    ArrowLeft, TrendingUp, DollarSign, BookOpen, Luggage
+    ArrowLeft, TrendingUp, DollarSign, BookOpen, Luggage, CreditCard,
+    BarChart3, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { api } from '@/lib/api';
 
@@ -25,7 +26,7 @@ const STATUS_COLORS: Record<string, string> = {
     FAILED: 'bg-red-100 text-red-700',
 };
 
-type BookingTab = 'flights' | 'trips' | 'events';
+type BookingTab = 'flights' | 'trips' | 'events' | 'pg-dashboard';
 
 interface FlightBooking {
     txnid: string;
@@ -59,8 +60,8 @@ export default function AdminBookingsPage() {
         try {
             const [flightRes, tripRes, eventRes] = await Promise.allSettled([
                 fetch('/api/admin/flight-bookings').then(r => r.json()),
-                api.get('/bookings').catch(() => ({ data: { data: [] } })),
-                api.get('/event-bookings').catch(() => ({ data: { data: [] } })),
+                api.admin.getBookings().catch(() => ({ data: { data: [] } })),
+                api.admin.getEventBookings().catch(() => ({ data: { data: [] } })),
             ]);
             if (flightRes.status === 'fulfilled') setFlightBookings(flightRes.value.data || []);
             if (tripRes.status === 'fulfilled') setTripBookings((tripRes.value as { data: { data: Record<string, unknown>[] } }).data?.data || []);
@@ -128,10 +129,47 @@ export default function AdminBookingsPage() {
             String(b.customerName || '').toLowerCase().includes(q);
     });
 
+    // PG Dashboard: group trip bookings by customer, show PG collected vs sale
+    interface PGRow {
+        customerName: string;
+        customerEmail: string;
+        customerPhone: string;
+        bookings: Record<string, unknown>[];
+        totalSale: number;
+        totalPGCollected: number;
+        gap: number;
+    }
+    const pgRows: PGRow[] = Object.values(
+        tripBookings.reduce((acc: Record<string, PGRow>, b: Record<string, unknown>) => {
+            const key = String(b.customerEmail || b.customerPhone || b.customerName || 'unknown');
+            if (!acc[key]) acc[key] = {
+                customerName: String(b.customerName || ''),
+                customerEmail: String(b.customerEmail || ''),
+                customerPhone: String(b.customerPhone || ''),
+                bookings: [],
+                totalSale: 0,
+                totalPGCollected: 0,
+                gap: 0,
+            };
+            acc[key].bookings.push(b);
+            // finalAmount = PG collected (what customer paid), totalAmount = sale amount
+            const pgCollected = Number(b.finalAmount || b.totalAmount || 0);
+            const saleAmount = Number(b.totalAmount || b.finalAmount || 0);
+            acc[key].totalPGCollected += pgCollected;
+            acc[key].totalSale += saleAmount;
+            acc[key].gap = acc[key].totalSale - acc[key].totalPGCollected;
+            return acc;
+        }, {})
+    );
+
+    const totalPGCollected = pgRows.reduce((s, r) => s + r.totalPGCollected, 0);
+    const totalSale = pgRows.reduce((s, r) => s + r.totalSale, 0);
+
     const tabs = [
         { id: 'flights' as BookingTab, label: 'Flight Bookings', count: flightBookings.length, icon: Plane },
         { id: 'trips' as BookingTab, label: 'Trip Bookings', count: tripBookings.length, icon: Luggage },
         { id: 'events' as BookingTab, label: 'Event Bookings', count: eventBookings.length, icon: Calendar },
+        { id: 'pg-dashboard' as BookingTab, label: 'PG vs Sale', count: pgRows.length, icon: BarChart3 },
     ];
 
     return (
@@ -426,6 +464,102 @@ export default function AdminBookingsPage() {
                                         </div>
                                     </div>
                                 ))}
+                            </div>
+                        )}
+
+                        {/* ── PG COLLECTED vs SALE DASHBOARD ── */}
+                        {activeTab === 'pg-dashboard' && (
+                            <div className="space-y-4">
+                                {/* Summary cards */}
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                                        <p className="text-xs text-gray-500 font-medium mb-1">Total Sale Amount</p>
+                                        <p className="text-2xl font-bold text-gray-900">₹{fmt(totalSale)}</p>
+                                        <p className="text-xs text-gray-400 mt-1">Booking value across all trips</p>
+                                    </div>
+                                    <div className="bg-white rounded-xl border border-green-200 p-5 shadow-sm">
+                                        <p className="text-xs text-gray-500 font-medium mb-1">PG Collected (Easebuzz)</p>
+                                        <p className="text-2xl font-bold text-green-700">₹{fmt(totalPGCollected)}</p>
+                                        <p className="text-xs text-gray-400 mt-1">Amount received via payment gateway</p>
+                                    </div>
+                                    <div className={`bg-white rounded-xl border p-5 shadow-sm ${totalSale - totalPGCollected > 0 ? 'border-red-200' : 'border-blue-200'}`}>
+                                        <p className="text-xs text-gray-500 font-medium mb-1">Gap (Sale − PG)</p>
+                                        <p className={`text-2xl font-bold ${totalSale - totalPGCollected > 0 ? 'text-red-600' : 'text-blue-600'}`}>
+                                            ₹{fmt(Math.abs(totalSale - totalPGCollected))}
+                                        </p>
+                                        <p className="text-xs text-gray-400 mt-1">{totalSale - totalPGCollected > 0 ? 'Pending collection' : 'Overpaid / adjustment needed'}</p>
+                                    </div>
+                                </div>
+
+                                {/* Per-user table */}
+                                {pgRows.length === 0 ? (
+                                    <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                                        <BarChart3 size={40} className="text-gray-300 mx-auto mb-3" />
+                                        <p className="text-gray-500 font-medium">No trip bookings to analyse</p>
+                                    </div>
+                                ) : (
+                                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                                        <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+                                            <CreditCard size={16} className="text-amber-500" />
+                                            <span className="font-semibold text-gray-800 text-sm">User-wise PG Collected vs Sale</span>
+                                            <span className="ml-auto text-xs text-gray-400">{pgRows.length} customers</span>
+                                        </div>
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full text-sm">
+                                                <thead className="bg-gray-50 border-b border-gray-100">
+                                                    <tr>
+                                                        <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
+                                                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Bookings</th>
+                                                        <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Sale Amount</th>
+                                                        <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">PG Collected</th>
+                                                        <th className="text-right px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Gap</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-gray-50">
+                                                    {pgRows.map((row, idx) => (
+                                                        <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                                                            <td className="px-5 py-4">
+                                                                <p className="font-semibold text-gray-900">{row.customerName || '—'}</p>
+                                                                <p className="text-xs text-gray-400">{row.customerEmail}</p>
+                                                                <p className="text-xs text-gray-400">{row.customerPhone}</p>
+                                                            </td>
+                                                            <td className="px-4 py-4">
+                                                                <div className="space-y-1">
+                                                                    {row.bookings.map((b, bi) => (
+                                                                        <div key={bi} className="text-xs">
+                                                                            <span className="font-mono text-gray-500">{String(b.bookingReference || `#${bi+1}`)}</span>
+                                                                            <span className="ml-2 text-gray-400">{String((b.trip as Record<string, unknown>)?.title || 'Trip')}</span>
+                                                                            <span className={`ml-2 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${STATUS_COLORS[String(b.status || '')] || 'bg-gray-100 text-gray-600'}`}>
+                                                                                {String(b.status || 'PENDING')}
+                                                                            </span>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-4 py-4 text-right font-semibold text-gray-900">₹{fmt(row.totalSale)}</td>
+                                                            <td className="px-4 py-4 text-right font-semibold text-green-700">₹{fmt(row.totalPGCollected)}</td>
+                                                            <td className="px-5 py-4 text-right">
+                                                                <span className={`font-bold ${row.gap > 0 ? 'text-red-600' : row.gap < 0 ? 'text-blue-600' : 'text-gray-400'}`}>
+                                                                    {row.gap === 0 ? '✓ Settled' : `${row.gap > 0 ? '-' : '+'}₹${fmt(Math.abs(row.gap))}`}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                                <tfoot className="bg-amber-50 border-t-2 border-amber-200">
+                                                    <tr>
+                                                        <td className="px-5 py-3 font-bold text-gray-800 text-sm" colSpan={2}>Totals</td>
+                                                        <td className="px-4 py-3 text-right font-bold text-gray-900">₹{fmt(totalSale)}</td>
+                                                        <td className="px-4 py-3 text-right font-bold text-green-700">₹{fmt(totalPGCollected)}</td>
+                                                        <td className={`px-5 py-3 text-right font-bold ${totalSale - totalPGCollected > 0 ? 'text-red-600' : 'text-blue-600'}`}>
+                                                            {totalSale === totalPGCollected ? '✓ Settled' : `${totalSale - totalPGCollected > 0 ? '-' : '+'}₹${fmt(Math.abs(totalSale - totalPGCollected))}`}
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </>
