@@ -7,9 +7,26 @@ import {
     Plane, Hotel, Calendar, Users, Mail, Phone, Clock, CheckCircle,
     XCircle, AlertCircle, RefreshCw, Search, Download, Eye, Filter,
     ArrowLeft, TrendingUp, DollarSign, BookOpen, Luggage, CreditCard,
-    BarChart3, ChevronDown, ChevronUp
+    BarChart3, ChevronDown, ChevronUp, ArrowUpDown, ArrowUp, ArrowDown
 } from 'lucide-react';
 import { api } from '@/lib/api';
+
+// ── Excel export (no library needed — pure CSV with BOM for Excel) ──────────
+function exportToExcel(rows: Record<string, string | number>[], filename: string) {
+    const cols = Object.keys(rows[0] || {});
+    const header = cols.join('\t');
+    const body = rows.map(r => cols.map(c => {
+        const v = r[c] ?? '';
+        // Wrap in quotes if contains tab/newline
+        return String(v).includes('\t') || String(v).includes('\n') ? `"${v}"` : v;
+    }).join('\t')).join('\n');
+    const bom = '\uFEFF'; // UTF-8 BOM so Excel opens correctly
+    const blob = new Blob([bom + header + '\n' + body], { type: 'text/tab-separated-values;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+}
 
 function fmt(n: number) { return new Intl.NumberFormat('en-IN').format(n); }
 function fmtDate(d: string) {
@@ -48,6 +65,37 @@ export default function AdminBookingsPage() {
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
+    type SortField = 'date' | 'amount' | 'name' | 'status';
+    type SortDir = 'asc' | 'desc';
+    const [sortField, setSortField] = useState<SortField>('date');
+    const [sortDir, setSortDir] = useState<SortDir>('desc');
+
+    const toggleSort = (field: SortField) => {
+        if (sortField === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+        else { setSortField(field); setSortDir('desc'); }
+    };
+
+    function sortBookings(list: Record<string, unknown>[]): Record<string, unknown>[] {
+        return [...list].sort((a, b) => {
+            let va: string | number = '', vb: string | number = '';
+            if (sortField === 'date') {
+                va = new Date(String(a.createdAt || a.savedAt || 0)).getTime();
+                vb = new Date(String(b.createdAt || b.savedAt || 0)).getTime();
+            } else if (sortField === 'amount') {
+                va = Number(a.finalAmount || a.totalAmount || a.amount || 0);
+                vb = Number(b.finalAmount || b.totalAmount || b.amount || 0);
+            } else if (sortField === 'name') {
+                va = String(a.customerName || '').toLowerCase();
+                vb = String(b.customerName || '').toLowerCase();
+            } else if (sortField === 'status') {
+                va = String(a.status || '');
+                vb = String(b.status || '');
+            }
+            if (va < vb) return sortDir === 'asc' ? -1 : 1;
+            if (va > vb) return sortDir === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }
 
     useEffect(() => {
         const token = localStorage.getItem('adminToken');
@@ -130,22 +178,79 @@ export default function AdminBookingsPage() {
         return matchSearch && matchStatus;
     });
 
-    const filteredTrips = tripBookings.filter((b: Record<string, unknown>) => {
+    const filteredTrips = sortBookings(tripBookings.filter((b: Record<string, unknown>) => {
         const q = search.toLowerCase();
         return !q ||
             String(b.bookingReference || '').toLowerCase().includes(q) ||
             String(b.customerEmail || '').toLowerCase().includes(q) ||
             String(b.customerName || '').toLowerCase().includes(q) ||
             String(b.customerPhone || '').includes(q);
-    });
+    }));
 
-    const filteredEvents = eventBookings.filter((b: Record<string, unknown>) => {
+    const filteredEvents = sortBookings(eventBookings.filter((b: Record<string, unknown>) => {
         const q = search.toLowerCase();
         return !q ||
             String(b.bookingReference || '').toLowerCase().includes(q) ||
             String(b.customerEmail || '').toLowerCase().includes(q) ||
             String(b.customerName || '').toLowerCase().includes(q);
-    });
+    }));
+
+    // ── Excel export helpers ─────────────────────────────────────────────────
+    const exportTrips = () => {
+        const rows = filteredTrips.map(b => ({
+            'Booking Ref': String(b.bookingReference || ''),
+            'Customer Name': String(b.customerName || ''),
+            'Email': String(b.customerEmail || ''),
+            'Phone': String(b.customerPhone || ''),
+            'Trip': String((b.trip as Record<string,unknown>)?.title || b.tripTitle || ''),
+            'Travel Date': String(b.travelDate || ''),
+            'Guests': String(b.numberOfGuests || 1),
+            'Amount (₹)': Number(b.finalAmount || b.totalAmount || 0),
+            'Payment Status': String(b.paymentStatus || b.status || ''),
+            'Booking Status': String(b.status || ''),
+            'TxnID': String(b.txnid || ''),
+            'Easebuzz PG ID': String(b.easepayid || ''),
+            'Booked On': String(b.createdAt ? new Date(String(b.createdAt)).toLocaleString('en-IN') : ''),
+            'Special Requests': String(b.specialRequests || ''),
+        }));
+        exportToExcel(rows, `YlooTrips_Trip_Bookings_${new Date().toISOString().slice(0,10)}.xls`);
+    };
+
+    const exportEvents = () => {
+        const rows = filteredEvents.map(b => ({
+            'Booking Ref': String(b.bookingReference || ''),
+            'Customer Name': String(b.customerName || ''),
+            'Email': String(b.customerEmail || ''),
+            'Phone': String(b.customerPhone || ''),
+            'Event': String((b.event as Record<string,unknown>)?.title || ''),
+            'Event Date': String(b.eventDate || ''),
+            'Tickets': String(b.numberOfTickets || 1),
+            'Amount (₹)': Number(b.finalAmount || b.totalAmount || 0),
+            'Status': String(b.status || ''),
+            'Booked On': String(b.createdAt ? new Date(String(b.createdAt)).toLocaleString('en-IN') : ''),
+        }));
+        exportToExcel(rows, `YlooTrips_Event_Bookings_${new Date().toISOString().slice(0,10)}.xls`);
+    };
+
+    const exportFlights = () => {
+        const rows = filteredFlights.map(b => ({
+            'TxnID': b.txnid,
+            'Passenger': `${b.passengers?.[0]?.firstName || ''} ${b.passengers?.[0]?.lastName || ''}`,
+            'Email': b.contact?.email || '',
+            'Phone': b.contact?.phone || '',
+            'Airline': b.flight?.airline || '',
+            'Flight No': b.flight?.flightNum || '',
+            'From': b.flight?.from || '',
+            'To': b.flight?.to || '',
+            'Date': b.flight?.date || '',
+            'Departure': b.flight?.dep || '',
+            'Arrival': b.flight?.arr || '',
+            'Amount (₹)': b.flight?.price || 0,
+            'Status': b.status || '',
+            'Booked On': b.savedAt || '',
+        }));
+        exportToExcel(rows, `YlooTrips_Flight_Bookings_${new Date().toISOString().slice(0,10)}.xls`);
+    };
 
     // PG Dashboard: group trip bookings by customer, show PG collected vs sale
     interface PGRow {
@@ -234,7 +339,7 @@ export default function AdminBookingsPage() {
                     })}
                 </div>
 
-                {/* Search + Filter */}
+                {/* Search + Filter + Sort + Download */}
                 <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative flex-1">
                         <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -249,6 +354,42 @@ export default function AdminBookingsPage() {
                                 <option key={s} value={s}>{s === 'ALL' ? 'All Status' : s.replace('_', ' ')}</option>
                             ))}
                         </select>
+                    )}
+                    {/* Sort — shown for trips & events */}
+                    {(activeTab === 'trips' || activeTab === 'events') && (
+                        <div className="flex gap-2">
+                            <select
+                                value={sortField}
+                                onChange={e => setSortField(e.target.value as SortField)}
+                                className="px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-amber-400 bg-white"
+                            >
+                                <option value="date">Sort: Date</option>
+                                <option value="amount">Sort: Amount</option>
+                                <option value="name">Sort: Name</option>
+                                <option value="status">Sort: Status</option>
+                            </select>
+                            <button
+                                onClick={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')}
+                                className="px-3 py-2.5 border border-gray-300 rounded-xl text-sm bg-white hover:bg-gray-50 flex items-center gap-1"
+                                title={sortDir === 'desc' ? 'Newest first' : 'Oldest first'}
+                            >
+                                {sortDir === 'desc' ? <ArrowDown size={14} /> : <ArrowUp size={14} />}
+                                {sortDir === 'desc' ? 'Desc' : 'Asc'}
+                            </button>
+                        </div>
+                    )}
+                    {/* Download Excel */}
+                    {activeTab !== 'pg-dashboard' && (
+                        <button
+                            onClick={() => {
+                                if (activeTab === 'trips') exportTrips();
+                                else if (activeTab === 'events') exportEvents();
+                                else if (activeTab === 'flights') exportFlights();
+                            }}
+                            className="flex items-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors shrink-0"
+                        >
+                            <Download size={15} /> Export Excel
+                        </button>
                     )}
                 </div>
 
