@@ -71,10 +71,14 @@ export default function AdminBookingsPage() {
 
     const loadAll = async () => {
         setLoading(true);
+        const token = localStorage.getItem('adminToken') || '';
         try {
             const [flightRes, tripRes, eventRes] = await Promise.allSettled([
                 fetch('/api/admin/flight-bookings').then(r => r.json()),
-                api.admin.getBookings(),
+                // Use server-side proxy — fetches ALL statuses (pending, confirmed, failed, cancelled)
+                fetch('/api/admin/trip-bookings', {
+                    headers: { 'x-admin-token': token },
+                }).then(r => r.json()),
                 api.admin.getEventBookings(),
             ]);
             if (flightRes.status === 'fulfilled') setFlightBookings(flightRes.value.data || []);
@@ -392,46 +396,76 @@ export default function AdminBookingsPage() {
                                         <Luggage size={40} className="text-gray-300 mx-auto mb-3" />
                                         <p className="text-gray-500 font-medium">No trip bookings found</p>
                                     </div>
-                                ) : filteredTrips.map((b: Record<string, unknown>, idx: number) => (
-                                    <div key={String(b.id || idx)} className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-                                        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2 flex-wrap">
-                                                    <span className="font-semibold text-gray-900 text-sm">{String(b.customerName || '')}</span>
-                                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COLORS[String(b.status || '')] || 'bg-gray-100 text-gray-600'}`}>
-                                                        {String(b.status || 'PENDING')}
-                                                    </span>
+                                ) : filteredTrips.map((b: Record<string, unknown>, idx: number) => {
+                                    const paymentStatus = String(b.paymentStatus || b.payment_status || b.status || 'PENDING');
+                                    const bookingStatus = String(b.status || 'PENDING');
+                                    const isPaid = ['CONFIRMED', 'COMPLETED', 'PAID', 'SUCCESS', 'CAPTURED'].includes(paymentStatus.toUpperCase()) ||
+                                        ['CONFIRMED', 'COMPLETED', 'PAID', 'SUCCESS'].includes(bookingStatus.toUpperCase());
+                                    const isPending = ['PENDING', 'INITIATED', 'PROCESSING'].includes(paymentStatus.toUpperCase()) ||
+                                        ['PENDING', 'INITIATED'].includes(bookingStatus.toUpperCase());
+                                    const isFailed = ['FAILED', 'CANCELLED', 'REFUNDED'].includes(paymentStatus.toUpperCase()) ||
+                                        ['FAILED', 'CANCELLED'].includes(bookingStatus.toUpperCase());
+
+                                    return (
+                                        <div key={String(b.id || idx)}
+                                            className={`bg-white rounded-xl shadow-sm p-4 border-l-4 ${isPaid ? 'border-l-green-500 border border-gray-200' : isPending ? 'border-l-amber-400 border border-amber-100' : 'border-l-red-400 border border-red-100'}`}>
+                                            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2 flex-wrap">
+                                                        <span className="font-semibold text-gray-900 text-sm">{String(b.customerName || '—')}</span>
+                                                        {/* Booking status */}
+                                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COLORS[bookingStatus] || 'bg-gray-100 text-gray-600'}`}>
+                                                            {bookingStatus}
+                                                        </span>
+                                                        {/* Payment status pill */}
+                                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${isPaid ? 'bg-green-50 text-green-700 border-green-200' : isPending ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+                                                            💳 {isPaid ? 'Payment Received' : isPending ? 'Payment Pending' : 'Payment Failed'}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm text-gray-700 mt-1 font-medium">
+                                                        {String((b.trip as Record<string, unknown>)?.title || b.tripTitle || b.packageName || 'Trip')}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 mt-0.5">
+                                                        Travel: {String(b.travelDate || b.travel_date || '—')} · {String(b.numberOfGuests || b.guests || 1)} guests
+                                                    </p>
+                                                    <p className="text-xs text-gray-400 mt-0.5">
+                                                        {String(b.customerEmail || '')} · {String(b.customerPhone || '')}
+                                                    </p>
+                                                    {/* Show all relevant IDs */}
+                                                    <div className="flex gap-3 mt-1 flex-wrap">
+                                                        {b.bookingReference && <span className="text-[10px] font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">Ref: {String(b.bookingReference)}</span>}
+                                                        {b.txnid && <span className="text-[10px] font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">TxnID: {String(b.txnid)}</span>}
+                                                        {b.easepayid && <span className="text-[10px] font-mono bg-green-100 px-1.5 py-0.5 rounded text-green-700">PG: {String(b.easepayid)}</span>}
+                                                        {b.id && <span className="text-[10px] font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-400">ID: {String(b.id)}</span>}
+                                                    </div>
                                                 </div>
-                                                <p className="text-sm text-gray-600 mt-0.5">
-                                                    {String((b.trip as Record<string, unknown>)?.title || 'Trip')} · {String(b.travelDate || '')}
-                                                </p>
-                                                <p className="text-xs text-gray-400 mt-0.5">
-                                                    {String(b.customerEmail || '')} · {String(b.customerPhone || '')} · {String(b.numberOfGuests || 1)} guests
-                                                </p>
-                                            </div>
-                                            <div className="flex items-center gap-3 shrink-0">
-                                                <div className="text-right">
-                                                    <p className="font-bold text-gray-900">₹{fmt(Number(b.finalAmount || b.totalAmount || 0))}</p>
-                                                    <p className="text-xs text-gray-400 font-mono">{String(b.bookingReference || '')}</p>
+                                                <div className="flex items-center gap-3 shrink-0">
+                                                    <div className="text-right">
+                                                        <p className="font-bold text-gray-900 text-lg">₹{fmt(Number(b.finalAmount || b.totalAmount || b.amount || 0))}</p>
+                                                        {b.totalAmount && b.finalAmount && Number(b.totalAmount) !== Number(b.finalAmount) && (
+                                                            <p className="text-xs text-gray-400 line-through">₹{fmt(Number(b.totalAmount))}</p>
+                                                        )}
+                                                        <p className="text-[10px] text-gray-400">{b.createdAt ? fmtDate(String(b.createdAt)) : ''}</p>
+                                                    </div>
+                                                    <a href={`mailto:${String(b.customerEmail || '')}?subject=Your Trip Booking - ${String(b.bookingReference || '')}`}
+                                                        className="p-2 rounded-lg hover:bg-blue-50 text-blue-500 transition-colors" title="Email customer">
+                                                        <Mail size={16} />
+                                                    </a>
+                                                    <a href={`https://wa.me/${String(b.customerPhone || '').replace(/\D/g, '')}?text=Hi%20${String(b.customerName || '')}!%20Regarding%20your%20trip%20booking%20${String(b.bookingReference || '')}.`}
+                                                        target="_blank" rel="noopener noreferrer"
+                                                        className="p-2 rounded-lg hover:bg-green-50 text-green-500 transition-colors" title="WhatsApp">
+                                                        <Phone size={16} />
+                                                    </a>
                                                 </div>
-                                                <a href={`mailto:${String(b.customerEmail || '')}?subject=Your Trip Booking Confirmed - ${String(b.bookingReference || '')}`}
-                                                    className="p-2 rounded-lg hover:bg-blue-50 text-blue-500 transition-colors" title="Email customer">
-                                                    <Mail size={16} />
-                                                </a>
-                                                <a href={`https://wa.me/${String(b.customerPhone || '').replace(/\D/g, '')}?text=Hi%20${String(b.customerName || '')}!%20Your%20trip%20booking%20${String(b.bookingReference || '')}%20is%20confirmed.`}
-                                                    target="_blank" rel="noopener noreferrer"
-                                                    className="p-2 rounded-lg hover:bg-green-50 text-green-500 transition-colors" title="WhatsApp">
-                                                    <Phone size={16} />
-                                                </a>
                                             </div>
+                                            {b.specialRequests ? (
+                                                <p className="mt-2 text-xs text-gray-500 bg-amber-50 rounded-lg px-3 py-2">
+                                                    📝 {String(b.specialRequests)}
+                                                </p>
+                                            ) : null}
                                         </div>
-                                        {b.specialRequests ? (
-                                            <p className="mt-2 text-xs text-gray-500 bg-amber-50 rounded-lg px-3 py-2">
-                                                📝 {String(b.specialRequests)}
-                                            </p>
-                                        ) : null}
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
 
