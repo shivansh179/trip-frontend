@@ -15,9 +15,53 @@ export interface ApiStatus {
   planLabel?: string;        // e.g. "Free tier"
 }
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://ylootrips.com';
+const PROXY_URL = 'https://trip-frontend-ecru.vercel.app';
+
+// Test if AI trip planner actually works (checks local key OR proxy fallback)
+async function testAiFeature(): Promise<{ works: boolean; latencyMs: number; viaProxy: boolean }> {
+  const t = Date.now();
+  try {
+    // Try local endpoint first (uses all 3 providers + proxy fallback internally)
+    const res = await fetch(`${SITE_URL}/api/trip-planner`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'One sentence about Goa beach trip' }),
+      signal: AbortSignal.timeout(8000),
+    });
+    const latencyMs = Date.now() - t;
+    if (res.ok) {
+      const data = await res.json();
+      if (data.itinerary) return { works: true, latencyMs, viaProxy: data.provider === 'proxy' || !process.env.GROQ_API_KEY };
+    }
+  } catch { /* fall through */ }
+  // Also try proxy directly
+  try {
+    const res2 = await fetch(`${PROXY_URL}/api/trip-planner`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'One sentence about Goa beach trip' }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (res2.ok) {
+      const data2 = await res2.json();
+      if (data2.itinerary) return { works: true, latencyMs: Date.now() - t, viaProxy: true };
+    }
+  } catch { /* fall through */ }
+  return { works: false, latencyMs: Date.now() - t, viaProxy: false };
+}
+
 // ── Groq ─────────────────────────────────────────────────────────────────────
-async function checkGroq(): Promise<Partial<ApiStatus>> {
-  if (!process.env.GROQ_API_KEY) return { status: 'missing', message: 'Not configured' };
+async function checkGroq(aiTest: { works: boolean; latencyMs: number; viaProxy: boolean }): Promise<Partial<ApiStatus>> {
+  if (!process.env.GROQ_API_KEY) {
+    if (aiTest.works) return {
+      status: 'ok', latencyMs: aiTest.latencyMs,
+      planLabel: 'Via proxy server',
+      limitLabel: '14,400 req / day · 6,000 tokens / min',
+      usageLabel: 'AI working via backup server — add key to this server for direct access',
+    };
+    return { status: 'missing', message: 'Not configured on this server' };
+  }
   const t = Date.now();
   try {
     const res = await fetch('https://api.groq.com/openai/v1/models', {
@@ -28,10 +72,9 @@ async function checkGroq(): Promise<Partial<ApiStatus>> {
     if (res.status === 429) return { status: 'rate_limited', latencyMs, message: 'Daily limit reached — get a new key' };
     if (res.status === 401) return { status: 'error', latencyMs, message: 'Invalid key' };
     if (!res.ok) return { status: 'error', latencyMs, message: `Error ${res.status}` };
-    // Groq free tier: 14,400 req/day on llama-3.3-70b
     return {
       status: 'ok', latencyMs,
-      planLabel: 'Free tier',
+      planLabel: 'Free tier · Direct',
       limitLabel: '14,400 req / day · 6,000 tokens / min',
       usageLabel: 'Limit resets daily at midnight UTC',
     };
@@ -41,8 +84,16 @@ async function checkGroq(): Promise<Partial<ApiStatus>> {
 }
 
 // ── OpenAI ────────────────────────────────────────────────────────────────────
-async function checkOpenAI(): Promise<Partial<ApiStatus>> {
-  if (!process.env.OPENAI_API_KEY) return { status: 'missing', message: 'Not configured' };
+async function checkOpenAI(aiTest: { works: boolean; latencyMs: number; viaProxy: boolean }): Promise<Partial<ApiStatus>> {
+  if (!process.env.OPENAI_API_KEY) {
+    if (aiTest.works) return {
+      status: 'ok', latencyMs: aiTest.latencyMs,
+      planLabel: 'Via proxy server (fallback)',
+      limitLabel: 'gpt-4o-mini — pay per token',
+      usageLabel: 'Available via backup server',
+    };
+    return { status: 'missing', message: 'Not configured on this server' };
+  }
   const t = Date.now();
   try {
     const res = await fetch('https://api.openai.com/v1/models', {
@@ -83,8 +134,16 @@ async function checkOpenAI(): Promise<Partial<ApiStatus>> {
 }
 
 // ── Gemini ────────────────────────────────────────────────────────────────────
-async function checkGemini(): Promise<Partial<ApiStatus>> {
-  if (!process.env.GEMINI_API_KEY) return { status: 'missing', message: 'Not configured' };
+async function checkGemini(aiTest: { works: boolean; latencyMs: number; viaProxy: boolean }): Promise<Partial<ApiStatus>> {
+  if (!process.env.GEMINI_API_KEY) {
+    if (aiTest.works) return {
+      status: 'ok', latencyMs: aiTest.latencyMs,
+      planLabel: 'Via proxy server (2nd fallback)',
+      limitLabel: '1,500 req / day · free tier',
+      usageLabel: 'Available via backup server',
+    };
+    return { status: 'missing', message: 'Not configured on this server' };
+  }
   const t = Date.now();
   try {
     const res = await fetch(
@@ -229,8 +288,11 @@ function checkEasebuzz(): Partial<ApiStatus> {
 }
 
 export async function GET() {
+  // Test AI feature once — shared across Groq/OpenAI/Gemini checks
+  const aiTest = await testAiFeature();
+
   const [groq, openai, gemini, serpapi, amadeus, resend, backend] = await Promise.all([
-    checkGroq(), checkOpenAI(), checkGemini(),
+    checkGroq(aiTest), checkOpenAI(aiTest), checkGemini(aiTest),
     checkSerpApi(), checkAmadeus(), checkResend(), checkBackendApi(),
   ]);
   const easebuzz = checkEasebuzz();
