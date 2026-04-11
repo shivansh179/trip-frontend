@@ -156,6 +156,7 @@ export async function POST(req: NextRequest) {
   }
 
   // All providers failed
-  console.error('[trip-planner] All providers failed:', lastErr);
-  return NextResponse.json({ error: 'All AI providers busy. Please try again in a moment.' }, { status: 503 });
+  const errMsg = lastErr instanceof Error ? lastErr.message : String(lastErr);
+  console.error('[trip-planner] All providers failed:', errMsg);
+  return NextResponse.json({ error: 'All AI providers busy. Please try again in a moment.', _debug: errMsg }, { status: 503 });
 }
