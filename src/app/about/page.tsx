@@ -149,13 +149,13 @@ export default function AboutPage() {
                   <div className="absolute -inset-4 bg-amber-500/20 rounded-3xl blur-2xl" />
                   <div className="relative w-72 h-80 sm:w-80 sm:h-96 rounded-3xl overflow-hidden border-2 border-amber-500/30 shadow-2xl">
                     {/* REPLACE with actual founder photo: /founder.jpg */}
-                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex flex-col items-center justify-center">
-                      <div className="w-28 h-28 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-xl mb-4">
-                        <span className="text-white text-5xl font-black">V</span>
-                      </div>
-                      <p className="text-amber-400/60 text-xs font-medium tracking-widest uppercase">Founder Photo</p>
-                      <p className="text-gray-600 text-[10px] mt-1">Replace with /public/founder.jpg</p>
-                    </div>
+                    <Image
+                      src="/founder.jpg"
+                      alt="Vinay Arora — Founder & CEO, YlooTrips"
+                      fill
+                      className="object-cover object-top"
+                      priority
+                    />
                   </div>
                   {/* Badge */}
                   <div className="absolute -bottom-4 -right-4 bg-amber-500 text-black rounded-2xl px-4 py-2 shadow-lg">
