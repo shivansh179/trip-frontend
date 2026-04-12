@@ -1,58 +1,21 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, Users, Award, Globe, Heart } from 'lucide-react';
-import PageHero from '@/components/PageHero';
+import { ArrowUpRight, Users, Award, Globe, Heart, TrendingUp, Shield, Zap, Star, CheckCircle, MapPin, Calendar } from 'lucide-react';
 import { BreadcrumbJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
-  title: 'About YlooTrips — India\'s Trusted Travel Experts Since 2012',
-  description: 'YlooTrips India Pvt. Ltd. has been crafting bespoke India journeys since 2012. 25,000+ happy travelers, 4.9-star Google rating, and expert guides who know every hidden gem. Learn our story.',
-  keywords: 'about YlooTrips, India travel company, best India travel agency, trusted India tour operator, India travel experts, New Delhi travel agency',
+  title: 'About YlooTrips — India\'s Fastest-Growing Travel Platform',
+  description: 'YlooTrips is India\'s next-gen travel platform — 25,000+ travelers, 4.9★ Google rating, MSME certified. Meet our founder and learn our vision to make premium travel accessible to every Indian.',
+  keywords: 'about YlooTrips, India travel startup, best India travel agency, trusted India tour operator, travel tech India',
   openGraph: {
-    title: 'About YlooTrips | India\'s Trusted Travel Experts Since 2012',
-    description: 'Crafting bespoke India journeys since 2012. 25,000+ happy travelers, 4.9★ Google rating (2,400+ reviews). Based in New Delhi.',
+    title: 'About YlooTrips | India\'s Next-Gen Travel Platform',
+    description: '25,000+ happy travelers, 4.9★ Google rating. Making premium travel accessible to every Indian.',
     url: 'https://www.ylootrips.com/about',
-    images: [
-      {
-        url: 'https://www.ylootrips.com/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'YlooTrips team — India travel experts since 2012',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'About YlooTrips | India\'s Trusted Travel Experts Since 2012',
-    description: 'Crafting bespoke India journeys since 2012. 25,000+ happy travelers, 4.9★ rated.',
-    images: ['https://www.ylootrips.com/og-image.jpg'],
+    images: [{ url: 'https://www.ylootrips.com/og-image.jpg', width: 1200, height: 630 }],
   },
   alternates: { canonical: 'https://www.ylootrips.com/about' },
 };
-
-const values = [
-  {
-    icon: Heart,
-    title: 'Authentic Experiences',
-    description: 'We believe in meaningful connections with local cultures, not tourist traps.',
-  },
-  {
-    icon: Globe,
-    title: 'Sustainable Travel',
-    description: 'Every journey we craft considers its impact on communities and environments.',
-  },
-  {
-    icon: Users,
-    title: 'Personal Touch',
-    description: 'Each trip is tailored to your unique preferences and travel style.',
-  },
-  {
-    icon: Award,
-    title: 'Excellence',
-    description: 'We partner only with the finest guides, hotels, and experiences.',
-  },
-];
 
 export default function AboutPage() {
   return (
@@ -62,162 +25,363 @@ export default function AboutPage() {
         { name: 'About', url: 'https://www.ylootrips.com/about' },
       ]} />
 
-      {/* Hero */}
-      <PageHero
-        title="Our Story"
-        subtitle="Born in New Delhi. Built on trust. Since 2012, we've guided 25,000+ travelers across India's most extraordinary destinations."
-        breadcrumb="About"
-      />
+      {/* ── HERO ── */}
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gray-950">
+        {/* Background */}
+        <div className="absolute inset-0">
+          <Image
+            src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1600&q=80"
+            alt="India travel"
+            fill
+            className="object-cover opacity-30"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-950/60 via-gray-950/40 to-gray-950" />
+        </div>
+        {/* Ambient glow */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-amber-500/10 rounded-full blur-3xl" />
 
-      {/* Philosophy Section */}
-      <section className="py-16 md:py-24 lg:py-32 bg-cream">
-        <div className="section-container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
-            <div className="space-y-8">
-              <div>
-                <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-4">
-                  Our Philosophy
-                </p>
-                <h2 className="font-display text-display-lg text-primary">
-                  Travel changes us.
-                  <br />
-                  <span className="italic">For the better.</span>
-                </h2>
+        <div className="relative z-10 text-center px-6 max-w-4xl mx-auto pt-24 pb-16">
+          <div className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/30 rounded-full px-4 py-1.5 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="text-amber-400 text-xs font-bold uppercase tracking-widest">Our Story</span>
+          </div>
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-tight mb-6">
+            We&apos;re building India&apos;s
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">
+              travel-tech future
+            </span>
+          </h1>
+          <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+            YlooTrips was built on one belief — every Indian deserves a world-class travel experience without overpaying or compromising on trust.
+          </p>
+
+          {/* Quick stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 max-w-3xl mx-auto">
+            {[
+              { value: '25,000+', label: 'Happy Travelers' },
+              { value: '4.9★', label: 'Google Rating' },
+              { value: '150+', label: 'Destinations' },
+              { value: '₹0', label: 'Hidden Fees' },
+            ].map((s) => (
+              <div key={s.label} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-4 py-4">
+                <div className="text-2xl md:text-3xl font-black text-amber-400">{s.value}</div>
+                <div className="text-white/50 text-xs font-medium mt-1 uppercase tracking-wider">{s.label}</div>
               </div>
-              <p className="text-primary/70 text-body-lg leading-relaxed">
-                Founded in New Delhi in 2012, YlooTrips began with a conviction that India&apos;s most extraordinary experiences aren&apos;t in guidebooks — they&apos;re in the conversations, the meals, the detours. We&apos;ve spent over a decade building a network of India&apos;s finest local guides, inspected boutique hotels, and trusted partners who share our belief in real, unhurried travel.
-              </p>
-              <p className="text-primary/70 text-body-lg leading-relaxed">
-                Today, we hold MSME certification from the Government of India, serve travelers from 40+ countries, and maintain a 4.9-star Google rating across 2,400+ verified reviews. Every itinerary is hand-crafted by a human — never a template.
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── MARKET OPPORTUNITY ── */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="section-container">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-3">The Opportunity</p>
+              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-gray-900 leading-tight mb-6">
+                India&apos;s travel market is
+                <br />
+                <span className="text-amber-500">exploding.</span>
+              </h2>
+              <p className="text-gray-500 text-lg leading-relaxed mb-8">
+                India&apos;s travel & tourism market is projected to reach <strong className="text-gray-800">$250 billion by 2030</strong>. Domestic travel alone crossed <strong className="text-gray-800">2.3 billion trips in 2023</strong>. Yet most Indians still overpay, get cheated, or settle for cookie-cutter packages. We&apos;re here to change that.
               </p>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 pt-6">
+              <div className="space-y-4">
                 {[
-                  { value: '12+', label: 'Years' },
-                  { value: '150+', label: 'Destinations' },
-                  { value: '25K+', label: 'Travelers' },
-                  { value: '98%', label: 'Satisfaction' },
-                ].map((stat, index) => (
-                  <div key={index} className="text-center">
-                    <div className="font-display text-2xl md:text-3xl text-secondary">{stat.value}</div>
-                    <div className="text-caption uppercase tracking-widest text-primary/50 mt-1">{stat.label}</div>
+                  { stat: '$250B', desc: 'India travel market by 2030 (CAGR 12%)', icon: TrendingUp },
+                  { stat: '2.3B+', desc: 'Domestic trips taken in India in 2023', icon: MapPin },
+                  { stat: '$27B', desc: 'Online travel bookings by 2028 in India', icon: Globe },
+                  { stat: '70%', desc: 'Travelers prefer transparent pricing over brand', icon: Shield },
+                ].map(({ stat, desc, icon: Icon }) => (
+                  <div key={stat} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                      <Icon size={18} className="text-amber-600" />
+                    </div>
+                    <div>
+                      <span className="font-black text-gray-900 text-lg">{stat}</span>
+                      <span className="text-gray-500 text-sm ml-2">{desc}</span>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="relative h-[380px] sm:h-[450px] md:h-[550px] lg:h-[600px]">
-              <div className="absolute top-0 right-0 w-3/4 h-2/3 overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=800&q=80"
-                  alt="Taj Mahal at sunrise — iconic India travel experience with YlooTrips"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="absolute bottom-0 left-0 w-2/3 h-1/2 overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&q=80"
-                  alt="Vibrant Rajasthani cultural festival — authentic India immersion with YlooTrips"
-                  fill
-                  className="object-cover"
-                />
+            <div className="relative">
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-8 border border-amber-100">
+                <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-4">Why YlooTrips Wins</p>
+                <div className="space-y-5">
+                  {[
+                    { title: 'No Hidden Costs', desc: 'Price shown = price paid. Always.', icon: '✅' },
+                    { title: 'Real Human Support', desc: '1-hour response, 7 days a week. Not bots.', icon: '🧑‍💼' },
+                    { title: 'AI-Powered Planning', desc: 'Smart trip builder + Yloo AI assistant.', icon: '🤖' },
+                    { title: '10% Cashback', desc: 'WanderLoot rewards on every booking.', icon: '💰' },
+                    { title: 'EMI Options', desc: '0% cost EMI — travel now, pay later.', icon: '📆' },
+                    { title: 'Verified Reviews', desc: '4.9★ from 2,400+ real travelers.', icon: '⭐' },
+                  ].map(({ title, desc, icon }) => (
+                    <div key={title} className="flex items-start gap-3">
+                      <span className="text-2xl shrink-0">{icon}</span>
+                      <div>
+                        <p className="font-bold text-gray-900 text-sm">{title}</p>
+                        <p className="text-gray-500 text-xs mt-0.5">{desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Timeline / Milestones Section */}
-      <section className="py-16 md:py-20 bg-primary text-cream">
+      {/* ── FOUNDER SECTION ── */}
+      <section className="py-16 md:py-24 bg-gray-950">
         <div className="section-container">
-          <p className="text-caption uppercase tracking-[0.3em] text-accent mb-4 text-center">Our Journey</p>
-          <h2 className="font-display text-display-lg text-cream text-center mb-12">12 years of extraordinary journeys</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 relative">
-            {/* Connecting line on desktop */}
-            <div className="hidden md:block absolute top-8 left-[12.5%] right-[12.5%] h-px bg-cream/15" />
-            {[
-              { year: '2012', event: 'Founded in New Delhi', icon: '🏛' },
-              { year: '2015', event: 'First 1,000 travelers served', icon: '🎯' },
-              { year: '2019', event: 'MSME Certified · GST Registered', icon: '🏅' },
-              { year: '2024', event: '25,000+ travelers · 40+ countries', icon: '🌏' },
-            ].map(({ year, event, icon }) => (
-              <div key={year} className="text-center relative">
-                <div className="w-16 h-16 bg-accent/15 border border-accent/30 flex items-center justify-center mx-auto mb-4 text-2xl rounded-full">
-                  {icon}
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+              {/* Photo */}
+              <div className="flex justify-center lg:justify-start">
+                <div className="relative">
+                  {/* Glow */}
+                  <div className="absolute -inset-4 bg-amber-500/20 rounded-3xl blur-2xl" />
+                  <div className="relative w-72 h-80 sm:w-80 sm:h-96 rounded-3xl overflow-hidden border-2 border-amber-500/30 shadow-2xl">
+                    {/* REPLACE with actual founder photo: /founder.jpg */}
+                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex flex-col items-center justify-center">
+                      <div className="w-28 h-28 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-xl mb-4">
+                        <span className="text-white text-5xl font-black">V</span>
+                      </div>
+                      <p className="text-amber-400/60 text-xs font-medium tracking-widest uppercase">Founder Photo</p>
+                      <p className="text-gray-600 text-[10px] mt-1">Replace with /public/founder.jpg</p>
+                    </div>
+                  </div>
+                  {/* Badge */}
+                  <div className="absolute -bottom-4 -right-4 bg-amber-500 text-black rounded-2xl px-4 py-2 shadow-lg">
+                    <p className="text-xs font-black uppercase tracking-wider">Founder & CEO</p>
+                  </div>
                 </div>
-                <div className="font-display text-2xl text-accent mb-1">{year}</div>
-                <p className="text-cream/60 text-sm">{event}</p>
               </div>
-            ))}
+
+              {/* Content */}
+              <div className="text-white">
+                <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-3">Meet the Founder</p>
+                <h2 className="font-display text-3xl md:text-4xl lg:text-5xl leading-tight mb-2">
+                  Vinay Arora
+                </h2>
+                <p className="text-amber-400 font-semibold text-lg mb-6">Founder & CEO, YlooTrips</p>
+
+                <div className="space-y-4 text-gray-300 text-base leading-relaxed">
+                  <p>
+                    Vinay started YlooTrips after experiencing firsthand how broken India&apos;s travel industry was — opaque pricing, unreliable operators, and zero post-booking support. He believed technology could fix this.
+                  </p>
+                  <p>
+                    &ldquo;I want every Indian to travel more. Not less. And to do that, we need to make the experience trustworthy, affordable, and genuinely exciting — from the moment you search to the moment you return home.&rdquo;
+                  </p>
+                  <p>
+                    Today, YlooTrips serves 25,000+ travelers with a team that lives and breathes travel — combining AI-powered tools with a deeply human touch.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-3 mt-8">
+                  {['New Delhi, India', 'Travel Tech', 'Ex-Traveler Turned Builder'].map((tag) => (
+                    <span key={tag} className="bg-white/5 border border-white/10 text-white/70 text-xs font-medium px-3 py-1.5 rounded-full">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex gap-4 mt-8">
+                  <a
+                    href="https://www.instagram.com/ylootrips/"
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-sm font-bold px-5 py-2.5 rounded-xl hover:opacity-90 transition-opacity"
+                  >
+                    Instagram
+                  </a>
+                  <a
+                    href="https://www.facebook.com/profile.php?id=61574908545709"
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-blue-600 text-white text-sm font-bold px-5 py-2.5 rounded-xl hover:opacity-90 transition-opacity"
+                  >
+                    Facebook
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Values Section */}
-      <section className="py-24 md:py-32 bg-cream-dark">
+      {/* ── VISION & MISSION ── */}
+      <section className="py-16 md:py-24 bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500">
         <div className="section-container">
-          <div className="text-center mb-16">
-            <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-4">
-              What We Believe
-            </p>
-            <h2 className="font-display text-display-lg text-primary">
-              Our guiding principles
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <p className="text-white/70 text-xs font-bold uppercase tracking-widest mb-3">Our North Star</p>
+            <h2 className="font-display text-3xl md:text-5xl text-white leading-tight">
+              Vision &amp; Mission
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {values.map((value, index) => (
-              <div key={index} className="bg-cream p-8 text-center group hover:shadow-xl transition-shadow duration-500">
-                <div className="w-16 h-16 mx-auto mb-6 bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
-                  <value.icon className="w-7 h-7 text-secondary" />
-                </div>
-                <h3 className="font-display text-xl text-primary mb-3">{value.title}</h3>
-                <p className="text-primary/60 text-sm">{value.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {/* Vision */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl p-8">
+              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center mb-5">
+                <span className="text-2xl">🔭</span>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">Vision</p>
+              <h3 className="text-white font-display text-2xl mb-4 leading-tight">
+                Make India the world&apos;s most explored travel destination.
+              </h3>
+              <p className="text-white/75 text-sm leading-relaxed">
+                By 2030, we envision YlooTrips as the platform of choice for every traveler — domestic and international — seeking authentic, premium, and transparent travel experiences across India and beyond.
+              </p>
+            </div>
 
-      {/* Certifications / Trust Section */}
-      <section className="py-12 md:py-16 bg-cream border-y border-primary/8">
-        <div className="section-container">
-          <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-8 text-center">Verified &amp; Trusted</p>
-          <div className="flex flex-wrap justify-center gap-6 md:gap-10">
+            {/* Mission */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl p-8">
+              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center mb-5">
+                <span className="text-2xl">🎯</span>
+              </div>
+              <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">Mission</p>
+              <h3 className="text-white font-display text-2xl mb-4 leading-tight">
+                Democratize premium travel for every Indian.
+              </h3>
+              <p className="text-white/75 text-sm leading-relaxed">
+                Deliver world-class travel experiences at honest prices — powered by technology, built on trust, and driven by a team that genuinely loves travel. No hidden fees. No compromises. Ever.
+              </p>
+            </div>
+          </div>
+
+          {/* 3 pillars */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto mt-6">
             {[
-              { label: 'Govt. of India Registered', sub: 'Licensed Travel Company' },
-              { label: 'MSME Certified', sub: 'Ministry of MSME, India' },
-              { label: 'GST Registered', sub: 'Tax-compliant business' },
-              { label: 'PCI-DSS Compliant', sub: 'Secure payment processing' },
-              { label: '4.9★ Google Rating', sub: '2,400+ verified reviews' },
-            ].map(({ label, sub }) => (
-              <div key={label} className="text-center px-4 py-4 border border-primary/10 bg-cream-dark min-w-[140px]">
-                <div className="text-sm font-semibold text-primary mb-0.5">{label}</div>
-                <div className="text-[10px] text-primary/45 uppercase tracking-wider">{sub}</div>
+              { icon: '🤝', title: 'Trust First', desc: 'Every decision we make starts with "would our traveler trust this?"' },
+              { icon: '💡', title: 'Tech-Enabled', desc: 'AI planning tools, real-time support, and seamless booking — all in one.' },
+              { icon: '🌍', title: 'Impact Driven', desc: 'Supporting local guides, eco-friendly stays, and responsible tourism.' },
+            ].map(({ icon, title, desc }) => (
+              <div key={title} className="bg-white/10 border border-white/20 rounded-2xl p-5 text-center">
+                <span className="text-3xl">{icon}</span>
+                <p className="text-white font-bold mt-3 mb-1">{title}</p>
+                <p className="text-white/65 text-xs leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-primary text-cream">
+      {/* ── TIMELINE ── */}
+      <section className="py-16 md:py-20 bg-gray-950">
+        <div className="section-container">
+          <div className="text-center mb-12">
+            <p className="text-amber-400 text-xs font-bold uppercase tracking-widest mb-3">Our Journey</p>
+            <h2 className="font-display text-3xl md:text-4xl text-white">Built year by year.</h2>
+          </div>
+          <div className="relative max-w-3xl mx-auto">
+            {/* Vertical line */}
+            <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-amber-500/60 via-amber-500/30 to-transparent" />
+            <div className="space-y-8">
+              {[
+                { year: '2023', event: 'YlooTrips launched', detail: 'Founded with a vision to fix India\'s travel industry — transparent pricing, real support, tech-first.', icon: '🚀' },
+                { year: '2024', event: 'First 10,000 travelers', detail: 'Crossed 10,000 happy travelers, launched WanderLoot cashback wallet and Yloo AI trip planner.', icon: '🎯' },
+                { year: '2025', event: 'MSME Certified + 25,000 travelers', detail: 'Government of India MSME certification. Expanded to 150+ destinations across India and 10+ international.', icon: '🏅' },
+                { year: '2026', event: '₹50Cr+ bookings & international expansion', detail: 'Growing 3x YoY. Launching Dubai, Bali, Singapore, Thailand packages. Series A fundraise planned.', icon: '🌏' },
+              ].map(({ year, event, detail, icon }, i) => (
+                <div key={year} className={`flex gap-6 md:gap-0 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                  {/* Content */}
+                  <div className={`flex-1 pb-2 pl-14 md:pl-0 ${i % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12 md:text-left'}`}>
+                    <span className="text-amber-400 text-xs font-black uppercase tracking-widest">{year}</span>
+                    <h3 className="text-white font-bold text-lg mt-1">{event}</h3>
+                    <p className="text-gray-400 text-sm mt-1 leading-relaxed">{detail}</p>
+                  </div>
+                  {/* Icon node */}
+                  <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-12 h-12 bg-gray-800 border-2 border-amber-500/50 rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-amber-500/10">
+                    {icon}
+                  </div>
+                  {/* Spacer for right side on desktop */}
+                  <div className="hidden md:block flex-1" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── VALUES ── */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="section-container">
+          <div className="text-center mb-12">
+            <p className="text-amber-600 text-xs font-bold uppercase tracking-widest mb-3">Our DNA</p>
+            <h2 className="font-display text-3xl md:text-4xl text-gray-900">What we stand for</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { icon: Heart, title: 'Traveler First', desc: 'Every feature, every policy, every decision — we ask "is this good for our traveler?"', color: 'text-rose-500 bg-rose-50' },
+              { icon: Shield, title: 'Radical Transparency', desc: 'Price shown = price paid. No surprises at checkout. No hidden hotel charges.', color: 'text-blue-500 bg-blue-50' },
+              { icon: Zap, title: 'Move Fast', desc: 'We ship new features weekly. Our travelers\' needs evolve — so do we.', color: 'text-amber-500 bg-amber-50' },
+              { icon: Globe, title: 'Real Impact', desc: 'We support local guides, eco stays, and responsible travel practices.', color: 'text-green-500 bg-green-50' },
+            ].map(({ icon: Icon, title, desc, color }) => (
+              <div key={title} className="p-6 rounded-3xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 group">
+                <div className={`w-12 h-12 rounded-2xl ${color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
+                  <Icon size={20} />
+                </div>
+                <h3 className="font-bold text-gray-900 text-lg mb-2">{title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CERTIFICATIONS ── */}
+      <section className="py-10 bg-gray-50 border-y border-gray-100">
+        <div className="section-container">
+          <p className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">Verified &amp; Trusted</p>
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+            {[
+              { label: '🏛 Govt. of India', sub: 'Licensed Travel Company' },
+              { label: '📜 MSME Certified', sub: 'Ministry of MSME' },
+              { label: '🧾 GST Registered', sub: 'Tax-Compliant Business' },
+              { label: '🔒 PCI-DSS Compliant', sub: 'Secure Payment Processing' },
+              { label: '⭐ 4.9 Google Rating', sub: '2,400+ Verified Reviews' },
+            ].map(({ label, sub }) => (
+              <div key={label} className="flex flex-col items-center px-5 py-3 bg-white border border-gray-200 rounded-2xl shadow-sm">
+                <div className="font-bold text-sm text-gray-800">{label}</div>
+                <div className="text-[10px] text-gray-400 uppercase tracking-wider mt-0.5">{sub}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="py-16 md:py-24 bg-gray-950">
         <div className="section-container text-center">
-          <p className="text-caption uppercase tracking-[0.3em] text-accent mb-4">Let&apos;s Travel Together</p>
-          <h2 className="font-display text-display-lg mb-4">Ready to see India the right way?</h2>
-          <p className="text-cream/60 text-body-lg max-w-xl mx-auto mb-10">
-            Our travel specialists respond in under 1 hour, 7 days a week. No bots, no templates — just expert advice.
+          <div className="inline-flex items-center gap-2 bg-green-500/15 border border-green-500/30 rounded-full px-4 py-1.5 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-green-400 text-xs font-bold uppercase tracking-widest">Team Online · Responds in &lt;1 hr</span>
+          </div>
+          <h2 className="font-display text-3xl md:text-5xl text-white mb-4">
+            Let&apos;s plan your dream trip.
+          </h2>
+          <p className="text-white/50 text-lg max-w-xl mx-auto mb-10">
+            No bots. No templates. Real travel experts who answer fast — 7 days a week.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://wa.me/918427831127?text=Hi%2C+I+read+about+YlooTrips+and+want+to+plan+a+trip"
+            <a
+              href="https://wa.me/918427831127?text=Hi%2C+I+want+to+plan+a+trip+with+YlooTrips"
               target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-8 py-4 font-semibold text-sm uppercase tracking-widest transition-colors">
+              className="inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-wider transition-colors shadow-xl shadow-green-500/20"
+            >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               Chat on WhatsApp
             </a>
-            <Link href="/contact" className="inline-flex items-center justify-center gap-2 border border-cream/25 text-cream hover:border-cream hover:bg-white/5 px-8 py-4 text-sm uppercase tracking-widest transition-all">
-              Plan My Trip <ArrowUpRight className="w-4 h-4" />
+            <Link
+              href="/trip-planner"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-black font-bold px-8 py-4 rounded-2xl text-sm uppercase tracking-wider hover:opacity-90 transition-opacity shadow-xl shadow-amber-500/20"
+            >
+              Plan with AI <ArrowUpRight size={16} />
             </Link>
           </div>
         </div>
