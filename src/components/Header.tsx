@@ -27,8 +27,7 @@ export default function Header() {
     const navLinks = [
         { name: 'Trips 🏕️', href: '/destinations/domestic' },
         { name: 'International 🌍', href: '/destinations/international' },
-        { name: 'Real Trips 📸', href: '/reel-to-trip' },
-        { name: 'Holiday Planner 🤖', href: '/trip-planner' },
+        { name: 'Holiday Planner 🗓️', href: '/trip-planner' },
         { name: 'Events 🎉', href: '/events' },
         { name: 'Blogs ✍️', href: '/blogs' },
         { name: 'About', href: '/about' },

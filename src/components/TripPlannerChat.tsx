@@ -846,62 +846,55 @@ export default function TripPlannerChat() {
   return (
     <div className="min-h-screen bg-cream-light">
       {/* Hero Header */}
-      <div className="bg-primary pt-16 pb-10 px-4 text-center relative overflow-hidden">
-        {/* Real Trips highlight — top right */}
+      <div className="bg-primary pt-16 pb-8 px-4 relative overflow-hidden">
+        {/* Real Trips pill — top right */}
         <a
           href="/reel-to-trip"
-          className="absolute top-20 right-3 sm:right-6 z-10 flex flex-col items-center gap-1.5 bg-gradient-to-br from-pink-500/90 via-purple-600/90 to-indigo-600/90 backdrop-blur border border-white/20 rounded-2xl px-3 py-3 shadow-xl shadow-purple-500/30 hover:scale-105 active:scale-95 transition-transform group max-w-[90px]"
+          className="absolute top-[72px] right-3 sm:right-5 z-10 flex items-center gap-1.5 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full px-3 py-1.5 shadow-lg shadow-purple-500/30 hover:scale-105 active:scale-95 transition-transform"
         >
-          <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center">
-            <Instagram className="w-4 h-4 text-white" />
-          </div>
-          <span className="text-white text-[10px] font-black text-center leading-tight">Real<br/>Trips ✨</span>
-          <span className="text-white/70 text-[9px] text-center leading-tight">Reel → Trip</span>
-          <div className="absolute -top-1.5 -right-1.5 flex items-center gap-0.5 bg-rose-500 rounded-full px-1.5 py-0.5">
-            <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
-            <span className="text-white text-[8px] font-black">NEW</span>
-          </div>
+          <Instagram className="w-3 h-3 text-white" />
+          <span className="text-white text-[10px] font-black">Reel → Trip</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
         </a>
 
-        <div className="inline-flex items-center gap-1.5 bg-accent/20 border border-accent/30 text-accent text-xs font-medium px-3 py-1.5 rounded-full mb-4">
-          <Calendar className="w-3 h-3" />
-          Holiday Planner · Yloo AI
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="inline-flex items-center gap-1.5 bg-accent/20 border border-accent/30 text-accent text-xs font-semibold px-3 py-1.5 rounded-full mb-3">
+            <Calendar className="w-3 h-3" />
+            Holiday Planner · Powered by Yloo AI
+          </div>
+          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl text-cream font-bold mb-2 leading-tight">
+            Plan Your Next Holiday 🗓️
+          </h1>
+          <p className="text-cream-dark text-sm max-w-sm mx-auto leading-relaxed">
+            Pick a long weekend below — or type any destination to get an AI itinerary in seconds.
+          </p>
         </div>
-        <h1 className="font-display text-display-lg text-cream mb-3">Long Weekends &amp; Holiday Trip Planner</h1>
-        <p className="text-cream-dark text-sm sm:text-base max-w-md mx-auto">
-          Pick an upcoming holiday, choose a destination, and let Yloo AI build your perfect itinerary — in seconds.
-        </p>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 -mt-5">
+      <div className="max-w-2xl mx-auto px-4 -mt-4">
         {/* Input Card */}
-        <div className="bg-white rounded-2xl shadow-lg border border-cream-dark p-4 sm:p-5">
+        <div className="bg-white rounded-2xl shadow-lg border border-cream-dark p-3 sm:p-5">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-secondary/50 mb-2 px-1">✨ Ask Yloo AI anything</p>
           <textarea
             ref={textareaRef}
             value={input}
             onChange={(e) => { setInput(e.target.value); autoResize(); }}
             onKeyDown={handleKeyDown}
-            placeholder="e.g. Plan a 5-day trip to Bali for 2 people, honeymoon, budget ₹80,000..."
+            placeholder="e.g. 5-day Bali trip for 2, honeymoon, budget ₹80,000…"
             rows={2}
-            className="w-full resize-none text-sm md:text-sm text-primary placeholder-secondary/50 bg-transparent outline-none leading-relaxed"
+            className="w-full resize-none text-sm text-primary placeholder-secondary/40 bg-transparent outline-none leading-relaxed"
           />
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-cream-dark">
-            <p className="text-xs text-secondary/60 hidden sm:block">Press Enter to generate · Shift+Enter for new line</p>
+          <div className="flex items-center justify-between mt-2 pt-2 border-t border-cream-dark">
+            <p className="text-[10px] text-secondary/50 hidden sm:block">Enter to generate · Shift+Enter new line</p>
             <button
               onClick={() => handleSubmit()}
               disabled={!input.trim() || loading}
-              className="ml-auto flex items-center gap-2 bg-primary text-cream text-sm font-medium px-5 py-2.5 rounded-xl hover:bg-primary-light transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="ml-auto flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-bold px-5 py-2.5 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-amber-500/20"
             >
               {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Planning...
-                </>
+                <><Loader2 className="w-4 h-4 animate-spin" />Planning…</>
               ) : (
-                <>
-                  <Send className="w-4 h-4" />
-                  Plan My Trip
-                </>
+                <><Sparkles className="w-4 h-4" />Plan My Trip</>
               )}
             </button>
           </div>
@@ -911,8 +904,8 @@ export default function TripPlannerChat() {
         {!hasSearched && (
           <>
             <HolidayCalendar onSelect={(q) => handleSubmit(q)} />
-            <div className="mt-6">
-              <p className="text-xs text-secondary font-medium mb-2.5 px-1">Or try a quick AI example:</p>
+            <div className="mt-4">
+              <p className="text-xs text-secondary font-semibold mb-2 px-1 uppercase tracking-widest">Or try a quick example:</p>
               <div className="flex flex-col gap-2">
                 {SUGGESTIONS.map((s, i) => (
                   <button
