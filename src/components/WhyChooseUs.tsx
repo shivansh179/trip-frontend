@@ -4,7 +4,7 @@ import { Shield, Clock, Users, MapPin, Star, HeartHandshake, CheckCircle2, Award
 import Link from 'next/link';
 
 const stats = [
-    { value: '12+', label: 'Years', sub: 'Founded 2012', icon: Award, gradient: 'from-amber-400 to-orange-500' },
+    { value: '3+', label: 'Years', sub: 'Est. 2022', icon: Award, gradient: 'from-amber-400 to-orange-500' },
     { value: '25K+', label: 'Travelers', sub: '40+ countries', icon: Users, gradient: 'from-blue-400 to-violet-500' },
     { value: '4.9★', label: 'Rating', sub: '2,400+ reviews', icon: Star, gradient: 'from-yellow-400 to-amber-500' },
     { value: '98%', label: 'Satisfaction', sub: 'Would recommend', icon: HeartHandshake, gradient: 'from-pink-400 to-rose-500' },

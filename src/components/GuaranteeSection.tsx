@@ -44,7 +44,7 @@ const certifications = [
   { label: 'GST Registered', sub: 'Tax compliant', icon: '📋' },
   { label: 'SSL Secured', sub: '256-bit encryption', icon: '🔐' },
   { label: 'PCI-DSS', sub: 'Payment security', icon: '💳' },
-  { label: '12+ Years', sub: 'In business since 2012', icon: '⏳' },
+  { label: '3+ Years', sub: 'In business since 2022', icon: '⏳' },
   { label: '4.9★ Google', sub: '2,400+ verified reviews', icon: '⭐' },
 ];
 

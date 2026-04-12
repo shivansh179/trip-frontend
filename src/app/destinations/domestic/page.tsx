@@ -856,7 +856,7 @@ function DomesticDestinationsContent() {
         subtitle={
           isInternational
             ? 'Handcrafted private tours — Taj Mahal, Kerala, Rajasthan & beyond. English-speaking guides · Licensed operator · Trusted by 25,000+ travelers from USA, UK, Australia & 40+ countries.'
-            : 'From the Himalayas to Kerala\'s backwaters — 12+ years crafting India journeys for 25,000+ travelers.'
+            : 'From the Himalayas to Kerala\'s backwaters — 3+ years crafting India journeys for 25,000+ travelers.'
         }
         breadcrumb={isInternational ? 'India Tours' : 'Domestic'}
         backgroundImage="https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1920&q=80"
@@ -1137,7 +1137,7 @@ function DomesticDestinationsContent() {
       <section className="py-8 bg-cream-dark border-y border-primary/8">
         <div className="section-container">
           <div className="flex flex-wrap justify-center gap-6 md:gap-12 text-center">
-            {[{ value: '12+', label: 'Years of India expertise' }, { value: '25K+', label: 'Travelers guided' }, { value: '4.9★', label: 'Google rating' }, { value: '40+', label: 'Countries served' }].map(({ value, label }) => (
+            {[{ value: '3+', label: 'Years of India expertise' }, { value: '25K+', label: 'Travelers guided' }, { value: '4.9★', label: 'Google rating' }, { value: '40+', label: 'Countries served' }].map(({ value, label }) => (
               <div key={label}>
                 <div className="font-display text-2xl md:text-3xl text-terracotta">{value}</div>
                 <div className="text-caption text-primary/50 uppercase tracking-widest mt-0.5">{label}</div>

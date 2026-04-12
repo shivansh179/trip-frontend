@@ -115,7 +115,7 @@ export default function Hero({ content, stats }: HeroProps) {
         { value: '25K+', label: 'Happy Travelers' },
         { value: '4.9★', label: 'Avg Rating' },
         { value: '150+', label: 'Destinations' },
-        { value: '12+', label: 'Years' },
+        { value: '3+', label: 'Years' },
     ];
 
     useEffect(() => {

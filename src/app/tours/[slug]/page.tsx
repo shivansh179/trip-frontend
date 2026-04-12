@@ -337,7 +337,7 @@ export default async function TourPage({ params }: Props) {
                 {[
                   { icon: Shield, text: 'Fully licensed & MSME certified', sub: 'India Pvt. Ltd. registered' },
                   { icon: Award, text: '4.9★ on Google Reviews', sub: `${tour.reviewCount}+ verified reviews` },
-                  { icon: ThumbsUp, text: '25,000+ travellers since 2012', sub: '40+ source countries' },
+                  { icon: ThumbsUp, text: '25,000+ travellers since 2022', sub: '40+ source countries' },
                   { icon: CreditCard, text: 'Secure international payment', sub: 'USD, EUR, GBP, AUD accepted' },
                   { icon: Globe, text: '24/7 WhatsApp support', sub: 'Real people, not bots' },
                   { icon: Plane, text: 'We handle your e-Visa letter', sub: 'India visa support included' },

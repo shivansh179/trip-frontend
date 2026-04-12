@@ -283,10 +283,13 @@ export default function AboutPage() {
             <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-amber-500/60 via-amber-500/30 to-transparent" />
             <div className="space-y-8">
               {[
-                { year: '2023', event: 'YlooTrips launched', detail: 'Founded with a vision to fix India\'s travel industry — transparent pricing, real support, tech-first.', icon: '🚀' },
-                { year: '2024', event: 'First 10,000 travelers', detail: 'Crossed 10,000 happy travelers, launched WanderLoot cashback wallet and Yloo AI trip planner.', icon: '🎯' },
-                { year: '2025', event: 'MSME Certified + 25,000 travelers', detail: 'Government of India MSME certification. Expanded to 150+ destinations across India and 10+ international.', icon: '🏅' },
-                { year: '2026', event: '₹50Cr+ bookings & international expansion', detail: 'Growing 3x YoY. Launching Dubai, Bali, Singapore, Thailand packages. Series A fundraise planned.', icon: '🌏' },
+                { year: '2022', event: 'Founded — Weekend Trips', detail: 'YlooTrips launched with curated weekend getaways across India. Manali, Goa, Coorg, Rishikesh — affordable, transparent, zero hidden fees.', icon: '🏕️' },
+                { year: '2022', event: 'Hotel Booking Added', detail: 'Expanded to hotel search and booking — boutique stays, homestays, and handpicked properties across 50+ Indian destinations.', icon: '🏨' },
+                { year: '2023', event: 'Flights + Full Packages', detail: 'Launched flight search and end-to-end holiday packages. Domestic multi-city tours with hotel + transport + sightseeing all-inclusive.', icon: '✈️' },
+                { year: '2023', event: 'International Packages', detail: 'Expanded beyond India — Dubai, Bali, Singapore, Thailand, Maldives. Premium international packages with visa assistance and full support.', icon: '🌏' },
+                { year: '2024', event: 'Events Platform Launched', detail: 'Launched ticketing for concerts, experiences, and curated travel events. 10,000+ travelers milestone. WanderLoot cashback wallet introduced.', icon: '🎉' },
+                { year: '2025', event: 'Major Events + MSME Certified', detail: 'Large-scale event management — corporate trips, group travel, destination weddings. MSME certified by Govt. of India. 25,000+ travelers served.', icon: '🏅' },
+                { year: '2026', event: 'AI Trip Planner + Scale', detail: 'Launched Yloo AI — smart trip planner powered by AI. Growing 3x YoY. Target: ₹50Cr+ bookings, Series A expansion.', icon: '🤖' },
               ].map(({ year, event, detail, icon }, i) => (
                 <div key={year} className={`flex gap-6 md:gap-0 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
                   {/* Content */}

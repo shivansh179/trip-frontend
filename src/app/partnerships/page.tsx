@@ -155,7 +155,7 @@ export default function PartnershipsPage() {
         <div className="section-container">
           <div className="flex flex-wrap justify-center gap-8 md:gap-16 text-center">
             {[
-              { value: '12+', label: 'Years operating' },
+              { value: '3+', label: 'Years operating' },
               { value: '500+', label: 'Partner network' },
               { value: '25K+', label: 'Travelers served' },
               { value: '40+', label: 'Source countries' },

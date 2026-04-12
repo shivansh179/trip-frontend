@@ -83,7 +83,7 @@ export default async function TripsPage() {
             {/* CTA Section */}
             <section className="py-20 bg-primary text-cream">
                 <div className="section-container text-center">
-                    <p className="text-caption uppercase tracking-[0.3em] text-accent mb-4">12+ Years · 25,000+ Travelers</p>
+                    <p className="text-caption uppercase tracking-[0.3em] text-accent mb-4">Est. 2022 · 25,000+ Travelers</p>
                     <h2 className="font-display text-display-lg mb-6">
                         Can&apos;t find what you&apos;re looking for?
                     </h2>

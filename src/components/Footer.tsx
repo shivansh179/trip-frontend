@@ -108,7 +108,7 @@ export default function Footer() {
                 <p className="text-[9px] uppercase tracking-[0.2em] text-accent">Company Details</p>
                 <p className="text-[10px] text-cream/35">MSME Registered · Govt. of India Licensed</p>
                 <p className="text-[10px] text-cream/35">GST Registered Travel Company</p>
-                <p className="text-[10px] text-cream/35">New Delhi, India · Est. 2012</p>
+                <p className="text-[10px] text-cream/35">New Delhi, India · Est. 2022</p>
               </div>
 
               {/* Newsletter */}

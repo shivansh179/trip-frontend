@@ -20,7 +20,7 @@ const trustSignals = [
   { icon: Star, label: '4.9★ Google', sub: '2,400+ reviews' },
   { icon: Users, label: '25,000+', sub: 'Travelers served' },
   { icon: Globe, label: '48 Countries', sub: 'Visitors hosted' },
-  { icon: Award, label: 'Est. 2012', sub: '13 Years experience' },
+  { icon: Award, label: 'Est. 2022', sub: '3 Years experience' },
   { icon: CheckCircle2, label: 'Visa Letter', sub: 'Support included' },
 ];
 
@@ -257,7 +257,7 @@ export default function ToursPage() {
               <span className="italic">travelers like you</span>
             </h2>
             <p className="text-cream/55 max-w-xl mx-auto text-base">
-              We've been hosting visitors from 48 countries since 2012. Here's what makes us different.
+              We've been hosting visitors from 48 countries since 2022. Here's what makes us different.
             </p>
           </div>
 

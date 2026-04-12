@@ -162,7 +162,7 @@ export default function CareersPage() {
       {/* CTA */}
       <section className="py-16 bg-primary text-cream">
         <div className="section-container text-center">
-          <p className="text-caption uppercase tracking-[0.3em] text-accent mb-4">New Delhi · Est. 2012</p>
+          <p className="text-caption uppercase tracking-[0.3em] text-accent mb-4">New Delhi · Est. 2022</p>
           <h2 className="font-display text-display-lg mb-4">Join a team that loves what it does</h2>
           <p className="text-cream/55 text-body-sm max-w-lg mx-auto mb-8">
             25,000+ travelers helped. 4.9★ on Google. 98% satisfaction rate. We're proud of what we've built — come help us grow it.

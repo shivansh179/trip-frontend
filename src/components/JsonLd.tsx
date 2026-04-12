@@ -20,8 +20,8 @@ export function OrganizationJsonLd() {
           height: 60,
         },
         description:
-          'YlooTrips India Pvt. Ltd. crafts bespoke India travel experiences — Golden Triangle, Kerala, Rajasthan, Himalayas and more. Trusted by 25,000+ travelers from 40+ countries since 2012.',
-        foundingDate: '2012',
+          'YlooTrips India Pvt. Ltd. crafts bespoke India travel experiences — Golden Triangle, Kerala, Rajasthan, Himalayas and more. Trusted by 25,000+ travelers from 40+ countries since 2022.',
+        foundingDate: '2022',
         numberOfEmployees: { '@type': 'QuantitativeValue', value: 50 },
         areaServed: ['IN', 'US', 'GB', 'AU', 'CA', 'DE', 'FR', 'SG'],
         address: {

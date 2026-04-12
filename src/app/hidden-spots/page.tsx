@@ -64,7 +64,7 @@ export default function HiddenSpotsPage() {
           <div className="flex flex-wrap gap-8 text-cream/50 text-sm">
             {[
               { v: `${hiddenSpots.length}`, l: 'Hidden spots' },
-              { v: '12+', l: 'Years discovering' },
+              { v: '3+', l: 'Years discovering' },
               { v: '8', l: 'States covered' },
               { v: '100%', l: 'Off the tourist trail' },
             ].map(({ v, l }) => (
