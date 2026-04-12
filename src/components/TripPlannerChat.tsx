@@ -76,6 +76,82 @@ const SUGGESTIONS = [
   "Singapore 5 days, couple, first international trip",
 ];
 
+/* ── Holiday / Long Weekend Calendar ─────────────────────────────────────── */
+const HOLIDAYS = [
+  { date: 'Apr 14', day: 'Tue', name: 'Ambedkar Jayanti', type: 'holiday', totalDays: 3, note: 'Take Apr 15 off → 3-day weekend', destinations: ['Jaipur', 'Agra', 'Rishikesh'], emoji: '🇮🇳' },
+  { date: 'May 1', day: 'Fri', name: 'May Day / Labour Day', type: 'long', totalDays: 3, note: 'Fri–Sun long weekend', destinations: ['Goa', 'Coorg', 'Ooty'], emoji: '🎉' },
+  { date: 'May 31', day: 'Sun', name: 'Buddha Purnima', type: 'holiday', totalDays: 3, note: 'Sat–Mon long weekend', destinations: ['Bodh Gaya', 'Dharamshala', 'Spiti'], emoji: '🪔' },
+  { date: 'Jun 6–7', day: 'Sat–Sun', name: 'Eid al-Adha', type: 'holiday', totalDays: 4, note: 'Fri–Mon — 4 days with leave!', destinations: ['Dubai', 'Turkey', 'Malaysia'], emoji: '🌙' },
+  { date: 'Aug 15', day: 'Sat', name: 'Independence Day', type: 'long', totalDays: 3, note: 'Thu–Sat — add a leave for 5 days!', destinations: ['Ladakh', 'Manali', 'Andaman'], emoji: '🇮🇳' },
+  { date: 'Aug 20', day: 'Thu', name: 'Janmashtami', type: 'holiday', totalDays: 4, note: 'Thu–Sun — take Fri off for 4 days', destinations: ['Mathura', 'Vrindavan', 'Nainital'], emoji: '🪈' },
+  { date: 'Sep 7', day: 'Mon', name: 'Ganesh Chaturthi', type: 'long', totalDays: 3, note: 'Sat–Mon long weekend', destinations: ['Mumbai', 'Goa', 'Hampi'], emoji: '🐘' },
+  { date: 'Oct 2', day: 'Fri', name: 'Gandhi Jayanti / Dussehra', type: 'long', totalDays: 4, note: 'Fri–Mon — 4-day weekend!', destinations: ['Mysuru', 'Kullu', 'Varanasi'], emoji: '🎆' },
+  { date: 'Nov 8', day: 'Sun', name: 'Diwali', type: 'festival', totalDays: 5, note: 'Multi-day festival break', destinations: ['Jaisalmer', 'Pushkar', 'Goa'], emoji: '✨' },
+  { date: 'Dec 25', day: 'Thu', name: 'Christmas', type: 'long', totalDays: 4, note: 'Thu–Sun — 4-day getaway!', destinations: ['Goa', 'Manali', 'Bali'], emoji: '🎄' },
+  { date: 'Dec 31', day: 'Wed', name: 'New Year\'s Eve', type: 'festival', totalDays: 3, note: 'Ring in 2027 on a trip!', destinations: ['Dubai', 'Thailand', 'Goa'], emoji: '🎊' },
+];
+
+function HolidayCalendar({ onSelect }: { onSelect: (q: string) => void }) {
+  const typeStyle: Record<string, string> = {
+    long: 'bg-green-100 text-green-700 border-green-200',
+    holiday: 'bg-amber-100 text-amber-700 border-amber-200',
+    festival: 'bg-rose-100 text-rose-700 border-rose-200',
+  };
+  const typeLabel: Record<string, string> = {
+    long: '🟢 Long Weekend',
+    holiday: '🟡 Holiday',
+    festival: '🌟 Festival Break',
+  };
+
+  return (
+    <div className="mt-6">
+      <div className="flex items-center justify-between mb-3 px-1">
+        <div>
+          <p className="text-sm font-bold text-primary">📅 Long Weekends & Holiday Calendar 2026</p>
+          <p className="text-xs text-secondary mt-0.5">Tap any holiday to plan your trip instantly</p>
+        </div>
+      </div>
+      <div className="space-y-2.5">
+        {HOLIDAYS.map((h) => (
+          <div
+            key={h.name}
+            className="bg-white border border-cream-dark rounded-2xl p-4 hover:border-amber-300 hover:shadow-sm transition-all cursor-pointer active:scale-[0.98]"
+            onClick={() => onSelect(`Plan a ${h.totalDays}-day trip for ${h.destinations[0]} around ${h.name} (${h.date}), budget trip for 2 people`)}
+          >
+            <div className="flex items-start gap-3">
+              <div className="text-2xl shrink-0 mt-0.5">{h.emoji}</div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bold text-sm text-primary">{h.name}</span>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${typeStyle[h.type]}`}>
+                    {typeLabel[h.type]}
+                  </span>
+                </div>
+                <p className="text-xs text-secondary mt-0.5">{h.date} ({h.day}) · {h.note}</p>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {h.destinations.map(dest => (
+                    <button
+                      key={dest}
+                      onClick={e => { e.stopPropagation(); onSelect(`Plan a ${h.totalDays}-day trip to ${dest} for ${h.name} break (${h.date}), budget trip for 2 people`); }}
+                      className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 active:scale-95 transition-transform hover:bg-amber-100"
+                    >
+                      {dest}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="shrink-0 text-right">
+                <div className="text-lg font-black text-amber-500">{h.totalDays}D</div>
+                <div className="text-[10px] text-secondary">off</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const TIME_COLORS: Record<string, string> = {
   Morning: 'bg-amber-50 text-amber-700 border-amber-200',
   Afternoon: 'bg-orange-50 text-orange-700 border-orange-200',
@@ -772,12 +848,12 @@ export default function TripPlannerChat() {
       {/* Hero Header */}
       <div className="bg-primary pt-16 pb-10 px-4 text-center">
         <div className="inline-flex items-center gap-1.5 bg-accent/20 border border-accent/30 text-accent text-xs font-medium px-3 py-1.5 rounded-full mb-4">
-          <Sparkles className="w-3 h-3" />
-          Yloo AI
+          <Calendar className="w-3 h-3" />
+          Holiday Planner · Yloo AI
         </div>
-        <h1 className="font-display text-display-lg text-cream mb-3">Plan Any Trip, Anywhere in the World</h1>
+        <h1 className="font-display text-display-lg text-cream mb-3">Long Weekends &amp; Holiday Trip Planner</h1>
         <p className="text-cream-dark text-sm sm:text-base max-w-md mx-auto">
-          Tell Yloo AI your destination, budget, and travel style — get a personalised day-by-day itinerary in seconds.
+          Pick an upcoming holiday, choose a destination, and let Yloo AI build your perfect itinerary — in seconds.
         </p>
       </div>
 
@@ -815,22 +891,25 @@ export default function TripPlannerChat() {
           </div>
         </div>
 
-        {/* Suggestions */}
+        {/* Holiday Calendar + AI Suggestions */}
         {!hasSearched && (
-          <div className="mt-5">
-            <p className="text-xs text-secondary font-medium mb-2.5 px-1">Try a quick example:</p>
-            <div className="flex flex-col gap-2">
-              {SUGGESTIONS.map((s, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleSubmit(s)}
-                  className="text-left text-sm text-primary bg-white border border-cream-dark rounded-xl px-4 py-3 hover:border-accent hover:bg-cream transition-all"
-                >
-                  {s}
-                </button>
-              ))}
+          <>
+            <HolidayCalendar onSelect={(q) => handleSubmit(q)} />
+            <div className="mt-6">
+              <p className="text-xs text-secondary font-medium mb-2.5 px-1">Or try a quick AI example:</p>
+              <div className="flex flex-col gap-2">
+                {SUGGESTIONS.map((s, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSubmit(s)}
+                    className="text-left text-sm text-primary bg-white border border-cream-dark rounded-xl px-4 py-3 hover:border-accent hover:bg-cream transition-all"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          </>
         )}
 
         {/* Loading State */}
