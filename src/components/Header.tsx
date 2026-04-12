@@ -97,10 +97,10 @@ export default function Header() {
                                 Plan Journey
                             </Link>
                             <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                className={`lg:hidden relative z-10 p-2 rounded-full transition-all duration-300 ${
+                                className={`lg:hidden relative z-10 p-2.5 rounded-full transition-all duration-300 ${
                                     hasHero && !isScrolled && !isMobileMenuOpen
-                                        ? 'text-white hover:bg-white/10'
-                                        : 'text-gray-700 hover:bg-gray-100'
+                                        ? 'text-white bg-black/30 hover:bg-black/40 border border-white/20'
+                                        : 'text-gray-800 bg-gray-100 hover:bg-gray-200'
                                 }`}>
                                 {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
                             </button>
