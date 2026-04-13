@@ -8,6 +8,8 @@ export interface IReview extends Document {
   trip: string;
   rating: number;
   text: string;
+  avatarUrl?: string;
+  tripPhotoUrl?: string;
   platform: 'YlooTrips';
   status: 'pending' | 'approved' | 'rejected';
   adminNote?: string;
@@ -24,6 +26,8 @@ const ReviewSchema = new Schema<IReview>(
     trip:    { type: String, required: true, trim: true, maxlength: 200 },
     rating:  { type: Number, required: true, min: 1, max: 5 },
     text:    { type: String, required: true, trim: true, maxlength: 1000 },
+    avatarUrl:    { type: String },
+    tripPhotoUrl: { type: String },
     platform: { type: String, default: 'YlooTrips' },
     status:  { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
     adminNote: { type: String },
