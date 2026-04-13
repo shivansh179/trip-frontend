@@ -34,7 +34,7 @@ interface FlightResult {
     seatsLeft: number | null; isDemo: boolean;
 }
 
-const CITIES = [
+const CITIES_DOMESTIC = [
     { name: 'New Delhi', code: 'DEL' }, { name: 'Mumbai', code: 'BOM' },
     { name: 'Bangalore', code: 'BLR' }, { name: 'Chennai', code: 'MAA' },
     { name: 'Hyderabad', code: 'HYD' }, { name: 'Kolkata', code: 'CCU' },
@@ -45,7 +45,101 @@ const CITIES = [
     { name: 'Srinagar', code: 'SXR' }, { name: 'Udaipur', code: 'UDR' },
     { name: 'Jodhpur', code: 'JDH' }, { name: 'Chandigarh', code: 'IXC' },
     { name: 'Dehradun', code: 'DED' }, { name: 'Port Blair', code: 'IXZ' },
+    { name: 'Bagdogra (Darjeeling)', code: 'IXB' }, { name: 'Indore', code: 'IDR' },
+    { name: 'Bhopal', code: 'BHO' }, { name: 'Nagpur', code: 'NAG' },
+    { name: 'Patna', code: 'PAT' }, { name: 'Guwahati', code: 'GAU' },
+    { name: 'Thiruvananthapuram', code: 'TRV' }, { name: 'Coimbatore', code: 'CJB' },
+    { name: 'Mangalore', code: 'IXE' }, { name: 'Bhubaneswar', code: 'BBI' },
 ];
+
+const CITIES_INTL = [
+    { name: 'Dubai (UAE)', code: 'DXB' }, { name: 'Abu Dhabi (UAE)', code: 'AUH' },
+    { name: 'Bangkok, Thailand', code: 'BKK' }, { name: 'Phuket, Thailand', code: 'HKT' },
+    { name: 'Bali (Denpasar)', code: 'DPS' }, { name: 'Singapore', code: 'SIN' },
+    { name: 'Kuala Lumpur', code: 'KUL' }, { name: 'Colombo (Sri Lanka)', code: 'CMB' },
+    { name: 'Kathmandu (Nepal)', code: 'KTM' }, { name: 'Male (Maldives)', code: 'MLE' },
+    { name: 'Dhaka (Bangladesh)', code: 'DAC' }, { name: 'Hanoi (Vietnam)', code: 'HAN' },
+    { name: 'Ho Chi Minh City', code: 'SGN' }, { name: 'Manila (Philippines)', code: 'MNL' },
+    { name: 'Jakarta (Indonesia)', code: 'CGK' }, { name: 'Doha (Qatar)', code: 'DOH' },
+    { name: 'Muscat (Oman)', code: 'MCT' }, { name: 'Kuwait City', code: 'KWI' },
+    { name: 'Riyadh (Saudi Arabia)', code: 'RUH' }, { name: 'Istanbul (Turkey)', code: 'IST' },
+    { name: 'London (Heathrow)', code: 'LHR' }, { name: 'Paris (CDG)', code: 'CDG' },
+    { name: 'Frankfurt (Germany)', code: 'FRA' }, { name: 'Amsterdam', code: 'AMS' },
+    { name: 'Tokyo (Japan)', code: 'NRT' }, { name: 'Seoul (South Korea)', code: 'ICN' },
+    { name: 'Hong Kong', code: 'HKG' }, { name: 'Sydney (Australia)', code: 'SYD' },
+    { name: 'Toronto (Canada)', code: 'YYZ' }, { name: 'New York (JFK)', code: 'JFK' },
+];
+
+const ALL_CITIES = [...CITIES_DOMESTIC, ...CITIES_INTL];
+
+function HeroCityPicker({ value, onChange }: { value: string; onChange: (code: string) => void }) {
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState('');
+    const inputRef = useRef<HTMLInputElement>(null);
+    const selected = ALL_CITIES.find(c => c.code === value);
+
+    useEffect(() => { if (open) setTimeout(() => inputRef.current?.focus(), 80); }, [open]);
+
+    const filter = (list: typeof ALL_CITIES) =>
+        query.trim()
+            ? list.filter(c => c.name.toLowerCase().includes(query.toLowerCase()) || c.code.toLowerCase().includes(query.toLowerCase()))
+            : list;
+
+    const domestic = filter(CITIES_DOMESTIC);
+    const intl = filter(CITIES_INTL);
+    const pick = (code: string) => { onChange(code); setOpen(false); setQuery(''); };
+
+    return (
+        <>
+            <button type="button" onClick={() => setOpen(true)}
+                className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm bg-white text-left flex items-center justify-between focus:outline-none focus:border-amber-400">
+                <span className="truncate text-gray-800">{selected ? `${selected.name} (${selected.code})` : 'Select city'}</span>
+                <ChevronDown size={13} className="shrink-0 text-gray-400 ml-1" />
+            </button>
+            {open && (
+                <div className="fixed inset-0 z-[9999] flex flex-col justify-end sm:items-center sm:justify-center">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => { setOpen(false); setQuery(''); }} />
+                    <div className="relative w-full sm:max-w-md bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col" style={{ maxHeight: '85dvh' }}>
+                        <div className="flex items-center gap-3 px-4 pt-4 pb-3 border-b border-gray-100 shrink-0">
+                            <Search size={15} className="text-gray-400 shrink-0" />
+                            <input ref={inputRef} value={query} onChange={e => setQuery(e.target.value)}
+                                placeholder="Search city or airport code…"
+                                className="flex-1 text-sm text-gray-900 outline-none placeholder:text-gray-400" />
+                            <button onClick={() => { setOpen(false); setQuery(''); }} className="p-1 rounded-full hover:bg-gray-100 text-gray-400"><X size={15} /></button>
+                        </div>
+                        <div className="overflow-y-auto flex-1 pb-6">
+                            {domestic.length > 0 && (
+                                <>
+                                    <div className="sticky top-0 bg-amber-50 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-amber-700">🇮🇳 India</div>
+                                    {domestic.map(c => (
+                                        <button key={c.code} type="button" onClick={() => pick(c.code)}
+                                            className={`w-full text-left px-4 py-3 text-sm flex items-center justify-between hover:bg-gray-50 active:bg-amber-50 ${value === c.code ? 'bg-amber-50 text-amber-700 font-semibold' : 'text-gray-800'}`}>
+                                            <span>{c.name}</span><span className="text-xs text-gray-400 font-mono">{c.code}</span>
+                                        </button>
+                                    ))}
+                                </>
+                            )}
+                            {intl.length > 0 && (
+                                <>
+                                    <div className="sticky top-0 bg-blue-50 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-blue-700">✈️ International</div>
+                                    {intl.map(c => (
+                                        <button key={c.code} type="button" onClick={() => pick(c.code)}
+                                            className={`w-full text-left px-4 py-3 text-sm flex items-center justify-between hover:bg-gray-50 active:bg-blue-50 ${value === c.code ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-800'}`}>
+                                            <span>{c.name}</span><span className="text-xs text-gray-400 font-mono">{c.code}</span>
+                                        </button>
+                                    ))}
+                                </>
+                            )}
+                            {domestic.length === 0 && intl.length === 0 && (
+                                <p className="text-center text-gray-400 text-sm py-10">No cities found</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+}
 
 const CITY_SUGGESTIONS = [
     'Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad',
@@ -138,7 +232,7 @@ export default function Hero({ content, stats }: HeroProps) {
         val.length > 0 ? CITY_SUGGESTIONS.filter(c => c.toLowerCase().includes(val.toLowerCase())).slice(0, 5) : []
     , []);
 
-    const cityName = useCallback((code: string) => CITIES.find(c => c.code === code)?.name ?? code, []);
+    const cityName = useCallback((code: string) => ALL_CITIES.find(c => c.code === code)?.name ?? code, []);
 
     const handleFlightSearch = useCallback(async () => {
         if (!flightDate) return;
@@ -327,11 +421,8 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 <div className="relative flex-1 min-w-[140px]">
                                                     <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">From</label>
                                                     <div className="relative">
-                                                        <Plane size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 rotate-45" />
-                                                        <select value={flightFrom} onChange={e => { setFlightFrom(e.target.value); setFlightResults(null); }}
-                                                            className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400 bg-white appearance-none">
-                                                            {CITIES.map(c => <option key={c.code} value={c.code}>{c.name} ({c.code})</option>)}
-                                                        </select>
+                                                        <Plane size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 rotate-45 z-10 pointer-events-none" />
+                                                        <HeroCityPicker value={flightFrom} onChange={v => { setFlightFrom(v); setFlightResults(null); }} />
                                                     </div>
                                                 </div>
 
@@ -345,11 +436,8 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 <div className="relative flex-1 min-w-[140px]">
                                                     <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">To</label>
                                                     <div className="relative">
-                                                        <Plane size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-500" />
-                                                        <select value={flightTo} onChange={e => { setFlightTo(e.target.value); setFlightResults(null); }}
-                                                            className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400 bg-white appearance-none">
-                                                            {CITIES.map(c => <option key={c.code} value={c.code}>{c.name} ({c.code})</option>)}
-                                                        </select>
+                                                        <Plane size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-500 z-10 pointer-events-none" />
+                                                        <HeroCityPicker value={flightTo} onChange={v => { setFlightTo(v); setFlightResults(null); }} />
                                                     </div>
                                                 </div>
 
