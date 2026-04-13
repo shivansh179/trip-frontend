@@ -237,11 +237,48 @@ interface DBReview {
   rating: number;
   text: string;
   createdAt: string;
+  avatarUrl?: string;
+  tripPhotoUrl?: string;
+}
+
+function PhotoUpload({
+  label, preview, onChange,
+}: { label: string; preview: string; onChange: (b64: string) => void }) {
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => onChange(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+  return (
+    <div>
+      <label className="block text-xs font-semibold text-gray-700 mb-1">{label}</label>
+      <label className="flex items-center gap-3 cursor-pointer group">
+        {preview ? (
+          <img src={preview} alt="preview" className="w-14 h-14 rounded-xl object-cover border border-gray-200 shrink-0" />
+        ) : (
+          <div className="w-14 h-14 rounded-xl border-2 border-dashed border-gray-300 group-hover:border-amber-400 flex items-center justify-center shrink-0 transition-colors">
+            <span className="text-2xl">📷</span>
+          </div>
+        )}
+        <div>
+          <span className="text-xs font-medium text-amber-600 underline underline-offset-2">
+            {preview ? 'Change photo' : 'Upload photo'}
+          </span>
+          <p className="text-[10px] text-gray-400 mt-0.5">JPG/PNG · max 2 MB · optional</p>
+        </div>
+        <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
+      </label>
+    </div>
+  );
 }
 
 function ReviewModal({ onClose }: { onClose: () => void }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', country: '', trip: '', text: '' });
   const [rating, setRating] = useState(0);
+  const [avatarB64, setAvatarB64] = useState('');
+  const [tripPhotoB64, setTripPhotoB64] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState('');
@@ -255,7 +292,7 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
       const res = await fetch('/api/reviews/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, rating }),
+        body: JSON.stringify({ ...form, rating, avatarUrl: avatarB64 || undefined, tripPhotoUrl: tripPhotoB64 || undefined }),
       });
       const data = await res.json();
       if (!res.ok) { setErr(data.error || 'Failed. Please try again.'); return; }
@@ -373,6 +410,12 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
                   className="w-full px-3 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl text-sm outline-none focus:border-amber-400 resize-none leading-relaxed placeholder:text-gray-400" />
               </div>
 
+              {/* Photo uploads */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <PhotoUpload label="Your Profile Photo (optional)" preview={avatarB64} onChange={setAvatarB64} />
+                <PhotoUpload label="Trip Photo (optional)" preview={tripPhotoB64} onChange={setTripPhotoB64} />
+              </div>
+
               {err && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{err}</p>}
 
               <button type="submit" disabled={submitting}
@@ -411,8 +454,8 @@ export default function InternationalTestimonials() {
     trip: r.trip,
     date: new Date(r.createdAt).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }),
     platform: 'YlooTrips' as const,
-    avatar: '',
-    tripPhoto: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=80',
+    avatar: r.avatarUrl || '',
+    tripPhoto: r.tripPhotoUrl || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=80',
     text: r.text,
     isUserSubmitted: true,
   }));

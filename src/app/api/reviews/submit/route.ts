@@ -8,7 +8,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, phone, country, trip, rating, text } = body;
+    const { name, email, phone, country, trip, rating, text, avatarUrl, tripPhotoUrl } = body;
 
     if (!name || !email || !country || !trip || !rating || !text) {
       return NextResponse.json({ error: 'All fields are required.' }, { status: 400 });
@@ -18,7 +18,11 @@ export async function POST(req: NextRequest) {
     }
 
     await connectDB();
-    const review = await Review.create({ name, email, phone, country, trip, rating: Number(rating), text });
+    const review = await Review.create({
+      name, email, phone, country, trip, rating: Number(rating), text,
+      ...(avatarUrl ? { avatarUrl } : {}),
+      ...(tripPhotoUrl ? { tripPhotoUrl } : {}),
+    });
 
     // Notify admin
     const adminUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://ylootrips.com'}/admin/reviews`;
