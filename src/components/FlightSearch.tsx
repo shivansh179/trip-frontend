@@ -257,11 +257,13 @@ export default function FlightSearch() {
   };
 
   const sorted = results
-    ? [...results].sort((a, b) =>
-        sortBy === 'price'
-          ? a.totalPrice - b.totalPrice
-          : a.durationMinutes - b.durationMinutes
-      )
+    ? [...results]
+        .filter(f => f.totalPrice > 0 && f.pricePerPerson > 0)
+        .sort((a, b) =>
+          sortBy === 'price'
+            ? a.totalPrice - b.totalPrice
+            : a.durationMinutes - b.durationMinutes
+        )
     : null;
 
   const waText = (f: FlightResult) =>
