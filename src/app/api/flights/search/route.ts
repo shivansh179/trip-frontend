@@ -112,7 +112,9 @@ async function fetchSerpApi(
             };
         });
 
-        return { isDemo: false, data };
+        const filtered = data.filter(f => f.totalPrice > 0 && f.pricePerPerson > 0);
+        if (!filtered.length) return null;
+        return { isDemo: false, data: filtered };
     } catch {
         return null;
     }

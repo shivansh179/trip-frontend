@@ -300,7 +300,9 @@ export default function Hero({ content, stats }: HeroProps) {
 
     const sorted = useMemo(() =>
         flightResults
-            ? [...flightResults].sort((a, b) => sortBy === 'price' ? a.totalPrice - b.totalPrice : a.durationMinutes - b.durationMinutes)
+            ? [...flightResults]
+                .filter(f => f.totalPrice > 0 && f.pricePerPerson > 0)
+                .sort((a, b) => sortBy === 'price' ? a.totalPrice - b.totalPrice : a.durationMinutes - b.durationMinutes)
             : null
     , [flightResults, sortBy]);
 
