@@ -1,70 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Zap, X, ArrowRight, Tag, CreditCard, Loader2, CheckCircle, BadgePercent, ShieldCheck } from 'lucide-react';
 
-/* Countdown that ends ~36h from first client render */
-const DURATION = 36 * 3600_000 + 14 * 60_000;
-
-function pad(n: number) { return String(Math.max(0, n)).padStart(2, '0'); }
-
-function Countdown() {
-  const [mounted, setMounted] = useState(false);
-  const [diff, setDiff] = useState(0);
-
-  useEffect(() => {
-    setMounted(true);
-    const saleEnd = Date.now() + DURATION;
-    setDiff(saleEnd - Date.now());
-    const t = setInterval(() => setDiff(saleEnd - Date.now()), 1000);
-    return () => clearInterval(t);
-  }, []);
-
-  const h = Math.floor(diff / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  const s = Math.floor((diff % 60000) / 1000);
-
-  if (!mounted) {
-    return (
-      <div className="flex items-center gap-1.5">
-        {['HRS', 'MIN', 'SEC'].map((label, i) => (
-          <div key={label} className="flex items-center gap-1">
-            {i > 0 && <span className="text-white/60 font-bold text-sm">:</span>}
-            <div className="flex flex-col items-center">
-              <div className="bg-black/30 backdrop-blur-sm text-white font-mono font-black text-lg leading-none px-2 py-1 rounded min-w-[2.5rem] text-center tabular-nums">--</div>
-              <span className="text-white/55 text-[9px] uppercase tracking-widest mt-0.5">{label}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex items-center gap-1.5">
-      {[
-        { val: pad(h), label: 'HRS' },
-        { val: pad(m), label: 'MIN' },
-        { val: pad(s), label: 'SEC' },
-      ].map(({ val, label }, i) => (
-        <div key={label} className="flex items-center gap-1">
-          {i > 0 && <span className="text-white/60 font-bold text-sm">:</span>}
-          <div className="flex flex-col items-center">
-            <div className="bg-black/30 backdrop-blur-sm text-white font-mono font-black text-lg leading-none px-2 py-1 rounded min-w-[2.5rem] text-center tabular-nums">
-              {val}
-            </div>
-            <span className="text-white/55 text-[9px] uppercase tracking-widest mt-0.5">{label}</span>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 const OFFERS = [
-  { code: 'YLOO15', discount: '15% OFF', label: 'All Trips', color: 'bg-violet-600' },
-  { code: 'FIRST10', discount: '10% OFF', label: 'First Booking', color: 'bg-emerald-600' },
-  { code: 'GROUP20', discount: '20% OFF', label: '4+ People', color: 'bg-amber-600' },
+  { code: 'YLOO15', discount: '15% OFF', label: 'All Trips', color: 'bg-gray-700' },
+  { code: 'FIRST10', discount: '10% OFF', label: 'First Booking', color: 'bg-gray-700' },
+  { code: 'GROUP20', discount: '20% OFF', label: '4+ People', color: 'bg-gray-700' },
 ];
 
 const PACKAGES = [
@@ -295,13 +237,13 @@ function FlashSaleDrawer({ onClose }: { onClose: () => void }) {
             <div className="p-5 bg-[#1a2535] min-h-full">
               {cbSent ? (
                 <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
-                  <div className="w-14 h-14 rounded-full bg-amber-400/20 flex items-center justify-center">
-                    <CheckCircle className="w-7 h-7 text-amber-400" />
+                  <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
+                    <CheckCircle className="w-7 h-7 text-white/70" />
                   </div>
                   <p className="font-display text-xl text-white">All set! 🎉</p>
-                  <p className="text-white/60 text-sm max-w-xs">Our expert calls you within <span className="text-amber-400 font-bold">1 hour</span> with the flash sale price + EMI plan.</p>
+                  <p className="text-white/60 text-sm max-w-xs">Our expert calls you within <span className="text-white font-bold">1 hour</span> with the price + EMI plan.</p>
                   <p className="text-white/30 text-[11px] mt-1">📱 Expect call from +91 84278 31127</p>
-                  <button onClick={onClose} className="mt-3 px-6 py-2.5 bg-amber-400 text-gray-900 font-bold rounded-xl text-sm">Done</button>
+                  <button onClick={onClose} className="mt-3 px-6 py-2.5 bg-white text-gray-900 font-bold rounded-xl text-sm">Done</button>
                 </div>
               ) : (
                 <form onSubmit={handleCallback} className="space-y-4">
@@ -389,14 +331,10 @@ export default function LimitedOffersBanner() {
 
             {/* Label */}
             <div className="flex items-center gap-3 shrink-0">
-              <div className="flex items-center gap-2 bg-terracotta text-white text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
-                <Zap className="w-3.5 h-3.5 fill-white" />
-                Flash Sale
+              <div className="flex items-center gap-2 bg-white/10 border border-white/20 text-white text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full">
+                <Zap className="w-3.5 h-3.5" />
+                Limited Offers
               </div>
-              <div className="text-white text-sm font-semibold hidden sm:block">
-                Ends in
-              </div>
-              <Countdown />
             </div>
 
             {/* Divider */}
@@ -410,10 +348,10 @@ export default function LimitedOffersBanner() {
                   onClick={() => copyCode(code)}
                   className="group flex items-center gap-2 bg-white/10 hover:bg-white/18 border border-white/15 hover:border-white/30 text-white rounded-xl px-4 py-2 transition-all"
                 >
-                  <Tag className="w-3.5 h-3.5 text-accent shrink-0" />
+                  <Tag className="w-3.5 h-3.5 text-white/60 shrink-0" />
                   <div className="text-left">
                     <div className="text-xs text-white/55 leading-none">{label}</div>
-                    <div className="font-bold text-sm leading-tight text-accent">{discount}</div>
+                    <div className="font-bold text-sm leading-tight text-white">{discount}</div>
                   </div>
                   <div className={`${color} text-white text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ml-1`}>
                     {copied === code ? '✓ Copied!' : code}
@@ -425,7 +363,7 @@ export default function LimitedOffersBanner() {
             {/* CTA — opens drawer */}
             <button
               onClick={() => setShowDrawer(true)}
-              className="shrink-0 flex items-center gap-2 bg-accent hover:bg-accent-warm text-primary text-xs font-bold uppercase tracking-widest px-5 py-2.5 rounded-full transition-all shadow-lg whitespace-nowrap"
+              className="shrink-0 flex items-center gap-2 bg-white hover:bg-gray-100 text-gray-900 text-xs font-bold uppercase tracking-widest px-5 py-2.5 rounded-full transition-all shadow-lg whitespace-nowrap"
             >
               Book Now
               <ArrowRight className="w-3.5 h-3.5" />

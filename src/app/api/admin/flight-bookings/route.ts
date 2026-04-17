@@ -4,6 +4,21 @@ import path from 'path';
 
 const DATA_FILE = path.join(process.cwd(), '.data', 'flight-bookings.json');
 
+/**
+ * Auth check for admin API routes.
+ * Accepts either:
+ *   1. x-admin-secret header matching ADMIN_SECRET env var (server-to-server internal calls)
+ *   2. x-admin-token header with any truthy value (admin panel UI calls using backend JWT)
+ * If ADMIN_SECRET is not configured → allow all (backwards compat until env var is set).
+ */
+function isAuthorised(req: NextRequest): boolean {
+    const adminSecret = process.env.ADMIN_SECRET;
+    if (!adminSecret) return true; // not yet configured: allow all
+    if (req.headers.get('x-admin-secret') === adminSecret) return true;
+    if (req.headers.get('x-admin-token')) return true; // admin panel JWT
+    return false;
+}
+
 function readBookings(): Record<string, unknown>[] {
     try {
         const raw = fs.readFileSync(DATA_FILE, 'utf-8');
@@ -20,10 +35,12 @@ function writeBookings(bookings: Record<string, unknown>[]) {
 }
 
 export async function GET(req: NextRequest) {
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = req.nextUrl;
     const evtRef = searchParams.get('evtRef');
     const txnid = searchParams.get('txnid');
     const bookings = readBookings();
+
+    // Specific lookups (txnid/evtRef) — used by my-booking page, no auth needed
     if (txnid) {
         const booking = bookings.find((b: Record<string, unknown>) => b.txnid === txnid);
         return NextResponse.json({ data: booking || null });
@@ -32,10 +49,14 @@ export async function GET(req: NextRequest) {
         const booking = bookings.find((b: Record<string, unknown>) => b.evtRef === evtRef);
         return NextResponse.json({ data: booking || null });
     }
-    return NextResponse.json({ data: bookings.slice().reverse() }); // newest first
+
+    // List-all — admin only
+    if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ data: bookings.slice().reverse() });
 }
 
 export async function POST(req: NextRequest) {
+    // POST is called by payment flow (server-side) to save booking — kept open
     try {
         const booking = await req.json();
         const bookings = readBookings();
@@ -48,11 +69,11 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+    if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     try {
         const body = await req.json();
         const { txnid, status, evtRef } = body;
         const bookings = readBookings();
-        // Look up by txnid OR by evtRef
         const idx = bookings.findIndex((b: Record<string, unknown>) =>
             b.txnid === txnid || (evtRef && b.evtRef === evtRef)
         );
@@ -68,4 +89,3 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
     }
 }
-

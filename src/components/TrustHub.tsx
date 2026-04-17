@@ -1,19 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
   ShieldCheck, Lock, Clock, Phone, Star, CreditCard, ArrowRight,
-  Shield, Users, HeartHandshake, MapPin, Award, Zap,
+  Users, HeartHandshake, Award, Zap,
 } from 'lucide-react';
 
 /* ─── data ──────────────────────────────────────────────────────────────── */
-
-function bookedToday() {
-  const d = new Date().getDate() + new Date().getMonth() * 31;
-  return 18 + (d % 14);
-}
 
 const STATS = [
   { value: '3+',  label: 'Years',       sub: 'Est. 2022',    icon: Award,         grad: 'from-amber-400 to-orange-500'  },
@@ -117,23 +112,14 @@ function HotelCard({ name, logo, sub }: { name: string; logo: string; sub: strin
 
 /* ─── main ───────────────────────────────────────────────────────────────── */
 export default function TrustHub() {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    const target = bookedToday();
-    let cur = 0;
-    const step = Math.ceil(target / 18);
-    const t = setInterval(() => { cur = Math.min(cur + step, target); setCount(cur); if (cur >= target) clearInterval(t); }, 55);
-    return () => clearInterval(t);
-  }, []);
 
   return (
     <section className="bg-white relative overflow-hidden">
 
-      {/* ── Live ticker ─────────────────────────────────────────────────── */}
-      <div className="bg-gray-900 py-2">
-        <p className="text-center text-[10px] text-white/60 uppercase tracking-widest flex items-center justify-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shrink-0" />
-          <span className="text-white font-bold">{count} trips</span> booked in last 24 hrs · Slots filling fast
+      {/* ── Top accent bar ──────────────────────────────────────────────── */}
+      <div className="bg-gray-950 py-2">
+        <p className="text-center text-[10px] text-white/40 uppercase tracking-widest">
+          Trusted · Verified · Award-winning travel partner
         </p>
       </div>
 
@@ -141,12 +127,12 @@ export default function TrustHub() {
 
         {/* ── Headline ────────────────────────────────────────────────────── */}
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-bold uppercase tracking-widest mb-4">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100 text-gray-500 text-xs font-bold uppercase tracking-widest mb-4 border border-gray-200">
             <Zap size={12} /> Why YlooTrips
           </span>
           <h2 className="font-serif text-3xl md:text-5xl font-bold text-gray-900 mb-3">
             India experts you can{' '}
-            <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent italic">actually trust</span>
+            <span className="italic text-amber-600">actually trust</span>
           </h2>
           <p className="text-gray-500 text-base max-w-xl mx-auto">
             Trusted by travelers from USA, UK, Australia, Germany, Canada & 35+ more countries.
@@ -157,8 +143,8 @@ export default function TrustHub() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {STATS.map(({ value, label, sub, icon: Icon, grad }) => (
             <div key={label} className="group text-center bg-gray-50 border border-gray-100 rounded-2xl p-5 md:p-7 hover:border-amber-200 hover:shadow-lg transition-all duration-300">
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300`}>
-                <Icon size={18} className="text-white" />
+              <div className="w-10 h-10 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                <Icon size={18} className="text-gray-600" />
               </div>
               <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-1">{value}</div>
               <div className="text-xs uppercase tracking-widest text-gray-500 mb-0.5">{label}</div>
@@ -171,10 +157,10 @@ export default function TrustHub() {
         <div>
           <p className="text-center text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-5">Verified credentials</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            {TRUST_BADGES.map(({ icon: Icon, color, bg, label, sub }) => (
-              <div key={label} className={`flex items-center gap-2.5 ${bg} border rounded-2xl px-4 py-3`}>
-                <div className={`w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0`}>
-                  <Icon size={16} className={color} />
+            {TRUST_BADGES.map(({ icon: Icon, label, sub }) => (
+              <div key={label} className="flex items-center gap-2.5 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3">
+                <div className="w-8 h-8 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center shrink-0">
+                  <Icon size={16} className="text-gray-600" />
                 </div>
                 <div>
                   <div className="text-[11px] font-bold text-gray-800 uppercase tracking-wide leading-none">{label}</div>
@@ -189,14 +175,14 @@ export default function TrustHub() {
         <div>
           <p className="text-center text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-6">Why choose us</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {REASONS.map(({ emoji, title, body, color, bg }) => (
-              <div key={title} className={`group flex gap-4 p-5 rounded-2xl border ${bg} hover:shadow-md transition-all duration-300 hover:-translate-y-0.5`}>
+            {REASONS.map(({ emoji, title, body }) => (
+              <div key={title} className="group flex gap-4 p-5 rounded-2xl border border-gray-100 bg-gray-50 hover:border-gray-200 hover:shadow-sm transition-all duration-300 hover:-translate-y-0.5">
                 <div className="shrink-0 w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center text-xl border border-gray-100">
                   {emoji}
                 </div>
                 <div>
-                  <h3 className={`font-bold text-sm mb-1.5 ${color}`}>{title}</h3>
-                  <p className="text-gray-600 text-xs leading-relaxed">{body}</p>
+                  <h3 className="font-bold text-sm mb-1.5 text-gray-800">{title}</h3>
+                  <p className="text-gray-500 text-xs leading-relaxed">{body}</p>
                 </div>
               </div>
             ))}
@@ -213,14 +199,14 @@ export default function TrustHub() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {GUARANTEES.map(g => (
-              <div key={g.title} className={`${g.bg} ${g.border} border rounded-2xl p-5 flex gap-4 hover:shadow-md transition-all duration-300`}>
-                <div className="text-3xl shrink-0 mt-0.5">{g.emoji}</div>
+              <div key={g.title} className="bg-white border border-gray-100 rounded-2xl p-5 flex gap-4 hover:shadow-md hover:border-gray-200 transition-all duration-300">
+                <div className="text-2xl shrink-0 mt-0.5">{g.emoji}</div>
                 <div>
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <h4 className="font-bold text-gray-900 text-sm">{g.title}</h4>
-                    <span className={`${g.bc} text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide`}>{g.badge}</span>
+                    <span className="bg-gray-100 text-gray-500 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">{g.badge}</span>
                   </div>
-                  <p className="text-gray-600 text-xs leading-relaxed">{g.body}</p>
+                  <p className="text-gray-500 text-xs leading-relaxed">{g.body}</p>
                 </div>
               </div>
             ))}
@@ -296,8 +282,8 @@ export default function TrustHub() {
         </div>
 
         {/* ── Certifications ──────────────────────────────────────────────── */}
-        <div className="bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border border-amber-200 rounded-2xl px-6 py-5">
-          <p className="text-[9px] text-amber-600 uppercase tracking-[0.3em] text-center mb-4">Verified Credentials</p>
+        <div className="bg-gray-50 border border-gray-100 rounded-2xl px-6 py-5">
+          <p className="text-[9px] text-gray-400 uppercase tracking-[0.3em] text-center mb-4">Verified Credentials</p>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
             {CERTS.map(c => (
               <div key={c.label} className="text-center group">
@@ -320,17 +306,20 @@ export default function TrustHub() {
 
         {/* ── CTA ─────────────────────────────────────────────────────────── */}
         <div className="text-center bg-gray-900 rounded-2xl px-6 py-8">
-          <p className="text-amber-400 text-xs font-bold uppercase tracking-widest mb-2">Our Promise to You 🤝</p>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 mb-6">
-            {['✅ Free 14-day cancellation','✅ Price match guarantee','✅ 24/7 emergency line','✅ Zero hidden fees'].map(g => (
-              <span key={g} className="text-gray-300 text-sm">{g}</span>
+          <p className="text-white/40 text-[10px] font-medium uppercase tracking-[0.25em] mb-3">Our Promise</p>
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 mb-6">
+            {['Free 14-day cancellation','Price match guarantee','24/7 emergency line','Zero hidden fees'].map(g => (
+              <span key={g} className="text-gray-400 text-sm flex items-center gap-1.5">
+                <span className="w-1 h-1 rounded-full bg-white/30 inline-block" />
+                {g}
+              </span>
             ))}
           </div>
           <Link href="/trip-planner"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold px-8 py-3.5 rounded-full hover:from-amber-600 hover:to-orange-600 transition-all hover:scale-105 shadow-lg shadow-amber-500/25">
+            className="inline-flex items-center gap-2 bg-white text-gray-900 font-bold px-8 py-3.5 rounded-full hover:bg-gray-100 transition-all hover:scale-105 shadow-lg">
             Plan My Trip — Zero Risk <ArrowRight size={16} />
           </Link>
-          <p className="text-gray-600 text-xs mt-2">No deposit until you confirm · Free itinerary in 24 hrs</p>
+          <p className="text-gray-600 text-xs mt-3">No deposit until you confirm · Free itinerary in 24 hrs</p>
         </div>
 
       </div>

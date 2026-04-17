@@ -65,9 +65,9 @@ const PARTY_EVENTS = [
     price: 2000,
     perks: ['Open bar (beer, spirits, cocktails)', 'Live food stations', 'Premium DJ set', 'VIP entry & seating', 'Midnight snacks included'],
     image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80',
-    badge: '🔥 Selling Fast',
-    badgeColor: 'bg-red-500',
-    spotsLeft: 18,
+    badge: 'Club Night',
+    badgeColor: 'bg-gray-700',
+    spotsLeft: 0,
     whatsapp: 'Hi! I\'d like to pre-book the Club Night NCR party. Please share venue details and availability.',
   },
   {
@@ -80,9 +80,9 @@ const PARTY_EVENTS = [
     price: 2000,
     perks: ['Craft cocktails & mocktails', 'Chef-made finger food & desserts', 'DJ + curated playlist', 'Instagram-worthy setup', 'Goodie bag on entry'],
     image: 'https://images.unsplash.com/photo-1574270981993-49ccc2e7f63e?w=800&q=80',
-    badge: '✨ Limited Seats',
-    badgeColor: 'bg-purple-600',
-    spotsLeft: 12,
+    badge: 'House Party',
+    badgeColor: 'bg-gray-700',
+    spotsLeft: 0,
     whatsapp: 'Hi! I\'d like to pre-book the House Party. Please share venue details and availability.',
   },
 ];
@@ -150,10 +150,10 @@ export default function EventsPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/60 to-primary/30" />
         <div className="absolute inset-0 flex items-center pt-20">
           <div className="section-container text-cream">
-            <p className="text-caption uppercase tracking-[0.4em] text-accent mb-4">Events & Experiences</p>
+            <p className="text-caption uppercase tracking-[0.4em] text-cream/60 mb-4">Events & Experiences</p>
             <h1 className="font-display text-display-xl text-cream max-w-3xl leading-tight mb-6">
               Unforgettable Events.<br />
-              <span className="italic text-accent">Extraordinary</span> Destinations.
+              <span className="italic text-cream/80">Extraordinary</span> Destinations.
             </h1>
             <p className="text-cream/75 text-body-lg max-w-xl mb-10 leading-relaxed">
               Corporate offsites, destination weddings, cultural festivals, and group adventures — planned and delivered across India&apos;s most spectacular venues.
@@ -163,15 +163,15 @@ export default function EventsPage() {
                 href="https://wa.me/918427831127?text=Hi!%20I%27d%20like%20to%20plan%20an%20event%20with%20YlooTrips."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-primary bg-accent text-primary hover:bg-accent-warm px-8 py-4 text-sm uppercase tracking-widest"
+                className="btn-primary bg-white text-gray-900 hover:bg-gray-100 px-8 py-4 text-sm uppercase tracking-widest"
               >
                 Plan My Event
               </a>
               <a
                 href="#party-events"
-                className="px-8 py-4 border border-amber-400/60 text-amber-400 text-sm uppercase tracking-widest hover:bg-amber-400/10 transition-colors"
+                className="px-8 py-4 border border-cream/30 text-cream/70 text-sm uppercase tracking-widest hover:bg-cream/10 transition-colors"
               >
-                🎉 Party Events · ₹2,000
+                Party Events · ₹2,000
               </a>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default function EventsPage() {
                 { num: '98%', label: 'Client Satisfaction' },
               ].map(({ num, label }) => (
                 <div key={label} className="text-center px-4 py-1">
-                  <div className="font-display text-2xl text-accent">{num}</div>
+                  <div className="font-display text-2xl text-cream">{num}</div>
                   <div className="text-cream/60 text-caption uppercase tracking-wider">{label}</div>
                 </div>
               ))}
@@ -231,16 +231,16 @@ export default function EventsPage() {
       <section className="py-20 bg-primary text-cream">
         <div className="section-container">
           <div className="text-center mb-14">
-            <p className="text-caption uppercase tracking-[0.3em] text-accent mb-3">Why YlooTrips</p>
+            <p className="text-caption uppercase tracking-[0.3em] text-cream/50 mb-3">Why YlooTrips</p>
             <h2 className="font-display text-display-lg text-cream">
-              India&apos;s events, <span className="italic text-accent">without the stress</span>
+              India&apos;s events, <span className="italic text-cream/70">without the stress</span>
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {whyUs.map(({ icon: Icon, title, desc }) => (
               <div key={title} className="text-center">
-                <div className="w-14 h-14 border border-accent/30 flex items-center justify-center mx-auto mb-5">
-                  <Icon className="w-6 h-6 text-accent" />
+                <div className="w-14 h-14 border border-cream/20 flex items-center justify-center mx-auto mb-5">
+                  <Icon className="w-6 h-6 text-cream/60" />
                 </div>
                 <h3 className="font-display text-xl text-cream mb-3">{title}</h3>
                 <p className="text-cream/55 text-sm leading-relaxed">{desc}</p>
@@ -250,7 +250,7 @@ export default function EventsPage() {
           <div className="mt-12 pt-10 border-t border-cream/10 flex flex-wrap items-center justify-center gap-6">
             {['Free site visits for large groups', 'Customisable packages', 'Transparent pricing', 'Visa & travel assistance included'].map((p) => (
               <div key={p} className="flex items-center gap-2 text-sm text-cream/70">
-                <Check className="w-4 h-4 text-accent shrink-0" />
+                <Check className="w-4 h-4 text-cream/60 shrink-0" />
                 {p}
               </div>
             ))}
@@ -259,7 +259,7 @@ export default function EventsPage() {
       </section>
 
       {/* ── SOCIAL PROOF BAR ── */}
-      <div className="bg-accent/10 border-y border-accent/20 py-4">
+      <div className="bg-primary/5 border-y border-primary/10 py-4">
         <div className="section-container flex flex-wrap justify-center gap-6 md:gap-12 text-sm text-primary/70">
           <span>✓ Free consultation</span>
           <span>✓ Custom packages for all budgets</span>
@@ -272,9 +272,9 @@ export default function EventsPage() {
       <section id="party-events" className="py-20 md:py-28 bg-gradient-to-br from-primary via-primary/95 to-[#1a0a2e]">
         <div className="section-container">
           <div className="text-center mb-12">
-            <p className="text-caption uppercase tracking-[0.3em] text-amber-400 mb-3">Pre-Book Now · Limited Spots</p>
+            <p className="text-caption uppercase tracking-[0.3em] text-cream/50 mb-3">NCR · ₹2,000 per person</p>
             <h2 className="font-display text-display-lg text-cream">
-              Party Events <span className="italic text-amber-400">NCR</span>
+              Party Events <span className="italic text-cream/70">NCR</span>
             </h2>
             <p className="text-cream/60 text-body mt-3 max-w-xl mx-auto">
               ₹2,000 per person · Includes food &amp; drinks · Pre-book your spot before it sells out
@@ -283,7 +283,7 @@ export default function EventsPage() {
 
           <div className="grid sm:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
             {PARTY_EVENTS.map((party) => (
-              <div key={party.id} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden group hover:border-amber-400/40 transition-all duration-500">
+              <div key={party.id} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden group hover:border-white/30 transition-all duration-500">
                 {/* Image */}
                 <div className="relative h-52 overflow-hidden">
                   <Image
@@ -299,11 +299,8 @@ export default function EventsPage() {
                       {party.badge}
                     </span>
                   </div>
-                  <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full">
-                    {party.spotsLeft} spots left
-                  </div>
                   <div className="absolute bottom-4 left-4 right-4">
-                    <span className="text-amber-400 text-[10px] uppercase tracking-widest font-semibold">{party.category}</span>
+                    <span className="text-white/60 text-[10px] uppercase tracking-widest font-semibold">{party.category}</span>
                     <h3 className="font-display text-xl text-white mt-0.5">{party.title}</h3>
                   </div>
                 </div>
@@ -316,7 +313,7 @@ export default function EventsPage() {
                   <div className="space-y-1.5 mb-5">
                     {party.perks.map((perk) => (
                       <div key={perk} className="flex items-center gap-2 text-xs text-cream/70">
-                        <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <Check className="w-3.5 h-3.5 text-white/60 shrink-0" />
                         {perk}
                       </div>
                     ))}
@@ -324,7 +321,7 @@ export default function EventsPage() {
 
                   {/* Location */}
                   <div className="flex items-center gap-1.5 text-xs text-cream/50 mb-5">
-                    <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <MapPin className="w-3.5 h-3.5 text-white/60 shrink-0" />
                     {party.location}
                   </div>
 
@@ -333,7 +330,7 @@ export default function EventsPage() {
                     <div>
                       <p className="text-[10px] text-cream/40 uppercase tracking-wider">Per Person</p>
                       <div className="flex items-baseline gap-1">
-                        <span className="font-display text-2xl text-amber-400">₹2,000</span>
+                        <span className="font-display text-2xl text-white">₹2,000</span>
                         <span className="text-xs text-cream/50 flex items-center gap-1"><UtensilsCrossed className="w-3 h-3" /> food &amp; drinks incl.</span>
                       </div>
                     </div>
@@ -341,7 +338,7 @@ export default function EventsPage() {
                       href={`https://wa.me/918427831127?text=${encodeURIComponent(party.whatsapp)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-primary text-xs font-bold uppercase tracking-widest rounded-xl transition-all duration-200 shadow-lg shadow-amber-400/30"
+                      className="flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-gray-100 text-gray-900 text-xs font-bold uppercase tracking-widest rounded-xl transition-all duration-200 shadow-lg shadow-black/20"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
                       Pre-Book

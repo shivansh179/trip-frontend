@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       // Update status
       fetch(`${baseUrl}/api/admin/market-bookings`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(process.env.ADMIN_SECRET ? { 'x-admin-secret': process.env.ADMIN_SECRET } : {}) },
         body: JSON.stringify({ txnid, status: 'PAID' }),
       }).catch(() => {});
       return NextResponse.redirect(mktSuccessUrl, { status: 303 });
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
             const hotelTxnid = (data.data as Record<string, string>).txnid || txnid;
             await fetch(`${baseUrl}/api/admin/hotel-bookings`, {
               method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 'Content-Type': 'application/json', ...(process.env.ADMIN_SECRET ? { 'x-admin-secret': process.env.ADMIN_SECRET } : {}) },
               body: JSON.stringify({ txnid: hotelTxnid, status: 'PAID' }),
             }).catch(() => {});
             const hotelSuccessUrl = new URL('/hotels/booking-success', baseUrl);
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
             flightSuccessUrl.searchParams.set('status', status);
             await fetch(`${baseUrl}/api/admin/flight-bookings`, {
               method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 'Content-Type': 'application/json', ...(process.env.ADMIN_SECRET ? { 'x-admin-secret': process.env.ADMIN_SECRET } : {}) },
               body: JSON.stringify({ txnid: flightTxnid, status: 'PAID' }),
             }).catch(() => {});
             return NextResponse.redirect(flightSuccessUrl, { status: 303 });

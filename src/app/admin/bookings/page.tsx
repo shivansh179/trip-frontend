@@ -36,7 +36,7 @@ function fmtDate(d: string) {
 
 const STATUS_COLORS: Record<string, string> = {
     CONFIRMED: 'bg-green-100 text-green-700',
-    PENDING: 'bg-amber-100 text-amber-700',
+    PENDING: 'bg-gray-100 text-gray-700',
     CANCELLED: 'bg-red-100 text-red-700',
     COMPLETED: 'bg-blue-100 text-blue-700',
     TICKET_SENT: 'bg-purple-100 text-purple-700',
@@ -122,7 +122,7 @@ export default function AdminBookingsPage() {
         const token = localStorage.getItem('adminToken') || '';
         try {
             const [flightRes, tripRes, eventRes] = await Promise.allSettled([
-                fetch('/api/admin/flight-bookings').then(r => r.json()),
+                fetch('/api/admin/flight-bookings', { headers: { 'x-admin-token': token } }).then(r => r.json()),
                 // Use server-side proxy — fetches ALL statuses (pending, confirmed, failed, cancelled)
                 fetch('/api/admin/trip-bookings', {
                     headers: { 'x-admin-token': token },
@@ -139,10 +139,11 @@ export default function AdminBookingsPage() {
 
     const updateFlightStatus = async (txnid: string, status: string) => {
         setUpdatingStatus(txnid);
+        const token = localStorage.getItem('adminToken') || '';
         try {
             await fetch('/api/admin/flight-bookings', {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
                 body: JSON.stringify({ txnid, status }),
             });
             setFlightBookings(prev => prev.map(b => b.txnid === txnid ? { ...b, status } : b));
@@ -324,7 +325,7 @@ export default function AdminBookingsPage() {
                 {/* Revenue Overview */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
-                        { label: 'Total Revenue', value: `₹${fmt(totalRevenue)}`, icon: TrendingUp, color: 'from-amber-400 to-orange-500', sub: 'All bookings' },
+                        { label: 'Total Revenue', value: `₹${fmt(totalRevenue)}`, icon: TrendingUp, color: 'from-gray-700 to-gray-900', sub: 'All bookings' },
                         { label: 'Flight Revenue', value: `₹${fmt(flightRevenue)}`, icon: Plane, color: 'from-blue-400 to-blue-600', sub: `${flightBookings.length} bookings` },
                         { label: 'Trip Revenue', value: `₹${fmt(tripRevenue)}`, icon: Luggage, color: 'from-green-400 to-emerald-500', sub: `${tripBookings.length} bookings` },
                         { label: 'Event Revenue', value: `₹${fmt(eventRevenue)}`, icon: Calendar, color: 'from-purple-400 to-purple-600', sub: `${eventBookings.length} bookings` },
@@ -351,11 +352,11 @@ export default function AdminBookingsPage() {
                         <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         <input type="text" placeholder="Search by name, email, phone, booking ref..." value={search}
                             onChange={e => setSearch(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-amber-400" />
+                            className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-gray-500" />
                     </div>
                     {activeTab === 'flights' && (
                         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-                            className="px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-amber-400 bg-white">
+                            className="px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-gray-500 bg-white">
                             {['ALL', 'PENDING', 'CONFIRMED', 'TICKET_SENT', 'COMPLETED', 'CANCELLED', 'FAILED'].map(s => (
                                 <option key={s} value={s}>{s === 'ALL' ? 'All Status' : s.replace('_', ' ')}</option>
                             ))}
@@ -367,7 +368,7 @@ export default function AdminBookingsPage() {
                             <select
                                 value={sortField}
                                 onChange={e => setSortField(e.target.value as SortField)}
-                                className="px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-amber-400 bg-white"
+                                className="px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-gray-500 bg-white"
                             >
                                 <option value="date">Sort: Date</option>
                                 <option value="amount">Sort: Amount</option>
@@ -405,9 +406,9 @@ export default function AdminBookingsPage() {
                         const Icon = t.icon;
                         return (
                             <button key={t.id} onClick={() => setActiveTab(t.id)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === t.id ? 'bg-white text-amber-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === t.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                                 <Icon size={14} />{t.label}
-                                <span className={`text-xs px-1.5 py-0.5 rounded-full ${activeTab === t.id ? 'bg-amber-100 text-amber-700' : 'bg-gray-200 text-gray-500'}`}>
+                                <span className={`text-xs px-1.5 py-0.5 rounded-full ${activeTab === t.id ? 'bg-gray-100 text-gray-700' : 'bg-gray-200 text-gray-500'}`}>
                                     {t.count}
                                 </span>
                             </button>
@@ -418,7 +419,7 @@ export default function AdminBookingsPage() {
                 {/* Content */}
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
-                        <div className="w-8 h-8 border-3 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-8 h-8 border-3 border-gray-900 border-t-transparent rounded-full animate-spin" />
                     </div>
                 ) : (
                     <>
@@ -437,7 +438,7 @@ export default function AdminBookingsPage() {
                                         <div className="p-4 flex flex-col sm:flex-row sm:items-center gap-3">
                                             {/* Flight info */}
                                             <div className="flex items-center gap-3 flex-1 min-w-0">
-                                                <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                                                <div className="w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center text-white font-bold text-sm shrink-0">
                                                     {b.flight?.airline?.substring(0, 2).toUpperCase() || 'FL'}
                                                 </div>
                                                 <div className="min-w-0">
@@ -509,7 +510,7 @@ export default function AdminBookingsPage() {
                                                         <div className="flex flex-wrap gap-1">
                                                             {['PENDING', 'CONFIRMED', 'TICKET_SENT', 'COMPLETED', 'CANCELLED'].map(s => (
                                                                 <button key={s} onClick={() => updateFlightStatus(b.txnid, s)}
-                                                                    className={`px-2 py-1 text-[10px] font-bold rounded transition-all ${b.status === s ? 'bg-amber-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:border-amber-400'}`}>
+                                                                    className={`px-2 py-1 text-[10px] font-bold rounded transition-all ${b.status === s ? 'bg-gray-800 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:border-gray-500'}`}>
                                                                     {s.replace('_', ' ')}
                                                                 </button>
                                                             ))}
@@ -555,7 +556,7 @@ export default function AdminBookingsPage() {
 
                                     return (
                                         <div key={String(b.id || idx)}
-                                            className={`bg-white rounded-xl shadow-sm p-4 border-l-4 ${isPaid ? 'border-l-green-500 border border-gray-200' : isPending ? 'border-l-amber-400 border border-amber-100' : 'border-l-red-400 border border-red-100'}`}>
+                                            className={`bg-white rounded-xl shadow-sm p-4 border-l-4 ${isPaid ? 'border-l-green-500 border border-gray-200' : isPending ? 'border-l-gray-400 border border-gray-100' : 'border-l-red-400 border border-red-100'}`}>
                                             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-2 flex-wrap">
@@ -565,7 +566,7 @@ export default function AdminBookingsPage() {
                                                             {bookingStatus}
                                                         </span>
                                                         {/* Payment status pill */}
-                                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${isPaid ? 'bg-green-50 text-green-700 border-green-200' : isPending ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+                                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${isPaid ? 'bg-green-50 text-green-700 border-green-200' : isPending ? 'bg-gray-100 text-gray-700 border-gray-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
                                                             💳 {isPaid ? 'Payment Received' : isPending ? 'Payment Pending' : 'Payment Failed'}
                                                         </span>
                                                     </div>
@@ -606,7 +607,7 @@ export default function AdminBookingsPage() {
                                                 </div>
                                             </div>
                                             {b.specialRequests ? (
-                                                <p className="mt-2 text-xs text-gray-500 bg-amber-50 rounded-lg px-3 py-2">
+                                                <p className="mt-2 text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
                                                     📝 {String(b.specialRequests)}
                                                 </p>
                                             ) : null}
@@ -695,7 +696,7 @@ export default function AdminBookingsPage() {
                                 ) : (
                                     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                                         <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
-                                            <CreditCard size={16} className="text-amber-500" />
+                                            <CreditCard size={16} className="text-gray-600" />
                                             <span className="font-semibold text-gray-800 text-sm">User-wise PG Collected vs Sale</span>
                                             <span className="ml-auto text-xs text-gray-400">{pgRows.length} customers</span>
                                         </div>
@@ -741,7 +742,7 @@ export default function AdminBookingsPage() {
                                                         </tr>
                                                     ))}
                                                 </tbody>
-                                                <tfoot className="bg-amber-50 border-t-2 border-amber-200">
+                                                <tfoot className="bg-gray-50 border-t-2 border-gray-200">
                                                     <tr>
                                                         <td className="px-5 py-3 font-bold text-gray-800 text-sm" colSpan={2}>Totals</td>
                                                         <td className="px-4 py-3 text-right font-bold text-gray-900">₹{fmt(totalSale)}</td>

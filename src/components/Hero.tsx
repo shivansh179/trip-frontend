@@ -92,7 +92,7 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (code: s
     return (
         <>
             <button type="button" onClick={() => setOpen(true)}
-                className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm bg-white text-left flex items-center justify-between focus:outline-none focus:border-amber-400">
+                className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm bg-white text-left flex items-center justify-between focus:outline-none focus:border-gray-400">
                 <span className="truncate text-gray-800">{selected ? `${selected.name} (${selected.code})` : 'Select city'}</span>
                 <ChevronDown size={13} className="shrink-0 text-gray-400 ml-1" />
             </button>
@@ -110,10 +110,10 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (code: s
                         <div className="overflow-y-auto flex-1 pb-6">
                             {domestic.length > 0 && (
                                 <>
-                                    <div className="sticky top-0 bg-amber-50 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-amber-700">🇮🇳 India</div>
+                                    <div className="sticky top-0 bg-gray-50 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-gray-600">🇮🇳 India</div>
                                     {domestic.map(c => (
                                         <button key={c.code} type="button" onClick={() => pick(c.code)}
-                                            className={`w-full text-left px-4 py-3 text-sm flex items-center justify-between hover:bg-gray-50 active:bg-amber-50 ${value === c.code ? 'bg-amber-50 text-amber-700 font-semibold' : 'text-gray-800'}`}>
+                                            className={`w-full text-left px-4 py-3 text-sm flex items-center justify-between hover:bg-gray-50 active:bg-gray-100 ${value === c.code ? 'bg-gray-100 text-gray-900 font-semibold' : 'text-gray-800'}`}>
                                             <span>{c.name}</span><span className="text-xs text-gray-400 font-mono">{c.code}</span>
                                         </button>
                                     ))}
@@ -203,7 +203,6 @@ export default function Hero({ content, stats }: HeroProps) {
 
     const guestRef = useRef<HTMLDivElement>(null);
     const todayStr = new Date().toISOString().split('T')[0];
-    const imageUrl = content?.imageUrl || 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1920&q=80';
 
     const displayStats = stats && stats.length > 0 ? stats : [
         { value: '25K+', label: 'Happy Travelers' },
@@ -317,6 +316,7 @@ export default function Hero({ content, stats }: HeroProps) {
     }, [flightDate, flightPax]);
 
     const currentAd = ads[adIndex];
+    const imageUrl = content?.imageUrl || 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1920&q=80';
 
     return (
         <section className="relative min-h-[100svh] flex flex-col overflow-hidden">
@@ -331,7 +331,7 @@ export default function Hero({ content, stats }: HeroProps) {
 
             {/* Mobile ad strip */}
             {ads.length > 0 && (
-                <div className="lg:hidden absolute top-16 left-0 right-0 z-30 bg-gradient-to-r from-primary via-secondary to-primary overflow-hidden">
+                <div className="lg:hidden absolute top-[72px] left-0 right-0 z-30 bg-gradient-to-r from-primary via-secondary to-primary overflow-hidden">
                     <div className="animate-marquee whitespace-nowrap py-1.5">
                         {[...ads, ...ads].map((ad, idx) => (
                             <span key={idx} className="inline-block text-white text-xs font-bold mx-6">
@@ -343,20 +343,20 @@ export default function Hero({ content, stats }: HeroProps) {
             )}
 
             {/* Main content */}
-            <div className="relative z-10 flex flex-col justify-center flex-1 px-4 sm:px-6 lg:px-8 pt-24 pb-10">
+            <div className="relative z-10 flex flex-col justify-center flex-1 px-4 sm:px-6 lg:px-8 pt-28 sm:pt-24 pb-10">
                 <div className="max-w-7xl mx-auto w-full">
 
                     {/* Visitor / Currency toggle */}
                     <div className="flex justify-end mb-5">
                         <div className="flex items-center gap-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full p-1">
                             <button onClick={() => chooseVisitor('indian')}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${visitor === 'indian' ? 'bg-amber-400 text-gray-900' : 'text-white/70 hover:text-white'}`}>
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${visitor === 'indian' ? 'bg-white text-gray-900' : 'text-white/70 hover:text-white'}`}>
                                 🇮🇳
                                 <span className="sm:hidden font-bold">INR</span>
                                 <span className="hidden sm:inline">Indian</span>
                             </button>
                             <button onClick={() => chooseVisitor('foreigner')}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${visitor === 'foreigner' ? 'bg-amber-400 text-gray-900' : 'text-white/70 hover:text-white'}`}>
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${visitor === 'foreigner' ? 'bg-white text-gray-900' : 'text-white/70 hover:text-white'}`}>
                                 <span className="sm:hidden font-bold">$ USD</span>
                                 <span className="hidden sm:inline">🌍 International</span>
                             </button>
@@ -370,11 +370,11 @@ export default function Hero({ content, stats }: HeroProps) {
                         <div>
                             {/* Headline */}
                             <div className="mb-6">
-                                <p className="text-amber-400 text-xs uppercase tracking-[0.3em] font-semibold mb-3">
+                                <p className="text-white/70 text-xs uppercase tracking-[0.3em] font-semibold mb-3">
                                     {content?.eyebrow || '⭐ Rated 4.9 on Google · 25,000+ Trips Booked'}
                                 </p>
                                 <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-4">
-                                    {content?.title ? content.title : <>International Trips<br /><span className="italic text-amber-300">Starting ₹9,999</span></>}
+                                    {content?.title ? content.title : <>International Trips<br /><span className="italic text-white/70">Starting ₹9,999</span></>}
                                 </h1>
                                 <p className="text-white/70 text-base sm:text-lg max-w-xl">
                                     {content?.subtitle || 'Goa · Kashmir · Dubai · Bali · Singapore · Thailand — Book in 2 minutes, pay ₹5,000 to confirm.'}
@@ -393,7 +393,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                         const Icon = tab.icon;
                                         return (
                                             <button key={tab.id} onClick={() => { setActiveTab(tab.id); setFlightResults(null); }}
-                                                className={`flex items-center gap-2 px-4 py-3.5 text-sm font-semibold transition-all flex-1 justify-center ${activeTab === tab.id ? 'text-amber-600 border-b-2 border-amber-500 bg-amber-50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
+                                                className={`flex items-center gap-2 px-4 py-3.5 text-sm font-semibold transition-all flex-1 justify-center ${activeTab === tab.id ? 'text-gray-900 border-b-2 border-gray-900 bg-gray-50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
                                                 <Icon size={15} />
                                                 <span className="hidden sm:inline">{tab.label}</span>
                                                 <span className="sm:hidden">{tab.short}</span>
@@ -410,7 +410,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                             <div className="flex gap-1 mb-3">
                                                 {(['oneway', 'return'] as const).map(t => (
                                                     <button key={t} onClick={() => { setTripType(t); setFlightResults(null); }}
-                                                        className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${tripType === t ? 'bg-amber-500 text-white border-amber-500' : 'border-gray-300 text-gray-500 hover:border-amber-400'}`}>
+                                                        className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${tripType === t ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-300 text-gray-500 hover:border-gray-300'}`}>
                                                         {t === 'oneway' ? 'One Way' : 'Round Trip'}
                                                     </button>
                                                 ))}
@@ -428,15 +428,15 @@ export default function Hero({ content, stats }: HeroProps) {
 
                                                 {/* Swap */}
                                                 <button onClick={swapFlightCities}
-                                                    className="self-center sm:mt-1 w-8 h-8 shrink-0 rounded-full bg-amber-100 hover:bg-amber-200 border border-amber-300 flex items-center justify-center transition-all hover:rotate-180 duration-300">
-                                                    <ArrowUpDown size={13} className="text-amber-600" />
+                                                    className="self-center sm:mt-1 w-8 h-8 shrink-0 rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-300 flex items-center justify-center transition-all hover:rotate-180 duration-300">
+                                                    <ArrowUpDown size={13} className="text-gray-600" />
                                                 </button>
 
                                                 {/* To city dropdown */}
                                                 <div className="relative flex-1 min-w-[140px]">
                                                     <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">To</label>
                                                     <div className="relative">
-                                                        <Plane size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-500 z-10 pointer-events-none" />
+                                                        <Plane size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none" />
                                                         <HeroCityPicker value={flightTo} onChange={v => { setFlightTo(v); setFlightResults(null); }} />
                                                     </div>
                                                 </div>
@@ -448,7 +448,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                         <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                         <input type="date" value={flightDate} min={todayStr}
                                                             onChange={e => { setFlightDate(e.target.value); setFlightResults(null); }}
-                                                            className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400" />
+                                                            className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
                                                     </div>
                                                 </div>
 
@@ -460,7 +460,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                             <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                             <input type="date" value={flightReturn} min={flightDate || todayStr}
                                                                 onChange={e => setFlightReturn(e.target.value)}
-                                                                className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400" />
+                                                                className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
                                                         </div>
                                                     </div>
                                                 )}
@@ -469,7 +469,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 <div className="relative sm:w-32 shrink-0" ref={guestRef}>
                                                     <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">Passengers</label>
                                                     <button onClick={() => setShowGuestPicker(!showGuestPicker)}
-                                                        className="w-full flex items-center pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm text-left hover:border-amber-400 transition-colors">
+                                                        className="w-full flex items-center pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm text-left hover:border-gray-300 transition-colors">
                                                         <Users size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                         <span className="text-gray-700">{flightPax} Pax</span>
                                                         <ChevronDown size={12} className="ml-auto text-gray-400" />
@@ -482,14 +482,14 @@ export default function Hero({ content, stats }: HeroProps) {
                                                                 <span className="text-lg font-semibold w-8 text-center">{flightPax}</span>
                                                                 <button onClick={() => setFlightPax(Math.min(9, flightPax + 1))} className="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-50 flex items-center justify-center text-lg">+</button>
                                                             </div>
-                                                            <button onClick={() => setShowGuestPicker(false)} className="mt-3 w-full py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-lg hover:bg-amber-600">Done</button>
+                                                            <button onClick={() => setShowGuestPicker(false)} className="mt-3 w-full py-1.5 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-gray-800">Done</button>
                                                         </div>
                                                     )}
                                                 </div>
 
                                                 {/* Search */}
                                                 <button onClick={handleFlightSearch} disabled={!flightDate || flightLoading}
-                                                    className="flex items-center justify-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all shadow-lg shadow-amber-500/30 active:scale-95 shrink-0 whitespace-nowrap">
+                                                    className="flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all shadow-lg shadow-gray-900/20 active:scale-95 shrink-0 whitespace-nowrap">
                                                     {flightLoading
                                                         ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Searching...</>
                                                         : <><Search size={16} /> Search</>
@@ -516,7 +516,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                             <span className="text-xs text-gray-400">Sort:</span>
                                                             {(['price', 'duration'] as const).map(s => (
                                                                 <button key={s} onClick={() => setSortBy(s)}
-                                                                    className={`px-2.5 py-0.5 rounded text-xs font-semibold transition-all ${sortBy === s ? 'bg-amber-500 text-white' : 'text-gray-400 hover:text-gray-700'}`}>
+                                                                    className={`px-2.5 py-0.5 rounded text-xs font-semibold transition-all ${sortBy === s ? 'bg-gray-900 text-white' : 'text-gray-400 hover:text-gray-700'}`}>
                                                                     {s === 'price' ? 'Cheapest' : 'Fastest'}
                                                                 </button>
                                                             ))}
@@ -560,7 +560,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                                     <div className="w-full flex items-center gap-1">
                                                                         <div className="w-1.5 h-1.5 rounded-full border border-gray-300" />
                                                                         <div className="flex-1 h-px bg-gray-300" />
-                                                                        <Plane size={11} className="text-amber-500" />
+                                                                        <Plane size={11} className="text-gray-400" />
                                                                         <div className="flex-1 h-px bg-gray-300" />
                                                                         <div className="w-1.5 h-1.5 rounded-full border border-gray-300" />
                                                                     </div>
@@ -584,7 +584,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                                     )}
                                                                 </div>
                                                                 <Link href={buildBookingUrl(f)}
-                                                                    className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 text-xs font-bold rounded-lg transition-colors whitespace-nowrap">
+                                                                    className="flex items-center gap-1.5 bg-gray-900 hover:bg-gray-800 text-white px-3 py-2 text-xs font-bold rounded-lg transition-colors whitespace-nowrap">
                                                                     <Plane size={12} /> Book Now
                                                                 </Link>
                                                             </div>
@@ -617,12 +617,12 @@ export default function Hero({ content, stats }: HeroProps) {
                                                             onChange={e => { const v = e.target.value; setFromCity(v); setFromSuggestions(filterSuggestions(v)); setShowFromSug(v.length > 0); }}
                                                             onFocus={() => setShowFromSug(fromCity.length > 0)}
                                                             onBlur={() => setTimeout(() => setShowFromSug(false), 150)}
-                                                            className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100" />
+                                                            className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100" />
                                                         {showFromSug && fromSuggestions.length > 0 && (
                                                             <ul className="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl z-50">
                                                                 {fromSuggestions.map(s => (
                                                                     <li key={s} onMouseDown={() => { setFromCity(s); setShowFromSug(false); }}
-                                                                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-amber-50 cursor-pointer">
+                                                                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50 cursor-pointer">
                                                                         <MapPin size={11} className="text-gray-400" />{s}
                                                                     </li>
                                                                 ))}
@@ -632,26 +632,26 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 </div>
 
                                                 <button onClick={swapTourCities}
-                                                    className="self-center w-8 h-8 shrink-0 rounded-full bg-amber-100 hover:bg-amber-200 border border-amber-300 flex items-center justify-center transition-all hover:rotate-180 duration-300">
-                                                    <ArrowLeftRight size={13} className="text-amber-600" />
+                                                    className="self-center w-8 h-8 shrink-0 rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-300 flex items-center justify-center transition-all hover:rotate-180 duration-300">
+                                                    <ArrowLeftRight size={13} className="text-gray-600" />
                                                 </button>
 
                                                 {/* To */}
                                                 <div className="relative flex-1">
                                                     <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">To</label>
                                                     <div className="relative">
-                                                        <MapPin size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-500" />
+                                                        <MapPin size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                         <input type="text" placeholder="Where do you want to go?" value={toCity}
                                                             onChange={e => { const v = e.target.value; setToCity(v); setToSuggestions(filterSuggestions(v)); setShowToSug(v.length > 0); }}
                                                             onFocus={() => setShowToSug(toCity.length > 0)}
                                                             onBlur={() => setTimeout(() => setShowToSug(false), 150)}
-                                                            className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100" />
+                                                            className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100" />
                                                         {showToSug && toSuggestions.length > 0 && (
                                                             <ul className="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl z-50">
                                                                 {toSuggestions.map(s => (
                                                                     <li key={s} onMouseDown={() => { setToCity(s); setShowToSug(false); }}
-                                                                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-amber-50 cursor-pointer">
-                                                                        <MapPin size={11} className="text-amber-400" />{s}
+                                                                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50 cursor-pointer">
+                                                                        <MapPin size={11} className="text-gray-400" />{s}
                                                                     </li>
                                                                 ))}
                                                             </ul>
@@ -665,7 +665,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                     <div className="relative">
                                                         <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                         <input type="date" value={checkIn} min={todayStr} onChange={e => setCheckIn(e.target.value)}
-                                                            className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400" />
+                                                            className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
                                                     </div>
                                                 </div>
 
@@ -673,7 +673,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 <div className="relative sm:w-28 shrink-0">
                                                     <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">Guests</label>
                                                     <button onClick={() => setShowGuestPicker(!showGuestPicker)}
-                                                        className="w-full flex items-center pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm text-left hover:border-amber-400 transition-colors">
+                                                        className="w-full flex items-center pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm text-left hover:border-gray-300 transition-colors">
                                                         <Users size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                         <span className="text-gray-700">{guests} {guests > 1 ? 'Guests' : 'Guest'}</span>
                                                         <ChevronDown size={12} className="ml-auto text-gray-400" />
@@ -685,13 +685,13 @@ export default function Hero({ content, stats }: HeroProps) {
                                                                 <span className="text-lg font-semibold w-8 text-center">{guests}</span>
                                                                 <button onClick={() => setGuests(Math.min(20, guests + 1))} className="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-50 flex items-center justify-center text-lg">+</button>
                                                             </div>
-                                                            <button onClick={() => setShowGuestPicker(false)} className="mt-3 w-full py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-lg hover:bg-amber-600">Done</button>
+                                                            <button onClick={() => setShowGuestPicker(false)} className="mt-3 w-full py-1.5 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-gray-800">Done</button>
                                                         </div>
                                                     )}
                                                 </div>
 
                                                 <button onClick={handleTourSearch}
-                                                    className="flex items-center justify-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-amber-500/30 active:scale-95 shrink-0">
+                                                    className="flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-xl transition-all shadow-lg shadow-gray-900/20 active:scale-95 shrink-0">
                                                     <Search size={16} /><span>Search</span>
                                                 </button>
                                             </div>
@@ -701,7 +701,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 <span className="text-xs text-gray-400 font-medium shrink-0">Trending:</span>
                                                 {POPULAR_DESTINATIONS.map(dest => (
                                                     <Link key={dest.label} href={dest.href}
-                                                        className="flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-amber-100 hover:text-amber-700 rounded-full text-xs text-gray-600 font-medium transition-colors">
+                                                        className="flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-xs text-gray-600 font-medium transition-colors">
                                                         <span>{dest.icon}</span><span>{dest.label}</span>
                                                     </Link>
                                                 ))}
@@ -718,7 +718,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                     <MapPin size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                     <input type="text" placeholder="City or hotel name" value={toCity}
                                                         onChange={e => setToCity(e.target.value)}
-                                                        className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100" />
+                                                        className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100" />
                                                 </div>
                                             </div>
                                             <div className="relative sm:w-36">
@@ -726,7 +726,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 <div className="relative">
                                                     <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                     <input type="date" value={checkIn} min={todayStr} onChange={e => setCheckIn(e.target.value)}
-                                                        className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400" />
+                                                        className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
                                                 </div>
                                             </div>
                                             <div className="relative sm:w-36">
@@ -734,13 +734,13 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 <div className="relative">
                                                     <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                     <input type="date" value={checkOut} min={checkIn || todayStr} onChange={e => setCheckOut(e.target.value)}
-                                                        className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400" />
+                                                        className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
                                                 </div>
                                             </div>
                                             <div className="relative sm:w-28 shrink-0">
                                                 <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">Guests</label>
                                                 <button onClick={() => setShowGuestPicker(!showGuestPicker)}
-                                                    className="w-full flex items-center pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm text-left hover:border-amber-400">
+                                                    className="w-full flex items-center pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm text-left hover:border-gray-300">
                                                     <Users size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                     <span className="text-gray-700">{guests} {guests > 1 ? 'Guests' : 'Guest'}</span>
                                                     <ChevronDown size={12} className="ml-auto text-gray-400" />
@@ -752,12 +752,12 @@ export default function Hero({ content, stats }: HeroProps) {
                                                             <span className="text-lg font-semibold w-8 text-center">{guests}</span>
                                                             <button onClick={() => setGuests(Math.min(20, guests + 1))} className="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-50 flex items-center justify-center text-lg">+</button>
                                                         </div>
-                                                        <button onClick={() => setShowGuestPicker(false)} className="mt-3 w-full py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-lg hover:bg-amber-600">Done</button>
+                                                        <button onClick={() => setShowGuestPicker(false)} className="mt-3 w-full py-1.5 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-gray-800">Done</button>
                                                     </div>
                                                 )}
                                             </div>
                                             <button onClick={handleHotelSearch}
-                                                className="flex items-center justify-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-amber-500/30 active:scale-95 shrink-0">
+                                                className="flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-xl transition-all shadow-lg shadow-gray-900/20 active:scale-95 shrink-0">
                                                 <Search size={16} /><span>Search</span>
                                             </button>
                                         </div>
@@ -803,17 +803,17 @@ export default function Hero({ content, stats }: HeroProps) {
                                     <div className="p-4">
                                         <h3 className="font-semibold text-white text-base mb-1">{currentAd.title}</h3>
                                         <p className="text-sm text-white/70 line-clamp-2">{currentAd.description}</p>
-                                        <div className="mt-3 py-2 bg-amber-500 text-white text-xs font-bold uppercase tracking-widest text-center rounded-lg hover:bg-amber-600 transition-colors">Book Now</div>
+                                        <div className="mt-3 py-2 bg-gray-900 text-white text-xs font-bold uppercase tracking-widest text-center rounded-lg hover:bg-gray-800 transition-colors">Book Now</div>
                                         {ads.length > 1 && (
                                             <div className="flex gap-1 justify-center mt-3">
                                                 {ads.map((_, i) => (
                                                     <button key={i} onClick={e => { e.preventDefault(); setAdIndex(i); }}
-                                                        className={`w-1.5 h-1.5 rounded-full transition-colors ${i === adIndex ? 'bg-amber-400' : 'bg-white/30'}`} />
+                                                        className={`w-1.5 h-1.5 rounded-full transition-colors ${i === adIndex ? 'bg-white' : 'bg-white/30'}`} />
                                                 ))}
                                             </div>
                                         )}
                                     </div>
-                                    <div className="absolute inset-0 rounded-2xl border border-amber-400/20 pointer-events-none" />
+                                    <div className="absolute inset-0 rounded-2xl border border-white/10 pointer-events-none" />
                                 </Link>
                             </div>
                         )}

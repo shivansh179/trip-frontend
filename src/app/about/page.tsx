@@ -39,17 +39,17 @@ export default function AboutPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-gray-950/60 via-gray-950/40 to-gray-950" />
         </div>
         {/* Ambient glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-amber-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-white/5 rounded-full blur-3xl" />
 
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto pt-40 pb-16">
-          <div className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/30 rounded-full px-4 py-1.5 mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-amber-400 text-xs font-bold uppercase tracking-widest">Our Story</span>
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
+            <span className="text-white/70 text-xs font-bold uppercase tracking-widest">Our Story</span>
           </div>
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-tight mb-6">
             We&apos;re building India&apos;s
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">
+            <span className="italic text-white/80">
               travel-tech future
             </span>
           </h1>
@@ -66,7 +66,7 @@ export default function AboutPage() {
               { value: '₹0', label: 'Hidden Fees' },
             ].map((s) => (
               <div key={s.label} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-4 py-4">
-                <div className="text-2xl md:text-3xl font-black text-amber-400">{s.value}</div>
+                <div className="text-2xl md:text-3xl font-black text-white">{s.value}</div>
                 <div className="text-white/50 text-xs font-medium mt-1 uppercase tracking-wider">{s.label}</div>
               </div>
             ))}
@@ -79,11 +79,11 @@ export default function AboutPage() {
         <div className="section-container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-3">The Opportunity</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">The Opportunity</p>
               <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-gray-900 leading-tight mb-6">
                 India&apos;s travel market is
                 <br />
-                <span className="text-amber-500">exploding.</span>
+                <span className="italic">growing.</span>
               </h2>
               <p className="text-gray-500 text-lg leading-relaxed mb-8">
                 India&apos;s travel & tourism market is projected to reach <strong className="text-gray-800">$250 billion by 2030</strong>. Domestic travel alone crossed <strong className="text-gray-800">2.3 billion trips in 2023</strong>. Yet most Indians still overpay, get cheated, or settle for cookie-cutter packages. We&apos;re here to change that.
@@ -97,8 +97,8 @@ export default function AboutPage() {
                   { stat: '70%', desc: 'Travelers prefer transparent pricing over brand', icon: Shield },
                 ].map(({ stat, desc, icon: Icon }) => (
                   <div key={stat} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                    <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                      <Icon size={18} className="text-amber-600" />
+                    <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0">
+                      <Icon size={18} className="text-gray-600" />
                     </div>
                     <div>
                       <span className="font-black text-gray-900 text-lg">{stat}</span>
@@ -110,8 +110,8 @@ export default function AboutPage() {
             </div>
 
             <div className="relative">
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-8 border border-amber-100">
-                <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-4">Why YlooTrips Wins</p>
+              <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100">
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Why YlooTrips Wins</p>
                 <div className="space-y-5">
                   {[
                     { title: 'No Hidden Costs', desc: 'Price shown = price paid. Always.', icon: '✅' },
@@ -146,8 +146,8 @@ export default function AboutPage() {
               <div className="flex justify-center lg:justify-start">
                 <div className="relative">
                   {/* Glow */}
-                  <div className="absolute -inset-4 bg-amber-500/20 rounded-3xl blur-2xl" />
-                  <div className="relative w-72 h-80 sm:w-80 sm:h-96 rounded-3xl overflow-hidden border-2 border-amber-500/30 shadow-2xl">
+                  <div className="absolute -inset-4 bg-white/10 rounded-3xl blur-2xl" />
+                  <div className="relative w-72 h-80 sm:w-80 sm:h-96 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl">
                     {/* REPLACE with actual founder photo: /founder.jpg */}
                     <Image
                       src="/founder.jpg"
@@ -158,7 +158,7 @@ export default function AboutPage() {
                     />
                   </div>
                   {/* Badge */}
-                  <div className="absolute -bottom-4 -right-4 bg-amber-500 text-black rounded-2xl px-4 py-2 shadow-lg">
+                  <div className="absolute -bottom-4 -right-4 bg-gray-900 text-white rounded-2xl px-4 py-2 shadow-lg">
                     <p className="text-xs font-black uppercase tracking-wider">Founder & CEO</p>
                   </div>
                 </div>
@@ -166,11 +166,11 @@ export default function AboutPage() {
 
               {/* Content */}
               <div className="text-white">
-                <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-3">Meet the Founder</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-3">Meet the Founder</p>
                 <h2 className="font-display text-3xl md:text-4xl lg:text-5xl leading-tight mb-2">
                   Vinay Arora
                 </h2>
-                <p className="text-amber-400 font-semibold text-lg mb-6">Founder & CEO, YlooTrips</p>
+                <p className="text-white/60 font-semibold text-lg mb-6">Founder & CEO, YlooTrips</p>
 
                 <div className="space-y-4 text-gray-300 text-base leading-relaxed">
                   <p>
@@ -215,7 +215,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── VISION & MISSION ── */}
-      <section className="py-16 md:py-24 bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500">
+      <section className="py-16 md:py-24 bg-gray-950">
         <div className="section-container">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <p className="text-white/70 text-xs font-bold uppercase tracking-widest mb-3">Our North Star</p>
@@ -275,12 +275,12 @@ export default function AboutPage() {
       <section className="py-16 md:py-20 bg-gray-950">
         <div className="section-container">
           <div className="text-center mb-12">
-            <p className="text-amber-400 text-xs font-bold uppercase tracking-widest mb-3">Our Journey</p>
+            <p className="text-white/50 text-xs font-bold uppercase tracking-widest mb-3">Our Journey</p>
             <h2 className="font-display text-3xl md:text-4xl text-white">Built year by year.</h2>
           </div>
           <div className="relative max-w-3xl mx-auto">
             {/* Vertical line */}
-            <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-amber-500/60 via-amber-500/30 to-transparent" />
+            <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-white/30 via-white/15 to-transparent" />
             <div className="space-y-8">
               {[
                 { year: '2022', event: 'Founded — Weekend Trips', detail: 'YlooTrips launched with curated weekend getaways across India. Manali, Goa, Coorg, Rishikesh — affordable, transparent, zero hidden fees.', icon: '🏕️' },
@@ -291,15 +291,15 @@ export default function AboutPage() {
                 { year: '2025', event: 'Major Events + MSME Certified', detail: 'Large-scale event management — corporate trips, group travel, destination weddings. MSME certified by Govt. of India. 25,000+ travelers served.', icon: '🏅' },
                 { year: '2026', event: 'AI Trip Planner + Scale', detail: 'Launched Yloo AI — smart trip planner powered by AI. Growing 3x YoY. Target: ₹50Cr+ bookings, Series A expansion.', icon: '🤖' },
               ].map(({ year, event, detail, icon }, i) => (
-                <div key={year} className={`flex gap-6 md:gap-0 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                <div key={`${year}-${i}`} className={`flex gap-6 md:gap-0 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
                   {/* Content */}
                   <div className={`flex-1 pb-2 pl-14 md:pl-0 ${i % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12 md:text-left'}`}>
-                    <span className="text-amber-400 text-xs font-black uppercase tracking-widest">{year}</span>
+                    <span className="text-white/40 text-xs font-black uppercase tracking-widest">{year}</span>
                     <h3 className="text-white font-bold text-lg mt-1">{event}</h3>
                     <p className="text-gray-400 text-sm mt-1 leading-relaxed">{detail}</p>
                   </div>
                   {/* Icon node */}
-                  <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-12 h-12 bg-gray-800 border-2 border-amber-500/50 rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-amber-500/10">
+                  <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-12 h-12 bg-gray-800 border-2 border-white/20 rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-black/20">
                     {icon}
                   </div>
                   {/* Spacer for right side on desktop */}
@@ -315,14 +315,14 @@ export default function AboutPage() {
       <section className="py-16 md:py-24 bg-white">
         <div className="section-container">
           <div className="text-center mb-12">
-            <p className="text-amber-600 text-xs font-bold uppercase tracking-widest mb-3">Our DNA</p>
+            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-3">Our DNA</p>
             <h2 className="font-display text-3xl md:text-4xl text-gray-900">What we stand for</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
               { icon: Heart, title: 'Traveler First', desc: 'Every feature, every policy, every decision — we ask "is this good for our traveler?"', color: 'text-rose-500 bg-rose-50' },
               { icon: Shield, title: 'Radical Transparency', desc: 'Price shown = price paid. No surprises at checkout. No hidden hotel charges.', color: 'text-blue-500 bg-blue-50' },
-              { icon: Zap, title: 'Move Fast', desc: 'We ship new features weekly. Our travelers\' needs evolve — so do we.', color: 'text-amber-500 bg-amber-50' },
+              { icon: Zap, title: 'Move Fast', desc: 'We ship new features weekly. Our travelers\' needs evolve — so do we.', color: 'text-gray-600 bg-gray-100' },
               { icon: Globe, title: 'Real Impact', desc: 'We support local guides, eco stays, and responsible travel practices.', color: 'text-green-500 bg-green-50' },
             ].map(({ icon: Icon, title, desc, color }) => (
               <div key={title} className="p-6 rounded-3xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 group">
@@ -361,9 +361,9 @@ export default function AboutPage() {
           {/* Why India + Why YlooTrips */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-14">
             {/* Why India */}
-            <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-3xl p-8">
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-8">
               <div className="text-3xl mb-4">🇮🇳</div>
-              <p className="text-amber-400 text-xs font-bold uppercase tracking-widest mb-3">Why India?</p>
+              <p className="text-white/50 text-xs font-bold uppercase tracking-widest mb-3">Why India?</p>
               <h3 className="text-white font-display text-2xl mb-4">The world&apos;s most diverse travel destination</h3>
               <div className="space-y-3">
                 {[
@@ -516,7 +516,7 @@ export default function AboutPage() {
             </a>
             <Link
               href="/trip-planner"
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-black font-bold px-8 py-4 rounded-2xl text-sm uppercase tracking-wider hover:opacity-90 transition-opacity shadow-xl shadow-amber-500/20"
+              className="inline-flex items-center justify-center gap-2 bg-white text-gray-900 font-bold px-8 py-4 rounded-2xl text-sm uppercase tracking-wider hover:bg-gray-100 transition-colors shadow-xl shadow-black/20"
             >
               Plan with AI <ArrowUpRight size={16} />
             </Link>

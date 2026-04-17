@@ -10,8 +10,8 @@ import daycations, { DAYCATION_CATEGORIES, Daycation } from '@/data/daycations';
 
 const DIFFICULTY_STYLE = {
   easy: 'bg-green-100 text-green-700',
-  moderate: 'bg-amber-100 text-amber-700',
-  hard: 'bg-red-100 text-red-700',
+  moderate: 'bg-gray-100 text-gray-600',
+  hard: 'bg-gray-200 text-gray-700',
 };
 
 const DIFFICULTY_LABEL = {
@@ -49,7 +49,7 @@ function DaycationCard({ d }: { d: Daycation }) {
 
         {/* Rating */}
         <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm text-white px-2.5 py-1 rounded-full">
-          <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+          <Star className="w-3 h-3 fill-white text-white" />
           <span className="text-xs font-bold">{d.rating}</span>
           <span className="text-[10px] opacity-70">({d.reviews.toLocaleString()})</span>
         </div>
@@ -82,8 +82,8 @@ function DaycationCard({ d }: { d: Daycation }) {
 
         {/* Vibe tag */}
         <div className="flex items-center gap-1.5">
-          <Zap className="w-3 h-3 text-amber-500" />
-          <span className="text-[11px] text-amber-600 font-medium italic">{d.vibe}</span>
+          <Zap className="w-3 h-3 text-gray-400" />
+          <span className="text-[11px] text-gray-500 font-medium italic">{d.vibe}</span>
         </div>
 
         {/* Includes pills */}
@@ -134,12 +134,12 @@ export default function DaycationsPage() {
       {/* Hero */}
       <section className="pt-32 pb-12 px-4 text-center">
         <div className="max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-6">
             <Flame className="w-3.5 h-3.5" />
             1-Day Adventures
           </div>
           <h1 className="font-display text-5xl sm:text-6xl md:text-7xl text-primary leading-none mb-4">
-            Daycations<span className="text-amber-500">.</span>
+            Daycations<span className="text-primary">.</span>
           </h1>
           <p className="text-secondary text-lg sm:text-xl mb-2">
             No bags. No hotel. Just <span className="font-semibold text-primary italic">pure vibes</span>.

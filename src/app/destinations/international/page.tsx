@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, MapPin, Globe, MessageCircle, Star, Clock, Users, X, CreditCard, Loader2, CheckCircle, ShieldCheck, BadgePercent } from 'lucide-react';
@@ -66,7 +66,7 @@ const INTERNATIONAL_DESTINATIONS: IntlDestination[] = [
     reviews: 1284,
     href: '/dubai-tour-package-from-delhi',
     badge: 'Best Value',
-    badgeColor: 'bg-amber-500',
+    badgeColor: 'bg-gray-800',
     highlights: ['Burj Khalifa At The Top', 'Desert Safari BBQ', 'Dubai Mall', 'Palm Jumeirah'],
     visa: 'Visa on arrival',
   },
@@ -144,7 +144,7 @@ const INTERNATIONAL_DESTINATIONS: IntlDestination[] = [
     reviews: 289,
     href: '/contact?destination=vietnam',
     badge: 'Trending',
-    badgeColor: 'bg-red-500',
+    badgeColor: 'bg-gray-800',
     highlights: ['Ha Long Bay Cruise', 'Hoi An Old Town', 'Hanoi Street Food Tour', 'Da Nang Beach'],
     visa: 'e-Visa ($25)',
   },
@@ -220,7 +220,7 @@ const INTERNATIONAL_DESTINATIONS: IntlDestination[] = [
     reviews: 134,
     href: '/contact?destination=kenya-safari',
     badge: 'Bucket List',
-    badgeColor: 'bg-amber-700',
+    badgeColor: 'bg-gray-800',
     highlights: ['Masai Mara Safari', 'Great Migration', 'Amboseli Elephant Park', 'Nairobi'],
     visa: 'e-Visa required',
   },
@@ -245,6 +245,14 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
   const [cbSent, setCbSent] = useState(false);
   const [cbSending, setCbSending] = useState(false);
   const { balance: walletBalance, addCashback, deductBalance } = useWallet();
+
+  // Lock body scroll on mobile when drawer is open
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    return () => { document.body.style.overflow = prev; };
+  }, []);
 
   const totalPrice = d.priceINR * Number(guests || 2);
   const discountAmt = Math.round(totalPrice * 0.05);
@@ -329,7 +337,7 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
             <h3 className="font-bold text-gray-900 text-base leading-tight">{d.name}</h3>
             <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
               <Clock className="w-3 h-3" /> {d.duration} &nbsp;·&nbsp;
-              <Star className="w-3 h-3 fill-amber-400 text-amber-400" /> {d.rating} ({d.reviews.toLocaleString()} reviews)
+              <Star className="w-3 h-3 fill-gray-400 text-gray-400" /> {d.rating} ({d.reviews.toLocaleString()} reviews)
             </p>
           </div>
           <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500 shrink-0 ml-3">
@@ -393,20 +401,20 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
 
               {/* WanderLoot wallet */}
               {payStep === 'options' && walletBalance > 0 && (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-amber-900">WanderLoot 💸</p>
-                      <p className="text-xs text-amber-700">Balance: ₹{walletBalance.toLocaleString('en-IN')} · Use up to ₹{maxWalletUsable.toLocaleString('en-IN')}</p>
+                      <p className="text-sm font-semibold text-gray-900">WanderLoot 💸</p>
+                      <p className="text-xs text-gray-600">Balance: ₹{walletBalance.toLocaleString('en-IN')} · Use up to ₹{maxWalletUsable.toLocaleString('en-IN')}</p>
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" checked={applyWallet} onChange={e => { setApplyWallet(e.target.checked); setPayStep('options'); setChargeNow(null); }} className="w-4 h-4 accent-amber-500" />
-                      <span className="text-xs font-semibold text-amber-800">Apply</span>
+                      <input type="checkbox" checked={applyWallet} onChange={e => { setApplyWallet(e.target.checked); setPayStep('options'); setChargeNow(null); }} className="w-4 h-4" />
+                      <span className="text-xs font-semibold text-gray-700">Apply</span>
                     </label>
                   </div>
                   {applyWallet && walletDeduction > 0 && (
-                    <div className="mt-2 pt-2 border-t border-amber-200 flex items-center justify-between text-xs">
-                      <span className="text-amber-800">💰 WanderLoot applied</span>
+                    <div className="mt-2 pt-2 border-t border-gray-200 flex items-center justify-between text-xs">
+                      <span className="text-gray-700">💰 WanderLoot applied</span>
                       <span className="font-semibold text-green-700">−₹{walletDeduction.toLocaleString('en-IN')}</span>
                     </div>
                   )}
@@ -462,18 +470,18 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
             <div className="p-5 bg-[#1a2535] min-h-full">
               {cbSent ? (
                 <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
-                  <div className="w-14 h-14 rounded-full bg-amber-400/20 flex items-center justify-center">
-                    <CheckCircle className="w-7 h-7 text-amber-400" />
+                  <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
+                    <CheckCircle className="w-7 h-7 text-white/70" />
                   </div>
                   <p className="font-display text-xl text-white">You're all set! 🎉</p>
-                  <p className="text-white/60 text-sm max-w-xs">Our Yloo travel expert will call you within <span className="text-amber-400 font-bold">1 hour</span> with a custom {d.name} package price, itinerary & flexible EMI plan.</p>
+                  <p className="text-white/60 text-sm max-w-xs">Our Yloo travel expert will call you within <span className="text-white font-bold">1 hour</span> with a custom {d.name} package price, itinerary & flexible EMI plan.</p>
                   <p className="text-white/30 text-[11px] mt-2">📱 Expect a call from +91 84278 31127</p>
-                  <button onClick={onClose} className="mt-3 px-6 py-2.5 bg-amber-400 text-gray-900 font-bold rounded-xl text-sm">Done</button>
+                  <button onClick={onClose} className="mt-3 px-6 py-2.5 bg-white text-gray-900 font-bold rounded-xl text-sm">Done</button>
                 </div>
               ) : (
                 <form onSubmit={handleCallback} className="space-y-4">
                   <div className="flex items-start gap-3 mb-1">
-                    <div className="w-10 h-10 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
                       <span className="text-xl">✈️</span>
                     </div>
                     <div>
@@ -501,20 +509,20 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
                       'Flexible 3/6/12 month EMI options',
                     ].map(item => (
                       <p key={item} className="text-white/70 text-xs flex items-center gap-2">
-                        <span className="text-amber-400 text-[10px]">✓</span> {item}
+                        <span className="text-white/60 text-[10px]">✓</span> {item}
                       </p>
                     ))}
                   </div>
 
                   <input required type="text" placeholder="Your name"
                     value={cbName} onChange={e => setCbName(e.target.value)}
-                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-amber-400" />
+                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-white/40" />
                   <input required type="tel" placeholder="Phone number (we'll call you)"
                     value={cbPhone} onChange={e => setCbPhone(e.target.value)}
-                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-amber-400" />
+                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-white/40" />
 
                   <button type="submit" disabled={cbSending}
-                    className="w-full flex items-center justify-center gap-2 bg-amber-400 text-gray-900 font-bold text-sm py-3.5 rounded-xl hover:bg-amber-300 disabled:opacity-60 transition-colors">
+                    className="w-full flex items-center justify-center gap-2 bg-white text-gray-900 font-bold text-sm py-3.5 rounded-xl hover:bg-gray-100 disabled:opacity-60 transition-colors">
                     {cbSending ? <Loader2 size={14} className="animate-spin" /> : '📞'}
                     {cbSending ? 'Booking callback…' : 'Get Free Callback + EMI Options'}
                   </button>
@@ -561,7 +569,7 @@ function IntlCard({ d }: { d: IntlDestination }) {
 
           {/* Rating */}
           <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm text-white px-2.5 py-1 rounded-full">
-            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+            <Star className="w-3 h-3 fill-white text-white" />
             <span className="text-xs font-bold">{d.rating}</span>
             <span className="text-[10px] opacity-70">({d.reviews.toLocaleString()})</span>
           </div>
@@ -601,7 +609,7 @@ function IntlCard({ d }: { d: IntlDestination }) {
             <span className="text-[10px] bg-green-50 text-green-700 border border-green-100 px-2 py-0.5 rounded-full font-semibold">
               🔒 Secure Easebuzz
             </span>
-            <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-100 px-2 py-0.5 rounded-full font-semibold">
+            <span className="text-[10px] bg-gray-50 text-gray-600 border border-gray-100 px-2 py-0.5 rounded-full font-semibold">
               5% Early Bird
             </span>
           </div>
@@ -744,7 +752,7 @@ export default function InternationalDestinationsPage() {
             <div className="flex justify-center mb-5">
               <Globe className="w-10 h-10 text-cream/40" />
             </div>
-            <p className="text-xs uppercase tracking-[0.3em] text-accent mb-4">International Travel Specialists</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-cream/50 mb-4">International Travel Specialists</p>
             <h2 className="font-display text-4xl md:text-5xl mb-4">Ready to explore the world?</h2>
             <p className="text-cream/60 text-lg max-w-xl mx-auto mb-10">
               We handle visa paperwork, flights, hotels, and on-ground guides. You just pack and go. Our specialists respond in under 1 hour.

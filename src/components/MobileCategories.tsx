@@ -35,15 +35,15 @@ export default function MobileCategories() {
             <Link
               key={href + label}
               href={href}
-              className={`flex flex-col items-center justify-center gap-1 py-4 px-1 text-center transition-all active:scale-95 select-none ${
-                highlight ? 'bg-amber-50 border-b-2 border-amber-400' : ''
+              className={`flex flex-col items-center justify-center gap-1 py-4 px-2 text-center transition-all active:scale-95 select-none ${
+                highlight ? 'bg-gray-900 border-b-2 border-gray-900' : ''
               }`}
             >
               <span className="text-2xl">{emoji}</span>
-              <p className={`text-[11px] font-bold leading-tight ${highlight ? 'text-amber-700' : 'text-gray-800'}`}>
+              <p className={`text-xs font-bold leading-tight ${highlight ? 'text-white' : 'text-gray-800'}`}>
                 {label}
               </p>
-              <p className="text-[9px] text-gray-400 leading-tight">{sub}</p>
+              <p className="text-[10px] text-gray-400 leading-tight">{sub}</p>
             </Link>
           ))}
         </div>
@@ -58,8 +58,8 @@ export default function MobileCategories() {
                 className="flex flex-col items-center justify-center gap-1 py-4 px-1 text-center transition-all active:scale-95 select-none"
               >
                 <span className="text-2xl">{emoji}</span>
-                <p className="text-[11px] font-bold text-gray-800 leading-tight">{label}</p>
-                <p className="text-[9px] text-gray-400 leading-tight">{sub}</p>
+                <p className="text-xs font-bold text-gray-800 leading-tight">{label}</p>
+                <p className="text-[10px] text-gray-400 leading-tight">{sub}</p>
               </Link>
             ))}
           </div>
@@ -68,7 +68,7 @@ export default function MobileCategories() {
         {/* Expand toggle */}
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-full flex items-center justify-center gap-1 py-2.5 border-t border-gray-50 text-[11px] text-gray-400 font-medium"
+          className="w-full flex items-center justify-center gap-1 py-3.5 border-t border-gray-50 text-xs text-gray-400 font-medium min-h-[44px]"
         >
           <ChevronDown
             size={13}

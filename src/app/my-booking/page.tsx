@@ -54,10 +54,10 @@ function StatusBadge({ status }: { status: string }) {
     <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider
       ${isGreen ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : ''}
       ${isRed ? 'bg-red-500/20 text-red-400 border border-red-500/30' : ''}
-      ${!isGreen && !isRed ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : ''}
+      ${!isGreen && !isRed ? 'bg-white/10 text-white/60 border border-white/20' : ''}
     `}>
       <span className={`w-1.5 h-1.5 rounded-full animate-pulse
-        ${isGreen ? 'bg-emerald-400' : isRed ? 'bg-red-400' : 'bg-amber-400'}`} />
+        ${isGreen ? 'bg-emerald-400' : isRed ? 'bg-red-400' : 'bg-white/40'}`} />
       {status}
     </span>
   );
@@ -88,10 +88,10 @@ function PaymentReceipt({ lines, total, paymentMethod, paymentStatus, paidAt, re
     <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
         <div className="flex items-center gap-2">
-          <Receipt size={15} className="text-amber-400" />
+          <Receipt size={15} className="text-white/60" />
           <span className="text-white font-bold text-sm">Payment Receipt</span>
         </div>
-        <span className={`text-xs font-black px-2.5 py-1 rounded-full ${isPaid ? 'bg-emerald-500 text-white' : 'bg-amber-400 text-gray-900'}`}>
+        <span className={`text-xs font-black px-2.5 py-1 rounded-full ${isPaid ? 'bg-emerald-500 text-white' : 'bg-white/10 text-white/60'}`}>
           {isPaid ? '✓ PAID' : 'PENDING'}
         </span>
       </div>
@@ -102,7 +102,7 @@ function PaymentReceipt({ lines, total, paymentMethod, paymentStatus, paidAt, re
             <div className="flex items-center gap-1.5">
               <p className="font-mono font-bold text-white/80">{receiptId}</p>
               <button onClick={() => { navigator.clipboard.writeText(receiptId); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-                className="text-white/30 hover:text-amber-400 transition-colors"><Copy size={11} /></button>
+                className="text-white/30 hover:text-white/70 transition-colors"><Copy size={11} /></button>
             </div>
             {copied && <p className="text-emerald-400 text-[10px] mt-0.5">Copied!</p>}
           </div>
@@ -125,7 +125,7 @@ function PaymentReceipt({ lines, total, paymentMethod, paymentStatus, paidAt, re
         <div className="h-px bg-white/10" />
         <div className="flex justify-between items-center">
           <span className="font-bold text-white">Total Paid</span>
-          <span className="text-2xl font-black text-amber-400">₹{fmt(total)}</span>
+          <span className="text-2xl font-black text-white">₹{fmt(total)}</span>
         </div>
         {paymentMethod && (
           <div className="flex items-center gap-2 bg-white/5 rounded-xl px-4 py-3">
@@ -138,10 +138,10 @@ function PaymentReceipt({ lines, total, paymentMethod, paymentStatus, paidAt, re
         )}
         <div className="flex items-center justify-between pt-1">
           <div className="flex items-center gap-1.5">
-            <Star size={11} className="text-amber-400 fill-amber-400" />
+            <Star size={11} className="text-white/60 fill-white/60" />
             <span className="text-xs text-white/30">YlooTrips Official Receipt</span>
           </div>
-          <button onClick={() => window.print()} className="flex items-center gap-1.5 text-xs text-white/40 hover:text-amber-400 transition-colors">
+          <button onClick={() => window.print()} className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors">
             <Download size={11} />Print
           </button>
         </div>
@@ -160,14 +160,14 @@ function Timeline({ steps }: { steps: { label: string; done: boolean }[] }) {
         {steps.map((step, i) => (
           <div key={step.label} className="flex items-center gap-3">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all
-              ${step.done ? 'bg-emerald-500 shadow-lg shadow-emerald-500/30' : i === firstPending ? 'bg-amber-500/20 border-2 border-amber-400' : 'bg-white/5 border border-white/10'}`}>
+              ${step.done ? 'bg-emerald-500 shadow-lg shadow-emerald-500/30' : i === firstPending ? 'bg-white/10 border-2 border-white/30' : 'bg-white/5 border border-white/10'}`}>
               {step.done
                 ? <CheckCircle size={15} className="text-white" />
-                : <Clock size={13} className={i === firstPending ? 'text-amber-400' : 'text-white/20'} />
+                : <Clock size={13} className={i === firstPending ? 'text-white/60' : 'text-white/20'} />
               }
             </div>
             <span className={`text-sm font-semibold
-              ${step.done ? 'text-emerald-400' : i === firstPending ? 'text-amber-400' : 'text-white/20'}`}>
+              ${step.done ? 'text-emerald-400' : i === firstPending ? 'text-white/70' : 'text-white/20'}`}>
               {step.label}
             </span>
           </div>
@@ -189,7 +189,7 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
   ];
   return (
     <div className="space-y-5">
-      <RefCard ref={ref} label="Trip Booking Reference" gradient="bg-gradient-to-br from-amber-500 via-orange-500 to-pink-500" />
+      <RefCard ref={ref} label="Trip Booking Reference" gradient="bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950" />
       <GlassCard>
         <div className="flex items-center justify-between mb-5">
           <p className="text-white font-bold text-lg">Trip Details</p>
@@ -199,8 +199,8 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
           {!!data.trip && (
             <>
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
-                  <MapPin size={15} className="text-amber-400" />
+                <div className="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+                  <MapPin size={15} className="text-white/60" />
                 </div>
                 <div>
                   <p className="text-white/40 text-xs uppercase tracking-wide">Destination</p>
@@ -208,8 +208,8 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
-                  <Zap size={15} className="text-amber-400" />
+                <div className="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+                  <Zap size={15} className="text-white/60" />
                 </div>
                 <div>
                   <p className="text-white/40 text-xs uppercase tracking-wide">Trip</p>
@@ -220,8 +220,8 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
           )}
           {!!data.travelDate && (
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
-                <Calendar size={15} className="text-amber-400" />
+              <div className="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+                <Calendar size={15} className="text-white/60" />
               </div>
               <div>
                 <p className="text-white/40 text-xs uppercase tracking-wide">Travel Date</p>
@@ -231,8 +231,8 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
           )}
           {data.numberOfGuests != null && (
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
-                <Users size={15} className="text-amber-400" />
+              <div className="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+                <Users size={15} className="text-white/60" />
               </div>
               <div>
                 <p className="text-white/40 text-xs uppercase tracking-wide">Guests</p>
@@ -242,7 +242,7 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
           )}
           <div className="flex items-center justify-between pt-4 border-t border-white/10">
             <p className="text-white/40 text-xs uppercase tracking-wide">Amount Paid</p>
-            <p className="text-2xl font-black text-amber-400">₹{fmt(total)}</p>
+            <p className="text-2xl font-black text-white">₹{fmt(total)}</p>
           </div>
         </div>
       </GlassCard>
@@ -521,7 +521,7 @@ function BookingSearchSheet({ onClose, onResult }: {
                 value={reference}
                 onChange={e => setReference(e.target.value)}
                 placeholder="BK-123456 · EVT-ABC123 · FLT-123456"
-                className="w-full px-4 py-4 rounded-2xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 font-mono text-sm transition-all"
+                className="w-full px-4 py-4 rounded-2xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 font-mono text-sm transition-all"
                 required
               />
             </div>
@@ -532,7 +532,7 @@ function BookingSearchSheet({ onClose, onResult }: {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="Email used when booking"
-                className="w-full px-4 py-4 rounded-2xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 text-sm transition-all"
+                className="w-full px-4 py-4 rounded-2xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 text-sm transition-all"
                 required
               />
             </div>
@@ -547,7 +547,7 @@ function BookingSearchSheet({ onClose, onResult }: {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black rounded-2xl transition-all shadow-lg shadow-amber-500/25 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 py-4 bg-gray-900 hover:bg-gray-800 text-white font-black rounded-2xl transition-all shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? <><RefreshCw size={18} className="animate-spin" />Looking up...</> : <><Search size={18} />Find My Booking</>}
             </button>
@@ -556,7 +556,7 @@ function BookingSearchSheet({ onClose, onResult }: {
           {/* Reference type hints */}
           <div className="grid grid-cols-3 gap-2 mt-4">
             {[
-              { prefix: 'BK-', label: 'Trip', emoji: '🗺️', color: 'border-amber-200 text-amber-600 bg-amber-50' },
+              { prefix: 'BK-', label: 'Trip', emoji: '🗺️', color: 'border-gray-200 text-gray-600 bg-gray-50' },
               { prefix: 'EVT-', label: 'Event', emoji: '🎟️', color: 'border-purple-200 text-purple-600 bg-purple-50' },
               { prefix: 'FLT-', label: 'Flight', emoji: '✈️', color: 'border-sky-200 text-sky-600 bg-sky-50' },
             ].map(h => (
@@ -581,7 +581,7 @@ function ProfilePage({ onOpenSearch }: { onOpenSearch: () => void }) {
     {
       title: 'My Trips',
       items: [
-        { icon: <Ticket size={20} className="text-amber-500" />, label: 'Track / Find Booking', sub: 'BK · EVT · FLT reference', action: onOpenSearch, bg: 'bg-amber-50' },
+        { icon: <Ticket size={20} className="text-gray-600" />, label: 'Track / Find Booking', sub: 'BK · EVT · FLT reference', action: onOpenSearch, bg: 'bg-gray-100' },
         { icon: <Heart size={20} className="text-rose-500" />, label: 'Wishlist', sub: 'Saved destinations', href: '/destinations/domestic', bg: 'bg-rose-50' },
       ],
     },
@@ -595,10 +595,10 @@ function ProfilePage({ onOpenSearch }: { onOpenSearch: () => void }) {
     {
       title: 'Explore',
       items: [
-        { icon: <Mountain size={20} className="text-amber-600" />, label: 'Domestic Trips', sub: '150+ India destinations', href: '/destinations/domestic', bg: 'bg-amber-50' },
+        { icon: <Mountain size={20} className="text-gray-600" />, label: 'Domestic Trips', sub: '150+ India destinations', href: '/destinations/domestic', bg: 'bg-gray-100' },
         { icon: <Globe size={20} className="text-blue-500" />, label: 'International', sub: '50+ countries', href: '/destinations/international', bg: 'bg-blue-50' },
         { icon: <span className="text-lg">🎉</span>, label: 'Events', sub: 'Concerts, experiences & more', href: '/events', bg: 'bg-pink-50' },
-        { icon: <Sparkles size={20} className="text-orange-500" />, label: 'AI Trip Planner', sub: 'Plan with Yloo AI', href: '/trip-planner', bg: 'bg-orange-50' },
+        { icon: <Sparkles size={20} className="text-gray-600" />, label: 'AI Trip Planner', sub: 'Plan with Yloo AI', href: '/trip-planner', bg: 'bg-gray-100' },
       ],
     },
     {
@@ -615,7 +615,7 @@ function ProfilePage({ onOpenSearch }: { onOpenSearch: () => void }) {
     <div className="min-h-screen bg-gray-100 pb-24">
 
       {/* Profile Hero Card */}
-      <div className="relative bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 pt-16 pb-8 px-4">
+      <div className="relative bg-gray-950 pt-28 pb-8 px-4">
         {/* Decorative circles */}
         <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-white/10 -translate-y-1/3 translate-x-1/4 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-black/10 translate-y-1/2 -translate-x-1/4 pointer-events-none" />
@@ -637,7 +637,7 @@ function ProfilePage({ onOpenSearch }: { onOpenSearch: () => void }) {
 
         {/* Wallet balance pill */}
         {balance > 0 && (
-          <Link href="/cashback" className="mt-4 inline-flex items-center gap-2 bg-white/20 border border-white/30 rounded-full px-4 py-2 active:scale-95 transition-transform">
+          <Link href="/trips" className="mt-4 inline-flex items-center gap-2 bg-white/20 border border-white/30 rounded-full px-4 py-2 active:scale-95 transition-transform">
             <Wallet size={14} className="text-white" />
             <span className="text-white font-bold text-sm">₹{balance} WanderLoot Cash</span>
             <ChevronRight size={14} className="text-white/60" />
@@ -650,7 +650,7 @@ function ProfilePage({ onOpenSearch }: { onOpenSearch: () => void }) {
         <div className="bg-white rounded-2xl shadow-lg px-4 py-5">
           <div className="grid grid-cols-3 gap-2">
             {[
-              { icon: <Search size={22} className="text-amber-500" />, label: 'Find Booking', action: onOpenSearch },
+              { icon: <Search size={22} className="text-gray-600" />, label: 'Find Booking', action: onOpenSearch },
               { icon: <MessageCircle size={22} className="text-green-500" />, label: 'Support', href: 'https://wa.me/918427831127?text=Hi!%20I%20need%20help.' },
               { icon: <Bell size={22} className="text-blue-500" />, label: 'Notifications', badge: true },
             ].map(({ icon, label, action, href, badge }) => {
@@ -780,7 +780,7 @@ export default function MyBookingPage() {
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto mb-4" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4" />
           <p className="text-gray-400">Loading...</p>
         </div>
       </div>

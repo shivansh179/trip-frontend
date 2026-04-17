@@ -22,11 +22,6 @@ export default function MobileStickyBookingBar({ price, onBook, disabled, spotsL
                 <div>
                     <div className="text-xl font-semibold text-primary">{fp(price)}</div>
                     <div className="text-xs text-primary/50">per person · no hidden fees</div>
-                    {spotsLeft && spotsLeft <= 5 && (
-                        <div className="text-xs text-red-500 font-medium mt-0.5">
-                            Only {spotsLeft} spots left!
-                        </div>
-                    )}
                 </div>
                 <button
                     onClick={onBook}

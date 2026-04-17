@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Star, BadgeCheck, Quote, X, Loader2, CheckCircle, PenLine } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 
 // Fallback avatar — shows colored circle + initials when photo fails to load
 function Avatar({ src, name }: { src: string; name: string }) {
@@ -499,16 +498,16 @@ export default function InternationalTestimonials() {
 
         {/* ── Header ─────────────────────────────────────────────────── */}
         <div className="text-center mb-12 md:mb-16">
-          <p className="text-caption uppercase tracking-[0.3em] text-accent mb-4">Real Reviews · Asli Log · Asli Anubhav</p>
+          <p className="text-caption uppercase tracking-[0.3em] text-cream/40 mb-4">Verified Reviews</p>
           <h2 className="font-display text-display-lg text-cream max-w-3xl mx-auto">
-            Indians & travelers from <span className="italic text-accent">40+ countries</span> trust us
+            Travelers from <span className="italic text-cream/70">40+ countries</span> trust us
           </h2>
 
           {/* Stats */}
           <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
             {stats.map(s => (
               <div key={s.label} className="text-center">
-                <div className="font-display text-2xl md:text-3xl text-accent">{s.value}</div>
+                <div className="font-display text-2xl md:text-3xl text-cream">{s.value}</div>
                 <div className="text-xs text-cream/50 uppercase tracking-widest mt-1">{s.label}</div>
               </div>
             ))}
@@ -547,7 +546,7 @@ export default function InternationalTestimonials() {
 
                 {/* Trip + platform at bottom of photo */}
                 <div className="absolute bottom-0 left-0 right-0 p-3 flex items-end justify-between">
-                  <span className="bg-accent text-primary text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
+                  <span className="bg-white/15 text-white text-[10px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full">
                     {r.trip}
                   </span>
                   <div className="flex items-center gap-1 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full">
@@ -609,19 +608,6 @@ export default function InternationalTestimonials() {
           </button>
         </div>
 
-        {/* ── CTA ─────────────────────────────────────────────────────── */}
-        <div className="text-center border-t border-white/10 pt-12">
-          <p className="text-cream/50 text-sm mb-4">Join 25,000+ travelers who chose YlooTrips</p>
-          <Link
-            href="/contact"
-            className="inline-flex items-center gap-2 bg-accent text-primary font-bold px-8 py-3.5 rounded-full hover:bg-accent/90 transition-colors shadow-lg shadow-accent/20"
-          >
-            Start Planning Your Trip
-          </Link>
-          <p className="text-xs text-cream/30 mt-3">
-            Custom itinerary in 24 hrs · No commitment · Free cancellation
-          </p>
-        </div>
 
       </div>
 

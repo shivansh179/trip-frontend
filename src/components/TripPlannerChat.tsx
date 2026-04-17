@@ -744,6 +744,125 @@ function ItineraryDisplay({ itinerary, onBookNow, matchedTrip, onShowMarket }: {
   );
 }
 
+const REAL_TRIPS = [
+  {
+    title: 'Golden Triangle',
+    subtitle: 'Delhi · Agra · Jaipur',
+    image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=400&q=80',
+    price: '₹1,16,200',
+    duration: '10 Days',
+    badge: '⭐ Most Popular',
+    href: '/trips/golden-triangle-10-day',
+  },
+  {
+    title: 'Kerala & South India',
+    subtitle: 'Kochi · Munnar · Alleppey · Varkala',
+    image: 'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400&q=80',
+    price: '₹1,57,700',
+    duration: '14 Days',
+    badge: '🏆 Top Rated',
+    href: '/trips/kerala-south-india-14-day',
+  },
+  {
+    title: 'Rajasthan Heritage',
+    subtitle: 'Jaipur · Jodhpur · Udaipur · Jaisalmer',
+    image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&q=80',
+    price: '₹78,850',
+    duration: '7 Days',
+    badge: '🎨 Cultural',
+    href: '/trips/rajasthan-heritage-7-day',
+  },
+];
+
+const POPULAR_PACKAGES = [
+  { name: '🏔️ Manali', href: '/manali-tour-package' },
+  { name: '🏖️ Goa', href: '/goa-tour-package' },
+  { name: '❄️ Kashmir', href: '/kashmir-tour-package' },
+  { name: '🌴 Kerala', href: '/kerala-tour-package' },
+  { name: '✈️ Bali', href: '/bali-honeymoon-package' },
+  { name: '🏙️ Dubai', href: '/dubai-tour-package-from-delhi' },
+];
+
+function RealTripsSidebar() {
+  return (
+    <div className="space-y-4 pb-12">
+      {/* Curated tours card */}
+      <div className="bg-white rounded-2xl border border-cream-dark overflow-hidden shadow-sm">
+        <div className="px-4 py-3 bg-primary">
+          <p className="text-xs font-black uppercase tracking-widest text-accent">✨ Real Itineraries</p>
+          <p className="text-[10px] text-cream-dark mt-0.5">Handcrafted by YlooTrips experts</p>
+        </div>
+        <div className="divide-y divide-cream-dark">
+          {REAL_TRIPS.map((trip) => (
+            <a
+              key={trip.href}
+              href={trip.href}
+              className="flex gap-3 p-3 hover:bg-cream-light transition-colors group"
+            >
+              <img
+                src={trip.image}
+                alt={trip.title}
+                className="w-[72px] h-[56px] rounded-xl object-cover shrink-0 group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold text-accent/90 uppercase tracking-wide leading-none mb-0.5">{trip.badge}</p>
+                <p className="font-bold text-primary text-[13px] leading-tight">{trip.title}</p>
+                <p className="text-[10px] text-secondary mt-0.5 truncate">{trip.subtitle}</p>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-xs font-bold text-primary">{trip.price}</span>
+                  <span className="text-[10px] text-secondary">· {trip.duration}</span>
+                </div>
+              </div>
+              <ArrowUpRight size={14} className="text-secondary shrink-0 mt-1 group-hover:text-primary transition-colors" />
+            </a>
+          ))}
+        </div>
+        <div className="p-3 border-t border-cream-dark">
+          <a
+            href="/trips"
+            className="w-full flex items-center justify-center gap-1.5 text-xs font-bold text-primary border border-primary/20 rounded-xl py-2.5 hover:bg-primary hover:text-cream transition-colors"
+          >
+            View All Trips <ArrowUpRight size={12} />
+          </a>
+        </div>
+      </div>
+
+      {/* Popular packages grid */}
+      <div className="bg-white rounded-2xl border border-cream-dark p-4 shadow-sm">
+        <p className="text-[10px] font-black uppercase tracking-widest text-secondary mb-3">Popular Packages</p>
+        <div className="grid grid-cols-2 gap-2">
+          {POPULAR_PACKAGES.map((pkg) => (
+            <a
+              key={pkg.href}
+              href={pkg.href}
+              className="text-center text-xs font-semibold text-primary bg-cream rounded-xl py-2.5 hover:bg-primary hover:text-cream transition-colors"
+            >
+              {pkg.name}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* WhatsApp CTA */}
+      <div className="bg-primary rounded-2xl p-4 shadow-sm">
+        <p className="text-xs font-bold text-accent mb-1">💬 Talk to a Trip Expert</p>
+        <p className="text-[11px] text-cream-dark mb-3 leading-relaxed">
+          Get a personalised quote with pricing &amp; itinerary in under 1 hour.
+        </p>
+        <a
+          href="https://wa.me/918427831127"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 bg-green-500 text-white text-xs font-bold py-2.5 rounded-xl hover:bg-green-600 transition-colors"
+        >
+          💬 WhatsApp Us Now
+        </a>
+        <p className="text-[10px] text-cream/40 text-center mt-2">Mon–Sun · 9am–10pm IST</p>
+      </div>
+    </div>
+  );
+}
+
 export default function TripPlannerChat() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -846,7 +965,7 @@ export default function TripPlannerChat() {
   return (
     <div className="min-h-screen bg-cream-light">
       {/* Hero Header */}
-      <div className="bg-primary pt-16 pb-8 px-4 relative overflow-hidden">
+      <div className="bg-primary pt-28 pb-8 px-4 relative overflow-hidden">
         {/* Real Trips pill — top right */}
         <a
           href="/reel-to-trip"
@@ -871,7 +990,9 @@ export default function TripPlannerChat() {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 -mt-4">
+      <div className="max-w-6xl mx-auto px-4 -mt-4">
+        <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_300px] xl:gap-6 xl:items-start">
+          <div>
         {/* Input Card */}
         <div className="bg-white rounded-2xl shadow-lg border border-cream-dark p-3 sm:p-5">
           <p className="text-[10px] font-bold uppercase tracking-widest text-secondary/50 mb-2 px-1">✨ Ask Yloo AI anything</p>
@@ -889,7 +1010,7 @@ export default function TripPlannerChat() {
             <button
               onClick={() => handleSubmit()}
               disabled={!input.trim() || loading}
-              className="ml-auto flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-bold px-5 py-2.5 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-amber-500/20"
+              className="ml-auto flex items-center gap-2 bg-gray-900 text-white text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-black/20"
             >
               {loading ? (
                 <><Loader2 className="w-4 h-4 animate-spin" />Planning…</>
@@ -970,6 +1091,12 @@ export default function TripPlannerChat() {
           </div>
         )}
         {itinerary && !showMarket && <div className="pb-12" />}
+          </div>
+          {/* Real trips sidebar — desktop only */}
+          <div className="hidden xl:block sticky top-20">
+            <RealTripsSidebar />
+          </div>
+        </div>
       </div>
     </div>
   );

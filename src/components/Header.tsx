@@ -66,14 +66,14 @@ export default function Header() {
                                 <Link key={link.name} href={link.href}
                                     className={`relative px-4 py-2 text-[11px] uppercase tracking-[0.12em] font-semibold rounded-full transition-all duration-300 ${
                                         isActive(link.href)
-                                            ? 'bg-amber-500/10 text-amber-600'
+                                            ? 'bg-gray-100 text-gray-900'
                                             : hasHero && !isScrolled
                                                 ? 'text-white/80 hover:text-white hover:bg-white/10'
                                                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                                     }`}>
                                     {link.name}
                                     {isActive(link.href) && (
-                                        <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-amber-500" />
+                                        <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gray-900" />
                                     )}
                                 </Link>
                             ))}
@@ -85,20 +85,20 @@ export default function Header() {
                             <Link href="/my-booking"
                                 className={`hidden md:flex items-center gap-1.5 px-3 py-2 rounded-full text-[11px] font-bold uppercase tracking-wider border transition-all duration-300 ${
                                     hasHero && !isScrolled
-                                        ? 'border-amber-400/50 text-amber-300 hover:bg-amber-400/10'
-                                        : 'border-amber-400 text-amber-600 hover:bg-amber-50'
+                                        ? 'border-white/50 text-white hover:bg-white/10'
+                                        : 'border-gray-900 text-gray-900 hover:bg-gray-100'
                                 }`}>
                                 <Ticket size={12} />
                                 My Booking
                             </Link>
                             {/* Plan Journey */}
                             <Link href="/trip-planner"
-                                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-wider bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 transition-all duration-300 hover:scale-105 shadow-md shadow-amber-500/20">
+                                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-wider bg-gray-900 text-white hover:bg-gray-700 transition-all duration-300 hover:scale-105 shadow-md shadow-black/20">
                                 <Sparkles size={13} />
                                 Plan Journey
                             </Link>
                             <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                className={`lg:hidden relative z-10 p-2.5 rounded-full transition-all duration-300 ${
+                                className={`lg:hidden relative z-10 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 ${
                                     hasHero && !isScrolled && !isMobileMenuOpen
                                         ? 'text-white bg-black/30 hover:bg-black/40 border border-white/20'
                                         : 'text-gray-800 bg-gray-100 hover:bg-gray-200'
@@ -124,7 +124,7 @@ export default function Header() {
                     }}
                 >
                     {/* Ambient glows */}
-                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
                     <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
                     {/* Subtle grid */}
@@ -140,7 +140,7 @@ export default function Header() {
                                 <img src="/logo.png" alt="YlooTrips" className="h-9 w-auto object-contain brightness-0 invert" />
                             </Link>
                             <button onClick={() => setIsMobileMenuOpen(false)}
-                                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-white/10 transition-colors active:scale-90">
+                                className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-white/10 transition-colors active:scale-90">
                                 <X size={20} />
                             </button>
                         </div>
@@ -153,10 +153,10 @@ export default function Header() {
                                         onClick={() => setIsMobileMenuOpen(false)}
                                         className={`flex items-center justify-between py-4 transition-all duration-300 active:scale-[0.98] ${
                                             isMobileMenuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'
-                                        } ${isActive(link.href) ? 'text-amber-400' : 'text-white/85 hover:text-white'}`}
+                                        } ${isActive(link.href) ? 'text-white' : 'text-white/85 hover:text-white'}`}
                                         style={{ transitionDelay: isMobileMenuOpen ? `${i * 55 + 80}ms` : '0ms' }}>
                                         <span className="font-semibold text-xl tracking-tight">{link.name}</span>
-                                        <ChevronRight size={18} className={isActive(link.href) ? 'text-amber-400' : 'text-white/20'} />
+                                        <ChevronRight size={18} className={isActive(link.href) ? 'text-white' : 'text-white/20'} />
                                     </Link>
                                     {i < navLinks.length - 1 && (
                                         <div className="h-px bg-white/5" />
@@ -183,7 +183,7 @@ export default function Header() {
                                 Track My Booking
                             </Link>
                             <Link href="/trip-planner" onClick={() => setIsMobileMenuOpen(false)}
-                                className={`flex items-center justify-center gap-2.5 py-4 rounded-2xl text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25 transition-all duration-500 ${
+                                className={`flex items-center justify-center gap-2.5 py-4 rounded-2xl text-sm font-bold bg-white text-gray-900 shadow-lg shadow-black/20 transition-all duration-500 ${
                                     isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                                 }`}
                                 style={{ transitionDelay: isMobileMenuOpen ? '430ms' : '0ms' }}>

@@ -84,12 +84,12 @@ export default function Navbar() {
           {/* Cashback & Offers — always-visible pill */}
           <Link
             href="/cashback"
-            className="flex items-center gap-1.5 border border-amber-500 bg-amber-500 text-white hover:bg-amber-600 hover:border-amber-600 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 relative"
+            className="flex items-center gap-1.5 border border-gray-900 bg-gray-900 text-white hover:bg-gray-700 hover:border-gray-700 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 relative"
           >
             <Wallet size={13} />
             WanderLoot 💸
             {balance > 0 && (
-              <span className="ml-1 bg-white text-amber-600 text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+              <span className="ml-1 bg-white/20 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
                 {formatPriceWithCurrency(balance, currency)}
               </span>
             )}
@@ -98,7 +98,7 @@ export default function Navbar() {
           {/* Track Booking CTA */}
           <Link
             href="/my-booking"
-            className="flex items-center gap-1.5 border border-amber-500 text-amber-600 hover:bg-amber-500 hover:text-white px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200"
+            className="flex items-center gap-1.5 border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200"
           >
             <Ticket size={13} />
             Track Booking
@@ -142,12 +142,12 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 font-serif text-4xl text-amber-600 hover:text-amber-500 transition-colors"
+                className="flex items-center gap-3 font-serif text-4xl text-primary hover:text-primary/70 transition-colors"
               >
                 <Wallet size={28} />
                 {link.name}
                 {balance > 0 && (
-                  <span className="bg-amber-500 text-white text-sm font-bold px-3 py-1 rounded-full">
+                  <span className="bg-gray-900 text-white text-sm font-bold px-3 py-1 rounded-full">
                     {formatPriceWithCurrency(balance, currency)}
                   </span>
                 )}
@@ -168,7 +168,7 @@ export default function Navbar() {
           <Link
             href="/my-booking"
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2 border border-amber-500 text-amber-600 rounded-full px-6 py-3 text-sm font-semibold tracking-widest uppercase"
+            className="flex items-center gap-2 border border-gray-900 text-gray-900 rounded-full px-6 py-3 text-sm font-semibold tracking-widest uppercase"
           >
             <Ticket size={16} />
             Track Booking

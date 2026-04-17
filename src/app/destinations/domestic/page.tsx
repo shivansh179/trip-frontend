@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, Suspense } from 'react';
+import { useState, useMemo, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -450,6 +450,14 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
   const [cbSending, setCbSending] = useState(false);
   const { balance: walletBalance, addCashback, deductBalance } = useWallet();
 
+  // Lock body scroll on mobile when drawer is open
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
   const totalPrice = trip.priceINR * Number(guests || 2);
   const discountAmt = Math.round(totalPrice * 0.05);
   const priceAfterDiscount = totalPrice - discountAmt;
@@ -560,20 +568,20 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
 
               {/* WanderLoot wallet */}
               {payStep === 'options' && walletBalance > 0 && (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-amber-900">WanderLoot 💸</p>
-                      <p className="text-xs text-amber-700">Balance: ₹{walletBalance.toLocaleString('en-IN')} · Use up to ₹{maxWalletUsable.toLocaleString('en-IN')}</p>
+                      <p className="text-sm font-semibold text-gray-900">WanderLoot 💸</p>
+                      <p className="text-xs text-gray-600">Balance: ₹{walletBalance.toLocaleString('en-IN')} · Use up to ₹{maxWalletUsable.toLocaleString('en-IN')}</p>
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" checked={applyWallet} onChange={e => { setApplyWallet(e.target.checked); setPayStep('options'); setChargeNow(null); }} className="w-4 h-4 accent-amber-500" />
-                      <span className="text-xs font-semibold text-amber-800">Apply</span>
+                      <input type="checkbox" checked={applyWallet} onChange={e => { setApplyWallet(e.target.checked); setPayStep('options'); setChargeNow(null); }} className="w-4 h-4" />
+                      <span className="text-xs font-semibold text-gray-700">Apply</span>
                     </label>
                   </div>
                   {applyWallet && walletDeduction > 0 && (
-                    <div className="mt-2 pt-2 border-t border-amber-200 flex items-center justify-between text-xs">
-                      <span className="text-amber-800">💰 WanderLoot applied</span>
+                    <div className="mt-2 pt-2 border-t border-gray-200 flex items-center justify-between text-xs">
+                      <span className="text-gray-700">💰 WanderLoot applied</span>
                       <span className="font-semibold text-green-700">−₹{walletDeduction.toLocaleString('en-IN')}</span>
                     </div>
                   )}
@@ -625,18 +633,18 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
             <div className="p-5 bg-[#1a2535] min-h-full">
               {cbSent ? (
                 <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
-                  <div className="w-14 h-14 rounded-full bg-amber-400/20 flex items-center justify-center">
-                    <CheckCircle className="w-7 h-7 text-amber-400"/>
+                  <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
+                    <CheckCircle className="w-7 h-7 text-white/70"/>
                   </div>
                   <p className="font-display text-xl text-white">You&apos;re all set! 🎉</p>
-                  <p className="text-white/60 text-sm max-w-xs">Our Yloo travel expert will call you within <span className="text-amber-400 font-bold">1 hour</span> with best price & EMI plan for {trip.title}.</p>
+                  <p className="text-white/60 text-sm max-w-xs">Our Yloo travel expert will call you within <span className="text-white font-bold">1 hour</span> with best price & EMI plan for {trip.title}.</p>
                   <p className="text-white/30 text-[11px] mt-2">📱 Expect call from +91 84278 31127</p>
-                  <button onClick={onClose} className="mt-3 px-6 py-2.5 bg-amber-400 text-gray-900 font-bold rounded-xl text-sm">Done</button>
+                  <button onClick={onClose} className="mt-3 px-6 py-2.5 bg-white text-gray-900 font-bold rounded-xl text-sm">Done</button>
                 </div>
               ) : (
                 <form onSubmit={handleCallback} className="space-y-4">
                   <div className="flex items-start gap-3 mb-1">
-                    <div className="w-10 h-10 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
                       <span className="text-xl">🏕️</span>
                     </div>
                     <div>
@@ -655,16 +663,16 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
                   <div className="bg-white/5 border border-white/10 rounded-xl p-3 space-y-1.5">
                     {[`Custom dates for ${trip.title}`,'Best group price guarantee','Pickup & drop options','Flexible 3/6/12 month EMI'].map(item=>(
                       <p key={item} className="text-white/70 text-xs flex items-center gap-2">
-                        <span className="text-amber-400 text-[10px]">✓</span> {item}
+                        <span className="text-white/60 text-[10px]">✓</span> {item}
                       </p>
                     ))}
                   </div>
                   <input required type="text" placeholder="Your name" value={cbName} onChange={e=>setCbName(e.target.value)}
-                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-amber-400"/>
+                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-white/40"/>
                   <input required type="tel" placeholder="Phone number (we'll call you)" value={cbPhone} onChange={e=>setCbPhone(e.target.value)}
-                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-amber-400"/>
+                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-white/40"/>
                   <button type="submit" disabled={cbSending}
-                    className="w-full flex items-center justify-center gap-2 bg-amber-400 text-gray-900 font-bold text-sm py-3.5 rounded-xl hover:bg-amber-300 disabled:opacity-60 transition-colors">
+                    className="w-full flex items-center justify-center gap-2 bg-white text-gray-900 font-bold text-sm py-3.5 rounded-xl hover:bg-gray-100 disabled:opacity-60 transition-colors">
                     {cbSending ? <Loader2 size={14} className="animate-spin"/> : '📞'}
                     {cbSending ? 'Booking callback…' : 'Get Free Callback + EMI Options'}
                   </button>
@@ -694,7 +702,7 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute top-3 left-3 flex gap-1.5 flex-wrap">
           {trip.badge && (
-            <span className="bg-accent text-primary text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
+            <span className="bg-gray-900 text-white text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
               {trip.badge}
             </span>
           )}
@@ -744,7 +752,7 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
             </span>
           ))}
           {trip.includes.length > 3 && (
-            <span className="text-[10px] text-accent font-medium self-center">+{trip.includes.length - 3} more</span>
+            <span className="text-[10px] text-gray-500 font-medium self-center">+{trip.includes.length - 3} more</span>
           )}
         </div>
 
@@ -760,7 +768,7 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
           <div className="bg-cream-light rounded-xl p-3 mb-3 space-y-2">
             {trip.itinerary.map((item) => (
               <div key={item.day} className="flex gap-2 text-xs">
-                <span className="font-bold text-accent shrink-0 w-10">{item.day}</span>
+                <span className="font-bold text-gray-600 shrink-0 w-10">{item.day}</span>
                 <span className="text-primary/70">{item.desc}</span>
               </div>
             ))}
@@ -777,7 +785,7 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
           <span className="text-[10px] bg-green-50 text-green-700 border border-green-100 px-2 py-0.5 rounded-full font-semibold">
             🔒 Secure Easebuzz
           </span>
-          <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-100 px-2 py-0.5 rounded-full font-semibold">
+          <span className="text-[10px] bg-gray-50 text-gray-600 border border-gray-100 px-2 py-0.5 rounded-full font-semibold">
             5% Early Bird
           </span>
         </div>
@@ -786,7 +794,7 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
         <div className="grid grid-cols-2 gap-2 pt-3 border-t border-primary/8">
           <button
             onClick={() => { setDrawerTab('pay'); setShowDrawer(true); }}
-            className="flex items-center justify-center gap-1.5 bg-accent text-primary text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl hover:bg-accent/90 transition-colors"
+            className="flex items-center justify-center gap-1.5 bg-gray-900 text-white text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl hover:bg-gray-800 transition-colors"
           >
             <CreditCard size={12} /> Book Now
           </button>
@@ -821,12 +829,12 @@ const highlights = [
   { icon: Waves, label: 'Beaches & Coasts', color: 'text-cyan-600', bg: 'bg-cyan-50' },
   { icon: TreePine, label: 'Wildlife Safaris', color: 'text-green-700', bg: 'bg-green-50' },
   { icon: Sailboat, label: 'Kerala Backwaters', color: 'text-teal-600', bg: 'bg-teal-50' },
-  { icon: Sun, label: 'Rajasthan Deserts', color: 'text-amber-600', bg: 'bg-amber-50' },
+  { icon: Sun, label: 'Rajasthan Deserts', color: 'text-yellow-700', bg: 'bg-yellow-50' },
 ];
 
 const trustSignals = [
   { icon: Shield, title: 'Fully Licensed & Insured', desc: 'Registered with India\'s Ministry of Tourism. All guides hold national guide cards.', color: 'text-blue-600', bg: 'bg-blue-50' },
-  { icon: Users, title: 'English-Speaking Private Guides', desc: 'Dedicated guide throughout your trip. Also available in French, German, Spanish & Japanese.', color: 'text-amber-600', bg: 'bg-amber-50' },
+  { icon: Users, title: 'English-Speaking Private Guides', desc: 'Dedicated guide throughout your trip. Also available in French, German, Spanish & Japanese.', color: 'text-indigo-600', bg: 'bg-indigo-50' },
   { icon: Globe, title: 'Trusted by 40+ Countries', desc: 'USA, UK, Australia, Canada, Germany, France — 25,000+ international travelers in 12 years.', color: 'text-green-600', bg: 'bg-green-50' },
   { icon: CreditCard, title: 'Secure International Payment', desc: 'Visa, Mastercard, Amex accepted. Prices in USD. No hidden charges. PCI-DSS compliant gateway.', color: 'text-purple-600', bg: 'bg-purple-50' },
   { icon: Clock, title: '24/7 Support During Your Trip', desc: 'WhatsApp, email, or phone — someone from our team is always available across all timezones.', color: 'text-rose-600', bg: 'bg-rose-50' },
@@ -895,7 +903,7 @@ function DomesticDestinationsContent() {
 
       {/* International trust bar */}
       {isInternational && (
-        <section className="bg-amber-500 text-white py-3">
+        <section className="bg-gray-900 text-white py-3">
           <div className="section-container">
             <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-xs font-semibold uppercase tracking-wider">
               {['🇺🇸 Trusted by Americans', '🇬🇧 Loved in the UK', '🇦🇺 Top-rated in Australia', '⭐ 4.9 Google · 2,400+ reviews', '🏛️ Ministry of Tourism Registered', '💳 Visa · Mastercard · Amex'].map((item) => (
@@ -908,23 +916,23 @@ function DomesticDestinationsContent() {
 
       {/* Curated tours for international users */}
       {isInternational && (
-        <section className="bg-gradient-to-b from-amber-50 to-white border-b border-amber-200/50 py-10 md:py-14">
+        <section className="bg-gray-50 border-b border-gray-200 py-10 md:py-14">
           <div className="section-container">
             <div className="flex items-start justify-between gap-4 mb-8">
               <div>
-                <div className="inline-flex items-center gap-2 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-3">
-                  🌍 Exclusive for International Travelers
+                <div className="inline-flex items-center gap-2 bg-gray-900 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-3">
+                  🌍 International Travelers
                 </div>
                 <h2 className="font-display text-2xl md:text-display-lg text-primary">Private Guided India Tours</h2>
                 <p className="text-primary/55 text-sm mt-2">English-speaking guide · Private AC car · All tickets · Secure USD payment · Free cancellation</p>
               </div>
-              <Link href="/tours" className="hidden md:flex items-center gap-1.5 shrink-0 text-xs font-bold text-amber-600 border border-amber-300 hover:bg-amber-500 hover:text-white hover:border-amber-500 px-4 py-2 rounded-full transition-all uppercase tracking-wider">
+              <Link href="/tours" className="hidden md:flex items-center gap-1.5 shrink-0 text-xs font-bold text-gray-700 border border-gray-300 hover:bg-gray-900 hover:text-white hover:border-gray-900 px-4 py-2 rounded-full transition-all uppercase tracking-wider">
                 All Tours <ArrowUpRight className="w-3.5 h-3.5" />
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
               {[
-                { slug: 'golden-triangle-10-day', title: '10-Day Golden Triangle', subtitle: 'Delhi · Agra · Jaipur', price: '$1,400', image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80', href: '/tours/golden-triangle-10-day', checkoutHref: '/checkout/tour?tour=golden-triangle-10-day', tags: ['Taj Mahal', 'Amber Fort', 'Red Fort'], rating: 4.9, reviews: 312, badge: 'Most Popular', badgeBg: 'bg-amber-500' },
+                { slug: 'golden-triangle-10-day', title: '10-Day Golden Triangle', subtitle: 'Delhi · Agra · Jaipur', price: '$1,400', image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80', href: '/tours/golden-triangle-10-day', checkoutHref: '/checkout/tour?tour=golden-triangle-10-day', tags: ['Taj Mahal', 'Amber Fort', 'Red Fort'], rating: 4.9, reviews: 312, badge: 'Most Popular', badgeBg: 'bg-gray-800' },
                 { slug: 'kerala-south-india-14-day', title: '14-Day Kerala & South India', subtitle: 'Kochi · Munnar · Alleppey · Pondicherry', price: '$1,900', image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&q=80', href: '/tours/kerala-south-india-14-day', checkoutHref: '/checkout/tour?tour=kerala-south-india-14-day', tags: ['Houseboat', 'Tea Estates', 'French Quarter'], rating: 4.9, reviews: 287, badge: 'Best Value', badgeBg: 'bg-green-600' },
                 { slug: 'rajasthan-heritage-7-day', title: '7-Day Rajasthan Heritage', subtitle: 'Jaipur · Jodhpur · Udaipur', price: '$950', image: 'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?w=800&q=80', href: '/tours/rajasthan-heritage-7-day', checkoutHref: '/checkout/tour?tour=rajasthan-heritage-7-day', tags: ['Desert Safari', 'Lake Palace', 'Blue City'], rating: 4.8, reviews: 194, badge: 'Quick Escape', badgeBg: 'bg-blue-600' },
               ].map((tour) => (
@@ -937,32 +945,32 @@ function DomesticDestinationsContent() {
                       <span className="bg-primary/80 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">🔒 Private Tour</span>
                     </div>
                     <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                      <Star className="w-3 h-3 fill-gray-600 text-gray-600" />
                       <span className="text-xs font-semibold">{tour.rating} ({tour.reviews})</span>
                     </div>
                     <div className="absolute bottom-3 left-3">
-                      <span className="bg-amber-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">From {tour.price}</span>
+                      <span className="bg-gray-900 text-white text-xs font-bold px-2.5 py-1 rounded-full">From {tour.price}</span>
                     </div>
                   </Link>
                   <div className="p-5 flex flex-col flex-1">
-                    <Link href={tour.href}><h3 className="font-display text-lg text-primary mb-1 group-hover:text-amber-600 transition-colors">{tour.title}</h3></Link>
+                    <Link href={tour.href}><h3 className="font-display text-lg text-primary mb-1 group-hover:text-secondary transition-colors">{tour.title}</h3></Link>
                     <p className="text-xs text-primary/50 flex items-center gap-1 mb-3"><MapPin className="w-3 h-3" />{tour.subtitle}</p>
                     <div className="flex flex-wrap gap-1.5 mb-3">
-                      {tour.tags.map((tag) => <span key={tag} className="bg-amber-50 text-amber-700 text-[10px] font-medium px-2 py-0.5 rounded-full">{tag}</span>)}
+                      {tour.tags.map((tag) => <span key={tag} className="bg-gray-100 text-gray-600 text-[10px] font-medium px-2 py-0.5 rounded-full">{tag}</span>)}
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-green-700 font-medium mb-4">
                       <Check className="w-3.5 h-3.5" /> English guide · Private car · All tickets
                     </div>
                     <div className="flex-1" />
                     <div className="grid grid-cols-2 gap-2 pt-3 border-t border-primary/8">
-                      <Link href={tour.checkoutHref} className="flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl transition-colors">Book Now</Link>
+                      <Link href={tour.checkoutHref} className="flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-gray-800 text-white text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl transition-colors">Book Now</Link>
                       <Link href={tour.href} className="flex items-center justify-center gap-1 border border-primary/20 text-primary text-xs font-medium uppercase tracking-wide py-2.5 rounded-xl hover:bg-primary hover:text-cream transition-all">Details <ArrowUpRight className="w-3 h-3" /></Link>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-4 md:gap-6 py-3 bg-white/70 rounded-xl border border-amber-100">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-4 md:gap-6 py-3 bg-white/70 rounded-xl border border-gray-100">
               {['🔒 256-bit SSL', '💳 Visa · MC · Amex', '🗣️ English Guides', '🆓 Free Cancellation', '🏛️ Govt. Licensed'].map((b) => (
                 <span key={b} className="text-xs text-primary/55 font-medium whitespace-nowrap">{b}</span>
               ))}
@@ -990,7 +998,7 @@ function DomesticDestinationsContent() {
         <section className="py-16 md:py-24 bg-white">
           <div className="section-container">
             <div className="text-center mb-12">
-              <p className="text-caption uppercase tracking-[0.3em] text-amber-600 mb-3">Why International Travelers Choose Us</p>
+              <p className="text-caption uppercase tracking-[0.3em] text-gray-400 mb-3">Why International Travelers Choose Us</p>
               <h2 className="font-display text-display-lg text-primary max-w-2xl mx-auto">Everything handled — <span className="italic">from airport to airport</span></h2>
               <p className="text-primary/60 mt-4 max-w-xl mx-auto">No group tours. No shared coaches. Just you, a private guide who speaks your language, and India at its finest.</p>
             </div>
@@ -1012,7 +1020,7 @@ function DomesticDestinationsContent() {
           <div className="section-container">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
               <div>
-                <p className="text-caption uppercase tracking-[0.3em] text-amber-600 mb-4">Private Guided Tours</p>
+                <p className="text-caption uppercase tracking-[0.3em] text-gray-400 mb-4">Private Guided Tours</p>
                 <h2 className="font-display text-display-lg text-primary mb-6">Not a tour group. <span className="italic">Your trip, your pace.</span></h2>
                 <p className="text-primary/65 text-body-lg mb-8">Every YlooTrips India tour is fully private. No strangers on your bus, no rushed photo stops. Your own vehicle, your own guide, your own pace — from the moment you land to the moment you leave.</p>
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -1035,7 +1043,7 @@ function DomesticDestinationsContent() {
                     <div className="relative aspect-[3/4] overflow-hidden rounded-xl"><Image src="https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?w=600&q=80" alt="Rajasthan heritage" fill className="object-cover" /></div>
                   </div>
                 </div>
-                <div className="absolute -bottom-4 -left-4 bg-amber-500 text-white px-5 py-3 rounded-xl shadow-lg">
+                <div className="absolute -bottom-4 -left-4 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg">
                   <div className="font-display text-2xl">25K+</div>
                   <div className="text-xs uppercase tracking-widest opacity-90">Travelers guided</div>
                 </div>
@@ -1049,7 +1057,7 @@ function DomesticDestinationsContent() {
       {isInternational && (
         <section className="py-12 bg-primary text-cream">
           <div className="section-container">
-            <p className="text-center text-caption uppercase tracking-[0.3em] text-amber-400 mb-8">Trusted by travelers from</p>
+            <p className="text-center text-caption uppercase tracking-[0.3em] text-cream/50 mb-8">Trusted by travelers from</p>
             <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-10">
               {[{ flag: '🇺🇸', country: 'USA' }, { flag: '🇬🇧', country: 'UK' }, { flag: '🇦🇺', country: 'Australia' }, { flag: '🇨🇦', country: 'Canada' }, { flag: '🇩🇪', country: 'Germany' }, { flag: '🇫🇷', country: 'France' }, { flag: '🇳🇱', country: 'Netherlands' }, { flag: '🇸🇬', country: 'Singapore' }, { flag: '🇯🇵', country: 'Japan' }, { flag: '🇳🇿', country: 'New Zealand' }, { flag: '🇰🇪', country: 'Kenya' }, { flag: '🇧🇷', country: 'Brazil' }].map(({ flag, country }) => (
                 <div key={country} className="flex flex-col items-center gap-1">
@@ -1065,7 +1073,7 @@ function DomesticDestinationsContent() {
                     <span className="text-2xl">{flag}</span>
                     <div><div className="font-medium text-cream text-sm">{traveler}</div><div className="text-xs text-cream/50">{country} · {trip}</div></div>
                   </div>
-                  <div className="flex mb-2">{Array.from({ length: rating }).map((_, i) => <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />)}</div>
+                  <div className="flex mb-2">{Array.from({ length: rating }).map((_, i) => <Star key={i} className="w-3 h-3 fill-white/70 text-white/70" />)}</div>
                   <p className="text-xs text-cream/70 leading-relaxed">&ldquo;{text}&rdquo;</p>
                 </div>
               ))}
@@ -1079,7 +1087,7 @@ function DomesticDestinationsContent() {
         <section className="py-16 md:py-20 bg-white">
           <div className="section-container max-w-3xl">
             <div className="text-center mb-10">
-              <p className="text-caption uppercase tracking-[0.3em] text-amber-600 mb-3">Before You Go</p>
+              <p className="text-caption uppercase tracking-[0.3em] text-gray-400 mb-3">Before You Go</p>
               <h2 className="font-display text-display-lg text-primary">Visa, Safety & Practical Info</h2>
             </div>
             <div className="space-y-3">
@@ -1087,17 +1095,17 @@ function DomesticDestinationsContent() {
                 <div key={i} className="border border-primary/10 rounded-xl overflow-hidden">
                   <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-primary/[0.02] transition-colors">
                     <span className="font-medium text-primary text-sm pr-4">{item.q}</span>
-                    {openFaq === i ? <ChevronUp size={18} className="text-amber-500 shrink-0" /> : <ChevronDown size={18} className="text-primary/40 shrink-0" />}
+                    {openFaq === i ? <ChevronUp size={18} className="text-gray-600 shrink-0" /> : <ChevronDown size={18} className="text-primary/40 shrink-0" />}
                   </button>
                   {openFaq === i && <div className="px-6 pb-5 text-primary/65 text-sm leading-relaxed border-t border-primary/5"><p className="pt-4">{item.a}</p></div>}
                 </div>
               ))}
             </div>
-            <div className="mt-8 p-5 bg-amber-50 border border-amber-200 rounded-xl flex gap-4 items-start">
+            <div className="mt-8 p-5 bg-gray-50 border border-gray-200 rounded-xl flex gap-4 items-start">
               <span className="text-2xl shrink-0">📋</span>
               <div>
-                <div className="font-semibold text-amber-900 mb-1">Free Pre-Trip India Guide</div>
-                <p className="text-sm text-amber-800">After booking, we send you our complete India travel guide — visa step-by-step, what to pack, safety tips, etiquette, money, and day-by-day prep.</p>
+                <div className="font-semibold text-gray-900 mb-1">Free Pre-Trip India Guide</div>
+                <p className="text-sm text-gray-600">After booking, we send you our complete India travel guide — visa step-by-step, what to pack, safety tips, etiquette, money, and day-by-day prep.</p>
               </div>
             </div>
           </div>
@@ -1106,13 +1114,13 @@ function DomesticDestinationsContent() {
 
       {/* Active tag filter banner */}
       {tagQuery && (
-        <div className="bg-amber-50 border-b border-amber-200 py-2.5">
+        <div className="bg-gray-100 border-b border-gray-200 py-2.5">
           <div className="section-container flex items-center justify-between gap-3">
-            <p className="text-sm text-amber-800 font-semibold">
+            <p className="text-sm text-gray-800 font-semibold">
               🔍 Showing results for: <span className="capitalize">{tagQuery}</span>
-              <span className="ml-2 text-amber-600 font-normal">({filtered.length} trip{filtered.length !== 1 ? 's' : ''})</span>
+              <span className="ml-2 text-gray-600 font-normal">({filtered.length} trip{filtered.length !== 1 ? 's' : ''})</span>
             </p>
-            <a href="/destinations/domestic" className="text-xs font-bold text-amber-700 border border-amber-300 px-3 py-1 rounded-full hover:bg-amber-500 hover:text-white hover:border-amber-500 transition-all">
+            <a href="/destinations/domestic" className="text-xs font-bold text-gray-700 border border-gray-300 px-3 py-1 rounded-full hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all">
               Clear filter ✕
             </a>
           </div>
@@ -1138,7 +1146,7 @@ function DomesticDestinationsContent() {
         <div className="section-container">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-10 md:mb-14">
             <div>
-              <p className="text-caption uppercase tracking-[0.3em] text-terracotta mb-2">
+              <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-2">
                 {activeRegion === 'All India' ? (isInternational ? 'Choose Your India Experience' : 'Across India') : activeRegion}
               </p>
               <h2 className="font-display text-display-lg text-primary">
@@ -1169,7 +1177,7 @@ function DomesticDestinationsContent() {
           <div className="flex flex-wrap justify-center gap-6 md:gap-12 text-center">
             {[{ value: '3+', label: 'Years of India expertise' }, { value: '25K+', label: 'Travelers guided' }, { value: '4.9★', label: 'Google rating' }, { value: '40+', label: 'Countries served' }].map(({ value, label }) => (
               <div key={label}>
-                <div className="font-display text-2xl md:text-3xl text-terracotta">{value}</div>
+                <div className="font-display text-2xl md:text-3xl text-primary">{value}</div>
                 <div className="text-caption text-primary/50 uppercase tracking-widest mt-0.5">{label}</div>
               </div>
             ))}
@@ -1181,7 +1189,7 @@ function DomesticDestinationsContent() {
       <section className="py-16 md:py-24 bg-primary text-cream">
         <div className="section-container">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="text-caption uppercase tracking-[0.3em] text-amber-400 mb-4">
+            <p className="text-caption uppercase tracking-[0.3em] text-cream/50 mb-4">
               {isInternational ? 'Start Planning Your India Trip' : 'India Travel Experts'}
             </p>
             <h2 className="font-display text-display-lg mb-4">

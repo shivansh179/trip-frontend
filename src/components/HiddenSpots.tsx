@@ -33,7 +33,7 @@ export default function HiddenSpots() {
               <span className="italic text-accent">travellers never find</span>
             </h2>
             <p className="text-cream/50 text-body-sm max-w-lg mt-4 leading-relaxed">
-              We've been finding India's best-kept secrets for 12 years. These are places that reward the curious — off the tourist trail, beyond the postcard.
+              Places that reward the curious — off the tourist trail, beyond the postcard. Hand-picked by our team, updated for 2026.
             </p>
           </div>
           <Link
@@ -111,7 +111,7 @@ export default function HiddenSpots() {
         {/* Bottom strip */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/8 pt-8">
           <p className="text-cream/35 text-sm">
-            {hiddenSpots.length} hidden spots curated over 12 years · Updated for 2026
+            {hiddenSpots.length} hand-picked hidden spots · Updated for 2026
           </p>
           <a
             href="https://wa.me/918427831127?text=Hi%2C+I'd+like+to+visit+one+of+your+hidden+gem+destinations"

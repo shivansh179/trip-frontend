@@ -88,13 +88,13 @@ export default function Footer() {
               {/* Contact info */}
               <div className="space-y-2.5">
                 <a href="https://wa.me/918427831127" target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2.5 text-cream/50 hover:text-accent transition-colors text-sm group">
-                  <Phone className="w-3.5 h-3.5 group-hover:text-accent" />
+                  className="flex items-center gap-2.5 text-cream/50 hover:text-white/80 transition-colors text-sm group">
+                  <Phone className="w-3.5 h-3.5 group-hover:text-white/80" />
                   <span>+91 84278 31127 (WhatsApp)</span>
                 </a>
                 <a href="mailto:connectylootrips@gmail.com"
-                  className="flex items-center gap-2.5 text-cream/50 hover:text-accent transition-colors text-sm group">
-                  <Mail className="w-3.5 h-3.5 group-hover:text-accent" />
+                  className="flex items-center gap-2.5 text-cream/50 hover:text-white/80 transition-colors text-sm group">
+                  <Mail className="w-3.5 h-3.5 group-hover:text-white/80" />
                   <span>connectylootrips@gmail.com</span>
                 </a>
                 <div className="flex items-start gap-2.5 text-cream/40 text-sm">
@@ -105,7 +105,7 @@ export default function Footer() {
 
               {/* GST / Registration */}
               <div className="border border-white/8 rounded px-4 py-3 space-y-1">
-                <p className="text-[9px] uppercase tracking-[0.2em] text-accent">Company Details</p>
+                <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">Company Details</p>
                 <p className="text-[10px] text-cream/35">MSME Registered · Govt. of India Licensed</p>
                 <p className="text-[10px] text-cream/35">GST Registered Travel Company</p>
                 <p className="text-[10px] text-cream/35">New Delhi, India · Est. 2022</p>
@@ -113,11 +113,11 @@ export default function Footer() {
 
               {/* Newsletter */}
               <div>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-accent mb-3">Travel Inspiration Weekly</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-3">Travel Inspiration Weekly</p>
                 <form className="flex gap-0">
                   <input type="email" placeholder="your@email.com"
-                    className="flex-1 min-w-0 bg-white/5 border border-white/10 px-4 py-3 text-cream text-sm placeholder:text-cream/30 focus:outline-none focus:border-accent transition-colors" />
-                  <button type="submit" className="px-4 py-3 bg-accent text-primary hover:bg-accent-warm transition-colors shrink-0">
+                    className="flex-1 min-w-0 bg-white/5 border border-white/10 px-4 py-3 text-cream text-sm placeholder:text-cream/30 focus:outline-none focus:border-white/30 transition-colors" />
+                  <button type="submit" className="px-4 py-3 bg-white/10 hover:bg-white/20 text-white transition-colors shrink-0 border border-white/10">
                     <ArrowUpRight className="w-4 h-4" />
                   </button>
                 </form>
@@ -135,7 +135,7 @@ export default function Footer() {
                   { title: 'Legal', links: footerLinks.legal },
                 ].map(({ title, links }) => (
                   <div key={title}>
-                    <h4 className="text-[10px] uppercase tracking-[0.2em] text-accent mb-5">{title}</h4>
+                    <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-5">{title}</h4>
                     <ul className="space-y-3">
                       {links.map(l => (
                         <li key={l.name}>
@@ -167,11 +167,11 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-5">
                 <a href="https://www.instagram.com/ylootrips/" target="_blank" rel="noopener noreferrer"
-                  className="text-cream/35 hover:text-accent transition-colors" aria-label="Instagram">
+                  className="text-cream/35 hover:text-white/80 transition-colors" aria-label="Instagram">
                   <Instagram className="w-5 h-5" />
                 </a>
                 <a href="https://www.facebook.com/profile.php?id=61574908545709" target="_blank" rel="noopener noreferrer"
-                  className="text-cream/35 hover:text-accent transition-colors" aria-label="Facebook">
+                  className="text-cream/35 hover:text-white/80 transition-colors" aria-label="Facebook">
                   <Facebook className="w-5 h-5" />
                 </a>
                 {/* Hidden admin */}

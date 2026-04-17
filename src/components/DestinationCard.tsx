@@ -96,7 +96,7 @@ export default function DestinationCard({ destination, index = 0, variant = 'def
                 )}
 
                 {/* CTA row — always visible but animates */}
-                <div className={`inline-flex items-center gap-2 px-4 py-2 border border-cream/30 text-cream text-xs uppercase tracking-widest transition-all duration-300 ${themeHover[theme]} group-hover:border-transparent`}>
+                <div className={`inline-flex items-center gap-2 px-4 py-3 border border-cream/30 text-cream text-xs uppercase tracking-widest transition-all duration-300 ${themeHover[theme]} group-hover:border-transparent`}>
                     <span>Explore</span>
                     <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </div>

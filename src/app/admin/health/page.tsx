@@ -45,7 +45,7 @@ const STATUS_CFG = {
   ok:           { cls: 'bg-green-100 text-green-700 border-green-200',  icon: CheckCircle2, label: 'Operational' },
   missing:      { cls: 'bg-red-100 text-red-700 border-red-200',        icon: XCircle,      label: 'Not Configured' },
   error:        { cls: 'bg-red-100 text-red-700 border-red-200',        icon: XCircle,      label: 'Error' },
-  rate_limited: { cls: 'bg-amber-100 text-amber-700 border-amber-200',  icon: AlertTriangle,label: 'Limit Reached' },
+  rate_limited: { cls: 'bg-yellow-100 text-yellow-700 border-yellow-200',  icon: AlertTriangle,label: 'Limit Reached' },
 };
 
 function StatusBadge({ status }: { status: ApiStatus['status'] }) {
@@ -59,12 +59,12 @@ function StatusBadge({ status }: { status: ApiStatus['status'] }) {
 }
 
 function UsageBar({ percent, status }: { percent: number; status: ApiStatus['status'] }) {
-  const color = status === 'rate_limited' ? 'bg-red-500' : percent > 80 ? 'bg-amber-500' : 'bg-green-500';
+  const color = status === 'rate_limited' ? 'bg-red-500' : percent > 80 ? 'bg-yellow-500' : 'bg-green-500';
   return (
     <div className="mt-3">
       <div className="flex justify-between text-[10px] text-gray-400 mb-1">
         <span>Usage</span>
-        <span className={percent > 80 ? 'text-amber-600 font-bold' : ''}>{percent}%</span>
+        <span className={percent > 80 ? 'text-yellow-600 font-bold' : ''}>{percent}%</span>
       </div>
       <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
         <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${percent}%` }} />
@@ -75,7 +75,7 @@ function UsageBar({ percent, status }: { percent: number; status: ApiStatus['sta
 
 function LatencyPill({ ms }: { ms?: number }) {
   if (!ms) return null;
-  const color = ms < 500 ? 'text-green-600 bg-green-50' : ms < 1500 ? 'text-amber-600 bg-amber-50' : 'text-red-600 bg-red-50';
+  const color = ms < 500 ? 'text-green-600 bg-green-50' : ms < 1500 ? 'text-yellow-600 bg-yellow-50' : 'text-red-600 bg-red-50';
   return (
     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${color}`}>
       {ms}ms
@@ -243,17 +243,17 @@ export default function HealthDashboard() {
         {/* How to fix */}
         <div className="bg-gray-900 rounded-2xl p-6 text-white">
           <h3 className="font-bold text-sm mb-1 flex items-center gap-2">
-            <Zap size={15} className="text-amber-400" /> How to add / replace an API key
+            <Zap size={15} className="text-gray-400" /> How to add / replace an API key
           </h3>
           <p className="text-gray-400 text-xs mb-4">Keys are stored as environment variables on Vercel — never shown here for security.</p>
           <ol className="space-y-2 text-xs text-gray-300">
-            <li className="flex gap-3"><span className="w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">1</span>
-              Go to <a href="https://vercel.com/dashboard" target="_blank" rel="noopener noreferrer" className="text-amber-400 underline">vercel.com</a> → your project → <strong>Settings → Environment Variables</strong></li>
-            <li className="flex gap-3"><span className="w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">2</span>
+            <li className="flex gap-3"><span className="w-5 h-5 rounded-full bg-gray-600 text-white text-[10px] flex items-center justify-center font-bold shrink-0">1</span>
+              Go to <a href="https://vercel.com/dashboard" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">vercel.com</a> → your project → <strong>Settings → Environment Variables</strong></li>
+            <li className="flex gap-3"><span className="w-5 h-5 rounded-full bg-gray-600 text-white text-[10px] flex items-center justify-center font-bold shrink-0">2</span>
               Click the variable name shown on the card above → update the value → Save</li>
-            <li className="flex gap-3"><span className="w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">3</span>
+            <li className="flex gap-3"><span className="w-5 h-5 rounded-full bg-gray-600 text-white text-[10px] flex items-center justify-center font-bold shrink-0">3</span>
               Click <strong>Redeploy</strong> on latest deployment for the change to take effect</li>
-            <li className="flex gap-3"><span className="w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">4</span>
+            <li className="flex gap-3"><span className="w-5 h-5 rounded-full bg-gray-600 text-white text-[10px] flex items-center justify-center font-bold shrink-0">4</span>
               Return here → <strong>Re-check All</strong> to confirm green status</li>
           </ol>
         </div>
@@ -266,10 +266,10 @@ export default function HealthDashboard() {
 function ApiCard({ api, highlight = false }: { api: ApiStatus; highlight?: boolean }) {
   const Icon = API_ICONS[api.name] ?? Globe;
   const borderCls = highlight
-    ? api.status === 'rate_limited' ? 'border-amber-300' : 'border-red-300'
+    ? api.status === 'rate_limited' ? 'border-yellow-300' : 'border-red-300'
     : 'border-gray-200';
-  const iconBg = api.status === 'ok' ? 'bg-green-50' : api.status === 'rate_limited' ? 'bg-amber-50' : 'bg-red-50';
-  const iconColor = api.status === 'ok' ? 'text-green-600' : api.status === 'rate_limited' ? 'text-amber-600' : 'text-red-500';
+  const iconBg = api.status === 'ok' ? 'bg-green-50' : api.status === 'rate_limited' ? 'bg-yellow-50' : 'bg-red-50';
+  const iconColor = api.status === 'ok' ? 'text-green-600' : api.status === 'rate_limited' ? 'text-yellow-600' : 'text-red-500';
 
   return (
     <div className={`bg-white rounded-xl border ${borderCls} shadow-sm p-5`}>
@@ -315,7 +315,7 @@ function ApiCard({ api, highlight = false }: { api: ApiStatus; highlight?: boole
         </div>
       ) : (
         <div className={`rounded-lg px-3 py-2.5 text-xs font-medium ${
-          api.status === 'rate_limited' ? 'bg-amber-50 text-amber-800' : 'bg-red-50 text-red-700'
+          api.status === 'rate_limited' ? 'bg-yellow-50 text-yellow-800' : 'bg-red-50 text-red-700'
         }`}>
           {api.message || 'This service is unavailable'}
           {api.status === 'missing' && <span className="block mt-1 text-gray-500 font-normal">Configure this key on Vercel to enable this feature.</span>}

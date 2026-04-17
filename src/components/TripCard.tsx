@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import type { MouseEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MapPin, Clock, Star, ArrowUpRight, ShoppingCart, Eye } from 'lucide-react';
+import { MapPin, Clock, Star, ArrowUpRight, ShoppingCart } from 'lucide-react';
 import { Trip } from '@/types';
 import { formatPriceWithCurrency, calculateDiscount } from '@/lib/utils';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -73,16 +73,6 @@ interface TripCardProps {
     variant?: 'default' | 'horizontal' | 'featured';
 }
 
-// Deterministic spots-left: 2–6, shown on ~half of trips
-function getSpotsLeft(id: number): number | null {
-    const val = ((id * 7) % 9) + 1;
-    return val <= 5 ? val : null;
-}
-
-// Deterministic viewers count: 4–23
-function getViewers(id: number): number {
-    return ((id * 13 + 7) % 20) + 4;
-}
 
 export default function TripCard({ trip, index = 0, variant = 'default' }: TripCardProps) {
     const { currency } = useCurrency();
@@ -92,8 +82,6 @@ export default function TripCard({ trip, index = 0, variant = 'default' }: TripC
         ? calculateDiscount(trip.originalPrice, trip.price)
         : 0;
     const fp = (p: typeof trip.price) => formatPriceWithCurrency(p, currency);
-    const spotsLeft = getSpotsLeft(trip.id);
-    const viewers = getViewers(trip.id);
 
     if (variant === 'horizontal') {
         return (
@@ -181,13 +169,8 @@ export default function TripCard({ trip, index = 0, variant = 'default' }: TripC
                         </span>
                     )}
                     {discount > 0 && (
-                        <span className="bg-terracotta text-cream text-caption uppercase tracking-wider px-3 py-1.5">
-                            {discount}% Off
-                        </span>
-                    )}
-                    {spotsLeft !== null && (
-                        <span className="bg-red-500 text-white text-[10px] font-semibold uppercase tracking-wide px-3 py-1.5 animate-pulse">
-                            Only {spotsLeft} spots left
+                        <span className="bg-black/60 backdrop-blur-sm text-white text-[10px] font-semibold uppercase tracking-wider px-3 py-1.5 rounded-sm">
+                            {discount}% off
                         </span>
                     )}
                 </div>
@@ -201,11 +184,6 @@ export default function TripCard({ trip, index = 0, variant = 'default' }: TripC
                     <WishlistButton tripId={trip.id} tripTitle={trip.title} className="relative" />
                 </div>
 
-                {/* Live viewers */}
-                <div className="absolute bottom-4 right-4 flex items-center gap-1 bg-black/50 backdrop-blur-sm text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">
-                    <Eye className="w-3 h-3" />
-                    <span>{viewers} viewing</span>
-                </div>
 
                 {/* Category */}
                 <div className="absolute bottom-4 left-4">

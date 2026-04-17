@@ -35,7 +35,7 @@ export default function MobileStickyCTA() {
     const isReelTrip = pathname?.startsWith('/reel-to-trip');
     const isTrips = isDomestic || isInternational || isReelTrip;
     const isPlannerActive = pathname?.startsWith('/trip-planner');
-    const isWallet = pathname?.startsWith('/cashback');
+    const isWallet = false;
     const isMyTrips = pathname?.startsWith('/my-booking');
 
     return (
@@ -67,16 +67,16 @@ export default function MobileStickyCTA() {
                         <Link
                             href="/destinations/domestic"
                             onClick={() => setTripsOpen(false)}
-                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl bg-gradient-to-b from-amber-50 to-orange-50 border border-amber-100/80 active:scale-95 transition-all duration-150"
+                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl bg-gradient-to-b from-gray-50 to-gray-100 border border-gray-200/80 active:scale-95 transition-all duration-150"
                         >
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-300/40">
+                            <div className="w-12 h-12 rounded-2xl bg-gray-900 flex items-center justify-center shadow-lg shadow-gray-900/30">
                                 <Mountain size={22} className="text-white" />
                             </div>
                             <div className="text-center">
                                 <div className="font-bold text-sm text-gray-900">Domestic</div>
-                                <div className="text-[10px] text-amber-600 font-semibold mt-0.5">150+ India trips</div>
+                                <div className="text-[10px] text-gray-500 font-semibold mt-0.5">150+ India trips</div>
                             </div>
-                            {isDomestic && <span className="text-[9px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200">● Active</span>}
+                            {isDomestic && <span className="text-[9px] font-bold text-gray-700 bg-gray-200 px-2 py-0.5 rounded-full border border-gray-300">● Active</span>}
                         </Link>
 
                         {/* International */}
@@ -162,11 +162,11 @@ export default function MobileStickyCTA() {
                             href="/"
                             className="relative flex flex-col items-center justify-center gap-1 transition-all duration-200 active:scale-90 select-none"
                         >
-                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 ${isHome ? 'bg-amber-50' : ''}`}>
-                                <Home size={20} strokeWidth={isHome ? 2.5 : 1.8} className={isHome ? 'text-amber-500' : 'text-gray-400'} />
-                                <span className={`text-[10px] font-${isHome ? 'bold' : 'medium'} ${isHome ? 'text-amber-600' : 'text-gray-400'}`}>Home</span>
+                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 ${isHome ? 'bg-gray-100' : ''}`}>
+                                <Home size={20} strokeWidth={isHome ? 2.5 : 1.8} className={isHome ? 'text-gray-900' : 'text-gray-400'} />
+                                <span className={`text-[10px] font-${isHome ? 'bold' : 'medium'} ${isHome ? 'text-gray-800' : 'text-gray-400'}`}>Home</span>
                             </div>
-                            {isHome && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-amber-500" />}
+                            {isHome && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-gray-900" />}
                         </Link>
 
                         {/* Trips */}
@@ -174,12 +174,12 @@ export default function MobileStickyCTA() {
                             onClick={() => setTripsOpen(!tripsOpen)}
                             className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none"
                         >
-                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 ${isTrips || tripsOpen ? 'bg-amber-50' : ''}`}>
-                                <Compass size={20} strokeWidth={isTrips || tripsOpen ? 2.5 : 1.8} className={isTrips || tripsOpen ? 'text-amber-500' : 'text-gray-400'} />
-                                <span className={`text-[10px] font-${isTrips || tripsOpen ? 'bold' : 'medium'} ${isTrips || tripsOpen ? 'text-amber-600' : 'text-gray-400'}`}>Trips</span>
+                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 ${isTrips || tripsOpen ? 'bg-gray-100' : ''}`}>
+                                <Compass size={20} strokeWidth={isTrips || tripsOpen ? 2.5 : 1.8} className={isTrips || tripsOpen ? 'text-gray-900' : 'text-gray-400'} />
+                                <span className={`text-[10px] font-${isTrips || tripsOpen ? 'bold' : 'medium'} ${isTrips || tripsOpen ? 'text-gray-800' : 'text-gray-400'}`}>Trips</span>
                             </div>
-                            {(isTrips || tripsOpen) && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-amber-500" />}
-                            <span className={`absolute bottom-2 text-[7px] transition-transform duration-200 ${tripsOpen ? 'rotate-180 text-amber-500' : 'text-gray-300'}`}>▲</span>
+                            {(isTrips || tripsOpen) && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-gray-900" />}
+                            <span className={`absolute bottom-2 text-[7px] transition-transform duration-200 ${tripsOpen ? 'rotate-180 text-gray-900' : 'text-gray-300'}`}>▲</span>
                         </button>
 
                         {/* AI Planner — centre raised button */}
@@ -189,18 +189,18 @@ export default function MobileStickyCTA() {
                         >
                             <div className={`flex flex-col items-center justify-center w-[54px] h-[54px] -mt-7 rounded-[18px] transition-all duration-200 ${
                                 isPlannerActive
-                                    ? 'bg-amber-600 shadow-xl shadow-amber-500/50'
-                                    : 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-xl shadow-amber-500/40'
+                                    ? 'bg-gray-700 shadow-xl shadow-gray-900/40'
+                                    : 'bg-gray-900 shadow-xl shadow-gray-900/40'
                             }`}>
                                 <Sparkles size={19} strokeWidth={2} className="text-white" />
                                 <span className="text-white text-[9px] font-black mt-0.5 leading-none tracking-tight">AI</span>
                             </div>
-                            <span className={`text-[10px] font-bold mt-1 ${isPlannerActive ? 'text-amber-600' : 'text-gray-400'}`}>Plan Trip</span>
+                            <span className={`text-[10px] font-bold mt-1 ${isPlannerActive ? 'text-gray-700' : 'text-gray-400'}`}>Plan Trip</span>
                         </Link>
 
                         {/* Wallet */}
                         <Link
-                            href="/cashback"
+                            href="/trips"
                             className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none"
                         >
                             <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 relative ${isWallet ? 'bg-green-50' : balance > 0 ? 'bg-green-50/60' : ''}`}>
@@ -222,11 +222,11 @@ export default function MobileStickyCTA() {
                             href="/my-booking"
                             className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none"
                         >
-                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 ${isMyTrips ? 'bg-amber-50' : ''}`}>
-                                <Ticket size={20} strokeWidth={isMyTrips ? 2.5 : 1.8} className={isMyTrips ? 'text-amber-500' : 'text-gray-400'} />
-                                <span className={`text-[10px] font-${isMyTrips ? 'bold' : 'medium'} ${isMyTrips ? 'text-amber-600' : 'text-gray-400'}`}>My Trips</span>
+                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 ${isMyTrips ? 'bg-gray-100' : ''}`}>
+                                <Ticket size={20} strokeWidth={isMyTrips ? 2.5 : 1.8} className={isMyTrips ? 'text-gray-900' : 'text-gray-400'} />
+                                <span className={`text-[10px] font-${isMyTrips ? 'bold' : 'medium'} ${isMyTrips ? 'text-gray-800' : 'text-gray-400'}`}>My Trips</span>
                             </div>
-                            {isMyTrips && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-amber-500" />}
+                            {isMyTrips && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-gray-900" />}
                         </Link>
 
                     </div>

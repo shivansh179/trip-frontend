@@ -68,7 +68,7 @@ interface HomePkg {
   nights: string;
   tag: string;
   href: string;
-  urgency: string;
+  urgency?: string;
   emoji?: string;
   tagColor?: string;
 }
@@ -203,11 +203,11 @@ function HomeBookingDrawer({ pkg, onClose }: { pkg: HomePkg; onClose: () => void
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-amber-600 uppercase tracking-wide bg-amber-50 px-2 py-0.5 rounded-full">{pkg.tag}</span>
+              <span className="text-xs font-bold text-gray-600 uppercase tracking-wide bg-gray-100 px-2 py-0.5 rounded-full">{pkg.tag}</span>
               <span className="text-xs text-gray-400">{pkg.nights}</span>
             </div>
             <h3 className="font-bold text-gray-900 text-lg mt-0.5">{pkg.label} Package</h3>
-            <p className="text-xs text-red-500 font-medium mt-0.5">⚡ {pkg.urgency}</p>
+            {pkg.urgency && <p className="text-xs text-gray-500 font-medium mt-0.5">{pkg.urgency}</p>}
           </div>
           <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500 shrink-0 ml-3"><X size={18} /></button>
         </div>
@@ -248,13 +248,13 @@ function HomeBookingDrawer({ pkg, onClose }: { pkg: HomePkg; onClose: () => void
                   <span className="font-semibold">− ₹{discountAmt.toLocaleString('en-IN')}</span>
                 </div>
                 {promoCashback > 0 && (
-                  <div className="flex justify-between text-sm text-amber-700">
+                  <div className="flex justify-between text-sm text-green-700">
                     <span>🎟 Promo cashback credited to wallet</span>
                     <span className="font-semibold">+₹{promoCashback.toLocaleString('en-IN')}</span>
                   </div>
                 )}
                 {walletDeduction > 0 && (
-                  <div className="flex justify-between text-sm text-amber-700">
+                  <div className="flex justify-between text-sm text-gray-600">
                     <span>💰 WanderLoot wallet</span>
                     <span className="font-semibold">− ₹{walletDeduction.toLocaleString('en-IN')}</span>
                   </div>
@@ -322,22 +322,22 @@ function HomeBookingDrawer({ pkg, onClose }: { pkg: HomePkg; onClose: () => void
 
                   {/* WanderLoot wallet */}
                   {walletBalance > 0 && (
-                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="text-lg">💰</span>
                           <div>
-                            <p className="text-sm font-bold text-amber-900">WanderLoot Wallet</p>
-                            <p className="text-xs text-amber-600">Balance: ₹{walletBalance.toLocaleString('en-IN')}</p>
+                            <p className="text-sm font-bold text-gray-900">WanderLoot Wallet</p>
+                            <p className="text-xs text-gray-500">Balance: ₹{walletBalance.toLocaleString('en-IN')}</p>
                           </div>
                         </div>
                         <label className="flex items-center gap-2 cursor-pointer">
-                          <span className="text-xs text-amber-700 font-medium">Use up to ₹{maxWalletUsable.toLocaleString('en-IN')}</span>
-                          <input type="checkbox" checked={applyWallet} onChange={e => setApplyWallet(e.target.checked)} className="w-4 h-4 accent-amber-500" />
+                          <span className="text-xs text-gray-600 font-medium">Use up to ₹{maxWalletUsable.toLocaleString('en-IN')}</span>
+                          <input type="checkbox" checked={applyWallet} onChange={e => setApplyWallet(e.target.checked)} className="w-4 h-4 accent-gray-900" />
                         </label>
                       </div>
                       {applyWallet && walletDeduction > 0 && (
-                        <div className="mt-2 flex items-center gap-1.5 text-xs text-amber-800 font-semibold bg-amber-100 rounded-lg px-2.5 py-1.5">
+                        <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-700 font-semibold bg-gray-100 rounded-lg px-2.5 py-1.5">
                           <span>💰</span> WanderLoot applied · −₹{walletDeduction.toLocaleString('en-IN')}
                         </div>
                       )}
@@ -393,18 +393,18 @@ function HomeBookingDrawer({ pkg, onClose }: { pkg: HomePkg; onClose: () => void
             <div className="p-5 bg-[#1a2535] min-h-full">
               {cbSent ? (
                 <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
-                  <div className="w-14 h-14 rounded-full bg-amber-400/20 flex items-center justify-center">
-                    <CheckCircle className="w-7 h-7 text-amber-400" />
+                  <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
+                    <CheckCircle className="w-7 h-7 text-white" />
                   </div>
                   <p className="font-display text-xl text-white">All set! 🎉</p>
-                  <p className="text-white/60 text-sm max-w-xs">Our expert calls you within <span className="text-amber-400 font-bold">1 hour</span> with best {pkg.label} price + EMI plan.</p>
+                  <p className="text-white/60 text-sm max-w-xs">Our expert calls you within <span className="text-white font-bold">1 hour</span> with best {pkg.label} price + EMI plan.</p>
                   <p className="text-white/30 text-[11px] mt-1">📱 Expect call from +91 84278 31127</p>
-                  <button onClick={onClose} className="mt-3 px-6 py-2.5 bg-amber-400 text-gray-900 font-bold rounded-xl text-sm">Done</button>
+                  <button onClick={onClose} className="mt-3 px-6 py-2.5 bg-white text-gray-900 font-bold rounded-xl text-sm">Done</button>
                 </div>
               ) : (
                 <form onSubmit={handleCallback} className="space-y-4">
                   <div className="flex items-start gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
                       <span className="text-xl">✈️</span>
                     </div>
                     <div>
@@ -423,16 +423,16 @@ function HomeBookingDrawer({ pkg, onClose }: { pkg: HomePkg; onClose: () => void
                   <div className="bg-white/5 border border-white/10 rounded-xl p-3 space-y-1.5">
                     {[`Custom dates & pricing for ${pkg.label}`, 'Group discount for 4+ pax', '0% EMI upto 12 months', 'Visa & travel insurance help'].map(item => (
                       <p key={item} className="text-white/70 text-xs flex items-center gap-2">
-                        <span className="text-amber-400">✓</span> {item}
+                        <span className="text-white/70">✓</span> {item}
                       </p>
                     ))}
                   </div>
                   <input required type="text" placeholder="Your name" value={cbName} onChange={e => setCbName(e.target.value)}
-                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-amber-400" />
+                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-white/40" />
                   <input required type="tel" placeholder="Phone number (we'll call you)" value={cbPhone} onChange={e => setCbPhone(e.target.value)}
-                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-amber-400" />
+                    className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-white/40" />
                   <button type="submit" disabled={cbSending}
-                    className="w-full flex items-center justify-center gap-2 bg-amber-400 text-gray-900 font-bold text-sm py-3.5 rounded-xl hover:bg-amber-300 disabled:opacity-60 transition-colors">
+                    className="w-full flex items-center justify-center gap-2 bg-white text-gray-900 font-bold text-sm py-3.5 rounded-xl hover:bg-gray-100 disabled:opacity-60 transition-colors">
                     {cbSending ? <Loader2 size={14} className="animate-spin" /> : '📞'}
                     {cbSending ? 'Booking callback…' : 'Get Free Callback + EMI Options'}
                   </button>
@@ -532,49 +532,40 @@ export default function Home() {
       <MobileCategories />
 
       {/* ── Hot Package Strip ── */}
-      <section className="bg-gray-950 py-5 overflow-x-hidden">
+      <section className="bg-white border-b border-gray-100 py-6 overflow-x-hidden">
         <div className="section-container">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="text-amber-400 text-[11px] font-black uppercase tracking-widest">🔥 Top Packages</span>
-              <span className="bg-amber-500/20 text-amber-400 text-[9px] font-bold px-2 py-0.5 rounded-full border border-amber-500/30">This Week</span>
+              <span className="text-gray-900 text-[11px] font-bold uppercase tracking-widest">Top Packages</span>
             </div>
-            <span className="text-gray-600 text-[10px] font-medium">{Math.floor(Date.now() / 3600000) % 60 + 140}+ booked</span>
+            <span className="text-gray-400 text-[10px] font-medium">Starting from ₹9,999</span>
           </div>
           <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {([
-              { label: 'Goa', price: '₹9,999', priceNum: 9999, nights: '3N/4D', tag: 'Best Seller', href: '/goa-tour-package', urgency: '4 slots left', emoji: '🏖️', tagColor: 'from-orange-500 to-amber-500' },
-              { label: 'Manali', price: '₹12,999', priceNum: 12999, nights: '4N/5D', tag: 'Most Popular', href: '/manali-tour-package', urgency: '3 slots left', emoji: '🏔️', tagColor: 'from-blue-500 to-cyan-500' },
-              { label: 'Kashmir', price: '₹18,999', priceNum: 18999, nights: '5N/6D', tag: 'Trending', href: '/kashmir-tour-package', urgency: '5 slots left', emoji: '🌸', tagColor: 'from-rose-500 to-pink-500' },
-              { label: 'Dubai', price: '₹35,999', priceNum: 35999, nights: '5N/6D', tag: 'International', href: '/dubai-tour-package-from-delhi', urgency: '2 slots left', emoji: '🏙️', tagColor: 'from-amber-500 to-yellow-500' },
-              { label: 'Bali', price: '₹42,999', priceNum: 42999, nights: '6N/7D', tag: 'Honeymoon', href: '/bali-honeymoon-package', urgency: '3 slots left', emoji: '🌴', tagColor: 'from-green-500 to-emerald-500' },
-              { label: 'Singapore', price: '₹32,999', priceNum: 32999, nights: '4N/5D', tag: 'New', href: '/singapore-tour-package', urgency: '4 slots left', emoji: '🦁', tagColor: 'from-red-500 to-rose-500' },
-              { label: 'Thailand', price: '₹28,999', priceNum: 28999, nights: '5N/6D', tag: 'Budget', href: '/thailand-budget-trip', urgency: '6 slots left', emoji: '🐘', tagColor: 'from-purple-500 to-violet-500' },
-              { label: 'Maldives', price: '₹89,999', priceNum: 89999, nights: '4N/5D', tag: 'Luxury', href: '/maldives-luxury-package', urgency: '2 slots left', emoji: '🏝️', tagColor: 'from-sky-500 to-blue-500' },
+              { label: 'Goa', price: '₹9,999', priceNum: 9999, nights: '3N/4D', tag: 'Best Seller', href: '/goa-tour-package' },
+              { label: 'Manali', price: '₹12,999', priceNum: 12999, nights: '4N/5D', tag: 'Most Popular', href: '/manali-tour-package' },
+              { label: 'Kashmir', price: '₹18,999', priceNum: 18999, nights: '5N/6D', tag: 'Trending', href: '/kashmir-tour-package' },
+              { label: 'Dubai', price: '₹35,999', priceNum: 35999, nights: '5N/6D', tag: 'International', href: '/dubai-tour-package-from-delhi' },
+              { label: 'Bali', price: '₹42,999', priceNum: 42999, nights: '6N/7D', tag: 'Honeymoon', href: '/bali-honeymoon-package' },
+              { label: 'Singapore', price: '₹32,999', priceNum: 32999, nights: '4N/5D', tag: 'New', href: '/singapore-tour-package' },
+              { label: 'Thailand', price: '₹28,999', priceNum: 28999, nights: '5N/6D', tag: 'Budget', href: '/thailand-budget-trip' },
+              { label: 'Maldives', price: '₹89,999', priceNum: 89999, nights: '4N/5D', tag: 'Luxury', href: '/maldives-luxury-package' },
             ] as HomePkg[]).map((pkg) => (
               <button key={pkg.href} onClick={() => setActivePackage(pkg)}
-                className="group flex-shrink-0 relative bg-gray-900 border border-gray-800/80 hover:border-amber-500/40 rounded-2xl overflow-hidden transition-all duration-300 active:scale-95 text-left"
-                style={{ minWidth: '155px' }}>
-                {/* Emoji header */}
-                <div className="relative h-20 flex items-center justify-center overflow-hidden">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${pkg.tagColor ?? 'from-amber-500 to-orange-500'} opacity-20`} />
-                  <span className="text-4xl">{pkg.emoji ?? '✈️'}</span>
-                  {/* Tag badge */}
-                  <span className={`absolute top-2 left-2 text-[9px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full bg-gradient-to-r ${pkg.tagColor ?? 'from-amber-500 to-orange-500'} text-white`}>
-                    {pkg.tag}
-                  </span>
-                  <span className="absolute top-2 right-2 text-[9px] text-gray-400 font-medium">{pkg.nights}</span>
-                </div>
+                className="group flex-shrink-0 relative bg-white border border-gray-200 hover:border-gray-400 rounded-2xl overflow-hidden transition-all duration-300 active:scale-95 text-left shadow-sm hover:shadow-md"
+                style={{ minWidth: '148px' }}>
+                {/* Header bar */}
+                <div className="h-2 bg-gray-900" />
                 {/* Content */}
-                <div className="px-3.5 pb-3.5">
-                  <p className="text-white font-bold text-base leading-tight">{pkg.label}</p>
-                  <p className="text-amber-400 font-black text-lg leading-tight mt-0.5">{pkg.price}</p>
-                  <p className="text-red-400/80 text-[10px] mt-1 font-semibold flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse inline-block" />
-                    {pkg.urgency}
-                  </p>
-                  <div className="mt-2.5 bg-gradient-to-r from-amber-500 to-orange-500 group-hover:from-amber-400 group-hover:to-orange-400 text-black text-[10px] font-black uppercase tracking-widest text-center rounded-xl py-2 transition-all shadow-md shadow-amber-500/20">
-                    Book Now →
+                <div className="px-3.5 pt-3 pb-3.5">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400">{pkg.tag}</span>
+                    <span className="text-[9px] text-gray-400">{pkg.nights}</span>
+                  </div>
+                  <p className="text-gray-900 font-bold text-base leading-tight">{pkg.label}</p>
+                  <p className="text-gray-700 font-bold text-sm leading-tight mt-0.5">{pkg.price} <span className="text-gray-400 font-normal text-[10px]">/ person</span></p>
+                  <div className="mt-3 bg-gray-900 group-hover:bg-gray-800 text-white text-[10px] font-bold uppercase tracking-widest text-center rounded-xl py-2 transition-colors">
+                    View →
                   </div>
                 </div>
               </button>
@@ -588,7 +579,7 @@ export default function Home() {
 
 
       {/* ── Cashback & Wallet + Referral Banner ── */}
-      <section className="bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 py-10 md:py-14">
+      <section className="bg-gray-950 py-10 md:py-14">
         <div className="section-container">
 
           {/* Top row: wallet headline + CTA */}
@@ -633,7 +624,7 @@ export default function Home() {
 
             <Link
               href="/cashback"
-              className="shrink-0 flex items-center gap-2 bg-white text-amber-600 hover:bg-amber-50 font-bold text-sm px-6 py-3 rounded-full transition-all shadow-lg shadow-black/10 whitespace-nowrap"
+              className="shrink-0 flex items-center gap-2 bg-white text-gray-900 hover:bg-gray-50 font-bold text-sm px-6 py-3 rounded-full transition-all shadow-lg shadow-black/10 whitespace-nowrap"
             >
               <Wallet size={16} />
               {balance > 0 ? `Use ${fp(balance)} Now` : 'View WanderLoot'}

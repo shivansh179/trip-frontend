@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         try {
             await fetch(`${SITE_URL}/api/admin/flight-bookings`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...(process.env.ADMIN_SECRET ? { 'x-admin-secret': process.env.ADMIN_SECRET } : {}) },
                 body: JSON.stringify(bookingSummary),
             });
         } catch { /* non-fatal */ }
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
                 try {
                     await fetch(`${SITE_URL}/api/admin/flight-bookings`, {
                         method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json', ...(process.env.ADMIN_SECRET ? { 'x-admin-secret': process.env.ADMIN_SECRET } : {}) },
                         body: JSON.stringify({ txnid, evtRef: ref }),
                     });
                 } catch { /* non-fatal */ }

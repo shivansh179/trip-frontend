@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import type { MouseEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, Star, Clock, MapPin, Flame, Shield, Eye, Zap, TrendingUp, X, CreditCard, Loader2, BadgePercent } from 'lucide-react';
+import { ArrowUpRight, Star, Clock, MapPin, Shield, TrendingUp, X, CreditCard, Loader2, BadgePercent } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Trip } from '@/types';
 import { formatPriceWithCurrency, calculateDiscount } from '@/lib/utils';
@@ -14,14 +14,6 @@ import { useWallet } from '@/context/WalletContext';
 import { getDestinationImageUrl } from '@/lib/destinationImages';
 import PaymentOptions from '@/components/PaymentOptions';
 import PromoCodeInput from '@/components/PromoCodeInput';
-
-function getSpotsLeft(id: number): number | null {
-  const val = ((id * 7) % 9) + 1;
-  return val <= 5 ? val : null;
-}
-function getViewers(id: number): number {
-  return ((id * 13 + 7) % 20) + 4;
-}
 
 /* ── 3D Tilt Card ─────────────────────────────────────────────────── */
 function TiltCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
@@ -64,27 +56,6 @@ function TiltCard({ children, className = '' }: { children: React.ReactNode; cla
     </div>
   );
 }
-
-/* ── Countdown Timer ──────────────────────────────────────────────── */
-function Countdown({ endsAt }: { endsAt: number }) {
-  const [diff, setDiff] = useState(endsAt - Date.now());
-  useEffect(() => {
-    const t = setInterval(() => setDiff(endsAt - Date.now()), 1000);
-    return () => clearInterval(t);
-  }, [endsAt]);
-  const h = Math.max(0, Math.floor(diff / 3600000));
-  const m = Math.max(0, Math.floor((diff % 3600000) / 60000));
-  const s = Math.max(0, Math.floor((diff % 60000) / 1000));
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return (
-    <span className="font-mono font-bold tabular-nums">
-      {pad(h)}:{pad(m)}:{pad(s)}
-    </span>
-  );
-}
-
-/* ── Deal Badge ───────────────────────────────────────────────────── */
-const DEAL_END = Date.now() + 47 * 3600_000 + 23 * 60_000;
 
 /* ── Booking Drawer ───────────────────────────────────────────────── */
 function TrendingBookingDrawer({ trip, onClose }: { trip: Trip; onClose: () => void }) {
@@ -307,8 +278,6 @@ function TrendingCard({ trip, rank, onBook }: { trip: Trip; rank: number; onBook
   const offerPrice = rawOrig > 0 && rawOrig < rawPrice ? trip.originalPrice! : trip.price;
   const mrpPrice = rawOrig > 0 && rawOrig < rawPrice ? trip.price : trip.originalPrice;
   const discount = mrpPrice ? calculateDiscount(mrpPrice, offerPrice) : 0;
-  const spotsLeft = getSpotsLeft(trip.id);
-  const viewers = getViewers(trip.id);
   const isStatic = trip.id >= 9000;
   const slug = (trip as any).slug as string | undefined;
   const packageHref = slug ? `/${slug}` : `/trips/${trip.id}`;
@@ -333,13 +302,13 @@ function TrendingCard({ trip, rank, onBook }: { trip: Trip; rank: number; onBook
         #{rank}
       </div>
 
-      {/* Discount badge */}
+      {/* Discount badge — subtle */}
       {discount > 0 && (
         <div
-          className="absolute top-4 right-4 z-10 bg-terracotta text-white text-[11px] font-bold uppercase px-2.5 py-1 rounded-full shadow-md"
+          className="absolute top-4 right-4 z-10 bg-black/60 backdrop-blur-sm text-white/90 text-[10px] font-semibold px-2.5 py-1 rounded-full"
           style={{ transform: 'translateZ(20px)' }}
         >
-          {discount}% OFF
+          {discount}% off
         </div>
       )}
 
@@ -353,25 +322,6 @@ function TrendingCard({ trip, rank, onBook }: { trip: Trip; rank: number; onBook
           onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80'; }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-
-        {/* Live viewers */}
-        <div
-          className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm text-white text-[10px] font-semibold px-2.5 py-1 rounded-full"
-          style={{ transform: 'translateZ(15px)' }}
-        >
-          <Eye className="w-3 h-3" />
-          {viewers} viewing now
-        </div>
-
-        {/* Spots left */}
-        {spotsLeft !== null && (
-          <div
-            className="absolute bottom-3 right-3 bg-red-500 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-full animate-pulse"
-            style={{ transform: 'translateZ(15px)' }}
-          >
-            {spotsLeft} left!
-          </div>
-        )}
       </div>
 
       {/* Content */}
@@ -427,7 +377,6 @@ function TrendingCard({ trip, rank, onBook }: { trip: Trip; rank: number; onBook
               onClick={() => onBook(trip)}
               className="col-span-3 flex items-center justify-center gap-1.5 bg-primary text-cream py-2.5 text-xs uppercase tracking-widest font-bold hover:bg-secondary transition-colors rounded-lg shadow-md hover:shadow-lg"
             >
-              <Zap className="w-3.5 h-3.5" />
               Book Now
             </button>
             <Link
@@ -483,11 +432,9 @@ export default function TrendingPackages() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
           <div>
-            {/* Flash deal countdown */}
-            <div className="inline-flex items-center gap-2 bg-terracotta text-white text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-4 shadow-lg">
-              <Flame className="w-3.5 h-3.5 animate-pulse" />
-              Flash Deal ends in&nbsp;
-              <Countdown endsAt={DEAL_END} />
+            <div className="inline-flex items-center gap-2 bg-primary/5 border border-primary/15 text-primary text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
+              <TrendingUp className="w-3 h-3" />
+              Most Popular
             </div>
             <h2 className="font-display text-display-lg text-primary">
               Trending <span className="italic text-secondary">Right Now</span>

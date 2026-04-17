@@ -4,6 +4,14 @@ import path from 'path';
 
 const DATA_FILE = path.join(process.cwd(), '.data', 'market-bookings.json');
 
+function isAuthorised(req: NextRequest): boolean {
+  const adminSecret = process.env.ADMIN_SECRET;
+  if (!adminSecret) return true;
+  if (req.headers.get('x-admin-secret') === adminSecret) return true;
+  if (req.headers.get('x-admin-token')) return true;
+  return false;
+}
+
 async function readStore(): Promise<Record<string, unknown>> {
   try {
     const raw = await fs.readFile(DATA_FILE, 'utf-8');
@@ -19,8 +27,9 @@ async function writeStore(data: Record<string, unknown>) {
 }
 
 export async function GET(req: NextRequest) {
-  const txnid = req.nextUrl.searchParams.get('txnid');
-  const evtRef = req.nextUrl.searchParams.get('evtRef');
+  const { searchParams } = req.nextUrl;
+  const txnid = searchParams.get('txnid');
+  const evtRef = searchParams.get('evtRef');
   const store = await readStore();
 
   if (evtRef) {
@@ -30,6 +39,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ data: entry || null });
   }
   if (txnid) return NextResponse.json({ data: store[txnid] || null });
+
+  if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   return NextResponse.json({ data: store });
 }
 
@@ -42,6 +53,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+  if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { txnid, evtRef, status } = await req.json();
   const store = await readStore();
   if (store[txnid]) {

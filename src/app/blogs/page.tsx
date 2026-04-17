@@ -234,7 +234,7 @@ export default function BlogsPage() {
                   />
                   <div className="absolute inset-0 bg-primary/20" />
                   <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-accent text-primary text-[10px] uppercase tracking-widest font-medium">
+                    <span className="px-3 py-1 bg-gray-900/80 text-white text-[10px] uppercase tracking-widest font-medium">
                       {guide.tag}
                     </span>
                   </div>

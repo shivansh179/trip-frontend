@@ -1,6 +1,6 @@
 'use client';
 
-import { MessageCircle, Clock } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 
 interface WhatsAppButtonProps {
   phoneNumber?: string;
@@ -22,19 +22,10 @@ export default function WhatsAppButton({
       aria-label="Chat on WhatsApp — we reply within 1 hour"
       className="hidden md:flex fixed bottom-8 right-5 z-50 group flex-col items-end gap-2"
     >
-      {/* Reply-time badge — shows on hover */}
-      <div className="flex items-center gap-1.5 bg-white text-gray-700 text-xs font-medium px-3 py-1.5 rounded-full shadow-lg border border-gray-100 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 pointer-events-none whitespace-nowrap">
-        <Clock size={12} className="text-green-500 shrink-0" />
-        <span>We reply within <strong>1 hour</strong></span>
-      </div>
-
       {/* Main button */}
-      <div className="relative bg-[#25D366] hover:bg-[#20bd5a] text-white px-4 py-3 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2">
-        <MessageCircle size={24} className="fill-white shrink-0" />
-        <span className="text-sm font-semibold pr-1 hidden sm:block">Get Instant Price</span>
-
-        {/* Pulse ring */}
-        <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-20 pointer-events-none" />
+      <div className="bg-[#25D366] hover:bg-[#20bd5a] text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2">
+        <MessageCircle size={22} className="fill-white shrink-0" />
+        <span className="text-sm font-semibold pr-1 hidden sm:block">WhatsApp</span>
       </div>
     </a>
   );

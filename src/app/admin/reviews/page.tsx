@@ -19,12 +19,12 @@ interface Review {
 
 function Stars({ n }: { n: number }) {
   return (
-    <span className="text-amber-400 text-sm">{'★'.repeat(n)}{'☆'.repeat(5 - n)}</span>
+    <span className="text-gray-500 text-sm">{'★'.repeat(n)}{'☆'.repeat(5 - n)}</span>
   );
 }
 
 const STATUS_COLORS = {
-  pending:  'bg-amber-50 text-amber-700 border-amber-200',
+  pending:  'bg-gray-100 text-gray-700 border-gray-200',
   approved: 'bg-green-50 text-green-700 border-green-200',
   rejected: 'bg-red-50 text-red-700 border-red-200',
 };
@@ -43,9 +43,14 @@ export default function AdminReviews() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [noteMap, setNoteMap] = useState<Record<string, string>>({});
 
+  const adminHeaders = () => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : '';
+    return { 'Content-Type': 'application/json', ...(token ? { 'x-admin-token': token } : {}) };
+  };
+
   const load = async () => {
     setLoading(true);
-    const res = await fetch(`/api/admin/reviews?status=${filter}`);
+    const res = await fetch(`/api/admin/reviews?status=${filter}`, { headers: adminHeaders() });
     const data = await res.json();
     setReviews(data.reviews || []);
     setLoading(false);
@@ -57,7 +62,7 @@ export default function AdminReviews() {
     setActing(id);
     await fetch('/api/admin/reviews', {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: adminHeaders(),
       body: JSON.stringify({ id, status, adminNote: noteMap[id] || '' }),
     });
     await load();
@@ -69,7 +74,7 @@ export default function AdminReviews() {
     setActing(id);
     await fetch('/api/admin/reviews', {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: adminHeaders(),
       body: JSON.stringify({ id }),
     });
     await load();
@@ -110,7 +115,7 @@ export default function AdminReviews() {
             >
               {s}
               {s === 'pending' && counts.pending > 0 && (
-                <span className="ml-1.5 bg-amber-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                <span className="ml-1.5 bg-gray-700 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                   {counts.pending}
                 </span>
               )}
@@ -129,7 +134,7 @@ export default function AdminReviews() {
                 {/* Card header */}
                 <div className="p-4 flex items-start gap-4">
                   {/* Avatar */}
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold shrink-0">
                     {r.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -169,7 +174,7 @@ export default function AdminReviews() {
                       rows={2}
                       value={noteMap[r._id] || ''}
                       onChange={(e) => setNoteMap({ ...noteMap, [r._id]: e.target.value })}
-                      className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg resize-none outline-none focus:border-amber-400"
+                      className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg resize-none outline-none focus:border-gray-400"
                     />
                     <div className="flex items-center gap-2 flex-wrap">
                       {r.status !== 'approved' && (
@@ -186,7 +191,7 @@ export default function AdminReviews() {
                         <button
                           onClick={() => act(r._id, 'rejected')}
                           disabled={acting === r._id}
-                          className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-lg disabled:opacity-60 transition-colors"
+                          className="flex items-center gap-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-bold px-4 py-2 rounded-lg disabled:opacity-60 transition-colors"
                         >
                           <XCircle size={13} />
                           Reject
