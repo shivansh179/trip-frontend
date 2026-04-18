@@ -16,8 +16,15 @@ export function OrganizationJsonLd() {
         logo: {
           '@type': 'ImageObject',
           url: 'https://www.ylootrips.com/logo.png',
-          width: 200,
-          height: 60,
+          width: 512,
+          height: 512,
+          caption: 'YlooTrips — Safe & Budget India Tour Packages',
+        },
+        image: {
+          '@type': 'ImageObject',
+          url: 'https://www.ylootrips.com/logo.png',
+          width: 512,
+          height: 512,
         },
         description:
           'YlooTrips India Pvt. Ltd. crafts bespoke India travel experiences — Golden Triangle, Kerala, Rajasthan, Himalayas and more. Trusted by 25,000+ travelers from 40+ countries since 2022.',
@@ -43,6 +50,11 @@ export function OrganizationJsonLd() {
           'https://www.instagram.com/ylootrips',
           'https://www.facebook.com/ylootrips',
           'https://twitter.com/ylootrips',
+          'https://www.youtube.com/@ylootrips',
+          'https://www.linkedin.com/company/ylootrips',
+          'https://in.pinterest.com/ylootrips',
+          'https://www.threads.net/@ylootrips',
+          'https://g.co/kgs/ylootrips',
         ],
         aggregateRating: {
           '@type': 'AggregateRating',
@@ -60,15 +72,58 @@ export function OrganizationJsonLd() {
         '@id': 'https://www.ylootrips.com/#website',
         url: 'https://www.ylootrips.com',
         name: 'YlooTrips',
+        description: 'Safe & affordable domestic and international tour packages from India. Budget trips to Manali, Kedarnath, Goa, Bali, Dubai & more.',
         publisher: { '@id': 'https://www.ylootrips.com/#organization' },
         potentialAction: {
           '@type': 'SearchAction',
           target: {
             '@type': 'EntryPoint',
-            urlTemplate: 'https://www.ylootrips.com/trips?search={search_term_string}',
+            urlTemplate: 'https://www.ylootrips.com/search?q={search_term_string}',
           },
           'query-input': 'required name=search_term_string',
         },
+      },
+      // Sitelinks — key pages shown below main Google result
+      {
+        '@type': 'ItemList',
+        '@id': 'https://www.ylootrips.com/#sitelinks',
+        name: 'YlooTrips — Quick Links',
+        itemListElement: [
+          { '@type': 'SiteLinksSearchBox', target: 'https://www.ylootrips.com/search?q={search_term_string}' },
+          { '@type': 'ListItem', position: 1, name: 'Domestic Trips', url: 'https://www.ylootrips.com/destinations/domestic' },
+          { '@type': 'ListItem', position: 2, name: 'International Tours', url: 'https://www.ylootrips.com/destinations/international' },
+          { '@type': 'ListItem', position: 3, name: 'Free AI Trip Planner', url: 'https://www.ylootrips.com/trip-planner' },
+          { '@type': 'ListItem', position: 4, name: 'Track My Booking', url: 'https://www.ylootrips.com/my-booking' },
+          { '@type': 'ListItem', position: 5, name: 'Blogs & Travel Guides', url: 'https://www.ylootrips.com/blogs' },
+          { '@type': 'ListItem', position: 6, name: 'About YlooTrips', url: 'https://www.ylootrips.com/about' },
+        ],
+      },
+      // FAQ schema — helps appear in People Also Ask
+      {
+        '@type': 'FAQPage',
+        '@id': 'https://www.ylootrips.com/#faq',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'Is YlooTrips safe for travel?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes. YlooTrips is an MSME-registered, GST-certified travel company trusted by 25,000+ travelers. All trips include verified guides, insured transport, and 24/7 support.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'What are the best budget trips in India?',
+            acceptedAnswer: { '@type': 'Answer', text: 'YlooTrips offers budget domestic trips starting from ₹4,999 — Manali, Kedarnath, Spiti Valley, Kasol, Goa, and more. International budget packages to Bali, Thailand start from ₹24,999.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'How do I book a trip with YlooTrips?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Browse trips at ylootrips.com, click Book Now, and pay online. Or use the free AI Trip Planner to get a custom itinerary in 1 hour. WhatsApp +91 84278 31127 for help.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'Does YlooTrips offer group tours?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes. YlooTrips offers group tours, family packages, honeymoon trips, and solo travel packages across 150+ domestic and 50+ international destinations.' },
+          },
+        ],
       },
     ],
   };
