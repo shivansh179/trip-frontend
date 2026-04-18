@@ -98,14 +98,14 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/logo.png', type: 'image/png', sizes: '512x512' },
+      { url: '/favicon.png', type: 'image/png', sizes: '512x512' },
       { url: '/favicon.png', type: 'image/png', sizes: '192x192' },
       { url: '/favicon.png', type: 'image/png', sizes: '32x32' },
     ],
     apple: [
       { url: '/apple-touch-icon.png', sizes: '512x512', type: 'image/png' },
     ],
-    shortcut: '/logo.png',
+    shortcut: '/favicon.png',
   },
   robots: {
     index: true,

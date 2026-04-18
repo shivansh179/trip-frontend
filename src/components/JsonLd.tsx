@@ -15,14 +15,14 @@ export function OrganizationJsonLd() {
         url: 'https://www.ylootrips.com',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://www.ylootrips.com/logo.png',
+          url: 'https://www.ylootrips.com/favicon.png',
           width: 512,
           height: 512,
           caption: 'YlooTrips — Safe & Budget India Tour Packages',
         },
         image: {
           '@type': 'ImageObject',
-          url: 'https://www.ylootrips.com/logo.png',
+          url: 'https://www.ylootrips.com/favicon.png',
           width: 512,
           height: 512,
         },
