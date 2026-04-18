@@ -229,7 +229,7 @@ function buildEmailHtml(booking: FlightBooking, isAdmin: boolean) {
 
 export async function POST(req: NextRequest) {
     const resend = new Resend(process.env.RESEND_API_KEY);
-    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@ylootrips.com';
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@ylootrips.com';
     const FROM = process.env.EMAIL_FROM || 'onboarding@resend.dev';
     try {
         const body = await req.json();

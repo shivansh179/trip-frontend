@@ -59,7 +59,7 @@ function BookingSuccessContent() {
               className="flex-1 flex items-center justify-center gap-2 bg-white/10 text-cream text-xs font-medium py-2.5 rounded-xl hover:bg-white/20 transition-colors">
               <Phone size={14} /> Call Us
             </a>
-            <a href="mailto:connectylootrips@gmail.com"
+            <a href="mailto:hello@ylootrips.com"
               className="flex-1 flex items-center justify-center gap-2 bg-white/10 text-cream text-xs font-medium py-2.5 rounded-xl hover:bg-white/20 transition-colors">
               <Mail size={14} /> Email
             </a>

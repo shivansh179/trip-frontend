@@ -301,9 +301,9 @@ export default function HotelDetailPage() {
                                         <Phone size={18} />
                                         <span>+91 8427831127</span>
                                     </a>
-                                    <a href="mailto:connectylootrips@gmail.com" className="flex items-center gap-2 text-body-lg hover:text-secondary transition-colors">
+                                    <a href="mailto:hello@ylootrips.com" className="flex items-center gap-2 text-body-lg hover:text-secondary transition-colors">
                                         <Mail size={18} />
-                                        <span>connectylootrips@gmail.com</span>
+                                        <span>hello@ylootrips.com</span>
                                     </a>
                                 </div>
                             </div>

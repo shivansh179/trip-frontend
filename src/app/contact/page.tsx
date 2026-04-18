@@ -255,7 +255,7 @@ function ContactForm() {
                     <Mail className="w-5 h-5 text-accent mt-1" />
                     <div>
                       <p className="text-caption uppercase tracking-widest text-cream/50 mb-1">Email</p>
-                      <a href="mailto:connectylootrips@gmail.com" className="text-lg hover:text-accent transition-colors">connectylootrips@gmail.com</a>
+                      <a href="mailto:hello@ylootrips.com" className="text-lg hover:text-accent transition-colors">hello@ylootrips.com</a>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">

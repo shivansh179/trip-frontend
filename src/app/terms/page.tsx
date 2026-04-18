@@ -67,7 +67,7 @@ export default function TermsPage() {
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
               <p className="text-amber-800 text-sm leading-relaxed">
                 By making a booking with <strong>YlooTrips</strong>, you agree to these Terms &amp; Conditions. Please read them carefully before proceeding with any purchase. If you have questions, email us at{' '}
-                <a href="mailto:admin@ylootrips.com" className="underline font-semibold">admin@ylootrips.com</a>.
+                <a href="mailto:hello@ylootrips.com" className="underline font-semibold">hello@ylootrips.com</a>.
               </p>
             </div>
 
@@ -87,7 +87,7 @@ export default function TermsPage() {
             <section id="cancellation" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-8">
               <h2 className="text-xl font-bold text-gray-900 mb-4">2. Cancellation Policy</h2>
               <p className="text-gray-600 text-sm mb-5 leading-relaxed">
-                Cancellations must be submitted in writing to <a href="mailto:admin@ylootrips.com" className="text-amber-600 underline">admin@ylootrips.com</a>. The cancellation date is the date we receive your written notice. Refund amounts are calculated based on the number of days before departure:
+                Cancellations must be submitted in writing to <a href="mailto:hello@ylootrips.com" className="text-amber-600 underline">hello@ylootrips.com</a>. The cancellation date is the date we receive your written notice. Refund amounts are calculated based on the number of days before departure:
               </p>
 
               <div className="overflow-x-auto">
@@ -190,7 +190,7 @@ export default function TermsPage() {
               <h2 className="text-xl font-bold text-gray-900 mb-4">9. Contact Us</h2>
               <div className="space-y-2 text-gray-600 text-sm">
                 <p><strong>Company:</strong> YlooTrips</p>
-                <p><strong>Email:</strong> <a href="mailto:admin@ylootrips.com" className="text-amber-600 underline">admin@ylootrips.com</a></p>
+                <p><strong>Email:</strong> <a href="mailto:hello@ylootrips.com" className="text-amber-600 underline">hello@ylootrips.com</a></p>
                 <p><strong>WhatsApp:</strong> <a href="https://wa.me/918427831127" target="_blank" rel="noopener noreferrer" className="text-amber-600 underline">+91 84278 31127</a></p>
                 <p className="pt-2 text-xs text-gray-400">For any queries related to bookings, refunds, or complaints, please reach out via email and we will respond within 1 business day.</p>
               </div>

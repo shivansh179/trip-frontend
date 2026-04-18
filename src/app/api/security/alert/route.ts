@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     await resend.emails.send({
       from: 'security@ylootrips.com',
-      to: 'connectylootrips@gmail.com',
+      to: 'hello@ylootrips.com',
       subject: `🚨 Security Alert — ${label}`,
       html: `
         <div style="font-family:system-ui,sans-serif;max-width:600px;margin:auto;background:#0f0f0f;color:#eee;border-radius:12px;overflow:hidden">

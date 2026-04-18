@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   keywords: 'contact YlooTrips, India tour inquiry, plan India trip, custom India tour, India travel agent contact, WhatsApp India tour, New Delhi travel agent',
   openGraph: {
     title: 'Contact YlooTrips | Plan Your India Trip Today',
-    description: 'Get your custom India itinerary in 1 hour. WhatsApp +91 84278 31127 or email connectylootrips@gmail.com.',
+    description: 'Get your custom India itinerary in 1 hour. WhatsApp +91 84278 31127 or email hello@ylootrips.com.',
     url: 'https://www.ylootrips.com/contact',
     images: [
       {

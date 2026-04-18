@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     try {
       await resend.emails.send({
         from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
-        to: process.env.ADMIN_EMAIL || 'connectylootrips@gmail.com',
+        to: process.env.ADMIN_EMAIL || 'hello@ylootrips.com',
         subject: `⭐ New Review Pending Approval — ${name} (${rating}/5)`,
         html: `
           <h2>New client review submitted</h2>

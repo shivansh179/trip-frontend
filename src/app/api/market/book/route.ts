@@ -4,7 +4,7 @@ import { generateTicket, logLeadToSheet } from '@/lib/leads';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ylootrips.com';
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'connectylootrips@gmail.com';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@ylootrips.com';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const EASEBUZZ_KEY = process.env.EASEBUZZ_KEY || '';
 const EASEBUZZ_SALT = process.env.EASEBUZZ_SALT || '';

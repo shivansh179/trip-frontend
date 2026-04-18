@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateTicket, logLeadToSheet } from '@/lib/leads';
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'connectylootrips@gmail.com';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@ylootrips.com';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 
 export async function POST(req: NextRequest) {
@@ -54,7 +54,7 @@ Dates:       ${preferredDates || 'Flexible'}
 We look forward to planning your perfect trip!
 
 📱 WhatsApp: +91 84278 31127
-📧 Email: connectylootrips@gmail.com
+📧 Email: hello@ylootrips.com
 
 Best regards,
 YlooTrips Team

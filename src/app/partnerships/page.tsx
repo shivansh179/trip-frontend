@@ -139,7 +139,7 @@ export default function PartnershipsPage() {
                 WhatsApp Us
               </a>
               <a
-                href="mailto:connectylootrips@gmail.com?subject=Partnership Enquiry — YlooTrips&body=Hi YlooTrips team,%0A%0AI'd like to explore a partnership.%0A%0ABusiness name:%0AType of partnership:%0ALocation:%0AWebsite / Reviews:%0A%0A[Tell us more about your business]"
+                href="mailto:hello@ylootrips.com?subject=Partnership Enquiry — YlooTrips&body=Hi YlooTrips team,%0A%0AI'd like to explore a partnership.%0A%0ABusiness name:%0AType of partnership:%0ALocation:%0AWebsite / Reviews:%0A%0A[Tell us more about your business]"
                 className="inline-flex items-center justify-center gap-2 border border-primary/20 text-primary hover:bg-primary hover:text-cream px-8 py-4 text-sm uppercase tracking-widest transition-all"
               >
                 Send Email <ArrowUpRight className="w-4 h-4" />

@@ -119,7 +119,7 @@ export default function CareersPage() {
                     </div>
                   </div>
                   <a
-                    href={`mailto:connectylootrips@gmail.com?subject=Application: ${encodeURIComponent(job.title)}&body=Hi YlooTrips team,%0A%0AI'd like to apply for the ${encodeURIComponent(job.title)} position.%0A%0A[Please attach your resume]`}
+                    href={`mailto:hello@ylootrips.com?subject=Application: ${encodeURIComponent(job.title)}&body=Hi YlooTrips team,%0A%0AI'd like to apply for the ${encodeURIComponent(job.title)} position.%0A%0A[Please attach your resume]`}
                     className="shrink-0 inline-flex items-center gap-2 bg-primary text-cream px-6 py-3 text-sm uppercase tracking-widest hover:bg-secondary transition-colors"
                   >
                     Apply Now <ArrowUpRight className="w-4 h-4" />
@@ -149,7 +149,7 @@ export default function CareersPage() {
               We occasionally hire for guide, photography, and content roles. Send us your resume and tell us how you'd add value to the team.
             </p>
             <a
-              href="mailto:connectylootrips@gmail.com?subject=General Application — YlooTrips&body=Hi YlooTrips team,%0A%0AI'd love to explore opportunities at YlooTrips.%0A%0A[Tell us about yourself and attach your resume]"
+              href="mailto:hello@ylootrips.com?subject=General Application — YlooTrips&body=Hi YlooTrips team,%0A%0AI'd love to explore opportunities at YlooTrips.%0A%0A[Tell us about yourself and attach your resume]"
               className="inline-flex items-center gap-2 btn-primary"
             >
               Send Open Application

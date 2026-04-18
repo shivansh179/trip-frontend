@@ -92,10 +92,10 @@ export default function Footer() {
                   <Phone className="w-3.5 h-3.5 group-hover:text-white/80" />
                   <span>+91 84278 31127 (WhatsApp)</span>
                 </a>
-                <a href="mailto:connectylootrips@gmail.com"
+                <a href="mailto:hello@ylootrips.com"
                   className="flex items-center gap-2.5 text-cream/50 hover:text-white/80 transition-colors text-sm group">
                   <Mail className="w-3.5 h-3.5 group-hover:text-white/80" />
-                  <span>connectylootrips@gmail.com</span>
+                  <span>hello@ylootrips.com</span>
                 </a>
                 <div className="flex items-start gap-2.5 text-cream/40 text-sm">
                   <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />

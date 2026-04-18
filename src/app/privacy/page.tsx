@@ -27,7 +27,7 @@ export default function PrivacyPage() {
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-8">
           <p className="text-amber-800 text-sm leading-relaxed">
             At <strong>YlooTrips</strong>, your privacy matters. This policy explains what data we collect, how we use it, and your rights. We will never sell your personal information. Questions? Email us at{' '}
-            <a href="mailto:admin@ylootrips.com" className="underline font-semibold">admin@ylootrips.com</a>.
+            <a href="mailto:hello@ylootrips.com" className="underline font-semibold">hello@ylootrips.com</a>.
           </p>
         </div>
 
@@ -138,7 +138,7 @@ export default function PrivacyPage() {
                 <li><strong>Portability:</strong> Receive your data in a machine-readable format</li>
                 <li><strong>Objection:</strong> Object to processing of your data in certain circumstances</li>
               </ul>
-              <p>To exercise any of these rights, email us at <a href="mailto:admin@ylootrips.com" className="text-amber-600 underline">admin@ylootrips.com</a> with your name and booking reference. We will respond within 7 business days.</p>
+              <p>To exercise any of these rights, email us at <a href="mailto:hello@ylootrips.com" className="text-amber-600 underline">hello@ylootrips.com</a> with your name and booking reference. We will respond within 7 business days.</p>
             </div>
           </div>
 
@@ -168,7 +168,7 @@ export default function PrivacyPage() {
             </div>
             <div className="space-y-2 text-gray-600 text-sm">
               <p><strong>Company:</strong> YlooTrips</p>
-              <p><strong>Email:</strong> <a href="mailto:admin@ylootrips.com" className="text-amber-600 underline">admin@ylootrips.com</a></p>
+              <p><strong>Email:</strong> <a href="mailto:hello@ylootrips.com" className="text-amber-600 underline">hello@ylootrips.com</a></p>
               <p><strong>WhatsApp:</strong> <a href="https://wa.me/918427831127" target="_blank" rel="noopener noreferrer" className="text-amber-600 underline">+91 84278 31127</a></p>
             </div>
           </div>

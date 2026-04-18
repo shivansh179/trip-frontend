@@ -34,7 +34,7 @@ export function OrganizationJsonLd() {
           {
             '@type': 'ContactPoint',
             telephone: '+91-8427831127',
-            email: 'connectylootrips@gmail.com',
+            email: 'hello@ylootrips.com',
             contactType: 'customer service',
             availableLanguage: ['English', 'Hindi'],
           },
@@ -133,7 +133,7 @@ export function TourJsonLd({
           name: 'YlooTrips',
           url: 'https://www.ylootrips.com',
           telephone: '+91-8427831127',
-          email: 'connectylootrips@gmail.com',
+          email: 'hello@ylootrips.com',
         },
         offers: {
           '@type': 'Offer',
