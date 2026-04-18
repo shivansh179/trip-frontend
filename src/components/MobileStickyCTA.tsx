@@ -35,7 +35,7 @@ export default function MobileStickyCTA() {
     const isReelTrip = pathname?.startsWith('/reel-to-trip');
     const isTrips = isDomestic || isInternational || isReelTrip;
     const isPlannerActive = pathname?.startsWith('/trip-planner');
-    const isWallet = false;
+    const isWallet = pathname?.startsWith('/cashback');
     const isMyTrips = pathname?.startsWith('/my-booking');
 
     return (
@@ -200,7 +200,7 @@ export default function MobileStickyCTA() {
 
                         {/* Wallet */}
                         <Link
-                            href="/trips"
+                            href="/cashback"
                             className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none"
                         >
                             <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 relative ${isWallet ? 'bg-green-50' : balance > 0 ? 'bg-green-50/60' : ''}`}>
