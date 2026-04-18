@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, MapPin, Globe, MessageCircle, Star, Clock, Users, X, CreditCard, Loader2, CheckCircle, ShieldCheck, BadgePercent } from 'lucide-react';
@@ -324,7 +325,7 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
     setCbSending(false);
   };
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
@@ -533,7 +534,8 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
