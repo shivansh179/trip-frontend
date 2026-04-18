@@ -1,17 +1,30 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import Review from '@/models/Review';
+import fs from 'fs';
+import path from 'path';
 
-export const dynamic = 'force-dynamic'; // always fresh — reviews must show immediately after approval
+const DATA_FILE = path.join(process.cwd(), '.data', 'reviews.json');
+
+export const dynamic = 'force-dynamic';
+
+interface Review {
+  id: string;
+  status: string;
+  createdAt: string;
+}
+
+function readReviews(): Review[] {
+  try {
+    return JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
+  } catch {
+    return [];
+  }
+}
 
 export async function GET() {
   try {
-    await connectDB();
-    const reviews = await Review.find({ status: 'approved' })
-      .sort({ createdAt: -1 })
-      .limit(20)
-      .lean();
-
+    const reviews = readReviews()
+      .filter(r => r.status === 'approved')
+      .slice(0, 20);
     return NextResponse.json({ reviews });
   } catch (err) {
     console.error('[reviews/approved]', err);
