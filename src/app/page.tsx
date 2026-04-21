@@ -302,7 +302,7 @@ function HomeBookingDrawer({ pkg, onClose }: { pkg: HomePkg; onClose: () => void
                 <>
                   {/* Promo code */}
                   <PromoCodeInput
-                    orderTotal={priceAfterDiscount}
+                    orderTotal={totalPrice}
                     appliedCode={promoCode}
                     discountAmount={promoCashback}
                     onApply={(code, discount) => {
