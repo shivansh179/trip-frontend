@@ -14,6 +14,7 @@ import MobileStickyBookingBar from '@/components/MobileStickyBookingBar';
 import { BreadcrumbJsonLd, FaqJsonLd, TourJsonLd } from '@/components/JsonLd';
 import { getDestinationImageUrl } from '@/lib/destinationImages';
 import FlightBookingSection from '@/components/FlightBookingSection';
+import BookingCalendar from '@/components/BookingCalendar';
 
 interface TripItinerary {
     id: number;
@@ -40,6 +41,7 @@ export default function TripDetailPage() {
     const [error, setError] = useState<string | null>(null);
     const [selectedGuests, setSelectedGuests] = useState(1);
     const [selectedDate, setSelectedDate] = useState('');
+    const [dynamicPrice, setDynamicPrice] = useState(0);
     const [openFaq, setOpenFaq] = useState<number | null>(null);
 
     useEffect(() => {
@@ -76,8 +78,9 @@ export default function TripDetailPage() {
         router.push(`/checkout?tripId=${trip.id}&guests=${selectedGuests}&date=${selectedDate}`);
     };
 
-    const totalPrice = trip ? (typeof trip.price === 'number' ? trip.price : parseFloat(trip.price.toString())) * selectedGuests : 0;
     const basePrice = trip ? (typeof trip.price === 'number' ? trip.price : parseFloat(trip.price.toString())) : 0;
+    const effectivePrice = dynamicPrice || basePrice;
+    const totalPrice = effectivePrice * selectedGuests;
 
     // Deterministic spots left (consistent server/client)
     const spotsLeft = trip ? (((trip.id * 7) % 9) + 1 <= 5 ? ((trip.id * 7) % 9) + 1 : null) : null;
@@ -374,14 +377,16 @@ export default function TripDetailPage() {
                             {/* Header strip */}
                             <div className="bg-gradient-to-r from-primary to-secondary px-6 py-4 flex items-center justify-between">
                                 <div>
-                                    <p className="text-[10px] text-white/60 uppercase tracking-widest">Starting from</p>
+                                    <p className="text-[10px] text-white/60 uppercase tracking-widest">{dynamicPrice ? 'Selected date price' : 'Starting from'}</p>
                                     <div className="flex items-baseline gap-2">
-                                        <span className="font-display text-3xl text-white">{fp(trip.price)}</span>
+                                        <span className="font-display text-3xl text-white">{fp(effectivePrice)}</span>
                                         <span className="text-white/60 text-sm">/ person</span>
                                     </div>
-                                    {trip.originalPrice && (
+                                    {dynamicPrice && dynamicPrice !== basePrice ? (
+                                        <span className="text-white/50 text-xs line-through">{fp(basePrice)} base</span>
+                                    ) : trip.originalPrice ? (
                                         <span className="text-white/50 text-xs line-through">{fp(trip.originalPrice)}</span>
-                                    )}
+                                    ) : null}
                                 </div>
                                 {spotsLeft !== null && (
                                     <div className="bg-red-500 text-white text-[10px] font-bold uppercase px-2.5 py-1.5 rounded-full animate-pulse text-center">
@@ -418,22 +423,28 @@ export default function TripDetailPage() {
                                     <label className="text-xs text-primary/55 uppercase tracking-widest mb-1.5 block font-medium">
                                         <Calendar className="w-3.5 h-3.5 inline mr-1" />Travel Date
                                     </label>
-                                    <input
-                                        type="date"
-                                        value={selectedDate}
-                                        onChange={(e) => setSelectedDate(e.target.value)}
-                                        min={new Date().toISOString().split('T')[0]}
-                                        className="w-full p-3 border border-primary/15 bg-cream/50 text-primary rounded-lg text-sm focus:outline-none focus:border-secondary"
-                                    />
+                                    {trip && (
+                                        <BookingCalendar
+                                            tripId={trip.id}
+                                            basePrice={basePrice}
+                                            maxSeats={trip.maxGroupSize || 16}
+                                            selectedDate={selectedDate}
+                                            selectedGuests={selectedGuests}
+                                            onSelectDate={(date, price) => {
+                                                setSelectedDate(date);
+                                                setDynamicPrice(price);
+                                            }}
+                                        />
+                                    )}
                                     {!selectedDate && (
-                                        <p className="text-xs text-amber-600 mt-1">← Select a date to confirm booking</p>
+                                        <p className="text-xs text-amber-600 mt-1.5">Select a date above to confirm booking</p>
                                     )}
                                 </div>
 
                                 {/* Price Breakdown */}
                                 <div className="bg-cream/60 rounded-xl p-4 space-y-2 border border-primary/8">
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-primary/60">{fp(basePrice)} × {selectedGuests} guest{selectedGuests > 1 ? 's' : ''}</span>
+                                        <span className="text-primary/60">{fp(effectivePrice)} × {selectedGuests} guest{selectedGuests > 1 ? 's' : ''}</span>
                                         <span className="font-medium text-primary">{fp(totalPrice)}</span>
                                     </div>
                                     <div className="flex justify-between text-sm text-green-700">
@@ -587,7 +598,7 @@ export default function TripDetailPage() {
 
             {/* Mobile Sticky Booking Bar */}
             <MobileStickyBookingBar
-                price={basePrice}
+                price={effectivePrice}
                 onBook={handleBookNow}
                 disabled={!selectedDate}
                 spotsLeft={spotsLeft ?? undefined}

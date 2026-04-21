@@ -1,81 +1,63 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const DATA_FILE = path.join(process.cwd(), '.data', 'hotel-bookings.json');
+import { connectDB } from '@/lib/mongodb';
+import { HotelBooking } from '@/lib/db/models';
 
 function isAuthorised(req: NextRequest): boolean {
-    const adminSecret = process.env.ADMIN_SECRET;
-    if (!adminSecret) return true;
-    if (req.headers.get('x-admin-secret') === adminSecret) return true;
-    if (req.headers.get('x-admin-token')) return true;
-    return false;
-}
-
-function readBookings(): Record<string, unknown>[] {
-    try {
-        const raw = fs.readFileSync(DATA_FILE, 'utf-8');
-        return JSON.parse(raw);
-    } catch {
-        return [];
-    }
-}
-
-function writeBookings(bookings: Record<string, unknown>[]) {
-    const dir = path.dirname(DATA_FILE);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(DATA_FILE, JSON.stringify(bookings, null, 2));
+  const adminSecret = process.env.ADMIN_SECRET;
+  if (!adminSecret) return true;
+  if (req.headers.get('x-admin-secret') === adminSecret) return true;
+  if (req.headers.get('x-admin-token')) return true;
+  return false;
 }
 
 export async function GET(req: NextRequest) {
-    const { searchParams } = req.nextUrl;
-    const evtRef = searchParams.get('evtRef');
-    const txnid = searchParams.get('txnid');
-    const bookings = readBookings();
+  const txnid  = req.nextUrl.searchParams.get('txnid');
+  const evtRef = req.nextUrl.searchParams.get('evtRef');
+  console.log(`[hotel-bookings GET] txnid=${txnid} evtRef=${evtRef}`);
 
-    if (txnid) {
-        const booking = bookings.find((b: Record<string, unknown>) => b.txnid === txnid);
-        return NextResponse.json({ data: booking || null });
-    }
-    if (evtRef) {
-        const booking = bookings.find((b: Record<string, unknown>) => b.evtRef === evtRef);
-        return NextResponse.json({ data: booking || null });
-    }
+  await connectDB();
 
-    if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    return NextResponse.json({ data: bookings.slice().reverse() });
+  if (txnid) {
+    const doc = await HotelBooking.findOne({ txnid }).lean();
+    return NextResponse.json({ data: doc || null });
+  }
+  if (evtRef) {
+    const doc = await HotelBooking.findOne({ evtRef }).lean();
+    return NextResponse.json({ data: doc || null });
+  }
+
+  if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const docs = await HotelBooking.find({}).sort({ savedAt: -1 }).lean();
+  return NextResponse.json({ data: docs });
 }
 
 export async function POST(req: NextRequest) {
-    try {
-        const booking = await req.json();
-        const bookings = readBookings();
-        bookings.push({ ...booking, savedAt: new Date().toISOString() });
-        writeBookings(bookings);
-        return NextResponse.json({ success: true });
-    } catch {
-        return NextResponse.json({ error: 'Failed to save booking' }, { status: 500 });
-    }
+  try {
+    const booking = await req.json();
+    console.log(`[hotel-bookings POST] txnid=${booking?.txnid}`);
+    await connectDB();
+    await HotelBooking.create({ ...booking, savedAt: new Date().toISOString() });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'Failed to save booking' }, { status: 500 });
+  }
 }
 
 export async function PATCH(req: NextRequest) {
-    if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    try {
-        const body = await req.json();
-        const { txnid, status, evtRef } = body;
-        const bookings = readBookings();
-        const idx = bookings.findIndex((b: Record<string, unknown>) =>
-            b.txnid === txnid || (evtRef && b.evtRef === evtRef)
-        );
-        if (idx !== -1) {
-            const updates: Record<string, unknown> = {};
-            if (status !== undefined) updates.status = status;
-            if (evtRef !== undefined) updates.evtRef = evtRef;
-            bookings[idx] = { ...bookings[idx], ...updates };
-            writeBookings(bookings);
-        }
-        return NextResponse.json({ success: true });
-    } catch {
-        return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
-    }
+  if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const { txnid, status, evtRef } = await req.json();
+    console.log(`[hotel-bookings PATCH] txnid=${txnid} status=${status}`);
+    await connectDB();
+    const update: Record<string, unknown> = {};
+    if (status !== undefined) update.status = status;
+    if (evtRef !== undefined) update.evtRef = evtRef;
+    await HotelBooking.findOneAndUpdate(
+      { $or: [{ txnid }, ...(evtRef ? [{ evtRef }] : [])] },
+      { $set: update }
+    );
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
+  }
 }

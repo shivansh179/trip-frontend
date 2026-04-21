@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
+import { isRateLimited, getClientIp } from '@/lib/ratelimit';
 
 const SYSTEM_PROMPT = `You are Yloo AI, an expert global travel planner for YlooTrips (ylootrips.com). You plan trips to any destination worldwide — India, Southeast Asia, Europe, Middle East, Americas, everywhere.
 
@@ -118,6 +119,14 @@ function isRateLimit(err: unknown) {
 }
 
 export async function POST(req: NextRequest) {
+  // 5 requests per minute per IP
+  if (isRateLimited(`trip-planner:${getClientIp(req)}`, 5, 60_000)) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait a moment before trying again.' },
+      { status: 429 }
+    );
+  }
+
   const { message } = await req.json();
 
   if (!message || typeof message !== 'string') {

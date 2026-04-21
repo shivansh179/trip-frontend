@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { isRateLimited, getClientIp } from '@/lib/ratelimit';
 
 const EASEBUZZ_KEY = process.env.EASEBUZZ_KEY || '';
 const EASEBUZZ_SALT = process.env.EASEBUZZ_SALT || '';
@@ -8,6 +9,11 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ylootrips.com'
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
 
 export async function POST(req: NextRequest) {
+  // 10 payment attempts per minute per IP
+  if (isRateLimited(`payment:${getClientIp(req)}`, 10, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests. Please try again shortly.' }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const { bookingReference, chargeNow, totalAmount, customerName, customerEmail, customerPhone, tripTitle } = body;

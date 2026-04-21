@@ -1,16 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tag, CheckCircle, X, ChevronDown, ChevronUp } from 'lucide-react';
-import { applyPromoCode, PROMO_CODES, PromoCode } from '@/lib/promoCodes';
+import type { PromoCode } from '@/lib/promoCodes';
 import { formatPriceWithCurrency } from '@/lib/utils';
 import { useCurrency } from '@/context/CurrencyContext';
 
 interface PromoCodeInputProps {
-  orderTotal: number;           // INR amount before promo
+  orderTotal: number;
   appliedCode: string | null;
   discountAmount: number;
-  onApply: (code: string, discount: number, promo: PromoCode) => void;
+  onApply: (code: string, discount: number) => void;
   onRemove: () => void;
 }
 
@@ -26,28 +26,39 @@ export default function PromoCodeInput({
 
   const [input, setInput] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [showList, setShowList] = useState(false);
+  const [promoList, setPromoList] = useState<PromoCode[]>([]);
 
-  const handleApply = () => {
-    setError(null);
-    const result = applyPromoCode(input, orderTotal);
-    if (result.valid) {
-      onApply(result.promo.code, result.discount, result.promo);
-      setInput('');
-    } else {
-      setError(result.error);
-    }
-  };
+  // Load available promos from backend (cached 1h on CDN)
+  useEffect(() => {
+    fetch('/api/promos/list')
+      .then((r) => r.json())
+      .then((d) => setPromoList(d.promos ?? []))
+      .catch(() => {});
+  }, []);
 
-  const handleQuickApply = (code: string) => {
+  const validate = async (code: string) => {
     setError(null);
-    const result = applyPromoCode(code, orderTotal);
-    if (result.valid) {
-      onApply(result.promo.code, result.discount, result.promo);
-      setShowList(false);
-    } else {
-      setError(result.error);
-      setShowList(false);
+    setLoading(true);
+    try {
+      const res = await fetch('/api/promos/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, orderTotal }),
+      });
+      const data = await res.json();
+      if (data.valid) {
+        onApply(data.code, data.discount);
+        setInput('');
+        setShowList(false);
+      } else {
+        setError(data.error ?? 'Invalid promo code.');
+      }
+    } catch {
+      setError('Could not validate promo code. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,18 +92,19 @@ export default function PromoCodeInput({
                 type="text"
                 value={input}
                 onChange={(e) => { setInput(e.target.value.toUpperCase()); setError(null); }}
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleApply())}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), validate(input))}
                 placeholder="Enter promo code"
-                className="w-full pl-9 pr-4 py-3 border border-primary/20 bg-white rounded-xl text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent uppercase"
+                disabled={loading}
+                className="w-full pl-9 pr-4 py-3 border border-primary/20 bg-white rounded-xl text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent uppercase disabled:opacity-60"
               />
             </div>
             <button
               type="button"
-              onClick={handleApply}
-              disabled={!input.trim()}
+              onClick={() => validate(input)}
+              disabled={!input.trim() || loading}
               className="px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
             >
-              Apply
+              {loading ? '...' : 'Apply'}
             </button>
           </div>
 
@@ -104,19 +116,21 @@ export default function PromoCodeInput({
           )}
 
           {/* View available codes toggle */}
-          <button
-            type="button"
-            onClick={() => setShowList(!showList)}
-            className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 hover:text-amber-700 transition-colors"
-          >
-            {showList ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-            {showList ? 'Hide offers' : 'View available promo codes'}
-          </button>
+          {promoList.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowList(!showList)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 hover:text-amber-700 transition-colors"
+            >
+              {showList ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+              {showList ? 'Hide offers' : 'View available promo codes'}
+            </button>
+          )}
 
           {/* Available codes list */}
           {showList && (
             <div className="space-y-2 pt-1">
-              {PROMO_CODES.map((promo) => {
+              {promoList.map((promo) => {
                 const eligible = orderTotal >= promo.minOrder;
                 return (
                   <div
@@ -126,7 +140,7 @@ export default function PromoCodeInput({
                         ? 'border-amber-200 bg-amber-50 cursor-pointer hover:bg-amber-100'
                         : 'border-gray-100 bg-gray-50 opacity-60'
                     }`}
-                    onClick={() => eligible && handleQuickApply(promo.code)}
+                    onClick={() => eligible && validate(promo.code)}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <span className="font-mono text-xs font-bold bg-white border border-dashed border-amber-400 text-amber-700 px-2 py-0.5 rounded-lg shrink-0">

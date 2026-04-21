@@ -29,19 +29,32 @@ export function generateTicket(): string {
   return `YLO-${ymd}-${rand}`;
 }
 
+// Cache the Sheets client — avoids re-parsing credentials + re-creating auth on every lead
+let _sheetsClient: ReturnType<typeof google.sheets> | null = null;
+let _sheetsCredHash: string | null = null;
+
+function getSheetsClient(credJson: string) {
+  // Reuse if same credentials
+  const hash = credJson.slice(0, 60);
+  if (_sheetsClient && _sheetsCredHash === hash) return _sheetsClient;
+
+  const creds = JSON.parse(credJson);
+  const auth = new google.auth.GoogleAuth({
+    credentials: creds,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+  _sheetsClient = google.sheets({ version: 'v4', auth });
+  _sheetsCredHash = hash;
+  return _sheetsClient;
+}
+
 /** Appends a lead row to Google Sheet. Non-fatal — never throws. */
 export async function logLeadToSheet(lead: LeadData): Promise<void> {
   try {
     const credJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
     if (!credJson) return; // silently skip if not configured
 
-    const creds = JSON.parse(credJson);
-    const auth = new google.auth.GoogleAuth({
-      credentials: creds,
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-
-    const sheets = google.sheets({ version: 'v4', auth });
+    const sheets = getSheetsClient(credJson);
 
     const now = new Date().toLocaleString('en-IN', {
       timeZone: 'Asia/Kolkata',

@@ -227,7 +227,7 @@ export async function GET(req: NextRequest) {
       });
 
       const res = await fetch(`https://serpapi.com/search?${params}`, {
-        next: { revalidate: 1800 }, // cache 30 min
+        next: { revalidate: 3600 }, // cache 1 hour — hotel prices stable within the hour
       });
 
       if (res.ok) {
@@ -242,7 +242,7 @@ export async function GET(req: NextRequest) {
 
           return NextResponse.json(
             { isDemo: false, data, nights, query },
-            { headers: { 'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600' } }
+            { headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200' } }
           );
         }
       }

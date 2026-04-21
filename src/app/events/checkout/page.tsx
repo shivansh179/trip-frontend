@@ -9,7 +9,6 @@ import { formatPrice } from '@/lib/utils';
 import TrustBadges from '@/components/TrustBadges';
 import PaintSplashBg from '@/components/PaintSplashBg';
 import PromoCodeInput from '@/components/PromoCodeInput';
-import { PromoCode } from '@/lib/promoCodes';
 import { useWallet } from '@/context/WalletContext';
 import { formatPriceWithCurrency } from '@/lib/utils';
 
@@ -377,7 +376,7 @@ function EventCheckoutContent() {
                                         orderTotal={baseTotal}
                                         appliedCode={promoCode}
                                         discountAmount={promoDiscount}
-                                        onApply={(code, discount, _promo: PromoCode) => {
+                                        onApply={(code, discount) => {
                                             setPromoCode(code);
                                             setPromoDiscount(discount);
                                         }}

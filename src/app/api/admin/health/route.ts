@@ -330,7 +330,21 @@ function checkEasebuzz(): Partial<ApiStatus> {
   };
 }
 
-export async function GET() {
+// Cache health results for 5 minutes — prevents repeated API calls to Groq/Gemini/SerpAPI
+// every time the admin dashboard refreshes
+declare global {
+  // eslint-disable-next-line no-var
+  var _healthCache: { data: unknown; expiresAt: number } | undefined;
+}
+
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const force = url.searchParams.get('force') === '1';
+
+  if (!force && globalThis._healthCache && Date.now() < globalThis._healthCache.expiresAt) {
+    return NextResponse.json(globalThis._healthCache.data);
+  }
+
   // Test AI feature once — shared across Groq/OpenAI/Gemini checks
   const aiTest = await testAiFeature();
 
@@ -355,10 +369,15 @@ export async function GET() {
     merge({ name: 'Backend API', purpose: 'Database · Trips · Bookings', configured: !!process.env.NEXT_PUBLIC_API_URL, docsUrl: '#' }, backend),
   ];
 
-  return NextResponse.json({
+  const result = {
     checkedAt: new Date().toISOString(),
     allOk: apis.every(a => a.status === 'ok'),
     hasIssues: apis.some(a => a.status !== 'ok'),
     apis,
-  });
+  };
+
+  // Cache for 5 minutes — pass ?force=1 to bypass
+  globalThis._healthCache = { data: result, expiresAt: Date.now() + 5 * 60 * 1000 };
+
+  return NextResponse.json(result);
 }

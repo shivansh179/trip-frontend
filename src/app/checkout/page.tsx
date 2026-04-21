@@ -13,7 +13,6 @@ import { useCurrency } from '@/context/CurrencyContext';
 import { useVisitor } from '@/context/VisitorContext';
 import { useWallet } from '@/context/WalletContext';
 import PromoCodeInput from '@/components/PromoCodeInput';
-import type { PromoCode } from '@/lib/promoCodes';
 
 function CheckoutContent() {
     const router = useRouter();

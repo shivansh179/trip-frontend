@@ -1,30 +1,16 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const DATA_FILE = path.join(process.cwd(), '.data', 'reviews.json');
+import { connectDB } from '@/lib/mongodb';
+import { Review } from '@/lib/db/models';
 
 export const dynamic = 'force-dynamic';
 
-interface Review {
-  id: string;
-  status: string;
-  createdAt: string;
-}
-
-function readReviews(): Review[] {
-  try {
-    return JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
-  } catch {
-    return [];
-  }
-}
-
 export async function GET() {
   try {
-    const reviews = readReviews()
-      .filter(r => r.status === 'approved')
-      .slice(0, 20);
+    await connectDB();
+    const reviews = await Review.find({ status: 'approved' })
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean();
     return NextResponse.json({ reviews });
   } catch (err) {
     console.error('[reviews/approved]', err);

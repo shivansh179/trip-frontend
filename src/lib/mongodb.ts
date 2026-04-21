@@ -21,7 +21,7 @@ export async function connectDB() {
 
   if (!cached.promise) {
     cached.promise = mongoose
-      .connect(uri, { serverSelectionTimeoutMS: 8000 })
+      .connect(uri, { serverSelectionTimeoutMS: 8000, maxPoolSize: 5 })
       .then((m) => m)
       .catch((err) => {
         // Reset so the next request retries instead of re-throwing the stale rejection

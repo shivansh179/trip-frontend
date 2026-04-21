@@ -55,7 +55,7 @@ async function fetchSerpApi(
         });
 
         const res = await fetch(`https://serpapi.com/search?${params}`, {
-            next: { revalidate: 300 },
+            next: { revalidate: 900 }, // 15 min — flight prices don't shift every 5 min
         });
         if (!res.ok) return null;
 
@@ -120,9 +120,20 @@ async function fetchSerpApi(
     }
 }
 
-// ── Amadeus fallback ──────────────────────────────────────────────────────────
+// ── Amadeus token cache — tokens live 30 min, reuse across requests ───────────
+declare global {
+    // eslint-disable-next-line no-var
+    var _amadeusToken: { token: string; expiresAt: number } | undefined;
+}
+
 async function getAmadeusToken(): Promise<string | null> {
     if (!AMADEUS_CLIENT_ID || !AMADEUS_CLIENT_SECRET) return null;
+
+    // Reuse cached token if still valid (with 60s safety buffer)
+    if (globalThis._amadeusToken && Date.now() < globalThis._amadeusToken.expiresAt) {
+        return globalThis._amadeusToken.token;
+    }
+
     try {
         const res = await fetch(`${AMADEUS_BASE}/v1/security/oauth2/token`, {
             method: 'POST',
@@ -134,7 +145,12 @@ async function getAmadeusToken(): Promise<string | null> {
             }),
         });
         const json = await res.json();
-        return json.access_token ?? null;
+        const token = json.access_token ?? null;
+        if (token) {
+            const expiresIn = (json.expires_in ?? 1799) - 60; // 1 min buffer
+            globalThis._amadeusToken = { token, expiresAt: Date.now() + expiresIn * 1000 };
+        }
+        return token;
     } catch { return null; }
 }
 
@@ -295,7 +311,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: 'origin, destination and date required' }, { status: 400 });
     }
 
-    const cacheHeaders = { 'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=1800' };
+    const cacheHeaders = { 'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600' };
 
     // 1. Try SerpAPI Google Flights (live)
     const serpResult = await fetchSerpApi(origin, dest, date, adults);

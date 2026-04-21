@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { generateTicket, logLeadToSheet } from '@/lib/leads';
+import { isRateLimited, getClientIp } from '@/lib/ratelimit';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ylootrips.com';
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
@@ -16,6 +17,11 @@ const MARKET_EVENT_ID = process.env.HOTEL_EVENT_ID
   : null;
 
 export async function POST(req: NextRequest) {
+  // 10 booking attempts per minute per IP
+  if (isRateLimited(`market-book:${getClientIp(req)}`, 10, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests. Please try again shortly.' }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const { name, email, phone, packageTitle, destination, sourceUrl, ourPrice, chargeNow, paymentMode, paymentMethod, marketPrice, priceDiff, guests } = body;

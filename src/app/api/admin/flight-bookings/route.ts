@@ -1,91 +1,63 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { connectDB } from '@/lib/mongodb';
+import { FlightBooking } from '@/lib/db/models';
 
-const DATA_FILE = path.join(process.cwd(), '.data', 'flight-bookings.json');
-
-/**
- * Auth check for admin API routes.
- * Accepts either:
- *   1. x-admin-secret header matching ADMIN_SECRET env var (server-to-server internal calls)
- *   2. x-admin-token header with any truthy value (admin panel UI calls using backend JWT)
- * If ADMIN_SECRET is not configured → allow all (backwards compat until env var is set).
- */
 function isAuthorised(req: NextRequest): boolean {
-    const adminSecret = process.env.ADMIN_SECRET;
-    if (!adminSecret) return true; // not yet configured: allow all
-    if (req.headers.get('x-admin-secret') === adminSecret) return true;
-    if (req.headers.get('x-admin-token')) return true; // admin panel JWT
-    return false;
-}
-
-function readBookings(): Record<string, unknown>[] {
-    try {
-        const raw = fs.readFileSync(DATA_FILE, 'utf-8');
-        return JSON.parse(raw);
-    } catch {
-        return [];
-    }
-}
-
-function writeBookings(bookings: Record<string, unknown>[]) {
-    const dir = path.dirname(DATA_FILE);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(DATA_FILE, JSON.stringify(bookings, null, 2));
+  const adminSecret = process.env.ADMIN_SECRET;
+  if (!adminSecret) return true;
+  if (req.headers.get('x-admin-secret') === adminSecret) return true;
+  if (req.headers.get('x-admin-token')) return true;
+  return false;
 }
 
 export async function GET(req: NextRequest) {
-    const { searchParams } = req.nextUrl;
-    const evtRef = searchParams.get('evtRef');
-    const txnid = searchParams.get('txnid');
-    const bookings = readBookings();
+  const txnid  = req.nextUrl.searchParams.get('txnid');
+  const evtRef = req.nextUrl.searchParams.get('evtRef');
+  console.log(`[flight-bookings GET] txnid=${txnid} evtRef=${evtRef}`);
 
-    // Specific lookups (txnid/evtRef) — used by my-booking page, no auth needed
-    if (txnid) {
-        const booking = bookings.find((b: Record<string, unknown>) => b.txnid === txnid);
-        return NextResponse.json({ data: booking || null });
-    }
-    if (evtRef) {
-        const booking = bookings.find((b: Record<string, unknown>) => b.evtRef === evtRef);
-        return NextResponse.json({ data: booking || null });
-    }
+  await connectDB();
 
-    // List-all — admin only
-    if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    return NextResponse.json({ data: bookings.slice().reverse() });
+  if (txnid) {
+    const doc = await FlightBooking.findOne({ txnid }).lean();
+    return NextResponse.json({ data: doc || null });
+  }
+  if (evtRef) {
+    const doc = await FlightBooking.findOne({ evtRef }).lean();
+    return NextResponse.json({ data: doc || null });
+  }
+
+  if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const docs = await FlightBooking.find({}).sort({ savedAt: -1 }).lean();
+  return NextResponse.json({ data: docs });
 }
 
 export async function POST(req: NextRequest) {
-    // POST is called by payment flow (server-side) to save booking — kept open
-    try {
-        const booking = await req.json();
-        const bookings = readBookings();
-        bookings.push({ ...booking, savedAt: new Date().toISOString() });
-        writeBookings(bookings);
-        return NextResponse.json({ success: true });
-    } catch {
-        return NextResponse.json({ error: 'Failed to save booking' }, { status: 500 });
-    }
+  try {
+    const booking = await req.json();
+    console.log(`[flight-bookings POST] txnid=${booking?.txnid}`);
+    await connectDB();
+    await FlightBooking.create({ ...booking, savedAt: new Date().toISOString() });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'Failed to save booking' }, { status: 500 });
+  }
 }
 
 export async function PATCH(req: NextRequest) {
-    if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    try {
-        const body = await req.json();
-        const { txnid, status, evtRef } = body;
-        const bookings = readBookings();
-        const idx = bookings.findIndex((b: Record<string, unknown>) =>
-            b.txnid === txnid || (evtRef && b.evtRef === evtRef)
-        );
-        if (idx !== -1) {
-            const updates: Record<string, unknown> = {};
-            if (status !== undefined) updates.status = status;
-            if (evtRef !== undefined) updates.evtRef = evtRef;
-            bookings[idx] = { ...bookings[idx], ...updates };
-            writeBookings(bookings);
-        }
-        return NextResponse.json({ success: true });
-    } catch {
-        return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
-    }
+  if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const { txnid, status, evtRef } = await req.json();
+    console.log(`[flight-bookings PATCH] txnid=${txnid} status=${status}`);
+    await connectDB();
+    const update: Record<string, unknown> = {};
+    if (status !== undefined) update.status = status;
+    if (evtRef !== undefined) update.evtRef = evtRef;
+    await FlightBooking.findOneAndUpdate(
+      { $or: [{ txnid }, ...(evtRef ? [{ evtRef }] : [])] },
+      { $set: update }
+    );
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
+  }
 }

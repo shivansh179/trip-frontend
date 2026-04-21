@@ -15,7 +15,6 @@ import { useCurrency } from '@/context/CurrencyContext';
 import { useVisitor } from '@/context/VisitorContext';
 import { useWallet } from '@/context/WalletContext';
 import { formatPriceWithCurrency } from '@/lib/utils';
-import { PromoCode } from '@/lib/promoCodes';
 import { api } from '@/lib/api';
 
 // Tour data — all amounts in INR (fp() converts display currency)
@@ -527,7 +526,7 @@ function TourCheckoutContent() {
                     orderTotal={basePrice - discountAmount}
                     appliedCode={promoCode}
                     discountAmount={promoDiscount}
-                    onApply={(code, discount, _promo: PromoCode) => {
+                    onApply={(code, discount) => {
                       setPromoCode(code);
                       setPromoDiscount(discount);
                     }}
