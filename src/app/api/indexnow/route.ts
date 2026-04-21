@@ -92,10 +92,8 @@ export async function GET() {
     })
   );
 
-  return NextResponse.json({
-    submitted: URLS.length,
-    urls: URLS,
-    engines: results,
-    timestamp: new Date().toISOString(),
-  });
+  return NextResponse.json(
+    { submitted: URLS.length, urls: URLS, engines: results, timestamp: new Date().toISOString() },
+    { headers: { 'Cache-Control': 'no-store' } }
+  );
 }
