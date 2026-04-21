@@ -260,9 +260,9 @@ function FlightBookContent() {
     };
 
     const paymentMethods = [
-        { id: 'upi', label: 'UPI', sub: 'PhonePe, Google Pay, Paytm', icon: Smartphone, badge: '5% OFF' },
-        { id: 'credit_card', label: 'Credit Card', sub: 'Visa, Mastercard, Amex', icon: CreditCard, badge: '3% OFF' },
-        { id: 'debit_card', label: 'Debit Card', sub: 'Visa, Mastercard, RuPay', icon: CreditCard, badge: '3% OFF' },
+        { id: 'upi', label: 'UPI', sub: 'PhonePe, Google Pay, Paytm', icon: Smartphone, badge: '' },
+        { id: 'credit_card', label: 'Credit Card', sub: 'Visa, Mastercard, Amex', icon: CreditCard, badge: '' },
+        { id: 'debit_card', label: 'Debit Card', sub: 'Visa, Mastercard, RuPay', icon: CreditCard, badge: '' },
         { id: 'netbanking', label: 'Net Banking', sub: 'All major banks supported', icon: Building2, badge: '' },
     ];
 
@@ -545,7 +545,7 @@ function FlightBookContent() {
                             {(paymentMethod === 'upi' || paymentMethod === 'credit_card' || paymentMethod === 'debit_card') && (
                                 <div className="mt-3 flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
                                     <span className="text-green-600 text-xs font-semibold">
-                                        {paymentMethod === 'upi' ? '🎉 5% OFF with UPI!' : '🎉 3% OFF with Card!'}
+                                        {paymentMethod === 'upi' ? '✅ UPI selected' : '✅ Card selected'}
                                     </span>
                                 </div>
                             )}

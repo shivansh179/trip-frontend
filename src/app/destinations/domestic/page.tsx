@@ -460,11 +460,9 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
   }, []);
 
   const totalPrice = trip.priceINR * Number(guests || 2);
-  const discountAmt = Math.round(totalPrice * 0.05);
-  const priceAfterDiscount = totalPrice - discountAmt;
-  const maxWalletUsable = Math.round(priceAfterDiscount * 0.10);
+  const maxWalletUsable = Math.round(totalPrice * 0.10);
   const walletDeduction = applyWallet ? Math.min(walletBalance, maxWalletUsable) : 0;
-  const finalPrice = Math.max(0, priceAfterDiscount - walletDeduction);
+  const finalPrice = Math.max(0, totalPrice - walletDeduction);
 
   const handlePaymentSelected = (payload: { mode: 'full' | 'emi' | 'partial'; amountNow: number; paymentMethod?: string }) => {
     setChargeNow(payload.amountNow);
@@ -486,7 +484,7 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
           packageTitle: trip.title, destination: trip.location,
           sourceUrl: `https://ylootrips.com/destinations/domestic`,
           ourPrice: finalPrice, chargeNow: chargeNow ?? finalPrice,
-          paymentMode, paymentMethod, marketPrice: totalPrice, priceDiff: discountAmt,
+          paymentMode, paymentMethod, marketPrice: totalPrice, priceDiff: 0,
         }),
       });
       const data = await res.json();
@@ -553,7 +551,7 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
               {/* Promo code */}
               {payStep === 'options' && (
                 <PromoCodeInput
-                  orderTotal={priceAfterDiscount}
+                  orderTotal={totalPrice}
                   appliedCode={promoCode}
                   discountAmount={promoCashback}
                   onApply={(code, discount) => {

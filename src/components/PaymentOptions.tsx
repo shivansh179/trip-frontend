@@ -84,8 +84,8 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const PAYMENT_METHODS = [
-  { id: 'upi',          label: 'UPI',          icon: '📱', sub: '5% instant discount', discount: 5 },
-  { id: 'credit_card',  label: 'Credit Card',  icon: '💳', sub: '3% off · Visa / MC / Amex', discount: 3 },
+  { id: 'upi',          label: 'UPI',          icon: '📱', sub: 'PhonePe · Google Pay · Paytm', discount: 0 },
+  { id: 'credit_card',  label: 'Credit Card',  icon: '💳', sub: 'Visa / Mastercard / Amex', discount: 0 },
   { id: 'debit_card',   label: 'Debit Card',   icon: '🏦', sub: 'All major banks', discount: 0 },
   { id: 'net_banking',  label: 'Net Banking',  icon: '🏛️', sub: 'HDFC / ICICI / SBI / Axis', discount: 0 },
   { id: 'wallet',       label: 'Wallets',      icon: '👛', sub: 'Paytm · PhonePe · GPay', discount: 0 },
