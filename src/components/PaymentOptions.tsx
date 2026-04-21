@@ -84,7 +84,7 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const PAYMENT_METHODS = [
-  { id: 'upi',          label: 'UPI',          icon: '📱', sub: 'PhonePe · Google Pay · Paytm', discount: 0 },
+  { id: 'upi',          label: 'UPI',          icon: '📱', sub: 'PhonePe · Google Pay · Paytm', discount: 3 },
   { id: 'credit_card',  label: 'Credit Card',  icon: '💳', sub: 'Visa / Mastercard / Amex', discount: 0 },
   { id: 'debit_card',   label: 'Debit Card',   icon: '🏦', sub: 'All major banks', discount: 0 },
   { id: 'net_banking',  label: 'Net Banking',  icon: '🏛️', sub: 'HDFC / ICICI / SBI / Axis', discount: 0 },
@@ -104,8 +104,9 @@ export default function PaymentOptions({ tripPrice, tripTitle, onProceed }: Paym
   const partial30d = Math.ceil(tripPrice * 0.3);
   const partialDepart = tripPrice - partialNow - partial30d;
 
+  const upiDiscountAmt = tab === 'full' && selectedMethod === 'upi' ? Math.round(tripPrice * 0.03) : 0;
   const amountNow =
-    tab === 'full'    ? tripPrice :
+    tab === 'full'    ? tripPrice - upiDiscountAmt :
     tab === 'partial' ? partialNow :
     selectedEmi       ? selectedEmi.monthlyAmount : 0;
 
@@ -435,6 +436,11 @@ export default function PaymentOptions({ tripPrice, tripTitle, onProceed }: Paym
               ? fmt(amountNow)
               : '—'}
           </p>
+          {upiDiscountAmt > 0 && (
+            <p className="text-xs text-green-600 font-semibold mt-0.5">
+              🎉 You save {fmt(upiDiscountAmt)} with UPI (3% off)
+            </p>
+          )}
         </div>
         <div className="text-right text-xs text-secondary">
           <p className="flex items-center gap-1 justify-end">
