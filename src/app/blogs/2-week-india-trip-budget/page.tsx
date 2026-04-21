@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
+import { ArticleJsonLd, BreadcrumbJsonLd, FaqJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
   title: "How to Plan a 2-Week India Trip on a $2,000 Budget",
@@ -55,6 +55,13 @@ export default function IndiaBudgetGuide() {
         { name: 'Home', url: 'https://www.ylootrips.com' },
         { name: 'Blog', url: 'https://www.ylootrips.com/blogs' },
         { name: '2-Week India Trip Budget', url: 'https://www.ylootrips.com/blogs/2-week-india-trip-budget' },
+      ]} />
+      <FaqJsonLd faqs={[
+        { question: 'How much does a 2-week trip to India cost?', answer: 'A 2-week India trip costs approximately: Budget backpacker ₹40,000–60,000 (~$500–720 USD) including dorms, local buses, street food. Mid-range traveler ₹80,000–1,20,000 (~$960–1,440 USD) including 3-star hotels, private transport, and a guide. Premium/comfort: ₹1,50,000–2,50,000+ (~$1,800–3,000 USD) with 4-5 star hotels and private tours. These estimates cover accommodation, transport, food, and entry fees but not international flights.' },
+        { question: 'What is the cheapest way to travel around India for 2 weeks?', answer: 'The cheapest ways: sleeper train between cities (₹500–1,500 per journey), government buses (₹200–800), and shared taxis. Book trains 60–90 days ahead via IRCTC. Avoid taxis at airports — use pre-paid cabs or Ola/Uber. Eat at local dhabas for ₹100–200 per meal. Use YlooTrips packages which bundle transport and hotels at bulk-negotiated rates.' },
+        { question: 'Is 2 weeks enough for India?', answer: 'Two weeks is enough for one region of India in depth — for example, the Golden Triangle (Delhi, Agra, Jaipur) + Rajasthan, or Kerala + Goa, or Himalayas (Manali + Spiti). India is vast — trying to see everything in 2 weeks leads to exhaustion. Focus on 2–3 states maximum.' },
+        { question: 'What is the best 2-week India itinerary?', answer: 'Most popular 2-week India itineraries: (1) Golden Triangle + Rajasthan — Delhi → Agra → Jaipur → Jodhpur → Udaipur; (2) Kerala + Goa — Kochi → Munnar → Alleppey → Varkala → Goa; (3) Himalayas — Delhi → Shimla → Manali → Spiti → Leh. YlooTrips offers curated 14-day packages for all three starting from ₹24,999/person.' },
+        { question: 'Do I need a visa to visit India for 2 weeks?', answer: 'Most nationalities (USA, UK, Australia, Canada, EU countries) can apply for an Indian e-Visa online at indianvisaonline.gov.in. It costs $25–80 depending on nationality and takes 2–4 business days. Apply at least 2 weeks before travel. The e-Visa allows stays up to 30 or 180 days.' },
       ]} />
       <ArticleJsonLd
         headline="How to Plan a 2-Week India Trip on a $2,000 Budget"

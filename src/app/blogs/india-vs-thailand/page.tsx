@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
+import { ArticleJsonLd, BreadcrumbJsonLd, FaqJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
   title: "India vs Thailand: Which Should You Visit First?",
@@ -82,6 +82,13 @@ export default function IndiaVsThailand() {
         { name: 'Home', url: 'https://www.ylootrips.com' },
         { name: 'Blog', url: 'https://www.ylootrips.com/blogs' },
         { name: 'India vs Thailand', url: 'https://www.ylootrips.com/blogs/india-vs-thailand' },
+      ]} />
+      <FaqJsonLd faqs={[
+        { question: 'Is India or Thailand better for a first-time Asia trip?', answer: 'Thailand is generally easier for first-timers due to widespread English, easier visa access, and simpler logistics. India offers unmatched cultural depth, history, and diversity but requires more planning. If you have 7–10 days, Thailand is easier. For 2+ weeks, India is transformative.' },
+        { question: 'Is India cheaper than Thailand?', answer: 'India is typically 20–40% cheaper than Thailand for accommodation, food, and local transport. A mid-range India trip costs ₹2,500–4,000/day (~$30–50 USD). Thailand costs ₹4,000–6,000/day (~$50–75 USD). Budget options exist in both countries.' },
+        { question: 'Which is safer — India or Thailand?', answer: 'Both India and Thailand are safe for tourists with normal precautions. Thailand has very low crime against tourists. India\'s major tourist circuits (Rajasthan, Kerala, Goa) are very safe. Use verified tour operators in both countries. YlooTrips provides 24/7 support and vetted guides throughout India.' },
+        { question: 'Can I visit both India and Thailand in one trip?', answer: 'Yes — India and Thailand combine well. A popular route is Delhi → Agra → Jaipur (7 days India) → Bangkok → Phuket (5 days Thailand). Flights between India and Thailand take 3–5 hours. YlooTrips can arrange the India portion with seamless handoffs.' },
+        { question: 'Which has better beaches — India or Thailand?', answer: 'Thailand wins for classic tropical beach holidays — Phuket, Koh Samui, and the islands are world-famous. India has excellent beaches in Goa, Kerala (Varkala, Kovalam), and Andaman Islands — often less crowded than Thailand at better value.' },
       ]} />
       <ArticleJsonLd
         headline="India vs Thailand: Which Should You Visit First?"

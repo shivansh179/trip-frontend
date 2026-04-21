@@ -121,6 +121,16 @@ export const metadata: Metadata = {
   verification: {
     google: '9C1_Q3HeFI5G6i2JTyjPllbVtlomtZQzOsWDVekljY0',
   },
+  // GEO: help AI engines understand the site content and purpose
+  other: {
+    'ai-content-declaration': 'human-authored',
+    'revisit-after': '3 days',
+    'rating': 'general',
+    'geo.region': 'IN-DL',
+    'geo.placename': 'New Delhi, India',
+    'geo.position': '28.6139;77.2090',
+    'ICBM': '28.6139, 77.2090',
+  },
 };
 
 export default function RootLayout({
@@ -136,6 +146,17 @@ export default function RootLayout({
         <meta name="theme-color" content="#F5F1EB" />
         {/* Viewport — critical for mobile rendering */}
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+        {/* GEO: AI search engine discovery link */}
+        <link rel="ai-content-declaration" href="/llms.txt" />
+        {/* GEO: Perplexity / Bing / DuckDuckGo AI meta */}
+        <meta name="perplexity-origin" content="ylootrips.com" />
+        <meta name="revisit-after" content="3 days" />
+        <meta name="rating" content="general" />
+        {/* Geo-targeting for local SEO */}
+        <meta name="geo.region" content="IN-DL" />
+        <meta name="geo.placename" content="New Delhi, India" />
+        <meta name="geo.position" content="28.6139;77.2090" />
+        <meta name="ICBM" content="28.6139, 77.2090" />
         {/* Preconnect for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://images.unsplash.com" />

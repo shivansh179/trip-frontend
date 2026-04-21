@@ -334,6 +334,78 @@ export function TourJsonLd({
   );
 }
 
+// ── Reviews page: AggregateRating + Review list for Google rich snippets ──────
+export function ReviewsPageJsonLd() {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    '@id': 'https://www.ylootrips.com/#organization',
+    name: 'YlooTrips India Pvt. Ltd.',
+    url: 'https://www.ylootrips.com',
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.9',
+      reviewCount: '2400',
+      bestRating: '5',
+      worstRating: '1',
+    },
+    review: [
+      {
+        '@type': 'Review',
+        author: { '@type': 'Person', name: 'Sarah Mitchell' },
+        datePublished: '2025-12-10',
+        reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+        reviewBody: 'Absolutely incredible trip to Kerala! YlooTrips arranged everything perfectly — the houseboat stay in Alleppey was magical. Our guide Arjun was knowledgeable and attentive. Highly recommend!',
+        name: 'Kerala Backwaters — Magical Experience',
+      },
+      {
+        '@type': 'Review',
+        author: { '@type': 'Person', name: 'James Thornton' },
+        datePublished: '2025-11-20',
+        reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+        reviewBody: 'Booked the Golden Triangle tour for our family of 4. Seamless from airport pickup to checkout. The private guide made the Taj Mahal come alive with stories. Worth every rupee.',
+        name: 'Golden Triangle — Perfect Family Tour',
+      },
+      {
+        '@type': 'Review',
+        author: { '@type': 'Person', name: 'Priya Sharma' },
+        datePublished: '2025-10-15',
+        reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+        reviewBody: 'Solo female traveler here — I was nervous about India but YlooTrips made it so safe and easy. 24/7 WhatsApp support, clean hotels, professional guides. Already planning my next trip!',
+        name: 'Rajasthan Solo Trip — Safe & Beautiful',
+      },
+      {
+        '@type': 'Review',
+        author: { '@type': 'Person', name: 'David Chen' },
+        datePublished: '2025-09-05',
+        reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+        reviewBody: 'Booked Manali package last minute. YlooTrips confirmed within hours, sent a full itinerary, and our guide was waiting at the hotel. Snow activities in Solang Valley were unreal!',
+        name: 'Manali Last-Minute Trip — Exceeded Expectations',
+      },
+      {
+        '@type': 'Review',
+        author: { '@type': 'Person', name: 'Emma Wilson' },
+        datePublished: '2025-08-22',
+        reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+        reviewBody: 'Honeymoon package to Bali arranged by YlooTrips. Every detail was perfect — surprise flower decoration at the villa, private sunset dinner, spa. Cannot recommend highly enough.',
+        name: 'Bali Honeymoon — Absolutely Perfect',
+      },
+    ],
+  };
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
+}
+
+// ── Speakable schema — helps Google Assistant / voice search ─────────────────
+export function SpeakableJsonLd({ url, cssSelectors }: { url: string; cssSelectors: string[] }) {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    url,
+    speakable: { '@type': 'SpeakableSpecification', cssSelector: cssSelectors },
+  };
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
+}
+
 interface ArticleJsonLdProps {
   headline: string;
   description: string;

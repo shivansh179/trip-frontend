@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
+import { ArticleJsonLd, BreadcrumbJsonLd, FaqJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
   title: "Solo Female Travel in India: Honest Safety Guide 2026",
@@ -37,6 +37,13 @@ export default function SoloFemaleTravelIndia() {
         { name: 'Home', url: 'https://www.ylootrips.com' },
         { name: 'Blog', url: 'https://www.ylootrips.com/blogs' },
         { name: 'Solo Female Travel in India', url: 'https://www.ylootrips.com/blogs/solo-female-travel-india' },
+      ]} />
+      <FaqJsonLd faqs={[
+        { question: 'Is India safe for solo female travelers?', answer: 'Yes — millions of women travel solo in India every year. The major tourist circuits (Rajasthan, Kerala, Goa, Himachal Pradesh) are generally very safe. Key tips: use verified tour operators like YlooTrips, stay in well-reviewed accommodation, dress modestly in conservative areas, and keep a local SIM with WhatsApp. YlooTrips offers solo female-specific packages with 24/7 emergency support.' },
+        { question: 'What are the safest destinations in India for solo female travelers?', answer: 'Kerala (especially Varkala and Alleppey) is consistently rated the safest state for solo women. Goa, Rajasthan (Jaipur, Udaipur), and Himachal Pradesh (Manali, Dharamshala) are also very popular and safe. Avoid traveling alone at night in poorly lit areas in any city.' },
+        { question: 'What should solo female travelers wear in India?', answer: 'Dress modestly in temples, rural areas, and North India — wear clothes that cover shoulders and knees. Goa and beach areas are more relaxed. Rajasthan and smaller towns are more conservative. Carry a light scarf to cover up when needed. This reduces unwanted attention significantly.' },
+        { question: 'What is the best solo female travel package in India?', answer: 'YlooTrips offers curated solo female packages across India. Popular choices: Kerala Backwaters (5 days from ₹14,999), Rajasthan Heritage (7 days from ₹24,999), and Himachal Pradesh (5 days from ₹12,999). All include verified guides, safe hotels, and 24/7 WhatsApp support.' },
+        { question: 'How do I book a solo trip to India safely?', answer: 'Book through a registered Indian travel company with verifiable reviews. YlooTrips is MSME-registered, GST-certified, and has 4.9★ rating from 2,400+ verified travelers. We provide police-verified guides, pre-vetted accommodation, airport pickup, and a 24/7 emergency line.' },
       ]} />
       <ArticleJsonLd
         headline="Solo Female Travel in India: Honest Safety Guide 2026"

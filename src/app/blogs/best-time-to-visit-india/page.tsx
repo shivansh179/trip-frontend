@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
+import { ArticleJsonLd, BreadcrumbJsonLd, FaqJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
   title: "Best Time to Visit India — Month by Month Guide 2026",
@@ -52,6 +52,13 @@ export default function BestTimeToVisitIndia() {
         { name: 'Home', url: 'https://www.ylootrips.com' },
         { name: 'Blog', url: 'https://www.ylootrips.com/blogs' },
         { name: 'Best Time to Visit India', url: 'https://www.ylootrips.com/blogs/best-time-to-visit-india' },
+      ]} />
+      <FaqJsonLd faqs={[
+        { question: 'What is the best time to visit India?', answer: 'October to March is the best time to visit India overall — the weather is pleasant across most regions. North India (Rajasthan, Delhi, Agra) is best Oct–Mar. Kerala and South India are best Sep–Mar. Hill stations like Manali and Himachal are best May–Jun and Sep–Oct for clear views, and Dec–Feb for snow.' },
+        { question: 'When is peak tourist season in India?', answer: 'Peak tourist season in India is November to February. This is when weather is coolest and most comfortable. Prices are highest during this period. For budget travel, consider shoulder season (Sep–Oct or Mar–Apr).' },
+        { question: 'Is India good to visit in summer (April–June)?', answer: 'April–June is hot in most of India (40°C+) but excellent for Himalayan destinations like Manali, Leh Ladakh, and Spiti Valley. These hill stations have pleasant summer weather (15–25°C) and are best visited May–September.' },
+        { question: 'Is it safe to visit India during monsoon (July–September)?', answer: 'The monsoon (July–September) makes some regions like Kerala incredibly lush and beautiful. It is a good time for Kerala Ayurveda retreats. However, hill stations can have landslides and some areas see flooding. Rajasthan and Goa are less appealing during heavy rains.' },
+        { question: 'What month is cheapest to visit India?', answer: 'May–June and July–August are generally the cheapest months to visit India due to heat or monsoon. Hotel prices and flight costs are 30–50% lower. Goa and Rajasthan are significantly cheaper off-season. Kerala is best visited during monsoon for low prices and lush scenery.' },
       ]} />
       <ArticleJsonLd
         headline="Best Time to Visit India — Month by Month Guide 2026"

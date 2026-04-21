@@ -2,14 +2,15 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, MapPin, Globe, Calendar, Award, Users, ThumbsUp, Camera, MessageSquare, CheckCircle, ExternalLink } from 'lucide-react';
-import { BreadcrumbJsonLd } from '@/components/JsonLd';
+import { BreadcrumbJsonLd, ReviewsPageJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
-  title: 'Reviews & Ratings — YlooTrips',
-  description: 'Read verified reviews from 25,000+ travelers who booked with YlooTrips. Rated 4.9★ on Google. India\'s most trusted travel platform.',
+  title: 'YlooTrips Reviews — 4.9★ Rated by 25,000+ Travelers',
+  description: 'YlooTrips is rated 4.9★ on Google from 2,400+ verified reviews. Read real traveler testimonials from Kerala, Rajasthan, Manali, Bali, Dubai & more. India\'s most trusted tour operator.',
+  keywords: 'YlooTrips reviews, YlooTrips rating, is YlooTrips legit, YlooTrips testimonials, India tour company reviews, best travel company India reviews',
   openGraph: {
     title: 'YlooTrips Reviews | 4.9★ Rated by 25,000+ Travelers',
-    description: 'Verified reviews from real travelers. See why YlooTrips is India\'s most trusted travel platform.',
+    description: '2,400+ verified reviews. 4.9★ Google rating. Read why travelers trust YlooTrips for India and international tours.',
     url: 'https://www.ylootrips.com/reviews',
     images: [{ url: 'https://www.ylootrips.com/og-image.jpg', width: 1200, height: 630 }],
   },
@@ -113,6 +114,7 @@ export default async function ReviewsPage() {
 
   return (
     <>
+      <ReviewsPageJsonLd />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://www.ylootrips.com' },
         { name: 'Reviews', url: 'https://www.ylootrips.com/reviews' },
