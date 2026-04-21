@@ -17,10 +17,15 @@ const URLS = [
   `${HOST}/`,
   `${HOST}/trips`,
   `${HOST}/destinations`,
+  `${HOST}/destinations/domestic`,
+  `${HOST}/destinations/international`,
   `${HOST}/blogs`,
   `${HOST}/about`,
   `${HOST}/contact`,
   `${HOST}/events`,
+  `${HOST}/reviews`,
+  `${HOST}/trip-planner`,
+  `${HOST}/hotels`,
 
   // Package landing pages (high-value SEO)
   `${HOST}/dubai-tour-package-from-delhi`,
@@ -33,11 +38,27 @@ const URLS = [
   `${HOST}/goa-tour-package`,
   `${HOST}/kerala-tour-package`,
 
+  // Curated tour itinerary pages
+  `${HOST}/tours/golden-triangle-10-day`,
+  `${HOST}/tours/kerala-south-india-14-day`,
+  `${HOST}/tours/rajasthan-heritage-7-day`,
+
   // Blog posts
   `${HOST}/blogs/best-time-to-visit-bali`,
   `${HOST}/blogs/dubai-trip-cost-from-india`,
   `${HOST}/blogs/thailand-itinerary-5-days`,
-  `${HOST}/blogs/india-travel-guide`,
+  `${HOST}/blogs/best-time-to-visit-india`,
+  `${HOST}/blogs/india-vs-thailand`,
+  `${HOST}/blogs/solo-female-travel-india`,
+  `${HOST}/blogs/2-week-india-trip-budget`,
+  `${HOST}/blogs/first-time-india-guide`,
+  `${HOST}/blogs/manali-trip-guide`,
+  `${HOST}/blogs/goa-budget-trip-guide`,
+  `${HOST}/blogs/kashmir-travel-guide`,
+  `${HOST}/blogs/kedarnath-yatra-guide`,
+  `${HOST}/blogs/best-honeymoon-destinations-india`,
+  `${HOST}/blogs/long-weekend-getaways-delhi`,
+  `${HOST}/india-travel-guide`,
 ];
 
 const ENGINES = [
