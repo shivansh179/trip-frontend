@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server';
 const HOST = 'https://www.ylootrips.com';
 const KEY = 'fcbdc72ba8354feb90a430b55ea69636';
 const KEY_LOCATION = `${HOST}/${KEY}.txt`;
+const BUILD_TS = '20260421-v3'; // cache-bust token
 
 // All important pages to submit
 const URLS = [
@@ -93,8 +94,9 @@ export async function GET() {
     })
   );
 
+  console.log(`[indexnow] build=${BUILD_TS} submitted=${URLS.length} engines=${JSON.stringify(results)}`);
   return NextResponse.json(
-    { submitted: URLS.length, urls: URLS, engines: results, timestamp: new Date().toISOString() },
+    { build: BUILD_TS, submitted: URLS.length, urls: URLS, engines: results, timestamp: new Date().toISOString() },
     { headers: { 'Cache-Control': 'no-store' } }
   );
 }
