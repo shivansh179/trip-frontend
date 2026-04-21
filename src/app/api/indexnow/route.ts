@@ -1,6 +1,7 @@
 /**
  * IndexNow — submits all YlooTrips URLs to Bing, Yandex, Google (via IndexNow protocol)
  * Triggers immediate crawling of new/updated pages
+ * v2 — 35 URLs including reviews, trip-planner, tours, all blogs
  *
  * Call: GET /api/indexnow  (also auto-called on deploy)
  */
