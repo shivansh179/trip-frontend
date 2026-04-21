@@ -785,6 +785,15 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
           <span className="text-[10px] bg-green-50 text-green-700 border border-green-100 px-2 py-0.5 rounded-full font-semibold">
             🔒 Secure Easebuzz
           </span>
+          <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-100 px-2 py-0.5 rounded-full font-semibold">
+            🎁 10% Cashback in Wallet
+          </span>
+          <span className="text-[10px] bg-purple-50 text-purple-700 border border-purple-100 px-2 py-0.5 rounded-full font-semibold">
+            ⚡ 3% Off on UPI
+          </span>
+          <span className="text-[10px] bg-rose-50 text-rose-700 border border-rose-100 px-2 py-0.5 rounded-full font-semibold">
+            🏷️ Use YLOO15 — 15% Off
+          </span>
         </div>
 
         {/* CTA */}

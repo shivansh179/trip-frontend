@@ -427,6 +427,15 @@ function PackageCard({ pkg, destination }: { pkg: MarketPackage; destination: st
             <span className="bg-green-50 text-green-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-green-100">
               ✅ 100% Refund Policy
             </span>
+            <span className="bg-orange-50 text-orange-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-orange-100">
+              🎁 10% Cashback in Wallet
+            </span>
+            <span className="bg-purple-50 text-purple-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-purple-100">
+              ⚡ 3% Off on UPI
+            </span>
+            <span className="bg-rose-50 text-rose-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-rose-100">
+              🏷️ Use YLOO15 — 15% Off
+            </span>
           </div>
         )}
       </div>
