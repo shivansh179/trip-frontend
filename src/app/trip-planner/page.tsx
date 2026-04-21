@@ -3,12 +3,14 @@ import { Suspense } from 'react';
 import TripPlannerChat from '@/components/TripPlannerChat';
 
 export const metadata: Metadata = {
-  title: 'Yloo AI Trip Planner — YlooTrips',
-  description: 'Plan any trip worldwide with Yloo AI — get a personalised day-by-day itinerary in seconds. India, Bali, Dubai, Thailand and beyond.',
+  title: 'Plan Your Dream Journey — Free AI Trip Planner | YlooTrips',
+  description: 'Plan your dream journey with Yloo AI — get a personalised day-by-day itinerary in seconds. India, Bali, Dubai, Thailand and beyond. 100% free.',
+  keywords: ['trip planner', 'AI travel planner', 'plan your dream journey', 'India itinerary planner', 'free trip planner'],
+  alternates: { canonical: 'https://www.ylootrips.com/trip-planner' },
   openGraph: {
-    title: 'Yloo AI Trip Planner — YlooTrips',
-    description: 'Plan any trip worldwide with Yloo AI — personalised itineraries for India and international destinations.',
-    url: 'https://ylootrips.com/trip-planner',
+    title: 'Plan Your Dream Journey — Free AI Trip Planner | YlooTrips',
+    description: 'Get a personalised day-by-day itinerary in seconds. India, Bali, Dubai, Thailand and beyond.',
+    url: 'https://www.ylootrips.com/trip-planner',
   },
 };
 

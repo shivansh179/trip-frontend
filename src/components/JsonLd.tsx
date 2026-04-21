@@ -72,8 +72,26 @@ export function OrganizationJsonLd() {
         '@id': 'https://www.ylootrips.com/#website',
         url: 'https://www.ylootrips.com',
         name: 'YlooTrips',
+        alternateName: ['YlooTrips India', 'Yloo Trips'],
         description: 'Safe & affordable domestic and international tour packages from India. Budget trips to Manali, Kedarnath, Goa, Bali, Dubai & more.',
         publisher: { '@id': 'https://www.ylootrips.com/#organization' },
+        potentialAction: [
+          {
+            '@type': 'SearchAction',
+            target: {
+              '@type': 'EntryPoint',
+              urlTemplate: 'https://www.ylootrips.com/search?q={search_term_string}',
+            },
+            'query-input': 'required name=search_term_string',
+          },
+        ],
+      },
+      // Sitelinks Search Box — shown in Google when users search "ylootrips"
+      {
+        '@type': 'WebSite',
+        '@id': 'https://www.ylootrips.com/#sitelinks-searchbox',
+        url: 'https://www.ylootrips.com',
+        name: 'YlooTrips',
         potentialAction: {
           '@type': 'SearchAction',
           target: {
@@ -83,19 +101,79 @@ export function OrganizationJsonLd() {
           'query-input': 'required name=search_term_string',
         },
       },
-      // Sitelinks — key pages shown below main Google result
+      // Sitelinks navigation — key pages Google shows as sub-links
       {
         '@type': 'ItemList',
         '@id': 'https://www.ylootrips.com/#sitelinks',
-        name: 'YlooTrips — Quick Links',
+        name: 'YlooTrips — Key Pages',
+        description: 'Quick links to popular YlooTrips pages',
         itemListElement: [
-          { '@type': 'SiteLinksSearchBox', target: 'https://www.ylootrips.com/search?q={search_term_string}' },
-          { '@type': 'ListItem', position: 1, name: 'Domestic Trips', url: 'https://www.ylootrips.com/destinations/domestic' },
-          { '@type': 'ListItem', position: 2, name: 'International Tours', url: 'https://www.ylootrips.com/destinations/international' },
-          { '@type': 'ListItem', position: 3, name: 'Free AI Trip Planner', url: 'https://www.ylootrips.com/trip-planner' },
-          { '@type': 'ListItem', position: 4, name: 'Track My Booking', url: 'https://www.ylootrips.com/my-booking' },
-          { '@type': 'ListItem', position: 5, name: 'Blogs & Travel Guides', url: 'https://www.ylootrips.com/blogs' },
-          { '@type': 'ListItem', position: 6, name: 'About YlooTrips', url: 'https://www.ylootrips.com/about' },
+          {
+            '@type': 'ListItem', position: 1,
+            name: 'About Us',
+            description: 'Learn about YlooTrips — India\'s trusted travel company since 2022',
+            item: {
+              '@type': 'WebPage',
+              '@id': 'https://www.ylootrips.com/about',
+              url: 'https://www.ylootrips.com/about',
+              name: 'About YlooTrips | India\'s Trusted Travel Company',
+            },
+          },
+          {
+            '@type': 'ListItem', position: 2,
+            name: 'Plan Your Dream Journey',
+            description: 'Free AI-powered trip planner — get a custom India itinerary in minutes',
+            item: {
+              '@type': 'WebPage',
+              '@id': 'https://www.ylootrips.com/trip-planner',
+              url: 'https://www.ylootrips.com/trip-planner',
+              name: 'Free AI Trip Planner — Plan Your Dream Journey | YlooTrips',
+            },
+          },
+          {
+            '@type': 'ListItem', position: 3,
+            name: 'Tour Packages',
+            description: 'Browse 150+ domestic & international tour packages from India',
+            item: {
+              '@type': 'WebPage',
+              '@id': 'https://www.ylootrips.com/trips',
+              url: 'https://www.ylootrips.com/trips',
+              name: 'India Tour Packages — Domestic & International | YlooTrips',
+            },
+          },
+          {
+            '@type': 'ListItem', position: 4,
+            name: 'International Tours',
+            description: 'Bali, Dubai, Thailand, Singapore, Maldives — packages from India',
+            item: {
+              '@type': 'WebPage',
+              '@id': 'https://www.ylootrips.com/destinations/international',
+              url: 'https://www.ylootrips.com/destinations/international',
+              name: 'International Tour Packages from India | YlooTrips',
+            },
+          },
+          {
+            '@type': 'ListItem', position: 5,
+            name: 'Customer Reviews',
+            description: '4.9★ rated by 2,400+ verified travelers',
+            item: {
+              '@type': 'WebPage',
+              '@id': 'https://www.ylootrips.com/reviews',
+              url: 'https://www.ylootrips.com/reviews',
+              name: 'YlooTrips Reviews — Verified Traveler Testimonials',
+            },
+          },
+          {
+            '@type': 'ListItem', position: 6,
+            name: 'Contact & Book',
+            description: 'Book a trip or speak to a travel expert — call +91 84278 31127',
+            item: {
+              '@type': 'WebPage',
+              '@id': 'https://www.ylootrips.com/contact',
+              url: 'https://www.ylootrips.com/contact',
+              name: 'Contact YlooTrips | Book a Tour or Get a Custom Quote',
+            },
+          },
         ],
       },
       // FAQ schema — helps appear in People Also Ask
