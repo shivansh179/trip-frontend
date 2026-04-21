@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Compass, Heart, Shield, Star, LucideIcon, Wallet, Gift, TrendingUp, Zap, X, CreditCard, Loader2, CheckCircle, BadgePercent, ShieldCheck, Copy, Check, Users } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Compass, Heart, Shield, Star, LucideIcon, Wallet, Gift, TrendingUp, Zap, X, CreditCard, Loader2, CheckCircle, ShieldCheck, Copy, Check, Users } from 'lucide-react';
 import Hero from '@/components/Hero';
 import MobileCategories from '@/components/MobileCategories';
 import DestinationCard from '@/components/DestinationCard';
@@ -139,11 +139,9 @@ function HomeBookingDrawer({ pkg, onClose }: { pkg: HomePkg; onClose: () => void
 
   const details = PKG_DETAILS[pkg.href];
   const totalPrice = pkg.priceNum * Number(guests || 2);
-  const discountAmt = Math.round(totalPrice * 0.05);
-  const priceAfterDiscount = totalPrice - discountAmt;
-  const maxWalletUsable = Math.floor(priceAfterDiscount * 0.10);
+  const maxWalletUsable = Math.floor(totalPrice * 0.10);
   const walletDeduction = applyWallet ? Math.min(walletBalance, maxWalletUsable) : 0;
-  const effectiveTotal = Math.max(0, priceAfterDiscount - walletDeduction);
+  const effectiveTotal = Math.max(0, totalPrice - walletDeduction);
 
   const handlePaymentSelected = (payload: { amountNow: number; mode: string; paymentMethod?: string }) => {
     setChargeNow(payload.amountNow);
@@ -165,7 +163,7 @@ function HomeBookingDrawer({ pkg, onClose }: { pkg: HomePkg; onClose: () => void
           sourceUrl: `https://ylootrips.com${pkg.href}`,
           ourPrice: effectiveTotal,
           chargeNow: chargeNow ?? effectiveTotal,
-          marketPrice: totalPrice, priceDiff: discountAmt,
+          marketPrice: totalPrice, priceDiff: 0,
           paymentMode, promoCode, walletDeduction,
         }),
       });
@@ -243,10 +241,7 @@ function HomeBookingDrawer({ pkg, onClose }: { pkg: HomePkg; onClose: () => void
                   <span className="text-gray-500">{pkg.price} × {guests} guest{Number(guests) > 1 ? 's' : ''}</span>
                   <span className="text-gray-700 font-medium">₹{totalPrice.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex justify-between text-sm text-green-700">
-                  <span className="flex items-center gap-1"><BadgePercent size={13} /> Early bird 5% off</span>
-                  <span className="font-semibold">− ₹{discountAmt.toLocaleString('en-IN')}</span>
-                </div>
+
                 {promoCashback > 0 && (
                   <div className="flex justify-between text-sm text-green-700">
                     <span>🎟 Promo cashback credited to wallet</span>

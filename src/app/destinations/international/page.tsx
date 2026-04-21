@@ -611,9 +611,6 @@ function IntlCard({ d }: { d: IntlDestination }) {
             <span className="text-[10px] bg-green-50 text-green-700 border border-green-100 px-2 py-0.5 rounded-full font-semibold">
               🔒 Secure Easebuzz
             </span>
-            <span className="text-[10px] bg-gray-50 text-gray-600 border border-gray-100 px-2 py-0.5 rounded-full font-semibold">
-              5% Early Bird
-            </span>
           </div>
 
           {/* Footer */}
