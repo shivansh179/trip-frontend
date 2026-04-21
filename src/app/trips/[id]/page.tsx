@@ -161,7 +161,7 @@ export default function TripDetailPage() {
                         <div className="max-w-3xl">
                             <h1 className="text-display-xl text-white mb-4">{trip.title}</h1>
                             <p className="text-body-lg text-white/90 mb-6">{trip.shortDescription || trip.description}</p>
-                            <div className="flex flex-wrap gap-6 text-white">
+                            <div className="flex flex-wrap items-center gap-4 text-white">
                                 <div className="flex items-center gap-2">
                                     <MapPin size={20} />
                                     <span>{trip.destination}</span>
@@ -179,6 +179,19 @@ export default function TripDetailPage() {
                                 <div className="flex items-center gap-2">
                                     <Star size={20} className="fill-yellow-400 text-yellow-400" />
                                     <span>{trip.rating} ({trip.reviewCount} reviews)</span>
+                                </div>
+                            </div>
+                            {/* Hero CTA — visible above the fold */}
+                            <div className="mt-6 flex flex-wrap items-center gap-3">
+                                <a
+                                    href="#booking-sidebar"
+                                    className="flex items-center gap-2 bg-accent text-primary px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:bg-accent/90 transition-all active:scale-[0.98]"
+                                >
+                                    <Zap className="w-4 h-4" />
+                                    Book Now · Pay ₹5,000 to Confirm
+                                </a>
+                                <div className="text-white/70 text-xs">
+                                    Starting {fp(basePrice)}/person · Free cancellation
                                 </div>
                             </div>
                         </div>
@@ -366,7 +379,7 @@ export default function TripDetailPage() {
                     </div>
 
                     {/* Booking Sidebar */}
-                    <div className="lg:sticky lg:top-24 h-fit space-y-4">
+                    <div id="booking-sidebar" className="lg:sticky lg:top-24 h-fit space-y-4">
 
                         {/* ── Main Booking Card ── */}
                         <div className="bg-white rounded-2xl border border-primary/10 shadow-xl overflow-hidden">

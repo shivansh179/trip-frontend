@@ -76,13 +76,13 @@ function OurTripCard({ trip }: { trip: typeof OUR_TRIPS[0] }) {
           ))}
         </ul>
         <div className="grid grid-cols-2 gap-2 pt-3 border-t border-primary/8">
-          <Link href={`/contact?destination=${encodeURIComponent(trip.title)}`}
+          <Link href={trip.href}
             className="flex items-center justify-center gap-1 bg-accent text-primary text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl hover:bg-accent/90 transition-colors">
             <CreditCard size={11} />Book Now
           </Link>
-          <Link href={trip.href}
+          <Link href={`/contact?destination=${encodeURIComponent(trip.title)}`}
             className="flex items-center justify-center gap-1 border border-primary/20 text-primary text-xs font-medium py-2.5 rounded-xl hover:bg-primary hover:text-cream transition-all">
-            Details <ArrowUpRight size={11} />
+            Enquire <ArrowUpRight size={11} />
           </Link>
         </div>
       </div>
