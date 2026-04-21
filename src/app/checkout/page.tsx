@@ -25,6 +25,7 @@ function CheckoutContent() {
     const tripId = searchParams.get('tripId');
     const guests = Number(searchParams.get('guests')) || 1;
     const date = searchParams.get('date') || '';
+    const priceParam = Number(searchParams.get('price')) || 0; // dynamic price from calendar
 
     const [trip, setTrip] = useState<Trip | null>(null);
     const [loading, setLoading] = useState(true);
@@ -194,7 +195,9 @@ function CheckoutContent() {
         }
     };
 
-    const basePrice = trip ? (typeof trip.price === 'number' ? trip.price : parseFloat(trip.price.toString())) * formData.numberOfGuests : 0;
+    const tripBasePrice = trip ? (typeof trip.price === 'number' ? trip.price : parseFloat(trip.price.toString())) : 0;
+    const pricePerPerson = priceParam || tripBasePrice;
+    const basePrice = pricePerPerson * formData.numberOfGuests;
     const discountPercent = formData.paymentMethod === 'upi' ? 5 : (formData.paymentMethod === 'credit_card' || formData.paymentMethod === 'debit_card') ? 3 : 0;
     const discountAmount = (basePrice * discountPercent) / 100;
     const priceAfterDiscount = basePrice - discountAmount - promoDiscount;

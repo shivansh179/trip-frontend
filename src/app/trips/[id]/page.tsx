@@ -70,21 +70,18 @@ export default function TripDetailPage() {
 
     const handleBookNow = () => {
         if (!trip) return;
-        const bookingData = {
-            tripId: trip.id,
-            numberOfGuests: selectedGuests,
-            travelDate: selectedDate || new Date().toISOString().split('T')[0],
-        };
-        router.push(`/checkout?tripId=${trip.id}&guests=${selectedGuests}&date=${selectedDate}`);
+        router.push(`/checkout?tripId=${trip.id}&guests=${selectedGuests}&date=${selectedDate}&price=${effectivePrice}`);
     };
 
     const basePrice = trip ? (typeof trip.price === 'number' ? trip.price : parseFloat(trip.price.toString())) : 0;
     const effectivePrice = dynamicPrice || basePrice;
     const totalPrice = effectivePrice * selectedGuests;
 
-    // Deterministic spots left (consistent server/client)
+    // Deterministic urgency numbers (consistent server/client)
     const spotsLeft = trip ? (((trip.id * 7) % 9) + 1 <= 5 ? ((trip.id * 7) % 9) + 1 : null) : null;
     const viewers = trip ? ((trip.id * 13 + 7) % 20) + 4 : 0;
+    const bookedToday = trip ? ((trip.id * 5 + 11) % 12) + 3 : 0; // 3–14
+    const bookedWeek  = trip ? bookedToday * 7 + ((trip.id * 3) % 20) : 0;
 
     // EMI calculation (6-month no-cost EMI)
     const emiMonthly = trip ? Math.ceil(totalPrice / 6) : 0;
@@ -395,11 +392,17 @@ export default function TripDetailPage() {
                                 )}
                             </div>
 
-                            <div className="p-6 space-y-4">
-                                {/* Live viewers */}
-                                <div className="flex items-center gap-2 text-xs text-primary/55">
-                                    <Eye className="w-3.5 h-3.5 text-amber-500" />
-                                    <span><strong className="text-primary">{viewers} people</strong> are viewing this trip right now</span>
+                            <div className="p-5 space-y-4">
+
+                                {/* FOMO bar */}
+                                <div className="flex items-center justify-between bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+                                    <span className="text-xs text-red-700 font-medium flex items-center gap-1.5">
+                                        <span className="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                                        <strong>{bookedToday} people</strong> booked today
+                                    </span>
+                                    <span className="text-[10px] text-red-500 font-semibold uppercase tracking-wide">
+                                        <Eye className="w-3 h-3 inline mr-0.5" />{viewers} viewing
+                                    </span>
                                 </div>
 
                                 {/* Guests */}
@@ -455,6 +458,17 @@ export default function TripDetailPage() {
                                         <span>Total</span>
                                         <span className="font-display text-xl">{fp(totalPrice)}</span>
                                     </div>
+                                    {/* Payment split */}
+                                    <div className="border-t border-dashed border-primary/10 pt-2 space-y-1">
+                                        <div className="flex justify-between text-xs">
+                                            <span className="text-emerald-700 font-semibold">Pay now to confirm</span>
+                                            <span className="text-emerald-700 font-bold">₹5,000</span>
+                                        </div>
+                                        <div className="flex justify-between text-xs text-primary/50">
+                                            <span>Balance before departure</span>
+                                            <span>{fp(Math.max(0, totalPrice - 5000))}</span>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* EMI Preview */}
@@ -462,18 +476,45 @@ export default function TripDetailPage() {
                                     <TrendingDown className="w-4 h-4 text-violet-600 shrink-0" />
                                     <p className="text-xs text-violet-800">
                                         <strong>No-cost EMI</strong> available from{' '}
-                                        <strong>{fp(emiMonthly)}/month</strong> for 6 months
+                                        <strong>{fp(emiMonthly)}/month</strong> for 6 months · UPI · Cards
                                     </p>
                                 </div>
 
                                 {/* Book Button */}
                                 <button
                                     onClick={handleBookNow}
-                                    className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-cream py-4 rounded-xl text-sm font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
+                                    className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-cream py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
                                 >
-                                    <Zap className="w-4 h-4" />
-                                    {!selectedDate ? 'Select Date & Book' : (visitor === 'foreigner' ? 'Book & Pay Online' : 'Proceed to Checkout')}
+                                    <Zap className="w-4 h-4 shrink-0" />
+                                    <span className="text-sm leading-tight text-center">
+                                        {!selectedDate
+                                            ? 'Select Date to Book'
+                                            : visitor === 'foreigner'
+                                                ? 'Book Now · Pay Online'
+                                                : 'Book Now · Pay ₹5,000 to Confirm'}
+                                    </span>
                                 </button>
+
+                                {/* Trust signals — right under Pay button */}
+                                <div className="flex items-center justify-center gap-3 py-1">
+                                    {[
+                                        { icon: Shield, label: '100% Secure', color: 'text-blue-600' },
+                                        { icon: RefreshCw, label: 'Free Cancel', color: 'text-green-600' },
+                                        { icon: BadgeCheck, label: 'PCI-DSS', color: 'text-emerald-600' },
+                                    ].map(({ icon: Icon, label, color }) => (
+                                        <div key={label} className="flex items-center gap-1">
+                                            <Icon className={`w-3 h-3 ${color}`} />
+                                            <span className="text-[10px] text-primary/50">{label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Payment logos */}
+                                <div className="flex items-center justify-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+                                    {['UPI', 'Visa', 'MC', 'Amex', 'EMI'].map(m => (
+                                        <span key={m} className="text-[10px] font-bold text-primary/40 border border-primary/10 px-1.5 py-0.5 rounded">{m}</span>
+                                    ))}
+                                </div>
 
                                 {/* WhatsApp fallback */}
                                 <a
@@ -486,19 +527,11 @@ export default function TripDetailPage() {
                                     {visitor === 'foreigner' ? 'Ask a Question on WhatsApp' : 'Chat on WhatsApp'}
                                 </a>
 
-                                {/* Trust icons row */}
-                                <div className="grid grid-cols-3 gap-2 pt-1">
-                                    {[
-                                        { icon: Shield, label: 'Secure Pay', color: 'text-blue-600' },
-                                        { icon: RefreshCw, label: 'Free Cancel', color: 'text-green-600' },
-                                        { icon: Award, label: '4.9★ Rated', color: 'text-amber-600' },
-                                    ].map(({ icon: Icon, label, color }) => (
-                                        <div key={label} className="flex flex-col items-center gap-1 text-center">
-                                            <Icon className={`w-4 h-4 ${color}`} />
-                                            <span className="text-[10px] text-primary/50 uppercase tracking-wide leading-tight">{label}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                                {/* Booked this week social proof */}
+                                <p className="text-center text-[11px] text-primary/40">
+                                    <Award className="w-3 h-3 inline mr-1 text-amber-500" />
+                                    <strong className="text-primary/60">{bookedWeek}+ travelers</strong> booked this trip in the last 7 days
+                                </p>
                             </div>
                         </div>
 
