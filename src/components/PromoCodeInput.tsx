@@ -42,9 +42,13 @@ export default function PromoCodeInput({
     setError(null);
     setLoading(true);
     try {
+      const adminToken = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
       const res = await fetch('/api/promos/validate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(adminToken ? { 'x-admin-token': adminToken } : {}),
+        },
         body: JSON.stringify({ code, orderTotal }),
       });
       const data = await res.json();
