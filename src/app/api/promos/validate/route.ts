@@ -6,6 +6,8 @@ const PROMO_CODES = [
   { code: 'TRIPFIVE',  title: '₹500 Off',              type: 'flat'    as const, value: 500, minOrder: 5000, validTill: '2026-06-30' },
   { code: 'HOLIDAY15', title: '15% Off Holiday Packages', type: 'percent' as const, value: 15, minOrder: 25000, maxDiscount: 10000, validTill: '2026-08-15' },
   { code: 'INDIATRAVEL', title: '₹1,000 Off India Tours', type: 'flat' as const, value: 1000, minOrder: 15000, validTill: '2027-03-31' },
+  // Internal test code — pay only ₹10 on any booking
+  { code: 'YLOOTEST10', title: 'Test Mode — Pay ₹10', type: 'fixed_price' as const, value: 10, minOrder: 1, validTill: '2030-12-31' },
 ];
 
 export async function POST(req: NextRequest) {
@@ -42,7 +44,9 @@ export async function POST(req: NextRequest) {
   }
 
   const discount =
-    promo.type === 'percent'
+    promo.type === 'fixed_price'
+      ? Math.max(0, orderTotal - promo.value)   // discount = total - ₹10, so final = ₹10
+      : promo.type === 'percent'
       ? Math.min(Math.round((orderTotal * promo.value) / 100), promo.maxDiscount ?? Infinity)
       : promo.value;
 
