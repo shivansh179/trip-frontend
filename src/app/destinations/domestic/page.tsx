@@ -759,7 +759,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 20349,
     originalPriceINR: 22499,
     badge: 'Best Seller',
-    image: 'https://images.unsplash.com/photo-1609766857851-59cc79c46798?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80',
     highlights: ['All 4 Dhams — Yamunotri, Gangotri, Kedarnath & Badrinath', 'Kedarnath temple darshan (3,583 m) — Lord Shiva\'s abode', 'Badrinath — sacred Vishnu temple in the Himalayas', 'Haridwar Ganga Aarti on arrival day'],
     includes: ['Hotel accommodation (3-star) throughout', 'Daily breakfast & dinner', 'Tempo Traveller / AC coach throughout', 'Experienced driver + religious guide', 'All temple entry & forest fees'],
     itinerary: [
@@ -786,7 +786,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 261905,
     originalPriceINR: 275000,
     badge: 'Premium',
-    image: 'https://images.unsplash.com/photo-1609766857851-59cc79c46798?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80',
     highlights: ['Helicopter darshan at all 4 Dhams — skip the long trek queues', 'Land directly at Kedarnath helipad (200 m from temple)', 'Luxury hotel accommodation throughout', 'VIP darshan at all temples — no long waiting'],
     includes: ['Helicopter tickets (all 4 Dhams)', 'Luxury hotel (4-star) accommodation', 'All meals (breakfast + dinner)', 'Airport transfers & ground transport', 'Dedicated religious escort & guide'],
     itinerary: [
@@ -1193,13 +1193,14 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
   const [showItinerary, setShowItinerary] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [drawerTab, setDrawerTab] = useState<'pay' | 'callback'>('pay');
+  const [imgSrc, setImgSrc] = useState(trip.image);
   const discount = Math.round(((trip.originalPriceINR - trip.priceINR) / trip.originalPriceINR) * 100);
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-primary/8 shadow-sm hover:shadow-lg transition-shadow flex flex-col">
       {/* Image */}
       <div className="relative h-52 overflow-hidden">
-        <Image src={trip.image} alt={trip.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" unoptimized />
+        <Image src={imgSrc} alt={trip.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" unoptimized onError={() => setImgSrc('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80')} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute top-3 left-3 flex gap-1.5 flex-wrap">
           {trip.badge && (
