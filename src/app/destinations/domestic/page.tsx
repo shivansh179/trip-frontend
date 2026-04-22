@@ -1189,9 +1189,103 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
 }
 
 // ── Trip Card ─────────────────────────────────────────────────────────────────
+function TripDetailsModal({ trip, onClose, onBook }: { trip: DomesticTrip; onClose: () => void; onBook: () => void }) {
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-white w-full sm:max-w-lg sm:rounded-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[88vh]">
+        {/* Image header */}
+        <div className="relative h-44 shrink-0">
+          <Image src={trip.image} alt={trip.title} fill className="object-cover" unoptimized />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/10" />
+          <button onClick={onClose} className="absolute top-3 right-3 bg-black/40 hover:bg-black/60 text-white rounded-full p-1.5 transition-colors">
+            <X size={16} />
+          </button>
+          <div className="absolute bottom-3 left-4">
+            <p className="text-white/70 text-xs">{trip.location} · {trip.duration}</p>
+            <h2 className="text-white font-display text-xl leading-tight">{trip.title}</h2>
+          </div>
+          <div className="absolute bottom-3 right-4 text-right">
+            <p className="text-white/60 text-xs line-through">₹{trip.originalPriceINR.toLocaleString('en-IN')}</p>
+            <p className="text-white font-bold text-lg">₹{trip.priceINR.toLocaleString('en-IN')}<span className="text-xs font-normal">/person</span></p>
+          </div>
+        </div>
+
+        {/* Scrollable content */}
+        <div className="overflow-y-auto flex-1 p-4 space-y-4">
+          {/* Tags row */}
+          <div className="flex flex-wrap gap-1.5">
+            <span className="bg-primary/8 text-primary text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide">{trip.category}</span>
+            {trip.difficulty && <span className="bg-amber-50 text-amber-700 text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide">{trip.difficulty}</span>}
+            {trip.badge && <span className="bg-green-50 text-green-700 text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide">{trip.badge}</span>}
+            <span className="bg-blue-50 text-blue-700 text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide">{trip.region}</span>
+          </div>
+
+          {/* Highlights */}
+          <div>
+            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">✨ Highlights</p>
+            <ul className="space-y-1.5">
+              {trip.highlights.map((h) => (
+                <li key={h} className="flex items-start gap-2 text-sm text-primary/80">
+                  <Check size={13} className="text-green-500 shrink-0 mt-0.5" />
+                  {h}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Includes */}
+          <div>
+            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">📦 What's Included</p>
+            <ul className="space-y-1.5">
+              {trip.includes.map((inc) => (
+                <li key={inc} className="flex items-start gap-2 text-sm text-primary/80">
+                  <CheckCircle size={13} className="text-blue-500 shrink-0 mt-0.5" />
+                  {inc}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Itinerary */}
+          <div>
+            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">🗓️ Day-by-Day Itinerary</p>
+            <div className="space-y-3">
+              {trip.itinerary.map((item, i) => (
+                <div key={i} className="flex gap-3">
+                  <div className="shrink-0 w-14 text-[10px] font-bold text-primary/50 uppercase pt-0.5">{item.day}</div>
+                  <p className="text-sm text-primary/75 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Sticky footer */}
+        <div className="shrink-0 border-t border-primary/10 p-4 flex gap-2 bg-white">
+          <button onClick={onClose} className="flex-1 border border-primary/20 text-primary text-sm font-medium py-3 rounded-xl hover:bg-primary/5 transition-colors">
+            Close
+          </button>
+          <button onClick={() => { onClose(); onBook(); }} className="flex-1 bg-gray-900 text-white text-sm font-bold py-3 rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5">
+            <CreditCard size={14} /> Book Now
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 function TripCard({ trip }: { trip: DomesticTrip }) {
   const [showItinerary, setShowItinerary] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const [drawerTab, setDrawerTab] = useState<'pay' | 'callback'>('pay');
   const [imgSrc, setImgSrc] = useState(trip.image);
   const discount = Math.round(((trip.originalPriceINR - trip.priceINR) / trip.originalPriceINR) * 100);
@@ -1307,15 +1401,16 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
             <CreditCard size={12} /> Book Now
           </button>
           <button
-            onClick={() => { setDrawerTab('callback'); setShowDrawer(true); }}
+            onClick={() => setShowDetails(true)}
             className="flex items-center justify-center gap-1.5 border border-primary/20 text-primary text-xs font-medium uppercase tracking-wide py-2.5 rounded-xl hover:bg-primary hover:text-cream transition-all"
           >
-            📋 Enquiry
+            <ArrowUpRight size={12} /> Details
           </button>
         </div>
       </div>
 
       {showDrawer && <DomesticBookingDrawer trip={trip} initialTab={drawerTab} onClose={() => setShowDrawer(false)} />}
+      {showDetails && <TripDetailsModal trip={trip} onClose={() => setShowDetails(false)} onBook={() => { setDrawerTab('pay'); setShowDrawer(true); }} />}
     </div>
   );
 }
