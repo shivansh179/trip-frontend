@@ -94,6 +94,9 @@ export interface PackageData {
   whatsappMsg: string;
   bookingHref: string;
 
+  // Things to Carry (optional)
+  thingsToCarry?: string[];
+
   // Schema
   schemaHighlights?: string[];
 }
@@ -936,6 +939,25 @@ export default function PackagePageLayout({ pkg }: { pkg: PackageData }) {
                 </div>
               </div>
             </section>
+
+            {/* Things to Carry */}
+            {pkg.thingsToCarry && pkg.thingsToCarry.length > 0 && (
+              <section id="things-to-carry">
+                <h2 className="font-display text-3xl text-primary mb-6">Things to Carry</h2>
+                <div className="bg-cream-light border border-primary/8 rounded-2xl p-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {pkg.thingsToCarry.map((item, i) => (
+                      <div key={i} className="flex items-center gap-3 py-2 border-b border-primary/6 last:border-0">
+                        <span className="w-8 h-8 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center text-base shrink-0">
+                          {item.split('|')[0]}
+                        </span>
+                        <span className="text-sm text-primary/80">{item.split('|')[1] ?? item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
 
             {/* Reviews */}
             <section id="reviews">
