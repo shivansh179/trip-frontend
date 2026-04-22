@@ -69,7 +69,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     nights: 4,
     priceINR: 7699,
     originalPriceINR: 8199,
-    image: 'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1692368159780-fd0950fdfb1e?w=800&q=80',
     badge: 'Hidden Gem',
     highlights: ['Jalori Pass at 10,800 ft', 'Sarolsar Lake trek with 360° Himalayan views', 'Jibhi Waterfall & Thailand Pool', '"Yeh Jawaani Hai Deewani" filming location'],
     includes: ['Resort/camp accommodation', 'All meals (breakfast, lunch & dinner)', 'Local guide', 'Private vehicle with driver', 'Trek activities & bonfire'],
@@ -158,7 +158,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 17599,
     originalPriceINR: 18499,
     difficulty: 'Moderate',
-    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1657215755902-2fb39b55e946?w=800&q=80',
     badge: 'Likely to Sell Out',
     highlights: ['Rohtang Pass (13,054 ft) — gateway to Spiti', 'Key Monastery — 1,000-year-old Buddhist monastery at 13,668 ft', 'Chandratal Lake (Moon Lake) at 14,100 ft', 'Kaza town — the capital of Spiti Valley'],
     includes: ['Hotel + guesthouse accommodation', 'All meals (breakfast & dinner)', 'Private SUV/Innova for all transfers', 'Experienced Spiti guide', 'Inner line permits & oxygen support'],
@@ -203,7 +203,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     nights: 4,
     priceINR: 7999,
     originalPriceINR: 8399,
-    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1649147313351-c86537fda0eb?w=800&q=80',
     highlights: ['One of 12 Jyotirlingas — sacred to Lord Shiva', '16 km trek Gaurikund → Kedarnath Temple (11,755 ft)', 'Devprayag confluence of Bhagirathi & Alaknanda', 'Route via Haridwar, Rishikesh, Guptkashi'],
     includes: ['AC bus Delhi–Haridwar', 'Hotel accommodation', 'All meals per itinerary', 'Professional tour guide'],
     itinerary: [
@@ -265,7 +265,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     nights: 7,
     priceINR: 14999,
     originalPriceINR: 15749,
-    image: 'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1657215755902-2fb39b55e946?w=800&q=80',
     badge: 'Epic Journey',
     highlights: ['Chicham Bridge — world\'s highest suspension bridge', 'Hikkim — world\'s highest post office (14,567 ft)', 'Key Monastery & Tabo Monastery', 'Chitkul — India\'s last village before Tibet'],
     includes: ['Homestay accommodation', 'All meals (breakfast, lunch & dinner)', 'Transportation throughout', 'Professional guide'],
@@ -292,7 +292,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     originalPriceINR: 5199,
     badge: 'Best Seller',
     difficulty: 'Easy',
-    image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1680962477252-f1f139d80028?w=800&q=80',
     highlights: ['Tungnath Temple — 1,000+ yrs old, highest Shiva temple', 'Chandrashila Peak at 13,000 ft', 'Deoriatal Lake with panoramic Himalayan views', 'Beginner-friendly weekend trek'],
     includes: ['AC group transport from Delhi/Rishikesh', 'Swiss tent accommodation & sleeping bags', 'All meals (breakfast, lunch & dinner)', 'Professional trek guide', 'Campfire'],
     itinerary: [
@@ -312,7 +312,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 4949,
     originalPriceINR: 5299,
     difficulty: 'Easy to Moderate',
-    image: 'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1681045905442-3203fb0e6111?w=800&q=80',
     highlights: ['360° panoramic views at 12,500 ft', 'Juda Ka Talab — frozen lake camping', 'Views of Kalanag, Swargarohini & Bandarpoonch peaks', 'Dense rhododendron & oak forests'],
     includes: ['4 nights campsite accommodation', 'All meals (breakfast, lunch & dinner)', 'Professional trek guides & camping gear', 'Transport Dehradun–Sankri return', 'Forest permits'],
     itinerary: [
@@ -334,7 +334,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 1265,
     originalPriceINR: 1399,
     difficulty: 'Easy to Moderate',
-    image: 'https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1673815994546-9913f4d76b77?w=800&q=80',
     highlights: ['Natural hot water springs at Kheerganga', 'Ideal first-timer trek (18 km round trip)', 'Apple orchards & pine forest trail', 'Bonfire & music sessions at camp'],
     includes: ['Professional guide (Barshaini to Barshaini)', 'Tea & dinner D1, breakfast D2', 'Twin/triple sharing tent', 'Music session & bonfire'],
     itinerary: [
@@ -415,7 +415,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 6489,
     originalPriceINR: 6299,
     difficulty: 'Moderate',
-    image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1609961245797-9cc9231012d8?w=800&q=80',
     highlights: ['Cross Sar Pass at 13,799 ft through snow terrain', 'Frozen lakes & snow-capped Parvati Valley', '48 km total trekking distance', 'Trekking shoes & safety coverage included'],
     includes: ['Dome tent accommodation (shared)', 'Experienced guide & permits', 'All meals (breakfast, lunch, snacks & dinner)', 'Camping gear & safety coverage', 'Free trekking gear'],
     itinerary: [
@@ -456,7 +456,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 7999,
     originalPriceINR: 8399,
     difficulty: 'Moderate',
-    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1681045905442-3203fb0e6111?w=800&q=80',
     highlights: ['Glacial valley of Jaundhar at 11,800 ft', 'Views of Swargarohini I/II/III, Bandarpooch & Black Peak', 'Mahabharata-era historical villages', 'Accessible in both winter & summer'],
     includes: ['All vegetarian meals', 'Professional trek guide', 'Camping tents & sleeping bags', '1 night guesthouse/homestay in Sankri', 'Transport Dehradun–Sankri return', 'First aid & safety equipment'],
     itinerary: [
@@ -533,7 +533,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     originalPriceINR: 31000,
     badge: 'Top Rated',
     difficulty: 'Easy',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1708944483061-03197b8317a2?w=800&q=80',
     highlights: ['Pangong Tso Lake (14,270 ft) — 3 Idiots filming location', 'Nubra Valley & Hunder sand dunes — double-humped camels', 'Khardung La Pass (17,582 ft) — world\'s highest motorable road', 'Shanti Stupa, Leh Palace & Magnetic Hill'],
     includes: ['Hotel accommodation (3-star)', 'All meals (breakfast & dinner)', 'Private SUV/Innova with driver', 'Airport/station transfers', 'Inner Line Permits & Environmental fees'],
     itinerary: [
@@ -585,7 +585,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 7149,
     originalPriceINR: 7699,
     badge: 'Best Seller',
-    image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1673815994546-9913f4d76b77?w=800&q=80',
     highlights: ['Kheerganga hot springs at 9,711 ft after 12 km trek', 'Parvati Valley — riverside camping under the stars', 'Chalal Village & Kasol Israeli Café culture', 'Manikaran Sahib Gurudwara — holy hot spring'],
     includes: ['Volvo AC bus Delhi–Kasol–Delhi', 'Hotel + camping accommodation', 'Daily breakfast & dinner', 'Trek guide for Kheerganga', 'Bonfire nights'],
     itinerary: [
@@ -607,7 +607,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 5499,
     originalPriceINR: 5899,
     difficulty: 'Moderate',
-    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1609961245797-9cc9231012d8?w=800&q=80',
     highlights: ['Trek through dense Parvati Valley forest & waterfalls', 'Camp by Parvati River at 7,500 ft', 'Rasul snow bridge & alpine meadows', 'Visit Tosh village (Himalayan hippie trail)'],
     includes: ['Volvo AC bus Delhi–Kasol–Delhi', '3 nights camping', 'All meals (breakfast, lunch, dinner)', 'Experienced trek guide', 'Camping equipment'],
     itinerary: [
@@ -630,7 +630,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 8250,
     originalPriceINR: 8799,
     badge: 'Hidden Gem',
-    image: 'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1692368159780-fd0950fdfb1e?w=800&q=80',
     highlights: ['Shangarh meadow — flat green plateau at 7,800 ft', 'Serolsar Lake trek with 360° Himalayan views', 'Jalori Pass (10,800 ft) — apple orchid valleys', 'Pristine forests, no crowds — the road less travelled'],
     includes: ['Tempo traveller from Delhi & back', 'Guesthouse + homestay accommodation', 'All meals (breakfast & dinner)', 'Local guide for treks', 'Bonfire & village cultural evening'],
     itinerary: [
@@ -653,7 +653,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     nights: 2,
     priceINR: 4869,
     originalPriceINR: 5199,
-    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1601283197965-2090b43fca4f?w=800&q=80',
     badge: 'Weekend Escape',
     highlights: ['Mullayanagiri Peak (6,330 ft) — highest peak in Karnataka', 'Coffee estate walk & plantation tour', 'Baba Budangiri dargah & Manikyadhara Waterfalls', 'Hebbe Falls — twin waterfall through coffee estates'],
     includes: ['AC bus or shared cab Bangalore–Chikmagalur–Bangalore', 'Coffee estate/resort accommodation', 'Daily breakfast & dinner', 'Jeep safari to Mullayanagiri', 'Coffee estate tour with tasting'],
@@ -674,7 +674,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 1863,
     originalPriceINR: 1999,
     difficulty: 'Moderate',
-    image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1601283197965-2090b43fca4f?w=800&q=80',
     highlights: ['Kudremukh Peak (6,214 ft) — Western Ghats UNESCO heritage', 'Horse-face shaped mountain; Bhadra river origin', 'Shola forests, grasslands & rare biodiversity', 'Views of Arabian Sea on clear days'],
     includes: ['Transport Chikmagalur–Kudremukh base–return', 'Forest guesthouse/homestay accommodation', 'All meals', 'Certified trek guide (forest permit required)', 'Forest department entry permit'],
     itinerary: [
@@ -696,7 +696,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 6599,
     originalPriceINR: 6999,
     difficulty: 'Moderate',
-    image: 'https://images.unsplash.com/photo-1526772662000-3f88f10405ff?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1649953904821-f522e74b588e?w=800&q=80',
     highlights: ['Indrahar Pass (14,248 ft) — panoramic views of Dhauladhar range', 'Triund ridge camp (9,350 ft) — Dharamshala valley far below', 'McLeod Ganj — Dalai Lama\'s home, Tibetan culture', 'Moonlit camp at Lahesh Cave (12,000 ft)'],
     includes: ['Hotel in Dharamshala + 2 nights camping', 'All meals from Day 1 dinner to Day 4 breakfast', 'Experienced certified trek guide', 'Camping equipment (tent, sleeping bag, mattress)', 'Transport Dharamshala–McLeod Ganj'],
     itinerary: [
@@ -717,7 +717,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 24640,
     originalPriceINR: 25999,
     badge: 'Honeymoon Special',
-    image: 'https://images.unsplash.com/photo-1566837945700-30057527ade0?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1584108139011-2c8d4025917f?w=800&q=80',
     highlights: ['Triund sunset trek — most romantic Himalayan ridge in HP', 'Dalhousie\'s colonial-era churches & Khajjiar meadow (Mini Switzerland)', 'Dalai Lama Temple Complex & Tibetan monastery visit', 'Couple spa & candlelight dinner in the mountains'],
     includes: ['Boutique hotel accommodation (3-star)', 'Daily breakfast & candlelight dinner', 'AC private cab throughout', 'Airport/station pickup & drop', 'Triund trek with guide; room decoration on arrival'],
     itinerary: [
@@ -739,7 +739,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 913,
     originalPriceINR: 999,
     difficulty: 'Easy',
-    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1649953904821-f522e74b588e?w=800&q=80',
     highlights: ['Triund ridge (9,350 ft) — 360° view of Dhauladhar & Kangra Valley', 'Star-gazing camp at 9,000 ft above McLeod Ganj', 'Short easy trek — perfect for first-timers', 'Sunrise over snow-capped Dhauladhar range'],
     includes: ['Camping accommodation (2-person tent)', 'Dinner at camp + breakfast', 'Local trek guide', 'Sleeping bag & mat'],
     itinerary: [
@@ -759,7 +759,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 20349,
     originalPriceINR: 22499,
     badge: 'Best Seller',
-    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1728769594167-2cd3ee828ec0?w=800&q=80',
     highlights: ['All 4 Dhams — Yamunotri, Gangotri, Kedarnath & Badrinath', 'Kedarnath temple darshan (3,583 m) — Lord Shiva\'s abode', 'Badrinath — sacred Vishnu temple in the Himalayas', 'Haridwar Ganga Aarti on arrival day'],
     includes: ['Hotel accommodation (3-star) throughout', 'Daily breakfast & dinner', 'Tempo Traveller / AC coach throughout', 'Experienced driver + religious guide', 'All temple entry & forest fees'],
     itinerary: [
@@ -786,7 +786,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 261905,
     originalPriceINR: 275000,
     badge: 'Premium',
-    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1728769594167-2cd3ee828ec0?w=800&q=80',
     highlights: ['Helicopter darshan at all 4 Dhams — skip the long trek queues', 'Land directly at Kedarnath helipad (200 m from temple)', 'Luxury hotel accommodation throughout', 'VIP darshan at all temples — no long waiting'],
     includes: ['Helicopter tickets (all 4 Dhams)', 'Luxury hotel (4-star) accommodation', 'All meals (breakfast + dinner)', 'Airport transfers & ground transport', 'Dedicated religious escort & guide'],
     itinerary: [
@@ -808,7 +808,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 8799,
     originalPriceINR: 9699,
     badge: 'Best Seller',
-    image: 'https://images.unsplash.com/photo-1591769225440-811ad7d6eab3?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1649147313351-c86537fda0eb?w=800&q=80',
     highlights: ['Kedarnath Temple (3,583 m) — one of 12 Jyotirlingas', 'Gaurikund holy dip before trek', 'Rishikesh Ganga Aarti at Triveni Ghat', 'Haridwar — Har Ki Pauri sacred bathing ghat'],
     includes: ['Hotel accommodation (3-star + guest house at Kedarnath)', 'Daily breakfast & dinner', 'AC vehicle Haridwar to Gaurikund & back', 'Trek guide for Kedarnath (16 km)', 'All permits & forest fees'],
     itinerary: [
@@ -829,7 +829,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     nights: 5,
     priceINR: 10449,
     originalPriceINR: 11499,
-    image: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1680962477252-f1f139d80028?w=800&q=80',
     highlights: ['Kedarnath Jyotirlinga darshan (3,583 m)', 'Tungnath — world\'s highest Shiva temple (3,680 m)', 'Chandrashila Peak (4,000 m) — 360° Himalayan panorama', 'Rishikesh white water rafting & yoga'],
     includes: ['Hotel + camp accommodation', 'Daily meals (breakfast + dinner)', 'AC cab throughout', 'Kedarnath trek guide + Tungnath trek guide', 'Rishikesh rafting session (Grade 3)'],
     itinerary: [
@@ -853,7 +853,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     originalPriceINR: 6699,
     badge: 'Best Winter Trek',
     difficulty: 'Moderate',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1681045905442-3203fb0e6111?w=800&q=80',
     highlights: ['Kedarkantha summit (12,500 ft) — 360° view of 13 Himalayan peaks', 'Snow-covered meadows in winter (Dec–Apr)', 'Dense oak & pine forest camps at Juda Ka Talab', 'Sankri village — traditional Garhwali culture'],
     includes: ['Camping accommodation (all nights)', 'All meals from Day 1 dinner to Day 6 breakfast', 'Expert trek guide + porter', 'Camping equipment (tent, sleeping bag, mattress)', 'Dehradun pickup & drop (shared)'],
     itinerary: [
@@ -877,7 +877,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     originalPriceINR: 7599,
     badge: 'UNESCO World Heritage',
     difficulty: 'Moderate',
-    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1723871493526-79bfa8d9402e?w=800&q=80',
     highlights: ['UNESCO World Heritage Site — 500+ species of wildflowers', 'Hemkund Sahib — sacred Sikh shrine at 15,200 ft', 'Bhyundar Valley confluence — stunning glacial meadows', 'Jul–Aug bloom peak — world\'s most colourful alpine valley'],
     includes: ['Accommodation in hotels + camps', 'All meals (Day 1 dinner to Day 6 lunch)', 'Trek guide + support staff', 'Camping equipment', 'Rishikesh/Haridwar pickup (shared)'],
     itinerary: [
@@ -900,7 +900,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     priceINR: 4399,
     originalPriceINR: 4899,
     difficulty: 'Easy–Moderate',
-    image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1680962477252-f1f139d80028?w=800&q=80',
     highlights: ['Chandrashila Peak (4,000 m) — views of Nanda Devi, Trishul & Kedarnath peaks', 'Tungnath Temple (3,680 m) — world\'s highest Shiva temple', 'Snow-blanketed meadows of Chopta (Feb–Apr)', 'Deoriatal Lake — mirror reflection of Chaukhamba peak'],
     includes: ['Homestay + camp accommodation', 'All meals during trek', 'Trek guide', 'Haridwar/Rishikesh pickup (shared)'],
     itinerary: [
@@ -922,7 +922,7 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
     originalPriceINR: 1199,
     badge: 'Best Seller',
     difficulty: 'Easy',
-    image: 'https://images.unsplash.com/photo-1530866495561-507c9faab2ed?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1671506320551-49cba39dfb7b?w=800&q=80',
     highlights: ['Grade 3–4 white water rafting on the Ganga (16 km)', 'Beach camp on Ganga riverside — bonfire & music', 'Cliff jumping into the Ganga rapids', 'Sunrise yoga session at the campsite'],
     includes: ['Beach tent camping', 'Dinner + breakfast at camp', 'River rafting with certified instructor (16 km)', 'Cliff jumping & kayaking session', 'Life jackets & safety gear'],
     itinerary: [
