@@ -142,10 +142,12 @@ function PackageBookingDrawer({ pkg, onClose }: { pkg: PackageData; onClose: () 
   const [cbPhone, setCbPhone] = useState('');
   const [cbSent, setCbSent] = useState(false);
   const [cbSending, setCbSending] = useState(false);
+  const [promoCode, setPromoCode] = useState<string | null>(null);
+  const [promoDiscount, setPromoDiscount] = useState(0);
 
   const totalPrice = pkg.priceINR * Number(guests || 2);
   const discountAmt = Math.round(totalPrice * 0.05);
-  const finalPrice = totalPrice - discountAmt;
+  const finalPrice = Math.max(0, totalPrice - discountAmt - promoDiscount);
 
   const handlePaymentSelected = (payload: { mode: 'full' | 'emi' | 'partial'; amountNow: number }) => {
     setChargeNow(payload.amountNow);
@@ -173,7 +175,7 @@ function PackageBookingDrawer({ pkg, onClose }: { pkg: PackageData; onClose: () 
           chargeNow: chargeNow ?? finalPrice,
           paymentMode,
           marketPrice: totalPrice,
-          priceDiff: discountAmt,
+          priceDiff: totalPrice - finalPrice,
         }),
       });
       const data = await res.json();
@@ -245,11 +247,25 @@ function PackageBookingDrawer({ pkg, onClose }: { pkg: PackageData; onClose: () 
                 <label className="block text-xs font-semibold text-gray-700 mb-1.5">Number of Guests</label>
                 <div className="flex gap-2">
                   {['1','2','3','4','5','6'].map(n => (
-                    <button key={n} onClick={() => { setGuests(n); setPayStep('options'); setChargeNow(null); }}
+                    <button key={n} onClick={() => { setGuests(n); setPayStep('options'); setChargeNow(null); setPromoCode(null); setPromoDiscount(0); }}
                       className={`w-10 h-10 rounded-xl text-sm font-bold border transition-all ${guests === n ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'}`}>{n}</button>
                   ))}
                 </div>
               </div>
+
+              {/* Promo code */}
+              {payStep === 'options' && (
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Promo Code</label>
+                  <PromoCodeInput
+                    orderTotal={totalPrice - discountAmt}
+                    appliedCode={promoCode}
+                    discountAmount={promoDiscount}
+                    onApply={(code, discount) => { setPromoCode(code); setPromoDiscount(discount); }}
+                    onRemove={() => { setPromoCode(null); setPromoDiscount(0); }}
+                  />
+                </div>
+              )}
 
               {/* Step 1: Payment Options */}
               {payStep === 'options' && (
