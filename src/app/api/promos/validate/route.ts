@@ -32,16 +32,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ valid: false, error: 'Invalid promo code. Please check and try again.' });
   }
 
-  // Admin-only codes require an active admin session
-  if ((promo as { adminOnly?: boolean }).adminOnly) {
-    const adminSecret = process.env.ADMIN_SECRET;
-    const hasAdminSecret = adminSecret && req.headers.get('x-admin-secret') === adminSecret;
-    const hasAdminToken = !!req.headers.get('x-admin-token');
-    if (!hasAdminSecret && !hasAdminToken) {
-      return NextResponse.json({ valid: false, error: 'Invalid promo code. Please check and try again.' });
-    }
-  }
-
   if (new Date(promo.validTill) < new Date()) {
     return NextResponse.json({ valid: false, error: 'This promo code has expired.' });
   }
