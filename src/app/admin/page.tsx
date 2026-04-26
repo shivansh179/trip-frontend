@@ -8,8 +8,7 @@ import {
     MessageSquare, BookOpen, Settings, LogOut, ChevronRight,
     Save, RefreshCw, Plus, Trash2, Eye, ChevronDown, ChevronUp,
     ShoppingBag, CheckCircle, XCircle, Clock, Mail, User, Calendar, Phone,
-    Megaphone, Star, Activity
-    , Upload, Copy, Link2, X
+    Megaphone, Star, Activity, Upload, Copy, Link2, X, ExternalLink, Zap
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import ImagePreview from '@/components/ImagePreview';
@@ -60,6 +59,18 @@ export default function AdminDashboard() {
     const [uploadFolder, setUploadFolder] = useState('admin');
     const [uploadedImageUrl, setUploadedImageUrl] = useState('');
     const [message, setMessage] = useState({ type: '', text: '' });
+
+    // Custom Trip Creator
+    const [customTrip, setCustomTrip] = useState({
+        title: '', destination: '', duration: '', price: '',
+        imageUrl: '', shortDescription: '', description: '',
+        category: 'Custom', difficulty: 'Easy',
+        highlights: [''], includes: [''], excludes: [''],
+    });
+    const [customItinerary, setCustomItinerary] = useState([
+        { dayTitle: '', description: '', activities: '' },
+    ]);
+    const [createdTripLink, setCreatedTripLink] = useState('');
 
     useEffect(() => {
         // Check if admin is logged in
@@ -732,7 +743,61 @@ export default function AdminDashboard() {
         setSaving(false);
     };
 
+    const handleCreateCustomTrip = async () => {
+        if (!customTrip.title || !customTrip.destination || !customTrip.price || !customTrip.duration) {
+            setMessage({ type: 'error', text: 'Title, destination, price, and duration are required.' });
+            return;
+        }
+        setSaving(true);
+        setCreatedTripLink('');
+        try {
+            const tripPayload = {
+                title: customTrip.title,
+                destination: customTrip.destination,
+                duration: customTrip.duration,
+                price: parseFloat(customTrip.price),
+                imageUrl: customTrip.imageUrl || '',
+                shortDescription: customTrip.shortDescription,
+                description: customTrip.description,
+                category: customTrip.category || 'Custom',
+                difficulty: customTrip.difficulty,
+                highlights: customTrip.highlights.filter(Boolean),
+                includes: customTrip.includes.filter(Boolean),
+                excludes: customTrip.excludes.filter(Boolean),
+                rating: 5.0,
+                reviewCount: 0,
+                isFeatured: false,
+            };
+            const tripRes = await api.admin.createTrip(tripPayload);
+            const tripId = tripRes.data?.id;
+            if (!tripId) throw new Error('No trip ID returned');
+
+            // Create itinerary days
+            for (let i = 0; i < customItinerary.length; i++) {
+                const day = customItinerary[i];
+                if (!day.dayTitle) continue;
+                await api.admin.createTripItinerary(tripId, {
+                    dayNumber: i + 1,
+                    dayTitle: day.dayTitle,
+                    description: day.description,
+                    activities: day.activities ? day.activities.split('\n').filter(Boolean) : [],
+                    accommodation: '',
+                    meals: '',
+                    imageUrl: '',
+                });
+            }
+
+            const link = `${window.location.origin}/trips/${tripId}`;
+            setCreatedTripLink(link);
+            setMessage({ type: 'success', text: `Trip created! Share the link with your client.` });
+        } catch (err: any) {
+            setMessage({ type: 'error', text: err?.response?.data?.error || err?.message || 'Failed to create trip' });
+        }
+        setSaving(false);
+    };
+
     const sidebarItems = [
+        { id: 'custom-trips', icon: Zap, label: 'Custom Trip Link' },
         { id: 'destinations', icon: MapPin, label: 'Destinations' },
         { id: 'experiences', icon: Compass, label: 'Experiences' },
         { id: 'stays', icon: Building, label: 'Stays' },
@@ -887,6 +952,225 @@ export default function AdminDashboard() {
 
                 {/* Content */}
                 <div className="bg-cream p-6 shadow-sm">
+
+                    {/* ── CUSTOM TRIP LINK TAB ── */}
+                    {activeTab === 'custom-trips' && (
+                        <div className="space-y-8 max-w-3xl">
+                            <div>
+                                <h2 className="font-display text-2xl text-primary mb-1">Create a Custom Trip Link</h2>
+                                <p className="text-sm text-primary/55">Fill in the trip details, add an itinerary, and get a shareable booking link with full payment gateway, promo codes, and trust badges built in.</p>
+                            </div>
+
+                            {/* Created link banner */}
+                            {createdTripLink && (
+                                <div className="p-5 bg-green-50 border border-green-200 rounded-xl flex flex-col gap-3">
+                                    <div className="flex items-center gap-2 text-green-700 font-semibold">
+                                        <CheckCircle className="w-5 h-5" /> Trip created! Share this link with your client:
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <code className="flex-1 bg-white border border-green-200 px-3 py-2 text-sm break-all rounded">{createdTripLink}</code>
+                                        <button
+                                            onClick={() => { navigator.clipboard.writeText(createdTripLink); setMessage({ type: 'success', text: 'Link copied!' }); }}
+                                            className="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm flex items-center gap-1 shrink-0"
+                                        >
+                                            <Copy className="w-4 h-4" /> Copy
+                                        </button>
+                                        <a href={createdTripLink} target="_blank" rel="noopener noreferrer"
+                                            className="px-3 py-2 bg-primary text-cream rounded hover:bg-primary/80 text-sm flex items-center gap-1 shrink-0">
+                                            <ExternalLink className="w-4 h-4" /> Open
+                                        </a>
+                                    </div>
+                                    <p className="text-xs text-green-600">The link opens a full trip page with itinerary → client clicks Book Now → full payment flow with promo codes, EMI, UPI discount, and trust badges.</p>
+                                </div>
+                            )}
+
+                            {/* ── TRIP DETAILS ── */}
+                            <div className="border border-primary/10 p-6 space-y-4 bg-cream-light">
+                                <h3 className="font-semibold text-primary text-lg">Trip Details</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Trip Title *</label>
+                                        <input
+                                            value={customTrip.title}
+                                            onChange={e => setCustomTrip(p => ({ ...p, title: e.target.value }))}
+                                            placeholder="e.g. Exclusive Rajasthan Heritage Tour"
+                                            className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Destination *</label>
+                                        <input
+                                            value={customTrip.destination}
+                                            onChange={e => setCustomTrip(p => ({ ...p, destination: e.target.value }))}
+                                            placeholder="e.g. Rajasthan, India"
+                                            className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Duration *</label>
+                                        <input
+                                            value={customTrip.duration}
+                                            onChange={e => setCustomTrip(p => ({ ...p, duration: e.target.value }))}
+                                            placeholder="e.g. 7 Days / 6 Nights"
+                                            className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Price per person (₹) *</label>
+                                        <input
+                                            type="number"
+                                            value={customTrip.price}
+                                            onChange={e => setCustomTrip(p => ({ ...p, price: e.target.value }))}
+                                            placeholder="e.g. 45000"
+                                            className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Category</label>
+                                        <input
+                                            value={customTrip.category}
+                                            onChange={e => setCustomTrip(p => ({ ...p, category: e.target.value }))}
+                                            placeholder="e.g. Heritage, Adventure, Honeymoon"
+                                            className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Difficulty</label>
+                                        <select
+                                            value={customTrip.difficulty}
+                                            onChange={e => setCustomTrip(p => ({ ...p, difficulty: e.target.value }))}
+                                            className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
+                                        >
+                                            <option>Easy</option>
+                                            <option>Moderate</option>
+                                            <option>Challenging</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Cover Image URL</label>
+                                    <input
+                                        value={customTrip.imageUrl}
+                                        onChange={e => setCustomTrip(p => ({ ...p, imageUrl: e.target.value }))}
+                                        placeholder="Paste URL from the upload tool above"
+                                        className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Short Description (shown on cards)</label>
+                                    <input
+                                        value={customTrip.shortDescription}
+                                        onChange={e => setCustomTrip(p => ({ ...p, shortDescription: e.target.value }))}
+                                        placeholder="One-line summary for the client"
+                                        className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Full Description</label>
+                                    <textarea
+                                        rows={4}
+                                        value={customTrip.description}
+                                        onChange={e => setCustomTrip(p => ({ ...p, description: e.target.value }))}
+                                        placeholder="Detailed description of the trip experience..."
+                                        className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm resize-none"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* ── HIGHLIGHTS / INCLUDES / EXCLUDES ── */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {(['highlights', 'includes', 'excludes'] as const).map((field) => (
+                                    <div key={field} className="border border-primary/10 p-4 bg-cream-light">
+                                        <h4 className="font-medium text-primary text-sm capitalize mb-3">{field}</h4>
+                                        {customTrip[field].map((item, idx) => (
+                                            <div key={idx} className="flex gap-2 mb-2">
+                                                <input
+                                                    value={item}
+                                                    onChange={e => setCustomTrip(p => {
+                                                        const arr = [...p[field]];
+                                                        arr[idx] = e.target.value;
+                                                        return { ...p, [field]: arr };
+                                                    })}
+                                                    placeholder={`Add ${field.slice(0, -1)}...`}
+                                                    className="flex-1 px-2 py-1.5 border border-primary/20 bg-cream text-xs"
+                                                />
+                                                <button
+                                                    onClick={() => setCustomTrip(p => {
+                                                        const arr = p[field].filter((_, i) => i !== idx);
+                                                        return { ...p, [field]: arr.length ? arr : [''] };
+                                                    })}
+                                                    className="text-red-400 hover:text-red-600 px-1"
+                                                ><X className="w-3 h-3" /></button>
+                                            </div>
+                                        ))}
+                                        <button
+                                            onClick={() => setCustomTrip(p => ({ ...p, [field]: [...p[field], ''] }))}
+                                            className="text-xs text-secondary hover:text-secondary/70 flex items-center gap-1 mt-1"
+                                        ><Plus className="w-3 h-3" /> Add</button>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* ── ITINERARY BUILDER ── */}
+                            <div className="border border-primary/10 p-6 bg-cream-light space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="font-semibold text-primary text-lg">Day-by-Day Itinerary</h3>
+                                    <button
+                                        onClick={() => setCustomItinerary(p => [...p, { dayTitle: '', description: '', activities: '' }])}
+                                        className="flex items-center gap-1 text-xs px-3 py-1.5 bg-secondary text-cream hover:bg-secondary/80"
+                                    ><Plus className="w-3 h-3" /> Add Day</button>
+                                </div>
+                                {customItinerary.map((day, idx) => (
+                                    <div key={idx} className="border border-primary/10 p-4 bg-cream relative">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="text-xs font-semibold text-secondary uppercase tracking-widest">Day {idx + 1}</span>
+                                            {customItinerary.length > 1 && (
+                                                <button
+                                                    onClick={() => setCustomItinerary(p => p.filter((_, i) => i !== idx))}
+                                                    className="text-red-400 hover:text-red-600"
+                                                ><Trash2 className="w-3.5 h-3.5" /></button>
+                                            )}
+                                        </div>
+                                        <div className="space-y-2">
+                                            <input
+                                                value={day.dayTitle}
+                                                onChange={e => setCustomItinerary(p => p.map((d, i) => i === idx ? { ...d, dayTitle: e.target.value } : d))}
+                                                placeholder="Day title (e.g. Arrive in Jaipur · Pink City tour)"
+                                                className="w-full px-3 py-2 border border-primary/20 bg-cream-light text-sm"
+                                            />
+                                            <textarea
+                                                rows={2}
+                                                value={day.description}
+                                                onChange={e => setCustomItinerary(p => p.map((d, i) => i === idx ? { ...d, description: e.target.value } : d))}
+                                                placeholder="Brief description of the day..."
+                                                className="w-full px-3 py-2 border border-primary/20 bg-cream-light text-sm resize-none"
+                                            />
+                                            <textarea
+                                                rows={2}
+                                                value={day.activities}
+                                                onChange={e => setCustomItinerary(p => p.map((d, i) => i === idx ? { ...d, activities: e.target.value } : d))}
+                                                placeholder="Activities — one per line (e.g. Amber Fort visit&#10;City Palace tour)"
+                                                className="w-full px-3 py-2 border border-primary/20 bg-cream-light text-xs resize-none font-mono"
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* ── CREATE BUTTON ── */}
+                            <div className="flex items-center gap-4">
+                                <button
+                                    onClick={handleCreateCustomTrip}
+                                    disabled={saving}
+                                    className="flex items-center gap-2 px-8 py-3 bg-secondary text-cream hover:bg-secondary/80 disabled:opacity-50 font-medium"
+                                >
+                                    <Zap className="w-4 h-4" />
+                                    {saving ? 'Creating...' : 'Create Trip & Get Shareable Link'}
+                                </button>
+                                <p className="text-xs text-primary/40">Client opens the link → sees full trip page with itinerary → pays via Easebuzz (UPI, cards, EMI, part-payment)</p>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Pages Tab */}
                     {activeTab === 'pages' && (
