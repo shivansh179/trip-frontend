@@ -6,7 +6,7 @@ import { Calendar, Users, MapPin, Lock, CheckCircle, ChevronDown, ChevronUp } fr
 import { api } from '@/lib/api';
 import { Trip } from '@/types';
 import { formatPriceWithCurrency } from '@/lib/utils';
-import { getDestinationImageUrl } from '@/lib/destinationImages';
+import { getDestinationImageUrl, INDIA_FALLBACK } from '@/lib/destinationImages';
 import PaymentOptions from '@/components/PaymentOptions';
 import TrustBadges from '@/components/TrustBadges';
 import CheckoutStepper from '@/components/CheckoutStepper';
@@ -93,7 +93,8 @@ function CheckoutContent() {
                     api.getTripById(Number(tripId)),
                     api.getTripItinerary(Number(tripId)).catch(() => ({ data: [] })),
                 ]);
-                setTrip(tripRes.data);
+                const tripData = tripRes.data;
+                setTrip(tripData);
                 setItinerary(Array.isArray(itiRes.data) ? itiRes.data : []);
                 setFormData(prev => ({
                     ...prev,
@@ -242,22 +243,27 @@ function CheckoutContent() {
     const totalPrice = Math.max(0, priceAfterDiscount - walletDeduction);
     const cashbackAmount = Math.round(totalPrice * 0.10);
 
-    // Find the best cover image: try destination keywords before falling back to trip.imageUrl
+    // Find the best cover image: try each destination keyword, then backend imageUrl
     const getCoverImage = () => {
         if (!trip) return '';
         const dest = trip.destination || trip.title || '';
-        // Try full destination name first
-        const byFull = getDestinationImageUrl(undefined, dest);
-        const INDIA_FALLBACK = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4';
-        if (byFull !== INDIA_FALLBACK) return byFull;
-        // Try each word/token in the destination (split by - · , space)
+        // Try each word/token in the destination (split by - · , / space)
         const tokens = dest.split(/[\s\-·,\/]+/).filter(t => t.length > 2);
         for (const token of tokens) {
             const byToken = getDestinationImageUrl(undefined, token);
             if (byToken !== INDIA_FALLBACK) return byToken;
         }
-        // Fall back to backend imageUrl (even if it might be wrong)
-        return trip.imageUrl || '';
+        // Try the full string as a last resort
+        const byFull = getDestinationImageUrl(undefined, dest);
+        if (byFull !== INDIA_FALLBACK) return byFull;
+        // Use backend imageUrl only if it's not a known-bad generic image
+        const badImages = [
+            'photo-1564507592333-c60657eea523', // Taj Mahal (India generic)
+            'photo-1506905925346-21bda4d32df4',
+        ];
+        const backendUrl = trip.imageUrl || '';
+        if (backendUrl && !badImages.some(b => backendUrl.includes(b))) return backendUrl;
+        return INDIA_FALLBACK;
     };
     const coverImage = trip ? getCoverImage() : '';
 
@@ -302,26 +308,31 @@ function CheckoutContent() {
 
                     <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
                         <div className="lg:col-span-2">
-                            <form onSubmit={handleSubmit} className="space-y-8">
+                            <form id="checkout-form" onSubmit={handleSubmit} className="space-y-8">
                                 {/* ── COVER IMAGE + TRIP SUMMARY ── */}
                                 <section className="border border-primary/10 overflow-hidden">
                                     {coverImage && (
-                                        <div className="relative h-48 md:h-64 w-full">
+                                        <div className="relative h-56 md:h-72 w-full">
                                             <img
                                                 src={coverImage}
                                                 alt={trip.destination}
                                                 className="w-full h-full object-cover"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-primary/20 to-transparent" />
-                                            <div className="absolute bottom-0 left-0 p-5">
-                                                <p className="text-cream/80 text-xs uppercase tracking-widest font-medium mb-1">Your Trip</p>
-                                                <h2 className="text-cream text-xl md:text-2xl font-display font-semibold leading-tight">{trip.title}</h2>
-                                                <div className="flex items-center gap-3 mt-2">
-                                                    <span className="flex items-center gap-1 text-cream/80 text-xs"><MapPin size={12} /> {trip.destination}</span>
-                                                    <span className="text-cream/40">·</span>
-                                                    <span className="flex items-center gap-1 text-cream/80 text-xs"><Calendar size={12} /> {trip.duration}</span>
-                                                    <span className="text-cream/40">·</span>
-                                                    <span className="flex items-center gap-1 text-cream/80 text-xs"><Users size={12} /> {formData.numberOfGuests} guests</span>
+                                            {/* Strong gradient so text is always readable */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+                                            <div className="absolute bottom-0 left-0 right-0 p-5">
+                                                <p className="text-white/70 text-[11px] uppercase tracking-widest font-semibold mb-1.5">Your Trip</p>
+                                                <h2 className="text-white text-xl md:text-2xl font-display font-bold leading-tight drop-shadow-sm">{trip.title}</h2>
+                                                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2.5">
+                                                    <span className="flex items-center gap-1.5 text-white/90 text-xs font-medium bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                                                        <MapPin size={11} /> {trip.destination}
+                                                    </span>
+                                                    <span className="flex items-center gap-1.5 text-white/90 text-xs font-medium bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                                                        <Calendar size={11} /> {trip.duration}
+                                                    </span>
+                                                    <span className="flex items-center gap-1.5 text-white/90 text-xs font-medium bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                                                        <Users size={11} /> {formData.numberOfGuests} {formData.numberOfGuests === 1 ? 'Guest' : 'Guests'}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -463,6 +474,41 @@ function CheckoutContent() {
                                     </section>
                                 )}
 
+                                {/* ── THINGS TO CARRY ── */}
+                                <section className="border border-primary/10 overflow-hidden">
+                                    <div className="bg-primary px-5 py-4 flex items-center gap-2">
+                                        <span className="text-base">🎒</span>
+                                        <h2 className="text-base font-semibold text-cream tracking-wide uppercase">Things to Carry</h2>
+                                    </div>
+                                    <div className="bg-white p-5">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 divide-y divide-primary/5 sm:divide-y-0">
+                                            {[
+                                                { icon: '📋', text: 'YLOO Booking Voucher (download from email)' },
+                                                { icon: '🪪', text: 'Government ID Proof (Aadhar / Passport)' },
+                                                { icon: '💊', text: 'Personal Medications (if any)' },
+                                                { icon: '🫙', text: 'Water Bottle (1.5L minimum)' },
+                                                { icon: '🧴', text: 'Sunscreen (SPF 50+)' },
+                                                { icon: '🕶️', text: 'UV Protected Sunglasses' },
+                                                { icon: '🧢', text: 'Cap or Hat (sun protection)' },
+                                                { icon: '🔋', text: 'Power Bank (fully charged)' },
+                                                { icon: '🧥', text: 'Warm Layered Clothing (thermal + fleece)' },
+                                                { icon: '👟', text: 'Trekking / Sports Shoes (ankle support)' },
+                                                { icon: '🎒', text: 'Day Backpack (20–30L)' },
+                                                { icon: '🌧️', text: 'Rain Poncho / Windcheater' },
+                                                { icon: '🦟', text: 'Mosquito & Insect Repellent' },
+                                                { icon: '🔦', text: 'Torch / Headlamp with extra batteries' },
+                                            ].map(({ icon, text }, i) => (
+                                                <div key={i} className="flex items-center gap-3 py-3 px-2 sm:border-b sm:border-primary/5 last:border-0">
+                                                    <div className="w-9 h-9 bg-cream rounded-full flex items-center justify-center shrink-0 text-lg">
+                                                        {icon}
+                                                    </div>
+                                                    <p className="text-sm text-primary/80">{text}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </section>
+
                                 {/* ── PERSONAL INFORMATION ── */}
                                 <section>
                                     <h2 className="text-xl md:text-2xl font-light mb-4 md:mb-6">Personal Information</h2>
@@ -520,15 +566,18 @@ function CheckoutContent() {
                                         <div>
                                             <label className="text-caption text-text-secondary mb-2 block">
                                                 Travel Date *
+                                                {date && <span className="ml-2 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-semibold uppercase tracking-wider">Pre-filled</span>}
                                             </label>
                                             <input
                                                 type="date"
                                                 required
+                                                readOnly={!!date}
                                                 value={formData.travelDate}
-                                                onChange={(e) => setFormData({ ...formData, travelDate: e.target.value })}
-                                                min={new Date().toISOString().split('T')[0]}
-                                                className="w-full p-4 border border-primary/20 bg-white text-primary"
+                                                onChange={(e) => !date && setFormData({ ...formData, travelDate: e.target.value })}
+                                                min={!date ? new Date().toISOString().split('T')[0] : undefined}
+                                                className={`w-full p-4 border border-primary/20 bg-white text-primary ${date ? 'opacity-80 cursor-not-allowed bg-cream' : ''}`}
                                             />
+                                            {date && <p className="text-xs text-primary/50 mt-1">Travel date set by your trip coordinator</p>}
                                         </div>
 
                                         <div>
@@ -656,7 +705,7 @@ function CheckoutContent() {
                                     </div>
                                 )}
 
-                                <div className="flex flex-col gap-4 pt-6">
+                                <div className="flex flex-col gap-4 pt-6 pb-28 sm:pb-6">
                                     <label className="flex items-start gap-3 cursor-pointer">
                                         <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} className="mt-1 w-4 h-4 accent-amber-500" />
                                         <span className="text-xs text-gray-600">
@@ -664,24 +713,48 @@ function CheckoutContent() {
                                             <a href="/privacy" target="_blank" className="text-amber-600 underline">Privacy Policy</a>.
                                         </span>
                                     </label>
-                                    <div className="flex flex-col-reverse sm:flex-row sm:items-center gap-3 sm:gap-4">
-                                    <button
-                                        type="submit"
-                                        disabled={submitting || !agreed}
-                                        className="btn-primary flex-1 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        {submitting ? 'Processing...' : 'Complete Booking'}
-                                    </button>
-                                    <div className="flex items-center justify-center sm:justify-start gap-2 text-body-sm text-text-secondary">
-                                        <Lock size={16} />
-                                        <span>Secure Payment</span>
-                                    </div>
+                                    {/* Desktop button */}
+                                    <div className="hidden sm:flex sm:items-center gap-4">
+                                        <button
+                                            type="submit"
+                                            disabled={submitting || !agreed}
+                                            className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            {submitting ? 'Processing...' : 'Complete Booking'}
+                                        </button>
+                                        <div className="flex items-center gap-2 text-body-sm text-text-secondary">
+                                            <Lock size={16} />
+                                            <span>Secure Payment</span>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
                         </div>
 
-                        <div className="lg:sticky lg:top-24 h-fit order-first lg:order-none">
+                        {/* ── MOBILE STICKY BOTTOM BAR ── */}
+                        <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-primary/10 shadow-2xl px-4 py-3 safe-area-inset-bottom">
+                            <div className="flex items-center justify-between mb-2">
+                                <div>
+                                    <p className="text-xs text-primary/50">Total Payable</p>
+                                    <p className="text-xl font-bold text-primary">{fp(advanceAmountNow !== null ? advanceAmountNow : totalPrice)}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] text-green-600 font-medium">No hidden fees</p>
+                                    <p className="text-[10px] text-primary/40">Incl. all taxes</p>
+                                </div>
+                            </div>
+                            <button
+                                form="checkout-form"
+                                type="submit"
+                                disabled={submitting || !agreed}
+                                className="w-full py-3.5 bg-primary text-cream font-semibold text-sm rounded-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                <Lock size={14} />
+                                {submitting ? 'Processing...' : `Complete Booking · ${fp(advanceAmountNow !== null ? advanceAmountNow : totalPrice)}`}
+                            </button>
+                        </div>
+
+                        <div className="lg:sticky lg:top-24 h-fit order-last lg:order-none">
                             <div className="bg-cream-light p-6 md:p-8 border border-primary/10">
                                 <h2 className="text-xl md:text-2xl font-light mb-4 md:mb-6">Order Summary</h2>
 

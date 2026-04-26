@@ -80,16 +80,31 @@ export default function AdminDashboard() {
         const lines = text.split('\n');
         const days: { dayTitle: string; description: string; activities: string }[] = [];
         let current: { dayTitle: string; description: string; activities: string } | null = null;
+        let dayCount = 0;
+
+        // Matches: "Day 1:", "Day1 -", "20 May:", "21st May:", "May 20:", "22nd May:", "23 may" etc.
+        const MONTHS = 'jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec';
+        const dayHeaderRegex = new RegExp(
+            `^(?:` +
+            `day\\s*\\d+` +                                                     // Day 1, Day2
+            `|\\d{1,2}(?:st|nd|rd|th)?\\s+(?:${MONTHS})\\w*` +                 // 20 May, 22nd May
+            `|(?:${MONTHS})\\w*\\s+\\d{1,2}(?:st|nd|rd|th)?` +                 // May 20, May 22nd
+            `)\\s*[:\\-–]?`,
+            'i'
+        );
+
         for (const raw of lines) {
             const line = raw.trim();
             if (!line) continue;
-            const dayMatch = line.match(/^day\s*(\d+)[:\-–]?\s*/i);
-            if (dayMatch) {
+
+            if (dayHeaderRegex.test(line)) {
                 if (current) days.push(current);
-                const title = line.replace(/^day\s*\d+[:\-–]?\s*/i, '').trim();
-                current = { dayTitle: title || `Day ${dayMatch[1]}`, description: '', activities: '' };
+                dayCount++;
+                // Title = text after the day/date header marker
+                const title = line.replace(dayHeaderRegex, '').trim();
+                current = { dayTitle: title || `Day ${dayCount}`, description: '', activities: '' };
             } else if (current) {
-                // First non-day line becomes description, rest become activities
+                // First non-header line = description; subsequent lines = activities
                 if (!current.description) {
                     current.description = line;
                 } else {
@@ -106,7 +121,7 @@ export default function AdminDashboard() {
         imageUrl: '', shortDescription: '', description: '',
         category: 'Custom', difficulty: 'Easy',
         highlights: [''], includes: [''], excludes: [''],
-        clientName: '', clientPhone: '', clientEmail: '', numPersons: '1', totalAmount: '',
+        clientName: '', clientPhone: '', clientEmail: '', clientDate: '', numPersons: '1', totalAmount: '',
     });
     const [customItinerary, setCustomItinerary] = useState([
         { dayTitle: '', description: '', activities: '' },
@@ -117,6 +132,11 @@ export default function AdminDashboard() {
     const [customTripRecords, setCustomTripRecords] = useState<CustomTripRecord[]>([]);
     const [recordBookings, setRecordBookings] = useState<Record<number, { bookingReference?: string; paymentStatus?: string; customerEmail?: string; customerPhone?: string }[]>>({});
     const [loadingRecordBookings, setLoadingRecordBookings] = useState(false);
+
+    // Itinerary editor for existing trips
+    const [editingItinTripId, setEditingItinTripId] = useState<number | null>(null);
+    const [editItinerary, setEditItinerary] = useState<{ id?: number; dayTitle: string; description: string; activities: string }[]>([{ dayTitle: '', description: '', activities: '' }]);
+    const [savingItin, setSavingItin] = useState(false);
 
     useEffect(() => {
         // Check if admin is logged in
@@ -839,6 +859,66 @@ export default function AdminDashboard() {
         setLoadingRecordBookings(false);
     };
 
+    const openItineraryEditor = async (tripId: number) => {
+        if (editingItinTripId === tripId) {
+            setEditingItinTripId(null);
+            return;
+        }
+        setEditingItinTripId(tripId);
+        try {
+            const token = localStorage.getItem('adminToken') || '';
+            const res = await api.admin.getTripItineraries(tripId);
+            const days = Array.isArray(res.data) ? res.data : [];
+            if (days.length > 0) {
+                setEditItinerary(days.map((d: Record<string, unknown>) => ({
+                    id: d.id as number | undefined,
+                    dayTitle: (d.dayTitle as string) || '',
+                    description: (d.description as string) || '',
+                    activities: Array.isArray(d.activities) ? (d.activities as string[]).join('\n') : (d.activities as string) || '',
+                })));
+            } else {
+                setEditItinerary([{ dayTitle: '', description: '', activities: '' }]);
+            }
+            void token; // used implicitly via api client
+        } catch {
+            setEditItinerary([{ dayTitle: '', description: '', activities: '' }]);
+        }
+    };
+
+    const saveItineraryForTrip = async (tripId: number) => {
+        setSavingItin(true);
+        try {
+            const token = localStorage.getItem('adminToken') || '';
+            // Delete existing days then re-create
+            const existingRes = await api.admin.getTripItineraries(tripId);
+            const existing = Array.isArray(existingRes.data) ? existingRes.data : [];
+            for (const d of existing) {
+                await api.admin.deleteTripItinerary((d as Record<string, unknown>).id as number).catch(() => {});
+            }
+            // Save new days
+            for (let i = 0; i < editItinerary.length; i++) {
+                const day = editItinerary[i];
+                if (!day.dayTitle.trim()) continue;
+                await api.admin.createTripItinerary(tripId, {
+                    dayNumber: i + 1,
+                    dayTitle: day.dayTitle.trim(),
+                    description: day.description.trim(),
+                    activities: day.activities.split('\n').map(a => a.trim()).filter(Boolean),
+                    accommodation: '',
+                    meals: '',
+                    imageUrl: '',
+                });
+            }
+            void token;
+            setMessage({ type: 'success', text: 'Itinerary saved! Client will now see it on checkout.' });
+            setEditingItinTripId(null);
+        } catch {
+            setMessage({ type: 'error', text: 'Failed to save itinerary. Please try again.' });
+        } finally {
+            setSavingItin(false);
+        }
+    };
+
     const handleCreateCustomTrip = async () => {
         if (!customTrip.title || !customTrip.destination || !customTrip.price || !customTrip.duration) {
             setMessage({ type: 'error', text: 'Title, destination, price, and duration are required.' });
@@ -894,6 +974,7 @@ export default function AdminDashboard() {
                 ...(customTrip.clientName ? { name: customTrip.clientName } : {}),
                 ...(customTrip.clientPhone ? { phone: customTrip.clientPhone } : {}),
                 ...(customTrip.clientEmail ? { email: customTrip.clientEmail } : {}),
+                ...(customTrip.clientDate ? { date: customTrip.clientDate } : {}),
             });
             const link = `${window.location.origin}/checkout?${qs.toString()}`;
             setCreatedTripLink(link);
@@ -1139,6 +1220,11 @@ export default function AdminDashboard() {
                                                         </td>
                                                         <td className="px-3 py-2.5">
                                                             <div className="flex items-center gap-1">
+                                                                <button onClick={() => openItineraryEditor(rec.tripId)}
+                                                                    className={`p-1 rounded ${editingItinTripId === rec.tripId ? 'bg-amber-100' : 'hover:bg-amber-50'}`}
+                                                                    title="Edit Itinerary">
+                                                                    <BookOpen className="w-3.5 h-3.5 text-amber-600" />
+                                                                </button>
                                                                 <button onClick={() => { navigator.clipboard.writeText(rec.link); setMessage({ type: 'success', text: 'Link copied!' }); }}
                                                                     className="p-1 hover:bg-primary/10 rounded" title="Copy link">
                                                                     <Copy className="w-3.5 h-3.5 text-primary/60" />
@@ -1166,6 +1252,72 @@ export default function AdminDashboard() {
                                     </table>
                                 </div>
                                 <p className="text-xs text-primary/40 mt-2">Records stored locally on this browser. Booking status fetched live from backend.</p>
+                            </div>
+                        )}
+
+                        {/* ── INLINE ITINERARY EDITOR ── */}
+                        {editingItinTripId !== null && (
+                            <div className="border border-amber-300 bg-amber-50 p-5 rounded-xl space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h3 className="font-semibold text-primary">Edit Itinerary — {customTripRecords.find(r => r.tripId === editingItinTripId)?.title}</h3>
+                                        <p className="text-xs text-primary/50 mt-0.5">This itinerary will show on the client's checkout page.</p>
+                                    </div>
+                                    <button onClick={() => setEditingItinTripId(null)} className="p-1 hover:bg-amber-100 rounded">
+                                        <X className="w-4 h-4 text-primary/40" />
+                                    </button>
+                                </div>
+
+                                <div className="space-y-3">
+                                    {editItinerary.map((day, idx) => (
+                                        <div key={idx} className="bg-white border border-amber-200 p-4 rounded-lg relative space-y-2">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <span className="text-xs font-bold text-amber-700 uppercase tracking-wider">Day {idx + 1}</span>
+                                                {editItinerary.length > 1 && (
+                                                    <button onClick={() => setEditItinerary(p => p.filter((_, i) => i !== idx))}
+                                                        className="text-red-400 hover:text-red-600">
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <input
+                                                value={day.dayTitle}
+                                                onChange={e => setEditItinerary(p => p.map((d, i) => i === idx ? { ...d, dayTitle: e.target.value } : d))}
+                                                placeholder="Day title (e.g. Arrive in Manali · Explore Mall Road)"
+                                                className="w-full px-3 py-2 border border-primary/20 bg-cream-light text-sm rounded"
+                                            />
+                                            <textarea rows={2}
+                                                value={day.description}
+                                                onChange={e => setEditItinerary(p => p.map((d, i) => i === idx ? { ...d, description: e.target.value } : d))}
+                                                placeholder="Brief description of the day..."
+                                                className="w-full px-3 py-2 border border-primary/20 bg-cream-light text-sm rounded resize-none"
+                                            />
+                                            <textarea rows={3}
+                                                value={day.activities}
+                                                onChange={e => setEditItinerary(p => p.map((d, i) => i === idx ? { ...d, activities: e.target.value } : d))}
+                                                placeholder={"Activities — one per line\nHadimba Temple visit\nMall Road stroll\nRohtang Pass excursion"}
+                                                className="w-full px-3 py-2 border border-primary/20 bg-cream-light text-xs rounded resize-none font-mono"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={() => setEditItinerary(p => [...p, { dayTitle: '', description: '', activities: '' }])}
+                                        className="flex items-center gap-1.5 text-xs text-amber-700 hover:text-amber-800 font-semibold border border-amber-300 px-3 py-1.5 rounded"
+                                    >
+                                        <Plus className="w-3.5 h-3.5" /> Add Day
+                                    </button>
+                                    <button
+                                        onClick={() => saveItineraryForTrip(editingItinTripId)}
+                                        disabled={savingItin}
+                                        className="flex items-center gap-2 px-5 py-2 bg-primary text-cream text-sm font-semibold rounded hover:bg-primary/90 disabled:opacity-50"
+                                    >
+                                        <Save className="w-3.5 h-3.5" />
+                                        {savingItin ? 'Saving...' : 'Save Itinerary'}
+                                    </button>
+                                </div>
                             </div>
                         )}
 
@@ -1239,6 +1391,15 @@ export default function AdminDashboard() {
                                             value={customTrip.clientEmail}
                                             onChange={e => setCustomTrip(p => ({ ...p, clientEmail: e.target.value }))}
                                             placeholder="e.g. rahul@gmail.com"
+                                            className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Travel Date</label>
+                                        <input
+                                            type="date"
+                                            value={customTrip.clientDate}
+                                            onChange={e => setCustomTrip(p => ({ ...p, clientDate: e.target.value }))}
                                             className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
                                         />
                                     </div>

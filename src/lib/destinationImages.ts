@@ -314,7 +314,7 @@ export const DEST_IMAGES: Record<string, string> = {
   'brahmatal':           'https://images.unsplash.com/photo-1548933122-5fedf3661c57?w=1200&q=85',
 };
 
-const INDIA_FALLBACK = 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80';
+export const INDIA_FALLBACK = 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80';
 
 function normalise(str: string): string {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
