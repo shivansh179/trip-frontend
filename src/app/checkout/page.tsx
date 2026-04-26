@@ -6,6 +6,7 @@ import { Calendar, Users, MapPin, Lock, CheckCircle, ChevronDown, ChevronUp } fr
 import { api } from '@/lib/api';
 import { Trip } from '@/types';
 import { formatPriceWithCurrency } from '@/lib/utils';
+import { getDestinationImageUrl } from '@/lib/destinationImages';
 import PaymentOptions from '@/components/PaymentOptions';
 import TrustBadges from '@/components/TrustBadges';
 import CheckoutStepper from '@/components/CheckoutStepper';
@@ -238,6 +239,25 @@ function CheckoutContent() {
     const totalPrice = Math.max(0, priceAfterDiscount - walletDeduction);
     const cashbackAmount = Math.round(totalPrice * 0.10);
 
+    // Find the best cover image: try destination keywords before falling back to trip.imageUrl
+    const getCoverImage = () => {
+        if (!trip) return '';
+        const dest = trip.destination || trip.title || '';
+        // Try full destination name first
+        const byFull = getDestinationImageUrl(undefined, dest);
+        const INDIA_FALLBACK = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4';
+        if (byFull !== INDIA_FALLBACK) return byFull;
+        // Try each word/token in the destination (split by - · , space)
+        const tokens = dest.split(/[\s\-·,\/]+/).filter(t => t.length > 2);
+        for (const token of tokens) {
+            const byToken = getDestinationImageUrl(undefined, token);
+            if (byToken !== INDIA_FALLBACK) return byToken;
+        }
+        // Fall back to backend imageUrl (even if it might be wrong)
+        return trip.imageUrl || '';
+    };
+    const coverImage = trip ? getCoverImage() : '';
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -282,10 +302,10 @@ function CheckoutContent() {
                             <form onSubmit={handleSubmit} className="space-y-8">
                                 {/* ── COVER IMAGE + TRIP SUMMARY ── */}
                                 <section className="border border-primary/10 overflow-hidden">
-                                    {trip.imageUrl && (
+                                    {coverImage && (
                                         <div className="relative h-48 md:h-64 w-full">
                                             <img
-                                                src={trip.imageUrl}
+                                                src={coverImage}
                                                 alt={trip.destination}
                                                 className="w-full h-full object-cover"
                                             />
@@ -303,7 +323,7 @@ function CheckoutContent() {
                                             </div>
                                         </div>
                                     )}
-                                    {!trip.imageUrl && (
+                                    {!coverImage && (
                                         <div className="bg-cream-light p-5 md:p-6">
                                             <h2 className="text-xl md:text-2xl font-light mb-4">Trip Summary</h2>
                                             <div className="space-y-3">
@@ -331,7 +351,7 @@ function CheckoutContent() {
                                             </div>
                                         </div>
                                     )}
-                                    {trip.imageUrl && trip.shortDescription && (
+                                    {coverImage && trip.shortDescription && (
                                         <div className="bg-cream-light px-5 py-3 border-t border-primary/10">
                                             <p className="text-sm text-primary/70 leading-relaxed">{trip.shortDescription}</p>
                                         </div>
