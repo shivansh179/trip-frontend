@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Calendar, Users, MapPin, Lock, CheckCircle } from 'lucide-react';
+import { Calendar, Users, MapPin, Lock, CheckCircle, ChevronDown, ChevronUp, Upload, FileCheck } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Trip } from '@/types';
 import { formatPriceWithCurrency } from '@/lib/utils';
@@ -25,9 +25,16 @@ function CheckoutContent() {
     const tripId = searchParams.get('tripId');
     const guests = Number(searchParams.get('guests')) || 1;
     const date = searchParams.get('date') || '';
-    const priceParam = Number(searchParams.get('price')) || 0; // dynamic price from calendar
+    const priceParam = Number(searchParams.get('price')) || 0;
+    // Auto-fill params from admin custom-trip link
+    const paramName = searchParams.get('name') || '';
+    const paramPhone = searchParams.get('phone') || '';
+    const paramEmail = searchParams.get('email') || '';
 
     const [trip, setTrip] = useState<Trip | null>(null);
+    const [itinerary, setItinerary] = useState<{ id?: number; dayNumber?: number; dayTitle?: string; description?: string; activities?: string[] }[]>([]);
+    const [openItinDay, setOpenItinDay] = useState<number | null>(0);
+    const [aadharFile, setAadharFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [agreed, setAgreed] = useState(false);
@@ -50,9 +57,9 @@ function CheckoutContent() {
     } | null>(null);
 
     const [formData, setFormData] = useState({
-        customerName: '',
-        customerEmail: '',
-        customerPhone: '',
+        customerName: paramName,
+        customerEmail: paramEmail,
+        customerPhone: paramPhone,
         numberOfGuests: guests,
         travelDate: date,
         specialRequests: '',
@@ -65,14 +72,20 @@ function CheckoutContent() {
                 router.push('/trips');
                 return;
             }
-
             try {
-                const response = await api.getTripById(Number(tripId));
-                setTrip(response.data);
+                const [tripRes, itiRes] = await Promise.all([
+                    api.getTripById(Number(tripId)),
+                    api.getTripItinerary(Number(tripId)).catch(() => ({ data: [] })),
+                ]);
+                setTrip(tripRes.data);
+                setItinerary(Array.isArray(itiRes.data) ? itiRes.data : []);
                 setFormData(prev => ({
                     ...prev,
                     numberOfGuests: guests,
-                    travelDate: date,
+                    travelDate: date || prev.travelDate,
+                    customerName: paramName || prev.customerName,
+                    customerPhone: paramPhone || prev.customerPhone,
+                    customerEmail: paramEmail || prev.customerEmail,
                 }));
             } catch {
                 router.push('/trips');
@@ -80,9 +93,9 @@ function CheckoutContent() {
                 setLoading(false);
             }
         };
-
         fetchTrip();
-    }, [tripId, guests, date, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [tripId]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -275,6 +288,77 @@ function CheckoutContent() {
                                     </div>
                                 </section>
 
+                                {/* ── ITINERARY ── */}
+                                {itinerary.length > 0 && (
+                                    <section className="bg-cream-light border border-primary/10 p-5">
+                                        <h2 className="text-xl font-light mb-4 flex items-center gap-2">
+                                            <Calendar size={18} className="text-secondary" /> Day-by-Day Itinerary
+                                        </h2>
+                                        <div className="space-y-2">
+                                            {itinerary.map((day, idx) => (
+                                                <div key={idx} className="border border-primary/10 bg-white">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setOpenItinDay(openItinDay === idx ? null : idx)}
+                                                        className="w-full flex items-center justify-between px-4 py-3 text-left"
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="w-6 h-6 bg-secondary text-cream text-xs font-bold flex items-center justify-center shrink-0">{day.dayNumber ?? idx + 1}</span>
+                                                            <span className="text-sm font-medium text-primary">{day.dayTitle || `Day ${idx + 1}`}</span>
+                                                        </div>
+                                                        {openItinDay === idx ? <ChevronUp size={16} className="text-primary/40" /> : <ChevronDown size={16} className="text-primary/40" />}
+                                                    </button>
+                                                    {openItinDay === idx && (
+                                                        <div className="px-4 pb-4 border-t border-primary/5">
+                                                            {day.description && <p className="text-sm text-primary/70 mt-3 leading-relaxed">{day.description}</p>}
+                                                            {day.activities && day.activities.length > 0 && (
+                                                                <ul className="mt-2 space-y-1">
+                                                                    {day.activities.map((a, i) => (
+                                                                        <li key={i} className="text-xs text-primary/60 flex items-start gap-2">
+                                                                            <span className="text-secondary mt-0.5">•</span> {a}
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </section>
+                                )}
+
+                                {/* ── INCLUDES / EXCLUDES ── */}
+                                {((trip.includes && trip.includes.length > 0) || (trip.excludes && trip.excludes.length > 0)) && (
+                                    <section className="grid md:grid-cols-2 gap-4">
+                                        {trip.includes && trip.includes.length > 0 && (
+                                            <div className="bg-green-50 border border-green-100 p-4">
+                                                <p className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-3">✓ What&apos;s Included</p>
+                                                <ul className="space-y-1.5">
+                                                    {trip.includes.map((item: string, i: number) => (
+                                                        <li key={i} className="text-sm text-green-800 flex items-start gap-2">
+                                                            <CheckCircle size={13} className="text-green-500 mt-0.5 shrink-0" /> {item}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                        {trip.excludes && trip.excludes.length > 0 && (
+                                            <div className="bg-red-50 border border-red-100 p-4">
+                                                <p className="text-xs font-semibold text-red-600 uppercase tracking-wider mb-3">✗ Not Included</p>
+                                                <ul className="space-y-1.5">
+                                                    {trip.excludes.map((item: string, i: number) => (
+                                                        <li key={i} className="text-sm text-red-700 flex items-start gap-2">
+                                                            <span className="mt-0.5 shrink-0">✗</span> {item}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </section>
+                                )}
+
+                                {/* ── PERSONAL INFORMATION ── */}
                                 <section>
                                     <h2 className="text-xl md:text-2xl font-light mb-4 md:mb-6">Personal Information</h2>
                                     <div className="space-y-6">
@@ -320,6 +404,39 @@ function CheckoutContent() {
                                                     placeholder="912345678900"
                                                 />
                                             </div>
+                                        </div>
+
+                                        {/* Aadhaar Card Upload */}
+                                        <div>
+                                            <label className="text-caption text-text-secondary mb-2 block">
+                                                Aadhaar Card (Upload photo/scan)
+                                                <span className="ml-1 text-primary/40 text-xs">— required for domestic travel verification</span>
+                                            </label>
+                                            <label className={`flex items-center gap-3 p-4 border-2 border-dashed cursor-pointer transition-colors ${aadharFile ? 'border-green-400 bg-green-50' : 'border-primary/20 bg-cream hover:border-secondary/50'}`}>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*,.pdf"
+                                                    className="hidden"
+                                                    onChange={(e) => setAadharFile(e.target.files?.[0] || null)}
+                                                />
+                                                {aadharFile ? (
+                                                    <>
+                                                        <FileCheck size={20} className="text-green-600 shrink-0" />
+                                                        <div>
+                                                            <p className="text-sm font-medium text-green-700">{aadharFile.name}</p>
+                                                            <p className="text-xs text-green-600">Uploaded · Click to change</p>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Upload size={20} className="text-primary/40 shrink-0" />
+                                                        <div>
+                                                            <p className="text-sm text-primary/60">Click to upload Aadhaar card</p>
+                                                            <p className="text-xs text-primary/40">JPG, PNG or PDF · Max 5MB</p>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </label>
                                         </div>
                                     </div>
                                 </section>
