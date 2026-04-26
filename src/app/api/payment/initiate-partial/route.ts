@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { bookingReference, chargeNow, totalAmount, customerName, customerEmail, customerPhone, tripTitle } = body;
+    const { bookingReference, chargeNow, totalAmount, customerName, customerEmail, customerPhone, tripTitle, emiTenure } = body;
 
     if (!bookingReference || !chargeNow || chargeNow <= 0) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -58,12 +58,14 @@ export async function POST(req: NextRequest) {
         phone,
         udf1,
         udf2,
-        udf3: '',
+        udf3: emiTenure ? String(emiTenure) : '',  // EMI tenure hint for Easebuzz
         udf4: '',
         udf5: '',
         hash,
         surl: `${SITE_URL}/payment/success?ref=${bookingReference}`,
         furl: `${SITE_URL}/payment/failure?ref=${bookingReference}`,
+        // Tell Easebuzz to offer EMI options when tenure is specified
+        ...(emiTenure ? { payment_options: 'EMI', emi_tenure: String(emiTenure) } : {}),
       });
 
       const ebRes = await fetch(payUrl, {

@@ -350,15 +350,20 @@ export default function PaymentOptions({ tripPrice, tripTitle, onProceed }: Paym
 
             {/* Selected EMI summary */}
             {selectedEmi && (
-              <div className="bg-primary/5 border border-primary/10 rounded-xl px-4 py-3 flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-secondary">You pay today</p>
-                  <p className="font-display text-xl font-semibold text-primary">{fmt(selectedEmi.monthlyAmount)}</p>
+              <div className="bg-primary/5 border border-primary/10 rounded-xl px-4 py-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-secondary">Monthly instalment</p>
+                    <p className="font-display text-xl font-semibold text-primary">{fmt(selectedEmi.monthlyAmount)}/mo</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-secondary">for {selectedEmi.months} months</p>
+                    <p className="font-semibold text-primary text-sm">{fmt(selectedEmi.totalAmount)} total</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs text-secondary">Then {selectedEmi.months - 1} more payments of</p>
-                  <p className="font-semibold text-primary text-sm">{fmt(selectedEmi.monthlyAmount)}/month</p>
-                </div>
+                <p className="text-[10px] text-secondary border-t border-primary/10 pt-2">
+                  💳 Full amount charged once on Easebuzz — your bank converts it to EMI automatically. You receive confirmation immediately.
+                </p>
               </div>
             )}
           </div>

@@ -135,12 +135,13 @@ function CheckoutContent() {
                 ? (halfPaymentCardType === 'credit' ? 'credit_card' : 'debit_card')
                 : formData.paymentMethod || 'upi';
 
-            // Amount to charge NOW — always recompute from current totalPrice
-            // (totalPrice already has wallet/cashback deducted, so chargeNow reflects net amount)
+            // Amount to charge NOW
+            // For EMI: Easebuzz receives FULL amount — the bank converts it to EMI on the customer's card.
+            // We receive full payment immediately. Do NOT split into instalments on our side.
             let chargeNow: number;
             if (selectedEmi !== null) {
-                // EMI: first instalment = totalPrice / tenure (recomputed so wallet deduction applies)
-                chargeNow = Math.ceil(totalPrice / (selectedEmi.tenure || 3));
+                // EMI via Easebuzz: send full amount, bank handles monthly split
+                chargeNow = totalPrice;
             } else if (formData.paymentMethod === 'half_payment') {
                 // 20% advance of NET price after wallet/promo
                 chargeNow = Math.ceil(totalPrice * 0.2);
@@ -181,12 +182,14 @@ function CheckoutContent() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     bookingReference: booking.bookingReference,
-                    chargeNow,               // exact amount: partial advance OR full price
+                    chargeNow,
                     totalAmount: totalPrice,
                     customerName: formData.customerName,
                     customerEmail: formData.customerEmail,
                     customerPhone: formData.customerPhone,
                     tripTitle: trip.title,
+                    // Pass EMI tenure so Easebuzz can pre-select EMI payment flow
+                    emiTenure: selectedEmi?.tenure || null,
                 }),
             });
             const paymentData = await payRes.json();
