@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowUpRight, Calendar, MapPin, Ticket, Phone, Users, Star, Camera, Music, Briefcase, Heart, ChevronRight, Check, Sparkles, UtensilsCrossed } from 'lucide-react';
+import { ArrowUpRight, Calendar, MapPin, Ticket, Phone, Users, Star, Camera, Music, Briefcase, Heart, ChevronRight, Check, Sparkles, UtensilsCrossed, X, CheckCircle, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Event as EventType } from '@/types';
 import { formatPrice } from '@/lib/utils';
@@ -87,16 +87,195 @@ const PARTY_EVENTS = [
   },
 ];
 
+// ── Callback Modal ─────────────────────────────────────────────────────────────
+function EventCallbackModal({ prefilledType, onClose }: { prefilledType: string; onClose: () => void }) {
+  const [form, setForm] = useState({
+    name: '', phone: '', email: '',
+    eventType: prefilledType,
+    guests: '', preferredDate: '', notes: '',
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [ticket, setTicket] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/events/callback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || 'Failed. Please try again.'); return; }
+      setTicket(data.ticket);
+    } catch {
+      setError('Network error. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col"
+        style={{ maxHeight: 'min(92dvh, 92vh)', overflow: 'hidden' }}>
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
+          <div>
+            <h3 className="font-bold text-gray-900 text-base">Request a Callback</h3>
+            <p className="text-xs text-gray-500 mt-0.5">We'll call you within 1 hour · Free consultation</p>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500 shrink-0">
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="overflow-y-auto flex-1 overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
+          {ticket ? (
+            <div className="flex flex-col items-center justify-center py-12 px-6 text-center gap-3">
+              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                <CheckCircle className="w-8 h-8 text-green-600" />
+              </div>
+              <h4 className="font-bold text-gray-900 text-lg">Request Received!</h4>
+              <p className="text-gray-500 text-sm max-w-xs">
+                Our event specialist will call you within <strong>1 hour</strong>. Keep your phone handy!
+              </p>
+              <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-3 mt-1">
+                <p className="text-xs text-amber-700 font-medium">Your Ticket Number</p>
+                <p className="font-mono text-lg font-bold text-amber-900">{ticket}</p>
+              </div>
+              <a
+                href={`https://wa.me/918427831127?text=Hi!%20I%20just%20submitted%20event%20callback%20request.%20Ticket:%20${ticket}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 px-6 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-semibold transition-colors"
+              >
+                Also message on WhatsApp
+              </a>
+              <button onClick={onClose} className="text-sm text-gray-400 hover:text-gray-600 mt-1">
+                Close
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="p-5 space-y-4 pb-8">
+              {/* Event type */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Event Type *</label>
+                <select
+                  required
+                  value={form.eventType}
+                  onChange={(e) => setForm({ ...form, eventType: e.target.value })}
+                  className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 bg-white outline-none focus:border-amber-400"
+                >
+                  <option value="">Select event type…</option>
+                  <option>Corporate Events</option>
+                  <option>Weddings & Celebrations</option>
+                  <option>Cultural Experiences</option>
+                  <option>Group Adventures</option>
+                  <option>Birthday / Anniversary</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              {/* Name + Phone */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Your Name *</label>
+                  <input required type="text" placeholder="Full name" maxLength={100}
+                    value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 outline-none focus:border-amber-400 placeholder:text-gray-400" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Phone Number *</label>
+                  <input required type="tel" placeholder="+91 98765 43210" maxLength={20}
+                    value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 outline-none focus:border-amber-400 placeholder:text-gray-400" />
+                </div>
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Email <span className="text-gray-400 font-normal">(optional)</span></label>
+                <input type="email" placeholder="your@email.com"
+                  value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 outline-none focus:border-amber-400 placeholder:text-gray-400" />
+              </div>
+
+              {/* Guests + Date */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Number of Guests</label>
+                  <select
+                    value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })}
+                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 bg-white outline-none focus:border-amber-400"
+                  >
+                    <option value="">Select size…</option>
+                    <option>1–10 guests</option>
+                    <option>11–25 guests</option>
+                    <option>26–50 guests</option>
+                    <option>51–100 guests</option>
+                    <option>100+ guests</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Preferred Date</label>
+                  <input type="date" min={new Date().toISOString().split('T')[0]}
+                    value={form.preferredDate} onChange={(e) => setForm({ ...form, preferredDate: e.target.value })}
+                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 outline-none focus:border-amber-400" />
+                </div>
+              </div>
+
+              {/* Notes */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  Event Details / Notes <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Venue preference, theme, budget range, special requirements…"
+                  maxLength={500}
+                  value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                  className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 outline-none focus:border-amber-400 placeholder:text-gray-400 resize-none"
+                />
+              </div>
+
+              {error && <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full flex items-center justify-center gap-2 py-3.5 bg-gray-900 hover:bg-gray-800 text-white font-semibold text-sm rounded-xl transition-colors disabled:opacity-50"
+              >
+                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Phone className="w-4 h-4" />}
+                {submitting ? 'Submitting…' : 'Request Callback'}
+              </button>
+              <p className="text-center text-[11px] text-gray-400">We'll call you within 1 hour · Free consultation · No obligation</p>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 export default function EventsPage() {
   const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [eventType, setEventType] = useState('');
-  const [guests, setGuests] = useState('');
-  const [submitted, setSubmitted] = useState(false);
   const [activeFilter, setActiveFilter] = useState('All Events');
+  const [callbackModal, setCallbackModal] = useState<string | null>(null); // holds pre-filled event type
 
   const eventFilters = ['All Events', 'Party', 'Corporate', 'Wedding', 'Cultural', 'Adventure'];
 
@@ -123,13 +302,6 @@ export default function EventsPage() {
     };
     fetchEvents();
   }, []);
-
-  const handleEnquiry = (e: React.FormEvent) => {
-    e.preventDefault();
-    const msg = `Hi! I'd like to plan an event.%0AName: ${name}%0AEmail: ${email}%0AEvent Type: ${eventType}%0AGuests: ${guests}`;
-    window.open(`https://wa.me/918427831127?text=${msg}`, '_blank');
-    setSubmitted(true);
-  };
 
   return (
     <div className="bg-cream min-h-screen">
@@ -159,14 +331,12 @@ export default function EventsPage() {
               Corporate offsites, destination weddings, cultural festivals, and group adventures — planned and delivered across India&apos;s most spectacular venues.
             </p>
             <div className="flex flex-wrap gap-4">
-              <a
-                href="https://wa.me/918427831127?text=Hi!%20I%27d%20like%20to%20plan%20an%20event%20with%20YlooTrips."
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => setCallbackModal('')}
                 className="btn-primary bg-white text-gray-900 hover:bg-gray-100 px-8 py-4 text-sm uppercase tracking-widest"
               >
                 Plan My Event
-              </a>
+              </button>
               <a
                 href="#party-events"
                 className="px-8 py-4 border border-cream/30 text-cream/70 text-sm uppercase tracking-widest hover:bg-cream/10 transition-colors"
@@ -206,7 +376,7 @@ export default function EventsPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {eventCategories.map(({ icon: Icon, title, desc, image }) => (
-              <Link key={title} href={`/contact?event=${encodeURIComponent(title)}`} className="group relative overflow-hidden bg-cream-light border border-primary/8 hover:shadow-xl transition-all duration-500 block">
+              <button key={title} onClick={() => setCallbackModal(title)} className="group relative overflow-hidden bg-cream-light border border-primary/8 hover:shadow-xl transition-all duration-500 text-left w-full">
                 <div className="relative h-48 overflow-hidden">
                   <Image src={image} alt={title} fill className="object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => { e.currentTarget.srcset = ''; e.currentTarget.src = 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=600&q=80'; }} />
                   <div className="absolute inset-0 bg-primary/40 group-hover:bg-primary/20 transition-colors duration-500" />
@@ -218,10 +388,10 @@ export default function EventsPage() {
                   <h3 className="font-display text-xl text-primary mb-2 group-hover:text-secondary transition-colors">{title}</h3>
                   <p className="text-sm text-primary/60 leading-relaxed">{desc}</p>
                   <div className="mt-4 flex items-center gap-1 text-secondary text-caption font-medium uppercase tracking-wider group-hover:gap-2 transition-all">
-                    Enquire Now <ChevronRight className="w-3.5 h-3.5" />
+                    Request Callback <ChevronRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
-              </Link>
+              </button>
             ))}
           </div>
         </div>
@@ -539,19 +709,19 @@ export default function EventsPage() {
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {destinationEvents.map(({ city, tag, image }) => (
-              <Link
+              <button
                 key={city}
-                href={`/contact?destination=${encodeURIComponent(city)}`}
-                className="group relative h-72 overflow-hidden"
+                onClick={() => setCallbackModal(`Event in ${city}`)}
+                className="group relative h-72 overflow-hidden text-left w-full"
               >
                 <Image src={image} alt={`${city} events`} fill className="object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => { e.currentTarget.srcset = ''; e.currentTarget.src = 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80'; }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-5">
                   <p className="text-caption uppercase tracking-wider text-accent mb-1">{tag}</p>
                   <h3 className="font-display text-xl text-cream">{city}</h3>
-                  <p className="text-cream/50 text-xs mt-1 group-hover:text-cream/80 transition-colors">Plan event here →</p>
+                  <p className="text-cream/50 text-xs mt-1 group-hover:text-cream/80 transition-colors">Request callback →</p>
                 </div>
-              </Link>
+              </button>
             ))}
           </div>
         </div>
@@ -598,77 +768,24 @@ export default function EventsPage() {
               </div>
             </div>
 
-            {/* Right — Form */}
-            <div className="bg-cream border border-primary/10 p-8">
-              {submitted ? (
-                <div className="text-center py-8">
-                  <div className="w-14 h-14 bg-green-100 flex items-center justify-center mx-auto mb-4">
-                    <Check className="w-7 h-7 text-green-600" />
-                  </div>
-                  <h3 className="font-display text-2xl text-primary mb-2">We&apos;ll be in touch!</h3>
-                  <p className="text-primary/60 text-sm">Our team will WhatsApp you within 1 hour with ideas and pricing.</p>
-                </div>
-              ) : (
-                <form onSubmit={handleEnquiry} className="space-y-5">
-                  <div>
-                    <label className="block text-caption uppercase tracking-wider text-primary/60 mb-2">Your Name *</label>
-                    <input
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="John & Sarah"
-                      className="w-full px-4 py-3 bg-cream-light border border-primary/15 text-primary placeholder:text-primary/30 focus:outline-none focus:border-secondary text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-caption uppercase tracking-wider text-primary/60 mb-2">Email Address *</label>
-                    <input
-                      required
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="your@email.com"
-                      className="w-full px-4 py-3 bg-cream-light border border-primary/15 text-primary placeholder:text-primary/30 focus:outline-none focus:border-secondary text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-caption uppercase tracking-wider text-primary/60 mb-2">Type of Event *</label>
-                    <select
-                      required
-                      value={eventType}
-                      onChange={(e) => setEventType(e.target.value)}
-                      className="w-full px-4 py-3 bg-cream-light border border-primary/15 text-primary focus:outline-none focus:border-secondary text-sm"
-                    >
-                      <option value="">Select event type…</option>
-                      <option>Corporate Offsite / Team Outing</option>
-                      <option>Destination Wedding</option>
-                      <option>Birthday / Anniversary Celebration</option>
-                      <option>Cultural Experience / Festival</option>
-                      <option>Adventure Group Trip</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-caption uppercase tracking-wider text-primary/60 mb-2">Number of Guests</label>
-                    <select
-                      value={guests}
-                      onChange={(e) => setGuests(e.target.value)}
-                      className="w-full px-4 py-3 bg-cream-light border border-primary/15 text-primary focus:outline-none focus:border-secondary text-sm"
-                    >
-                      <option value="">Select group size…</option>
-                      <option>1–10 guests</option>
-                      <option>11–25 guests</option>
-                      <option>26–50 guests</option>
-                      <option>51–100 guests</option>
-                      <option>100+ guests</option>
-                    </select>
-                  </div>
-                  <button type="submit" className="btn-primary w-full py-4 text-sm uppercase tracking-widest mt-2">
-                    Send Enquiry via WhatsApp
-                  </button>
-                  <p className="text-center text-caption text-primary/40">We respond within 1 hour · No spam</p>
-                </form>
-              )}
+            {/* Right — Callback CTA */}
+            <div className="bg-cream border border-primary/10 p-8 flex flex-col items-center justify-center text-center gap-6">
+              <div className="w-16 h-16 bg-primary/5 border border-primary/10 flex items-center justify-center mx-auto">
+                <Phone className="w-7 h-7 text-primary/60" />
+              </div>
+              <div>
+                <h3 className="font-display text-2xl text-primary mb-2">Get a Free Callback</h3>
+                <p className="text-primary/55 text-sm leading-relaxed">
+                  Share your event details and our specialist will call you within <strong>1 hour</strong> with venue options and a custom quote.
+                </p>
+              </div>
+              <button
+                onClick={() => setCallbackModal('')}
+                className="btn-primary w-full py-4 text-sm uppercase tracking-widest"
+              >
+                Request Callback Now
+              </button>
+              <p className="text-caption text-primary/40">Free · No obligation · Reply in &lt; 1 hour</p>
             </div>
           </div>
         </div>
@@ -684,9 +801,12 @@ export default function EventsPage() {
             From a 10-person desert camp to a 500-person corporate gala — we&apos;ve planned it all. Let&apos;s start with a conversation.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link href="/contact" className="btn-primary bg-accent text-primary hover:bg-accent-warm px-10 py-4 text-sm uppercase tracking-widest">
+            <button
+              onClick={() => setCallbackModal('')}
+              className="btn-primary bg-accent text-primary hover:bg-accent-warm px-10 py-4 text-sm uppercase tracking-widest"
+            >
               Get a Free Quote
-            </Link>
+            </button>
             <a
               href="https://wa.me/918427831127?text=Hi!%20I%27d%20like%20to%20discuss%20an%20event%20with%20YlooTrips."
               target="_blank"
@@ -698,6 +818,14 @@ export default function EventsPage() {
           </div>
         </div>
       </section>
+
+      {/* ── CALLBACK MODAL ── */}
+      {callbackModal !== null && (
+        <EventCallbackModal
+          prefilledType={callbackModal}
+          onClose={() => setCallbackModal(null)}
+        />
+      )}
 
     </div>
   );

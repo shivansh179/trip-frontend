@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { connectDB } from '@/lib/mongodb';
-import { Review } from '@/lib/db/models';
+import { appendReview } from '@/lib/reviews-sheet';
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, phone, country, trip, rating, text, avatarUrl, tripPhotoUrl } = body;
+    const { name, email, phone, country, trip, rating, text } = body;
 
     if (!name || !email || !country || !trip || !rating || !text) {
       return NextResponse.json({ error: 'All fields are required.' }, { status: 400 });
@@ -15,23 +14,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Review too long (max 1000 characters).' }, { status: 400 });
     }
 
-    const MAX_B64 = 1_500_000;
-    const safeAvatar    = avatarUrl    && avatarUrl.length    <= MAX_B64 ? avatarUrl    : undefined;
-    const safeTripPhoto = tripPhotoUrl && tripPhotoUrl.length <= MAX_B64 ? tripPhotoUrl : undefined;
+    const id = `rev_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+    const createdAt = new Date().toISOString();
 
-    const review = {
-      id: `rev_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-      name, email, phone, country, trip,
-      rating: Number(rating),
+    await appendReview({
+      id, createdAt,
+      name, email,
+      phone:     phone || '',
+      country,   trip,
+      rating:    Number(rating),
       text,
-      status: 'pending',
-      ...(safeAvatar    ? { avatarUrl: safeAvatar }       : {}),
-      ...(safeTripPhoto ? { tripPhotoUrl: safeTripPhoto } : {}),
-      createdAt: new Date().toISOString(),
-    };
-
-    await connectDB();
-    await Review.create(review);
+      status:    'pending',
+      adminNote: '',
+    });
 
     // Notify admin (non-fatal)
     try {
@@ -61,10 +56,10 @@ export async function POST(req: NextRequest) {
       }
     } catch { /* email failure is non-fatal */ }
 
-    return NextResponse.json({ success: true, id: review.id });
+    return NextResponse.json({ success: true, id });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error('[review/submit]', msg);
-    return NextResponse.json({ error: 'Failed to submit review. Please try again.' }, { status: 500 });
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

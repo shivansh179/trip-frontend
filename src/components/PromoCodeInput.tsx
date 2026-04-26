@@ -75,7 +75,7 @@ export default function PromoCodeInput({
             <CheckCircle size={17} className="text-amber-600 shrink-0" />
             <div>
               <p className="text-sm font-bold text-amber-800">{appliedCode} applied!</p>
-              <p className="text-xs text-amber-700">💰 {fp(discountAmount)} cashback added to your WanderLoot wallet!</p>
+              <p className="text-xs text-amber-700">🏷️ {fp(discountAmount)} discount applied to your order!</p>
             </div>
           </div>
           <button
@@ -161,7 +161,7 @@ export default function PromoCodeInput({
                     </div>
                     <div className="shrink-0 text-right">
                       <span className="text-xs font-bold text-amber-600">
-                        {promo.type === 'percent' ? `${promo.value}% Cashback` : `₹${promo.value} Cashback`}
+                        {promo.type === 'percent' ? `${promo.value}% Off` : `₹${promo.value} Off`}
                       </span>
                       {eligible && (
                         <p className="text-[10px] text-green-600 font-medium">Tap to apply</p>

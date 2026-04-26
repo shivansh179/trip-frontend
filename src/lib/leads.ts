@@ -29,32 +29,26 @@ export function generateTicket(): string {
   return `YLO-${ymd}-${rand}`;
 }
 
-// Cache the Sheets client — avoids re-parsing credentials + re-creating auth on every lead
+// Cache the Sheets client
 let _sheetsClient: ReturnType<typeof google.sheets> | null = null;
-let _sheetsCredHash: string | null = null;
 
-function getSheetsClient(credJson: string) {
-  // Reuse if same credentials
-  const hash = credJson.slice(0, 60);
-  if (_sheetsClient && _sheetsCredHash === hash) return _sheetsClient;
-
-  const creds = JSON.parse(credJson);
-  const auth = new google.auth.GoogleAuth({
-    credentials: creds,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
+function getSheetsClient() {
+  if (_sheetsClient) return _sheetsClient;
+  const clientId     = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
+  if (!clientId || !clientSecret || !refreshToken) return null;
+  const auth = new google.auth.OAuth2(clientId, clientSecret);
+  auth.setCredentials({ refresh_token: refreshToken });
   _sheetsClient = google.sheets({ version: 'v4', auth });
-  _sheetsCredHash = hash;
   return _sheetsClient;
 }
 
 /** Appends a lead row to Google Sheet. Non-fatal — never throws. */
 export async function logLeadToSheet(lead: LeadData): Promise<void> {
   try {
-    const credJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
-    if (!credJson) return; // silently skip if not configured
-
-    const sheets = getSheetsClient(credJson);
+    const sheets = getSheetsClient();
+    if (!sheets) return; // silently skip if env vars not configured
 
     const now = new Date().toLocaleString('en-IN', {
       timeZone: 'Asia/Kolkata',

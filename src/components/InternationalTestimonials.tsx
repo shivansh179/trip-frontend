@@ -223,9 +223,9 @@ function Stars({ n, interactive, onSelect }: { n: number; interactive?: boolean;
             onClick={() => onSelect?.(i + 1)}
             onMouseEnter={() => setHover(i + 1)}
             onMouseLeave={() => setHover(0)}
-            className="transition-transform hover:scale-110"
+            className="p-1.5 -m-1.5 transition-transform hover:scale-110 active:scale-95"
           >
-            <Star className={`w-7 h-7 ${(hover || n) > i ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}`} />
+            <Star className={`w-8 h-8 ${(hover || n) > i ? 'fill-amber-400 text-amber-400' : 'fill-gray-200 text-gray-400'}`} />
           </button>
         ))}
       </div>

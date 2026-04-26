@@ -198,7 +198,7 @@ function CheckoutContent() {
     const tripBasePrice = trip ? (typeof trip.price === 'number' ? trip.price : parseFloat(trip.price.toString())) : 0;
     const pricePerPerson = priceParam || tripBasePrice;
     const basePrice = pricePerPerson * formData.numberOfGuests;
-    const discountPercent = formData.paymentMethod === 'upi' ? 5 : (formData.paymentMethod === 'credit_card' || formData.paymentMethod === 'debit_card') ? 3 : 0;
+    const discountPercent = formData.paymentMethod === 'upi' ? 3 : (formData.paymentMethod === 'credit_card' || formData.paymentMethod === 'debit_card') ? 3 : 0;
     const discountAmount = (basePrice * discountPercent) / 100;
     const priceAfterDiscount = basePrice - discountAmount - promoDiscount;
     const maxWalletUsable = Math.round(Math.max(0, priceAfterDiscount) * 0.10); // cap at 10% of order
