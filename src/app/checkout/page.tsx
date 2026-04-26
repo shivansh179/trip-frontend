@@ -280,76 +280,131 @@ function CheckoutContent() {
                     <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
                         <div className="lg:col-span-2">
                             <form onSubmit={handleSubmit} className="space-y-8">
-                                <section className="bg-cream-light p-5 md:p-6 border border-primary/10">
-                                    <h2 className="text-xl md:text-2xl font-light mb-4">Trip Summary</h2>
-                                    <div className="space-y-3">
-                                        <div className="flex items-start gap-3">
-                                            <MapPin size={20} className="text-secondary mt-1" />
-                                            <div>
-                                                <p className="text-caption text-text-secondary">Destination</p>
-                                                <p className="text-body-lg">{trip.destination}</p>
+                                {/* ── COVER IMAGE + TRIP SUMMARY ── */}
+                                <section className="border border-primary/10 overflow-hidden">
+                                    {trip.imageUrl && (
+                                        <div className="relative h-48 md:h-64 w-full">
+                                            <img
+                                                src={trip.imageUrl}
+                                                alt={trip.destination}
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-primary/20 to-transparent" />
+                                            <div className="absolute bottom-0 left-0 p-5">
+                                                <p className="text-cream/80 text-xs uppercase tracking-widest font-medium mb-1">Your Trip</p>
+                                                <h2 className="text-cream text-xl md:text-2xl font-display font-semibold leading-tight">{trip.title}</h2>
+                                                <div className="flex items-center gap-3 mt-2">
+                                                    <span className="flex items-center gap-1 text-cream/80 text-xs"><MapPin size={12} /> {trip.destination}</span>
+                                                    <span className="text-cream/40">·</span>
+                                                    <span className="flex items-center gap-1 text-cream/80 text-xs"><Calendar size={12} /> {trip.duration}</span>
+                                                    <span className="text-cream/40">·</span>
+                                                    <span className="flex items-center gap-1 text-cream/80 text-xs"><Users size={12} /> {formData.numberOfGuests} guests</span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="flex items-start gap-3">
-                                            <Calendar size={20} className="text-secondary mt-1" />
-                                            <div>
-                                                <p className="text-caption text-text-secondary">Duration</p>
-                                                <p className="text-body-lg">{trip.duration}</p>
+                                    )}
+                                    {!trip.imageUrl && (
+                                        <div className="bg-cream-light p-5 md:p-6">
+                                            <h2 className="text-xl md:text-2xl font-light mb-4">Trip Summary</h2>
+                                            <div className="space-y-3">
+                                                <div className="flex items-start gap-3">
+                                                    <MapPin size={20} className="text-secondary mt-1" />
+                                                    <div>
+                                                        <p className="text-caption text-text-secondary">Destination</p>
+                                                        <p className="text-body-lg">{trip.destination}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-start gap-3">
+                                                    <Calendar size={20} className="text-secondary mt-1" />
+                                                    <div>
+                                                        <p className="text-caption text-text-secondary">Duration</p>
+                                                        <p className="text-body-lg">{trip.duration}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-start gap-3">
+                                                    <Users size={20} className="text-secondary mt-1" />
+                                                    <div>
+                                                        <p className="text-caption text-text-secondary">Guests</p>
+                                                        <p className="text-body-lg">{formData.numberOfGuests}</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="flex items-start gap-3">
-                                            <Users size={20} className="text-secondary mt-1" />
-                                            <div>
-                                                <p className="text-caption text-text-secondary">Trip Title</p>
-                                                <p className="text-body-lg">{trip.title}</p>
-                                            </div>
+                                    )}
+                                    {trip.imageUrl && trip.shortDescription && (
+                                        <div className="bg-cream-light px-5 py-3 border-t border-primary/10">
+                                            <p className="text-sm text-primary/70 leading-relaxed">{trip.shortDescription}</p>
                                         </div>
-                                    </div>
+                                    )}
                                 </section>
 
                                 {/* ── ITINERARY ── */}
-                                <section className="bg-cream-light border border-primary/10 p-5">
-                                    <h2 className="text-xl font-light mb-4 flex items-center gap-2">
-                                        <Calendar size={18} className="text-secondary" /> Day-by-Day Itinerary
-                                    </h2>
+                                <section className="border border-primary/10 overflow-hidden">
+                                    <div className="bg-primary px-5 py-4 flex items-center gap-2">
+                                        <Calendar size={16} className="text-secondary" />
+                                        <h2 className="text-base font-semibold text-cream tracking-wide uppercase">Day-by-Day Itinerary</h2>
+                                        {itinerary.length > 0 && <span className="ml-auto text-xs text-secondary font-medium">{itinerary.length} Days</span>}
+                                    </div>
                                     {itinerary.length > 0 ? (
-                                        <div className="space-y-2">
-                                            {itinerary.map((day, idx) => (
-                                                <div key={idx} className="border border-primary/10 bg-white">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setOpenItinDay(openItinDay === idx ? null : idx)}
-                                                        className="w-full flex items-center justify-between px-4 py-3 text-left"
-                                                    >
-                                                        <div className="flex items-center gap-3">
-                                                            <span className="w-6 h-6 bg-secondary text-cream text-xs font-bold flex items-center justify-center shrink-0">{day.dayNumber ?? idx + 1}</span>
-                                                            <span className="text-sm font-medium text-primary">{day.dayTitle || `Day ${idx + 1}`}</span>
-                                                        </div>
-                                                        {openItinDay === idx ? <ChevronUp size={16} className="text-primary/40" /> : <ChevronDown size={16} className="text-primary/40" />}
-                                                    </button>
-                                                    {openItinDay === idx && (
-                                                        <div className="px-4 pb-4 border-t border-primary/5">
-                                                            {day.description && <p className="text-sm text-primary/70 mt-3 leading-relaxed">{day.description}</p>}
-                                                            {day.activities && day.activities.length > 0 && (
-                                                                <ul className="mt-2 space-y-1">
-                                                                    {day.activities.map((a, i) => (
-                                                                        <li key={i} className="text-xs text-primary/60 flex items-start gap-2">
-                                                                            <span className="text-secondary mt-0.5">•</span> {a}
-                                                                        </li>
-                                                                    ))}
-                                                                </ul>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ))}
+                                        <div className="divide-y divide-primary/8">
+                                            {itinerary.map((day, idx) => {
+                                                const isOpen = openItinDay === idx;
+                                                const dayColors = ['bg-amber-500','bg-emerald-600','bg-blue-600','bg-purple-600','bg-rose-600','bg-orange-500','bg-teal-600'];
+                                                const dotColor = dayColors[idx % dayColors.length];
+                                                return (
+                                                    <div key={idx} className="bg-white">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setOpenItinDay(isOpen ? null : idx)}
+                                                            className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-cream transition-colors"
+                                                        >
+                                                            <div className="flex items-center gap-4">
+                                                                <div className={`${dotColor} text-white text-xs font-bold w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm`}>
+                                                                    {day.dayNumber ?? idx + 1}
+                                                                </div>
+                                                                <div>
+                                                                    <p className="text-xs text-primary/40 font-medium uppercase tracking-wider">Day {day.dayNumber ?? idx + 1}</p>
+                                                                    <p className="text-sm font-semibold text-primary leading-snug">{day.dayTitle || `Day ${idx + 1}`}</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 shrink-0">
+                                                                {day.activities && day.activities.length > 0 && (
+                                                                    <span className="text-[10px] bg-secondary/10 text-secondary px-2 py-0.5 rounded-full font-medium hidden sm:block">{day.activities.length} activities</span>
+                                                                )}
+                                                                {isOpen ? <ChevronUp size={16} className="text-primary/40" /> : <ChevronDown size={16} className="text-primary/40" />}
+                                                            </div>
+                                                        </button>
+                                                        {isOpen && (
+                                                            <div className="px-5 pb-5 bg-cream-light border-t border-primary/5">
+                                                                {day.description && (
+                                                                    <p className="text-sm text-primary/70 mt-4 leading-relaxed">{day.description}</p>
+                                                                )}
+                                                                {day.activities && day.activities.length > 0 && (
+                                                                    <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                                                                        {day.activities.map((a, i) => (
+                                                                            <li key={i} className="text-xs text-primary/70 flex items-start gap-2 bg-white px-3 py-2 border border-primary/8">
+                                                                                <span className="text-secondary font-bold mt-0.5 shrink-0">✦</span> {a}
+                                                                            </li>
+                                                                        ))}
+                                                                    </ul>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     ) : (
-                                        <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100">
-                                            <span className="text-xl">📋</span>
+                                        <div className="bg-white p-6 flex items-start gap-4">
+                                            <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+                                                <span className="text-lg">📋</span>
+                                            </div>
                                             <div>
-                                                <p className="text-sm font-medium text-amber-900">Detailed itinerary will be shared on WhatsApp</p>
-                                                <p className="text-xs text-amber-700 mt-1">Our team will send you a complete day-by-day plan within 1 hour of booking. You can also <a href="https://wa.me/918427831127" target="_blank" rel="noopener noreferrer" className="underline font-medium">WhatsApp us</a> to get it right now.</p>
+                                                <p className="text-sm font-semibold text-primary">Detailed itinerary will be shared on WhatsApp</p>
+                                                <p className="text-xs text-primary/60 mt-1 leading-relaxed">Our team will send you a complete day-by-day plan within 1 hour of booking. You can also{' '}
+                                                    <a href="https://wa.me/918427831127" target="_blank" rel="noopener noreferrer" className="text-green-600 underline font-medium">WhatsApp us</a>
+                                                    {' '}to get it right now.
+                                                </p>
                                             </div>
                                         </div>
                                     )}
