@@ -17,6 +17,17 @@ import { formatPrice } from '@/lib/utils';
 import InlineImageUploader from '@/components/InlineImageUploader';
 import { getDestinationImageUrl } from '@/lib/destinationImages';
 
+interface CustomTripRecord {
+    tripId: number;
+    title: string;
+    clientName: string;
+    destination: string;
+    numPersons: number;
+    totalAmount: number;
+    link: string;
+    createdAt: string;
+}
+
 interface PageData {
     id: number;
     pageKey: string;
@@ -102,6 +113,11 @@ export default function AdminDashboard() {
     ]);
     const [createdTripLink, setCreatedTripLink] = useState('');
 
+    // Custom Trip Records (persisted in localStorage)
+    const [customTripRecords, setCustomTripRecords] = useState<CustomTripRecord[]>([]);
+    const [recordBookings, setRecordBookings] = useState<Record<number, { bookingReference?: string; paymentStatus?: string; customerEmail?: string; customerPhone?: string }[]>>({});
+    const [loadingRecordBookings, setLoadingRecordBookings] = useState(false);
+
     useEffect(() => {
         // Check if admin is logged in
         const token = localStorage.getItem('adminToken');
@@ -117,9 +133,23 @@ export default function AdminDashboard() {
             router.push('/');
         });
 
+        // Load custom trip records from localStorage
+        try {
+            const stored = localStorage.getItem('ylootrips-custom-trip-records');
+            if (stored) setCustomTripRecords(JSON.parse(stored));
+        } catch { /* ignore */ }
+
         // Load only destinations on initial load for fast startup
         fetchTabData('destinations');
     }, [router]);
+
+    // Load bookings for custom trip records when tab is active
+    useEffect(() => {
+        if (activeTab === 'custom-trips' && customTripRecords.length > 0) {
+            fetchRecordBookings();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeTab, customTripRecords.length]);
 
     // Track which tabs have been loaded
     const [loadedTabs, setLoadedTabs] = useState<Record<string, boolean>>({ destinations: false });
@@ -773,6 +803,42 @@ export default function AdminDashboard() {
         setSaving(false);
     };
 
+    const saveCustomTripRecord = (record: CustomTripRecord) => {
+        setCustomTripRecords(prev => {
+            const updated = [record, ...prev];
+            try { localStorage.setItem('ylootrips-custom-trip-records', JSON.stringify(updated)); } catch { /* ignore */ }
+            return updated;
+        });
+    };
+
+    const fetchRecordBookings = async () => {
+        if (customTripRecords.length === 0) return;
+        setLoadingRecordBookings(true);
+        try {
+            const token = localStorage.getItem('adminToken') || '';
+            const allBookingsRes = await fetch('/api/admin/trip-bookings', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!allBookingsRes.ok) return;
+            const allBookings: Record<string, unknown>[] = await allBookingsRes.json();
+            const byTrip: typeof recordBookings = {};
+            for (const b of allBookings) {
+                const tid = (b.trip as Record<string, unknown>)?.id as number;
+                if (tid) {
+                    if (!byTrip[tid]) byTrip[tid] = [];
+                    byTrip[tid].push({
+                        bookingReference: b.bookingReference as string,
+                        paymentStatus: b.paymentStatus as string,
+                        customerEmail: b.customerEmail as string,
+                        customerPhone: b.customerPhone as string,
+                    });
+                }
+            }
+            setRecordBookings(byTrip);
+        } catch { /* non-fatal */ }
+        setLoadingRecordBookings(false);
+    };
+
     const handleCreateCustomTrip = async () => {
         if (!customTrip.title || !customTrip.destination || !customTrip.price || !customTrip.duration) {
             setMessage({ type: 'error', text: 'Title, destination, price, and duration are required.' });
@@ -819,6 +885,7 @@ export default function AdminDashboard() {
 
             const numPersons = parseInt(customTrip.numPersons) || 1;
             const totalAmt = customTrip.totalAmount ? parseFloat(customTrip.totalAmount) : null;
+            const computedTotal = totalAmt || (parseFloat(customTrip.price) * numPersons);
             const perPersonForUrl = totalAmt ? Math.ceil(totalAmt / numPersons) : parseFloat(customTrip.price);
             const qs = new URLSearchParams({
                 tripId: String(tripId),
@@ -828,6 +895,19 @@ export default function AdminDashboard() {
             });
             const link = `${window.location.origin}/checkout?${qs.toString()}`;
             setCreatedTripLink(link);
+
+            // Save record for tracking
+            saveCustomTripRecord({
+                tripId,
+                title: customTrip.title,
+                clientName: customTrip.clientName || '—',
+                destination: customTrip.destination,
+                numPersons,
+                totalAmount: computedTotal,
+                link,
+                createdAt: new Date().toISOString(),
+            });
+
             setMessage({ type: 'success', text: `Trip created! Share the link with your client.` });
         } catch (err: any) {
             setMessage({ type: 'error', text: err?.response?.data?.error || err?.message || 'Failed to create trip' });
@@ -994,6 +1074,100 @@ export default function AdminDashboard() {
 
                     {/* ── CUSTOM TRIP LINK TAB ── */}
                     {activeTab === 'custom-trips' && (
+                        <div className="space-y-8">
+
+                        {/* ── RECORDS TABLE ── */}
+                        {customTripRecords.length > 0 && (
+                            <div>
+                                <div className="flex items-center justify-between mb-4">
+                                    <h2 className="font-display text-xl text-primary">All Custom Trip Links</h2>
+                                    <button onClick={fetchRecordBookings} disabled={loadingRecordBookings}
+                                        className="flex items-center gap-1 text-xs px-3 py-1.5 bg-cream border border-primary/20 hover:bg-white text-primary">
+                                        <RefreshCw className={`w-3 h-3 ${loadingRecordBookings ? 'animate-spin' : ''}`} /> Refresh Bookings
+                                    </button>
+                                </div>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm border-collapse">
+                                        <thead>
+                                            <tr className="bg-primary text-cream text-xs uppercase tracking-wider">
+                                                <th className="px-3 py-2 text-left">Client</th>
+                                                <th className="px-3 py-2 text-left">Trip</th>
+                                                <th className="px-3 py-2 text-left">Dest.</th>
+                                                <th className="px-3 py-2 text-right">Persons</th>
+                                                <th className="px-3 py-2 text-right">Total (₹)</th>
+                                                <th className="px-3 py-2 text-left">Booking Ref</th>
+                                                <th className="px-3 py-2 text-center">Status</th>
+                                                <th className="px-3 py-2 text-left">Created</th>
+                                                <th className="px-3 py-2 text-left">Link</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {customTripRecords.map((rec, i) => {
+                                                const bkgs = recordBookings[rec.tripId] || [];
+                                                const latestBkg = bkgs[0];
+                                                const isPaid = bkgs.some(b => b.paymentStatus === 'SUCCESS' || b.paymentStatus === 'PAID' || b.paymentStatus === 'paid');
+                                                const isPending = bkgs.some(b => b.paymentStatus === 'PENDING' || b.paymentStatus === 'pending');
+                                                return (
+                                                    <tr key={i} className={`border-b border-primary/10 ${i % 2 === 0 ? 'bg-white' : 'bg-cream-light'} hover:bg-accent/10 transition-colors`}>
+                                                        <td className="px-3 py-2.5 font-medium text-primary">{rec.clientName}</td>
+                                                        <td className="px-3 py-2.5 text-primary/80 max-w-[160px] truncate" title={rec.title}>{rec.title}</td>
+                                                        <td className="px-3 py-2.5 text-primary/60">{rec.destination}</td>
+                                                        <td className="px-3 py-2.5 text-right text-primary/70">{rec.numPersons}</td>
+                                                        <td className="px-3 py-2.5 text-right font-semibold text-primary">{rec.totalAmount.toLocaleString('en-IN')}</td>
+                                                        <td className="px-3 py-2.5">
+                                                            {latestBkg?.bookingReference ? (
+                                                                <span className="font-mono text-xs text-primary bg-primary/5 px-1.5 py-0.5">{latestBkg.bookingReference}</span>
+                                                            ) : (
+                                                                <span className="text-primary/30 text-xs">Not yet booked</span>
+                                                            )}
+                                                        </td>
+                                                        <td className="px-3 py-2.5 text-center">
+                                                            {bkgs.length === 0 ? (
+                                                                <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-500">Link Sent</span>
+                                                            ) : isPaid ? (
+                                                                <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 font-semibold">✓ Paid</span>
+                                                            ) : isPending ? (
+                                                                <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-700">Pending</span>
+                                                            ) : (
+                                                                <span className="text-xs px-2 py-0.5 bg-red-100 text-red-600">{latestBkg?.paymentStatus || 'Failed'}</span>
+                                                            )}
+                                                        </td>
+                                                        <td className="px-3 py-2.5 text-primary/40 text-xs whitespace-nowrap">
+                                                            {new Date(rec.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' })}
+                                                        </td>
+                                                        <td className="px-3 py-2.5">
+                                                            <div className="flex items-center gap-1">
+                                                                <button onClick={() => { navigator.clipboard.writeText(rec.link); setMessage({ type: 'success', text: 'Link copied!' }); }}
+                                                                    className="p-1 hover:bg-primary/10 rounded" title="Copy link">
+                                                                    <Copy className="w-3.5 h-3.5 text-primary/60" />
+                                                                </button>
+                                                                <a href={rec.link} target="_blank" rel="noopener noreferrer"
+                                                                    className="p-1 hover:bg-primary/10 rounded" title="Open link">
+                                                                    <ExternalLink className="w-3.5 h-3.5 text-secondary" />
+                                                                </a>
+                                                                <button onClick={() => {
+                                                                    if (!confirm('Remove this record? (The trip in backend is not deleted)')) return;
+                                                                    setCustomTripRecords(prev => {
+                                                                        const updated = prev.filter((_, idx) => idx !== i);
+                                                                        try { localStorage.setItem('ylootrips-custom-trip-records', JSON.stringify(updated)); } catch { /* ignore */ }
+                                                                        return updated;
+                                                                    });
+                                                                }} className="p-1 hover:bg-red-50 rounded" title="Remove record">
+                                                                    <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p className="text-xs text-primary/40 mt-2">Records stored locally on this browser. Booking status fetched live from backend.</p>
+                            </div>
+                        )}
+
+                        {/* ── CREATE FORM ── */}
                         <div className="space-y-8 max-w-3xl">
                             <div>
                                 <h2 className="font-display text-2xl text-primary mb-1">Create a Custom Trip Link</h2>
@@ -1022,7 +1196,7 @@ export default function AdminDashboard() {
                                     {customTrip.clientName && (
                                         <p className="text-xs text-green-700 font-medium">Client: {customTrip.clientName} · {customTrip.numPersons} person{parseInt(customTrip.numPersons) > 1 ? 's' : ''} · ₹{(customTrip.totalAmount ? parseFloat(customTrip.totalAmount) : parseFloat(customTrip.price || '0') * parseInt(customTrip.numPersons || '1')).toLocaleString('en-IN')} total</p>
                                     )}
-                                    <p className="text-xs text-green-600">Link opens directly to checkout with guests & price pre-filled → promo codes, EMI, UPI discount, trust badges, and Easebuzz PG.</p>
+                                    <p className="text-xs text-green-600">{'Link opens directly to checkout with guests & price pre-filled → promo codes, EMI, UPI discount, trust badges, and Easebuzz PG.'}</p>
                                 </div>
                             )}
 
@@ -1327,8 +1501,9 @@ export default function AdminDashboard() {
                                     <Zap className="w-4 h-4" />
                                     {saving ? 'Creating...' : 'Create Trip & Get Shareable Link'}
                                 </button>
-                                <p className="text-xs text-primary/40">Client opens the link → sees full trip page with itinerary → pays via Easebuzz (UPI, cards, EMI, part-payment)</p>
+                                <p className="text-xs text-primary/40">{'Client opens the link → sees full trip page with itinerary → pays via Easebuzz (UPI, cards, EMI, part-payment)'}</p>
                             </div>
+                        </div>
                         </div>
                     )}
 
@@ -1759,7 +1934,7 @@ export default function AdminDashboard() {
                                                     ) : null}
                                                 </div>
                                                 <div>
-                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Discount (%) → auto-calculates MRP</label>
+                                                    <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">{'Discount (%) → auto-calculates MRP'}</label>
                                                     <input
                                                         type="number"
                                                         min="0"
@@ -2526,7 +2701,7 @@ export default function AdminDashboard() {
                                                 <input type="number" value={event.price as number || 0} onChange={(e) => setEvents(events.map(ev => ev.id === event.id ? { ...ev, price: Number(e.target.value) } : ev))} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
                                             </div>
                                             <div>
-                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">Discount (%) → auto-calculates MRP</label>
+                                                <label className="block text-caption uppercase tracking-widest text-primary/70 mb-2">{'Discount (%) → auto-calculates MRP'}</label>
                                                 <input type="number" min="0" max="99" value={(() => { const p = Number(event.price)||0; const op = Number(event.originalPrice)||0; if(op>0&&p>0&&op>p) return Math.round((1-p/op)*100); return 0; })()} onChange={(e) => { const discount = Math.min(99, Math.max(0, Number(e.target.value))); const price = Number(event.price)||0; const originalPrice = discount > 0 ? Math.round(price / (1 - discount / 100)) : 0; setEvents(events.map(ev => ev.id === event.id ? { ...ev, originalPrice } : ev)); }} className="w-full px-4 py-3 border border-primary/20 bg-cream focus:outline-none focus:border-secondary" />
                                                 {Number(event.originalPrice) > 0 && <p className="text-xs text-primary/50 mt-1">MRP: {formatPrice(Number(event.originalPrice))}</p>}
                                             </div>

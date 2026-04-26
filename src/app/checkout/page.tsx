@@ -181,6 +181,7 @@ function CheckoutContent() {
                     walletDeduction,
                     totalPrice,
                     tripName: trip.title,
+                    promoCashback,
                 }));
                 window.location.href = paymentData.paymentUrl;
             } else {
@@ -210,9 +211,12 @@ function CheckoutContent() {
     const tripBasePrice = trip ? (typeof trip.price === 'number' ? trip.price : parseFloat(trip.price.toString())) : 0;
     const pricePerPerson = priceParam || tripBasePrice;
     const basePrice = pricePerPerson * formData.numberOfGuests;
-    const discountPercent = formData.paymentMethod === 'upi' ? 3 : (formData.paymentMethod === 'credit_card' || formData.paymentMethod === 'debit_card') ? 3 : 0;
+    // 3% discount only for UPI — not for cards or EMI
+    const discountPercent = (formData.paymentMethod === 'upi' && selectedEmi === null) ? 3 : 0;
     const discountAmount = (basePrice * discountPercent) / 100;
-    const priceAfterDiscount = basePrice - discountAmount - promoDiscount;
+    // Promo discount is credited to WanderLoot wallet after payment, not deducted from price
+    const promoCashback = promoDiscount; // credited to wallet post-payment
+    const priceAfterDiscount = basePrice - discountAmount;
     const maxWalletUsable = Math.round(Math.max(0, priceAfterDiscount) * 0.10); // cap at 10% of order
     const walletDeduction = applyWallet ? Math.min(walletBalance, maxWalletUsable) : 0;
     const totalPrice = Math.max(0, priceAfterDiscount - walletDeduction);
@@ -605,11 +609,11 @@ function CheckoutContent() {
                                         </div>
                                     )}
 
-                                    {/* Promo discount */}
+                                    {/* Promo — credited to WanderLoot wallet after payment */}
                                     {promoDiscount > 0 && (
-                                        <div className="flex justify-between text-body-lg text-green-600">
-                                            <span>🏷️ Promo ({promoCode})</span>
-                                            <span>-{fp(promoDiscount)}</span>
+                                        <div className="flex justify-between text-body-sm text-amber-700 bg-amber-50 px-2 py-1.5 rounded">
+                                            <span>🎁 Promo ({promoCode}) → Wallet</span>
+                                            <span className="font-semibold">+{fp(promoDiscount)}</span>
                                         </div>
                                     )}
 
@@ -646,7 +650,7 @@ function CheckoutContent() {
                                 {cashbackAmount > 0 && (
                                     <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-2 text-xs text-amber-800">
                                         <span>🎉</span>
-                                        <span>You'll earn <strong>{fp(cashbackAmount)}</strong> cashback (10%) on this booking!</span>
+                                        <span>You'll earn <strong>{fp(cashbackAmount + promoCashback)}</strong> in WanderLoot wallet after payment!{promoCashback > 0 ? ` (${fp(cashbackAmount)} cashback + ${fp(promoCashback)} promo)` : ' (10% cashback)'}</span>
                                     </div>
                                 )}
 

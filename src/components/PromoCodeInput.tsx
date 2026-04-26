@@ -75,7 +75,7 @@ export default function PromoCodeInput({
             <CheckCircle size={17} className="text-amber-600 shrink-0" />
             <div>
               <p className="text-sm font-bold text-amber-800">{appliedCode} applied!</p>
-              <p className="text-xs text-amber-700">🏷️ {fp(discountAmount)} discount applied to your order!</p>
+              <p className="text-xs text-amber-700">🎁 {fp(discountAmount)} will be credited to your WanderLoot wallet after payment!</p>
             </div>
           </div>
           <button

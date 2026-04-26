@@ -144,9 +144,11 @@ function PaymentSuccessContent() {
                         const pendingRaw = sessionStorage.getItem(`ylootrips-pending-${ref}`);
                         if (pendingRaw) {
                             try {
-                                const { walletDeduction, totalPrice, tripName } = JSON.parse(pendingRaw);
+                                const { walletDeduction, totalPrice, tripName, promoCashback } = JSON.parse(pendingRaw);
                                 if (walletDeduction > 0) deductBalance(walletDeduction, ref);
                                 addCashback(totalPrice, ref, tripName);
+                                // Credit promo code discount to wallet
+                                if (promoCashback > 0) addCashback(promoCashback, `promo-${ref}`, `Promo code reward`);
                                 sessionStorage.removeItem(`ylootrips-pending-${ref}`);
                             } catch { /* malformed data, skip */ }
                         }
