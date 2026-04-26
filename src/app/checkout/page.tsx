@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Calendar, Users, MapPin, Lock, CheckCircle, ChevronDown, ChevronUp, Upload, FileCheck } from 'lucide-react';
+import { Calendar, Users, MapPin, Lock, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Trip } from '@/types';
 import { formatPriceWithCurrency } from '@/lib/utils';
@@ -34,7 +34,6 @@ function CheckoutContent() {
     const [trip, setTrip] = useState<Trip | null>(null);
     const [itinerary, setItinerary] = useState<{ id?: number; dayNumber?: number; dayTitle?: string; description?: string; activities?: string[] }[]>([]);
     const [openItinDay, setOpenItinDay] = useState<number | null>(0);
-    const [aadharFile, setAadharFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [agreed, setAgreed] = useState(false);
@@ -406,38 +405,6 @@ function CheckoutContent() {
                                             </div>
                                         </div>
 
-                                        {/* Aadhaar Card Upload */}
-                                        <div>
-                                            <label className="text-caption text-text-secondary mb-2 block">
-                                                Aadhaar Card (Upload photo/scan)
-                                                <span className="ml-1 text-primary/40 text-xs">— required for domestic travel verification</span>
-                                            </label>
-                                            <label className={`flex items-center gap-3 p-4 border-2 border-dashed cursor-pointer transition-colors ${aadharFile ? 'border-green-400 bg-green-50' : 'border-primary/20 bg-cream hover:border-secondary/50'}`}>
-                                                <input
-                                                    type="file"
-                                                    accept="image/*,.pdf"
-                                                    className="hidden"
-                                                    onChange={(e) => setAadharFile(e.target.files?.[0] || null)}
-                                                />
-                                                {aadharFile ? (
-                                                    <>
-                                                        <FileCheck size={20} className="text-green-600 shrink-0" />
-                                                        <div>
-                                                            <p className="text-sm font-medium text-green-700">{aadharFile.name}</p>
-                                                            <p className="text-xs text-green-600">Uploaded · Click to change</p>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Upload size={20} className="text-primary/40 shrink-0" />
-                                                        <div>
-                                                            <p className="text-sm text-primary/60">Click to upload Aadhaar card</p>
-                                                            <p className="text-xs text-primary/40">JPG, PNG or PDF · Max 5MB</p>
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </label>
-                                        </div>
                                     </div>
                                 </section>
 
@@ -684,17 +651,74 @@ function CheckoutContent() {
                                 )}
 
                                 <div className="space-y-2 text-body-sm text-text-secondary mb-3">
-                                    <div className="flex items-start gap-2">
-                                        <CheckCircle size={16} className="text-success mt-1 shrink-0" />
-                                        <span>Instant confirmation</span>
+                                    {[
+                                        'Instant confirmation',
+                                        'Free cancellation up to 7 days before departure',
+                                        '24/7 customer support — WhatsApp & call',
+                                        'No hidden fees · all taxes included',
+                                        'Secure payment via Easebuzz (PCI-DSS)',
+                                    ].map(t => (
+                                        <div key={t} className="flex items-start gap-2">
+                                            <CheckCircle size={16} className="text-success mt-0.5 shrink-0" />
+                                            <span>{t}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* ── CANCELLATION POLICY ── */}
+                                <div className="mt-4 pt-4 border-t border-primary/10">
+                                    <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-2">Cancellation Policy</p>
+                                    <div className="space-y-1.5 text-xs text-primary/60">
+                                        <p>✓ <strong>7+ days before</strong> — Full refund</p>
+                                        <p>⚠ <strong>3–7 days before</strong> — 50% refund</p>
+                                        <p>✗ <strong>Within 3 days</strong> — Non-refundable (date change allowed)</p>
+                                        <p className="text-primary/40 mt-1">One free date change per booking · <a href="/terms" className="underline text-secondary" target="_blank">Full T&amp;C</a></p>
                                     </div>
-                                    <div className="flex items-start gap-2">
-                                        <CheckCircle size={16} className="text-success mt-1 shrink-0" />
-                                        <span>Free cancellation up to 7 days before departure</span>
+                                </div>
+
+                                {/* ── 24/7 SUPPORT ── */}
+                                <div className="mt-4 pt-4 border-t border-primary/10">
+                                    <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-2">Need Help?</p>
+                                    <a href="https://wa.me/918427831127" target="_blank" rel="noopener noreferrer"
+                                        className="flex items-center gap-2 px-3 py-2 bg-green-500 text-white text-xs font-medium hover:bg-green-600 transition-colors mb-2">
+                                        <span>💬</span> WhatsApp Us — Reply in &lt;1 hour
+                                    </a>
+                                    <p className="text-xs text-primary/50">📞 +91 84278 31127 · Available 24/7</p>
+                                </div>
+
+                                {/* ── TESTIMONIALS ── */}
+                                <div className="mt-4 pt-4 border-t border-primary/10">
+                                    <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-3">What Travellers Say</p>
+                                    <div className="space-y-3">
+                                        {[
+                                            { name: 'Priya S.', loc: 'Mumbai', text: 'Seamless booking, incredible trip. YlooTrips handled everything perfectly!', stars: 5 },
+                                            { name: 'Rahul M.', loc: 'Delhi', text: 'Amazing support team. They were available at 2AM when we needed help.', stars: 5 },
+                                            { name: 'Anita K.', loc: 'Bangalore', text: 'Best honeymoon of our lives. Every detail was taken care of.', stars: 5 },
+                                        ].map(({ name, loc, text, stars }) => (
+                                            <div key={name} className="bg-cream p-3 border border-primary/8">
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <p className="text-xs font-semibold text-primary">{name} <span className="text-primary/40 font-normal">· {loc}</span></p>
+                                                    <span className="text-amber-400 text-xs">{'★'.repeat(stars)}</span>
+                                                </div>
+                                                <p className="text-xs text-primary/60 leading-relaxed italic">&ldquo;{text}&rdquo;</p>
+                                            </div>
+                                        ))}
                                     </div>
-                                    <div className="flex items-start gap-2">
-                                        <CheckCircle size={16} className="text-success mt-1 shrink-0" />
-                                        <span>24/7 customer support</span>
+                                </div>
+
+                                {/* ── WHY YLOO ── */}
+                                <div className="mt-4 pt-4 border-t border-primary/10">
+                                    <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-2">Why YlooTrips?</p>
+                                    <div className="space-y-1.5 text-xs text-primary/60">
+                                        {[
+                                            '10,000+ happy travellers',
+                                            'Personally curated itineraries',
+                                            'Dedicated coordinator from day 1',
+                                            'Live tracking & 24/7 emergency support',
+                                            'Flexible EMI & part-payment options',
+                                        ].map(r => (
+                                            <p key={r} className="flex items-start gap-1.5"><span className="text-secondary">✦</span> {r}</p>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
