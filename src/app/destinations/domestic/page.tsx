@@ -1827,9 +1827,33 @@ function DomesticDestinationsContent() {
   );
 }
 
+function DomesticPageSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="h-[340px] md:h-[420px] bg-primary/20" />
+      <div className="py-12 md:py-20 bg-cream">
+        <div className="section-container">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1,2,3,4,5,6].map(i => (
+              <div key={i} className="bg-cream-dark rounded-2xl overflow-hidden">
+                <div className="aspect-[4/3] bg-primary/10" />
+                <div className="p-4 space-y-3">
+                  <div className="h-5 bg-primary/10 rounded w-3/4" />
+                  <div className="h-3 bg-primary/8 rounded w-full" />
+                  <div className="h-3 bg-primary/8 rounded w-2/3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DomesticDestinationsPage() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<DomesticPageSkeleton />}>
       <DomesticDestinationsContent />
     </Suspense>
   );

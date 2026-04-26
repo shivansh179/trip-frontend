@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function TripPlannerPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-cream-light" />}>
+    <Suspense fallback={<div className="min-h-screen bg-cream-light animate-pulse"><div className="bg-primary h-56" /></div>}>
       <TripPlannerChat />
     </Suspense>
   );
