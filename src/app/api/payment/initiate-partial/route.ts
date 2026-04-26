@@ -58,13 +58,15 @@ export async function POST(req: NextRequest) {
         phone,
         udf1,
         udf2,
-        udf3: emiTenure ? String(emiTenure) : '',  // EMI tenure hint for Easebuzz
+        udf3: emiTenure ? String(emiTenure) : '',
         udf4: '',
         udf5: '',
         hash,
         surl: `${SITE_URL}/payment/success?ref=${bookingReference}`,
         furl: `${SITE_URL}/payment/failure?ref=${bookingReference}`,
-        // Tell Easebuzz to offer EMI options when tenure is specified
+        // Accept international cards (Visa/Mastercard from any country)
+        allow_international: '1',
+        // EMI flow when selected
         ...(emiTenure ? { payment_options: 'EMI', emi_tenure: String(emiTenure) } : {}),
       });
 

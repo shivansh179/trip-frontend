@@ -85,7 +85,7 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
 
 const PAYMENT_METHODS = [
   { id: 'upi',          label: 'UPI',          icon: '📱', sub: 'PhonePe · Google Pay · Paytm', discount: 3 },
-  { id: 'credit_card',  label: 'Credit Card',  icon: '💳', sub: 'Visa / Mastercard / Amex', discount: 0 },
+  { id: 'credit_card',  label: 'Credit Card',  icon: '💳', sub: 'Visa / Mastercard / Amex · International ✓', discount: 0 },
   { id: 'debit_card',   label: 'Debit Card',   icon: '🏦', sub: 'All major banks', discount: 0 },
   { id: 'net_banking',  label: 'Net Banking',  icon: '🏛️', sub: 'HDFC / ICICI / SBI / Axis', discount: 0 },
   { id: 'wallet',       label: 'Wallets',      icon: '👛', sub: 'Paytm · PhonePe · GPay', discount: 0 },
@@ -243,6 +243,7 @@ export default function PaymentOptions({ tripPrice, tripTitle, onProceed }: Paym
                 </div>
               ))}
             </div>
+            <p className="text-[10px] text-secondary/70 pt-1">🌍 International cards accepted · Charged in INR · Your bank converts to local currency</p>
           </div>
         )}
 
