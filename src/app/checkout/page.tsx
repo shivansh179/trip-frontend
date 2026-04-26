@@ -66,6 +66,21 @@ function CheckoutContent() {
         paymentMethod: 'upi',
     });
 
+    // Auto-fill from URL params (handles hydration delay where searchParams arrives after useState init)
+    useEffect(() => {
+        if (paramName || paramPhone || paramEmail) {
+            setFormData(prev => ({
+                ...prev,
+                customerName: paramName || prev.customerName,
+                customerPhone: paramPhone || prev.customerPhone,
+                customerEmail: paramEmail || prev.customerEmail,
+                numberOfGuests: guests || prev.numberOfGuests,
+                travelDate: date || prev.travelDate,
+            }));
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [paramName, paramPhone, paramEmail]);
+
     useEffect(() => {
         const fetchTrip = async () => {
             if (!tripId) {

@@ -106,7 +106,7 @@ export default function AdminDashboard() {
         imageUrl: '', shortDescription: '', description: '',
         category: 'Custom', difficulty: 'Easy',
         highlights: [''], includes: [''], excludes: [''],
-        clientName: '', numPersons: '1', totalAmount: '',
+        clientName: '', clientPhone: '', clientEmail: '', numPersons: '1', totalAmount: '',
     });
     const [customItinerary, setCustomItinerary] = useState([
         { dayTitle: '', description: '', activities: '' },
@@ -892,6 +892,8 @@ export default function AdminDashboard() {
                 guests: String(numPersons),
                 price: String(perPersonForUrl),
                 ...(customTrip.clientName ? { name: customTrip.clientName } : {}),
+                ...(customTrip.clientPhone ? { phone: customTrip.clientPhone } : {}),
+                ...(customTrip.clientEmail ? { email: customTrip.clientEmail } : {}),
             });
             const link = `${window.location.origin}/checkout?${qs.toString()}`;
             setCreatedTripLink(link);
@@ -1194,7 +1196,12 @@ export default function AdminDashboard() {
                                         </a>
                                     </div>
                                     {customTrip.clientName && (
-                                        <p className="text-xs text-green-700 font-medium">Client: {customTrip.clientName} · {customTrip.numPersons} person{parseInt(customTrip.numPersons) > 1 ? 's' : ''} · ₹{(customTrip.totalAmount ? parseFloat(customTrip.totalAmount) : parseFloat(customTrip.price || '0') * parseInt(customTrip.numPersons || '1')).toLocaleString('en-IN')} total</p>
+                                        <p className="text-xs text-green-700 font-medium">
+                                            Client: {customTrip.clientName}
+                                            {customTrip.clientPhone ? ` · ${customTrip.clientPhone}` : ''}
+                                            {customTrip.clientEmail ? ` · ${customTrip.clientEmail}` : ''}
+                                            {' · '}{customTrip.numPersons} person{parseInt(customTrip.numPersons) > 1 ? 's' : ''} · ₹{(customTrip.totalAmount ? parseFloat(customTrip.totalAmount) : parseFloat(customTrip.price || '0') * parseInt(customTrip.numPersons || '1')).toLocaleString('en-IN')} total
+                                        </p>
                                     )}
                                     <p className="text-xs text-green-600">{'Link opens directly to checkout with guests & price pre-filled → promo codes, EMI, UPI discount, trust badges, and Easebuzz PG.'}</p>
                                 </div>
@@ -1205,13 +1212,33 @@ export default function AdminDashboard() {
                                 <h3 className="font-semibold text-primary text-lg flex items-center gap-2">
                                     <User className="w-5 h-5 text-secondary" /> Client Details
                                 </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Client Name</label>
                                         <input
                                             value={customTrip.clientName}
                                             onChange={e => setCustomTrip(p => ({ ...p, clientName: e.target.value }))}
                                             placeholder="e.g. Rahul Sharma"
+                                            className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Client Phone</label>
+                                        <input
+                                            type="tel"
+                                            value={customTrip.clientPhone}
+                                            onChange={e => setCustomTrip(p => ({ ...p, clientPhone: e.target.value }))}
+                                            placeholder="e.g. 9876543210"
+                                            className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-primary/60 uppercase tracking-wider mb-1 block">Client Email</label>
+                                        <input
+                                            type="email"
+                                            value={customTrip.clientEmail}
+                                            onChange={e => setCustomTrip(p => ({ ...p, clientEmail: e.target.value }))}
+                                            placeholder="e.g. rahul@gmail.com"
                                             className="w-full px-3 py-2 border border-primary/20 bg-cream text-sm"
                                         />
                                     </div>
