@@ -161,10 +161,10 @@ export default function PromoCodeInput({
                     </div>
                     <div className="shrink-0 text-right">
                       <span className="text-xs font-bold text-amber-600">
-                        {promo.type === 'percent' ? `${promo.value}% Off` : `₹${promo.value} Off`}
+                        {promo.type === 'percent' ? `${promo.value}% Cashback` : `₹${promo.value} Cashback`}
                       </span>
                       {eligible && (
-                        <p className="text-[10px] text-green-600 font-medium">Tap to apply</p>
+                        <p className="text-[10px] text-amber-600 font-medium">→ WanderLoot Wallet</p>
                       )}
                     </div>
                   </div>

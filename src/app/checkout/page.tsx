@@ -514,7 +514,8 @@ function CheckoutContent() {
 
                                 {/* Promo code section */}
                                 <section>
-                                    <h2 className="text-xl md:text-2xl font-light mb-3">Promo Code</h2>
+                                    <h2 className="text-xl md:text-2xl font-light mb-1">Promo Code</h2>
+                                    <p className="text-xs text-amber-700 mb-3">🎁 Promo discount is credited to your WanderLoot wallet after payment — not deducted from the trip price</p>
                                     <PromoCodeInput
                                         orderTotal={basePrice - discountAmount}
                                         appliedCode={promoCode}
