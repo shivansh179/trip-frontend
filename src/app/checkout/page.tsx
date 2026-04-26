@@ -55,6 +55,7 @@ function CheckoutContent() {
         description: string;
     } | null>(null);
 
+    const [upiExplicitlySelected, setUpiExplicitlySelected] = useState(false);
     const [formData, setFormData] = useState({
         customerName: paramName,
         customerEmail: paramEmail,
@@ -211,8 +212,8 @@ function CheckoutContent() {
     const tripBasePrice = trip ? (typeof trip.price === 'number' ? trip.price : parseFloat(trip.price.toString())) : 0;
     const pricePerPerson = priceParam || tripBasePrice;
     const basePrice = pricePerPerson * formData.numberOfGuests;
-    // 3% discount only for UPI — not for cards or EMI
-    const discountPercent = (formData.paymentMethod === 'upi' && selectedEmi === null) ? 3 : 0;
+    // 3% discount only when user explicitly selects UPI (not the default), and not for EMI
+    const discountPercent = (upiExplicitlySelected && formData.paymentMethod === 'upi' && selectedEmi === null) ? 3 : 0;
     const discountAmount = (basePrice * discountPercent) / 100;
     // Promo discount is credited to WanderLoot wallet after payment, not deducted from price
     const promoCashback = promoDiscount; // credited to wallet post-payment
@@ -292,11 +293,11 @@ function CheckoutContent() {
                                 </section>
 
                                 {/* ── ITINERARY ── */}
-                                {itinerary.length > 0 && (
-                                    <section className="bg-cream-light border border-primary/10 p-5">
-                                        <h2 className="text-xl font-light mb-4 flex items-center gap-2">
-                                            <Calendar size={18} className="text-secondary" /> Day-by-Day Itinerary
-                                        </h2>
+                                <section className="bg-cream-light border border-primary/10 p-5">
+                                    <h2 className="text-xl font-light mb-4 flex items-center gap-2">
+                                        <Calendar size={18} className="text-secondary" /> Day-by-Day Itinerary
+                                    </h2>
+                                    {itinerary.length > 0 ? (
                                         <div className="space-y-2">
                                             {itinerary.map((day, idx) => (
                                                 <div key={idx} className="border border-primary/10 bg-white">
@@ -328,8 +329,16 @@ function CheckoutContent() {
                                                 </div>
                                             ))}
                                         </div>
-                                    </section>
-                                )}
+                                    ) : (
+                                        <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100">
+                                            <span className="text-xl">📋</span>
+                                            <div>
+                                                <p className="text-sm font-medium text-amber-900">Detailed itinerary will be shared on WhatsApp</p>
+                                                <p className="text-xs text-amber-700 mt-1">Our team will send you a complete day-by-day plan within 1 hour of booking. You can also <a href="https://wa.me/918427831127" target="_blank" rel="noopener noreferrer" className="underline font-medium">WhatsApp us</a> to get it right now.</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </section>
 
                                 {/* ── INCLUDES / EXCLUDES ── */}
                                 {((trip.includes && trip.includes.length > 0) || (trip.excludes && trip.excludes.length > 0)) && (
@@ -484,14 +493,18 @@ function CheckoutContent() {
                                                     description: `No-cost EMI · ${payload.emiPlan.months} months`,
                                                 });
                                                 setFormData(f => ({ ...f, paymentMethod: 'credit_card' }));
+                                                setUpiExplicitlySelected(false);
                                             } else if (payload.mode === 'partial') {
                                                 setFormData(f => ({ ...f, paymentMethod: 'half_payment' }));
                                                 setSelectedEmi(null);
                                                 setAdvanceAmountNow(payload.amountNow); // 20% advance
+                                                setUpiExplicitlySelected(false);
                                             } else {
                                                 setSelectedEmi(null);
                                                 setAdvanceAmountNow(null); // full payment
-                                                setFormData(f => ({ ...f, paymentMethod: payload.paymentMethod || 'upi' }));
+                                                const method = payload.paymentMethod || 'upi';
+                                                setFormData(f => ({ ...f, paymentMethod: method }));
+                                                setUpiExplicitlySelected(method === 'upi');
                                             }
                                         }}
                                     />
