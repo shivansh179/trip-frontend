@@ -104,9 +104,13 @@ export default function PaymentOptions({ tripPrice, tripTitle, onProceed }: Paym
   const partial30d = Math.ceil(tripPrice * 0.3);
   const partialDepart = tripPrice - partialNow - partial30d;
 
-  const upiDiscountAmt = tab === 'full' && selectedMethod === 'upi' ? Math.round(tripPrice * 0.03) : 0;
+  const methodDiscount = tab === 'full'
+    ? (PAYMENT_METHODS.find(m => m.id === selectedMethod)?.discount ?? 0)
+    : 0;
+  const methodDiscountAmt = Math.round(tripPrice * methodDiscount / 100);
+
   const amountNow =
-    tab === 'full'    ? tripPrice - upiDiscountAmt :
+    tab === 'full'    ? tripPrice - methodDiscountAmt :
     tab === 'partial' ? partialNow :
     selectedEmi       ? selectedEmi.monthlyAmount : 0;
 
@@ -436,9 +440,9 @@ export default function PaymentOptions({ tripPrice, tripTitle, onProceed }: Paym
               ? fmt(amountNow)
               : '—'}
           </p>
-          {upiDiscountAmt > 0 && (
-            <p className="text-xs text-green-600 font-semibold mt-0.5">
-              🎉 You save {fmt(upiDiscountAmt)} with UPI (3% off)
+          {methodDiscountAmt > 0 && (
+            <p className="text-xs text-green-600 font-medium mt-0.5">
+              You save {fmt(methodDiscountAmt)} with {selectedMethod.toUpperCase()} ({methodDiscount}% off)
             </p>
           )}
         </div>
