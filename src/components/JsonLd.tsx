@@ -10,51 +10,83 @@ export function OrganizationJsonLd() {
       {
         '@type': ['TravelAgency', 'LocalBusiness'],
         '@id': 'https://www.ylootrips.com/#organization',
-        name: 'YlooTrips India Pvt. Ltd.',
-        alternateName: 'YlooTrips',
+        name: 'YlooTrips',
+        alternateName: ['Yloo Trips', 'YlooTrips India'],
         url: 'https://www.ylootrips.com',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://www.ylootrips.com/favicon.png',
+          url: 'https://www.ylootrips.com/logo.png',
           width: 512,
           height: 512,
           caption: 'YlooTrips — Safe & Budget India Tour Packages',
         },
-        image: {
-          '@type': 'ImageObject',
-          url: 'https://www.ylootrips.com/favicon.png',
-          width: 512,
-          height: 512,
-        },
+        image: [
+          'https://www.ylootrips.com/og-image.jpg',
+          'https://www.ylootrips.com/logo.png',
+        ],
         description:
-          'YlooTrips India Pvt. Ltd. crafts bespoke India travel experiences — Golden Triangle, Kerala, Rajasthan, Himalayas and more. Trusted by 25,000+ travelers from 40+ countries since 2022.',
+          'YlooTrips crafts bespoke India travel experiences — Golden Triangle, Kerala, Rajasthan, Himalayas and more. Trusted by 25,000+ travelers from 40+ countries since 2022. MSME registered, GST certified.',
         foundingDate: '2022',
         numberOfEmployees: { '@type': 'QuantitativeValue', value: 50 },
         areaServed: ['IN', 'US', 'GB', 'AU', 'CA', 'DE', 'FR', 'SG'],
         address: {
           '@type': 'PostalAddress',
+          streetAddress: 'New Delhi',
           addressLocality: 'New Delhi',
           addressRegion: 'Delhi',
+          postalCode: '110001',
           addressCountry: 'IN',
         },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: '28.6139',
+          longitude: '77.2090',
+        },
+        hasMap: 'https://maps.google.com/?q=YlooTrips+New+Delhi+India',
+        telephone: '+91-8427831127',
+        email: 'hello@ylootrips.com',
+        openingHoursSpecification: [
+          {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+            opens: '09:00',
+            closes: '21:00',
+          },
+        ],
         contactPoint: [
           {
             '@type': 'ContactPoint',
             telephone: '+91-8427831127',
             email: 'hello@ylootrips.com',
             contactType: 'customer service',
+            contactOption: 'TollFree',
+            availableLanguage: ['English', 'Hindi'],
+            hoursAvailable: {
+              '@type': 'OpeningHoursSpecification',
+              dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+              opens: '09:00',
+              closes: '21:00',
+            },
+          },
+          {
+            '@type': 'ContactPoint',
+            telephone: '+91-8427831127',
+            contactType: 'reservations',
             availableLanguage: ['English', 'Hindi'],
           },
         ],
+        identifier: [
+          { '@type': 'PropertyValue', name: 'GST', value: '07BATPV1942C1ZF' },
+          { '@type': 'PropertyValue', name: 'MSME', value: 'UDYAM-HR-05-0141455' },
+        ],
         sameAs: [
           'https://www.instagram.com/ylootrips',
-          'https://www.facebook.com/ylootrips',
+          'https://www.facebook.com/profile.php?id=61574908545709',
           'https://twitter.com/ylootrips',
           'https://www.youtube.com/@ylootrips',
           'https://www.linkedin.com/company/ylootrips',
           'https://in.pinterest.com/ylootrips',
           'https://www.threads.net/@ylootrips',
-          'https://g.co/kgs/ylootrips',
         ],
         aggregateRating: {
           '@type': 'AggregateRating',
@@ -63,10 +95,11 @@ export function OrganizationJsonLd() {
           bestRating: '5',
           worstRating: '1',
         },
-        priceRange: '$$',
+        priceRange: '₹₹',
         currenciesAccepted: 'INR, USD, GBP, EUR, AUD',
-        paymentAccepted: 'Visa, Mastercard, Amex, UPI, Bank Transfer',
+        paymentAccepted: 'Visa, Mastercard, Amex, UPI, Bank Transfer, EMI',
       },
+      // WebSite with Sitelinks Searchbox — triggers search box in Google SERP
       {
         '@type': 'WebSite',
         '@id': 'https://www.ylootrips.com/#website',
@@ -75,33 +108,16 @@ export function OrganizationJsonLd() {
         alternateName: ['YlooTrips India', 'Yloo Trips'],
         description: 'Safe & affordable domestic and international tour packages from India. Budget trips to Manali, Kedarnath, Goa, Bali, Dubai & more.',
         publisher: { '@id': 'https://www.ylootrips.com/#organization' },
-        potentialAction: [
-          {
-            '@type': 'SearchAction',
-            target: {
-              '@type': 'EntryPoint',
-              urlTemplate: 'https://www.ylootrips.com/search?q={search_term_string}',
-            },
-            'query-input': 'required name=search_term_string',
-          },
-        ],
-      },
-      // Sitelinks Search Box — shown in Google when users search "ylootrips"
-      {
-        '@type': 'WebSite',
-        '@id': 'https://www.ylootrips.com/#sitelinks-searchbox',
-        url: 'https://www.ylootrips.com',
-        name: 'YlooTrips',
         potentialAction: {
           '@type': 'SearchAction',
           target: {
             '@type': 'EntryPoint',
-            urlTemplate: 'https://www.ylootrips.com/search?q={search_term_string}',
+            urlTemplate: 'https://www.ylootrips.com/trips?q={search_term_string}',
           },
           'query-input': 'required name=search_term_string',
         },
       },
-      // Sitelinks navigation — key pages Google shows as sub-links
+      // Sitelinks — key pages Google shows as sub-links under the main result
       {
         '@type': 'ItemList',
         '@id': 'https://www.ylootrips.com/#sitelinks',
@@ -110,28 +126,6 @@ export function OrganizationJsonLd() {
         itemListElement: [
           {
             '@type': 'ListItem', position: 1,
-            name: 'About Us',
-            description: 'Learn about YlooTrips — India\'s trusted travel company since 2022',
-            item: {
-              '@type': 'WebPage',
-              '@id': 'https://www.ylootrips.com/about',
-              url: 'https://www.ylootrips.com/about',
-              name: 'About YlooTrips | India\'s Trusted Travel Company',
-            },
-          },
-          {
-            '@type': 'ListItem', position: 2,
-            name: 'Plan Your Dream Journey',
-            description: 'Free AI-powered trip planner — get a custom India itinerary in minutes',
-            item: {
-              '@type': 'WebPage',
-              '@id': 'https://www.ylootrips.com/trip-planner',
-              url: 'https://www.ylootrips.com/trip-planner',
-              name: 'Free AI Trip Planner — Plan Your Dream Journey | YlooTrips',
-            },
-          },
-          {
-            '@type': 'ListItem', position: 3,
             name: 'Tour Packages',
             description: 'Browse 150+ domestic & international tour packages from India',
             item: {
@@ -139,6 +133,28 @@ export function OrganizationJsonLd() {
               '@id': 'https://www.ylootrips.com/trips',
               url: 'https://www.ylootrips.com/trips',
               name: 'India Tour Packages — Domestic & International | YlooTrips',
+            },
+          },
+          {
+            '@type': 'ListItem', position: 2,
+            name: 'Contact Us',
+            description: 'Book a trip or speak to a travel expert — WhatsApp +91 84278 31127',
+            item: {
+              '@type': 'WebPage',
+              '@id': 'https://www.ylootrips.com/contact',
+              url: 'https://www.ylootrips.com/contact',
+              name: 'Contact YlooTrips | Book a Tour or Get a Custom Quote',
+            },
+          },
+          {
+            '@type': 'ListItem', position: 3,
+            name: 'Plan Your Trip',
+            description: 'Free AI-powered trip planner — get a custom India itinerary in minutes',
+            item: {
+              '@type': 'WebPage',
+              '@id': 'https://www.ylootrips.com/trip-planner',
+              url: 'https://www.ylootrips.com/trip-planner',
+              name: 'Free AI Trip Planner | YlooTrips',
             },
           },
           {
@@ -154,24 +170,35 @@ export function OrganizationJsonLd() {
           },
           {
             '@type': 'ListItem', position: 5,
-            name: 'Customer Reviews',
+            name: 'Reviews',
             description: '4.9★ rated by 2,400+ verified travelers',
             item: {
               '@type': 'WebPage',
               '@id': 'https://www.ylootrips.com/reviews',
               url: 'https://www.ylootrips.com/reviews',
-              name: 'YlooTrips Reviews — Verified Traveler Testimonials',
+              name: 'YlooTrips Reviews — 4.9★ Verified Traveler Testimonials',
             },
           },
           {
             '@type': 'ListItem', position: 6,
-            name: 'Contact & Book',
-            description: 'Book a trip or speak to a travel expert — call +91 84278 31127',
+            name: 'We are Hiring',
+            description: 'Join the YlooTrips team — open positions in travel, marketing & operations',
             item: {
               '@type': 'WebPage',
-              '@id': 'https://www.ylootrips.com/contact',
-              url: 'https://www.ylootrips.com/contact',
-              name: 'Contact YlooTrips | Book a Tour or Get a Custom Quote',
+              '@id': 'https://www.ylootrips.com/careers',
+              url: 'https://www.ylootrips.com/careers',
+              name: 'Careers at YlooTrips | Join Our Team',
+            },
+          },
+          {
+            '@type': 'ListItem', position: 7,
+            name: 'About Us',
+            description: 'Learn about YlooTrips — India\'s trusted travel company since 2022',
+            item: {
+              '@type': 'WebPage',
+              '@id': 'https://www.ylootrips.com/about',
+              url: 'https://www.ylootrips.com/about',
+              name: 'About YlooTrips | India\'s Trusted Travel Company Since 2022',
             },
           },
         ],
