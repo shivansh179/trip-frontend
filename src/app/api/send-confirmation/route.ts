@@ -1,6 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
+
+function packingList(destination: string, duration: string): string[] {
+  const dest = (destination || '').toLowerCase();
+  const base = [
+    'Government-issued photo ID (Aadhaar / Passport)',
+    'Booking confirmation (this email)',
+    'Comfortable walking shoes',
+    'Sunscreen & sunglasses',
+    'Personal medications',
+    'Power bank & charging cables',
+    'Small day-pack / backpack',
+    'Reusable water bottle',
+    'Cash (ATMs may be limited in remote areas)',
+  ];
+  if (dest.includes('himalaya') || dest.includes('manali') || dest.includes('leh') || dest.includes('spiti') || dest.includes('kashmir') || dest.includes('kedarnath') || dest.includes('uttarakhand') || dest.includes('himachal') || dest.includes('shimla')) {
+    base.push('Heavy woolens / down jacket', 'Thermal inner-wear', 'Waterproof trekking boots', 'Lip balm & moisturiser', 'Altitude sickness tablets (consult doctor)');
+  } else if (dest.includes('goa') || dest.includes('beach') || dest.includes('kerala') || dest.includes('andaman') || dest.includes('maldiv')) {
+    base.push('Swimwear & flip-flops', 'Light cotton / linen clothes', 'Waterproof bag for beach days', 'Insect repellent');
+  } else if (dest.includes('rajasthan') || dest.includes('jaipur') || dest.includes('jodhpur') || dest.includes('desert')) {
+    base.push('Light cotton clothes (loose-fitting)', 'Scarf / stole (for temples & sun)', 'Anti-glare sunglasses', 'Extra water & ORS sachets');
+  } else if (dest.includes('bali') || dest.includes('thailand') || dest.includes('dubai') || dest.includes('singapore') || dest.includes('international')) {
+    base.push('Valid passport (6-month validity)', 'Visa / e-Visa printout', 'Travel insurance documents', 'International debit/credit card', 'Small currency of destination country');
+  }
+  return base;
+}
+
 export async function POST(req: NextRequest) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   try {
@@ -14,15 +41,33 @@ export async function POST(req: NextRequest) {
     const isEvent = !!booking.event;
     const title = isEvent ? booking.event?.title : booking.trip?.title;
     const destination = isEvent ? booking.event?.location : booking.trip?.destination;
-    const travelDate = booking.travelDate || booking.eventDate
+    const duration = booking.trip?.duration || '';
+    const travelDate = (booking.travelDate || booking.eventDate)
       ? new Date(booking.travelDate || booking.eventDate).toLocaleDateString('en-IN', {
           weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
         })
       : null;
     const amount = booking.finalAmount || booking.totalAmount;
-    const formattedAmount = amount
-      ? `₹${Number(amount).toLocaleString('en-IN')}`
-      : 'See details';
+    const chargedNow = booking.chargeNow || booking.paidAmount || amount;
+    const formattedAmount = amount ? `₹${Number(amount).toLocaleString('en-IN')}` : 'See details';
+    const formattedCharged = chargedNow ? `₹${Number(chargedNow).toLocaleString('en-IN')}` : formattedAmount;
+
+    // Fetch itinerary from backend (non-fatal)
+    let itineraryDays: { dayNumber?: number; dayTitle?: string; description?: string; activities?: string[] }[] = [];
+    const tripId = booking.trip?.id;
+    if (tripId && !isEvent) {
+      try {
+        const iRes = await fetch(`${API_BASE}/trips/${tripId}/itinerary`, { cache: 'no-store' });
+        if (iRes.ok) itineraryDays = await iRes.json();
+      } catch { /* non-fatal */ }
+    }
+
+    // Trip includes / excludes from booking or trip object
+    const includes: string[] = booking.trip?.includes || booking.includes || [];
+    const excludes: string[] = booking.trip?.excludes || booking.excludes || [];
+    const highlights: string[] = booking.trip?.highlights || booking.highlights || [];
+
+    const carrying = packingList(destination || '', duration);
 
     const html = `
 <!DOCTYPE html>
