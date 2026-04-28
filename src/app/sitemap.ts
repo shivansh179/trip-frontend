@@ -40,6 +40,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/tours/kerala-south-india-14-day`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE_URL}/tours/rajasthan-heritage-7-day`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
 
+    // Careers
+    { url: `${BASE_URL}/careers`, lastModified: now, changeFrequency: 'monthly', priority: 0.75 },
+
+    // Author pages
+    { url: `${BASE_URL}/blogs/authors/priya-verma`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/blogs/authors/arjun-khanna`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/blogs/authors/sneha-joshi`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+
     // Blog posts
     { url: `${BASE_URL}/blogs/first-time-india-guide`, lastModified: now, changeFrequency: 'monthly', priority: 0.88 },
     { url: `${BASE_URL}/blogs/best-time-to-visit-india`, lastModified: now, changeFrequency: 'monthly', priority: 0.88 },

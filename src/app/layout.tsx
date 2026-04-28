@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     url: "https://www.ylootrips.com",
     images: [
       {
-        url: "https://www.ylootrips.com/og-image.jpg",
+        url: "https://www.ylootrips.com/api/og",
         width: 1200,
         height: 630,
         alt: "YlooTrips — Safe & Budget India Tour Packages",
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "YlooTrips | Safe & Budget India Tour Packages",
     description: "Safe, affordable domestic & international trips from India. Manali, Kedarnath, Bali, Dubai & more. 4.9★ rated · 25,000+ travelers.",
-    images: ["https://www.ylootrips.com/og-image.jpg"],
+    images: ["https://www.ylootrips.com/api/og"],
   },
   alternates: {
     canonical: "https://www.ylootrips.com",
