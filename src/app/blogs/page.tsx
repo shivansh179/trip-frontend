@@ -24,6 +24,10 @@ interface Blog {
 
 const categories = ['All', 'Destinations', 'Philosophy', 'Responsible Travel', 'Tips', 'Food & Culture', 'Guides'];
 
+const PRIYA  = { name: 'Priya Verma',  href: '/blogs/authors/priya-verma' };
+const ARJUN  = { name: 'Arjun Khanna', href: '/blogs/authors/arjun-khanna' };
+const SNEHA  = { name: 'Sneha Joshi',  href: '/blogs/authors/sneha-joshi' };
+
 const staticGuides = [
   {
     title: 'Best Time to Visit India — Month by Month Guide 2026',
@@ -32,6 +36,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600&q=80',
     tag: 'Travel Planning',
     read: '8 min read',
+    author: PRIYA,
   },
   {
     title: 'Manali Trip Guide 2026 — Summer, Winter & Everything In Between',
@@ -40,6 +45,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
     tag: 'Destinations',
     read: '9 min read',
+    author: PRIYA,
   },
   {
     title: 'Goa on a Budget 2026 — How to Visit for Under ₹15,000',
@@ -48,6 +54,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=80',
     tag: 'Budget Travel',
     read: '7 min read',
+    author: ARJUN,
   },
   {
     title: 'Kashmir Travel Guide 2026 — Complete Itinerary & Travel Tips',
@@ -56,6 +63,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1566837945700-30057527ade0?w=600&q=80',
     tag: 'Destinations',
     read: '10 min read',
+    author: PRIYA,
   },
   {
     title: '15 Best Honeymoon Destinations in India 2026',
@@ -64,6 +72,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?w=600&q=80',
     tag: 'Honeymoon',
     read: '8 min read',
+    author: SNEHA,
   },
   {
     title: '20 Best Long Weekend Getaways from Delhi 2026',
@@ -72,6 +81,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600&q=80',
     tag: 'Weekend Trips',
     read: '8 min read',
+    author: SNEHA,
   },
   {
     title: 'Kedarnath Yatra 2026 — Complete Guide (Registration, Trek & Budget)',
@@ -80,6 +90,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=600&q=80',
     tag: 'Pilgrimage',
     read: '11 min read',
+    author: PRIYA,
   },
   {
     title: 'Best Time to Visit Bali 2026 — Month-by-Month Guide',
@@ -88,6 +99,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80',
     tag: 'Destinations',
     read: '7 min read',
+    author: ARJUN,
   },
   {
     title: 'Dubai Trip Cost from India 2026 — Full Budget Breakdown',
@@ -96,6 +108,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80',
     tag: 'Budget Travel',
     read: '8 min read',
+    author: ARJUN,
   },
   {
     title: 'Thailand 5-Day Itinerary — Bangkok + Phuket on a Budget',
@@ -104,6 +117,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=600&q=80',
     tag: 'Destinations',
     read: '9 min read',
+    author: ARJUN,
   },
   {
     title: 'First Time in India? Complete 2026 Guide for International Travelers',
@@ -112,6 +126,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600&q=80',
     tag: 'Beginners Guide',
     read: '12 min read',
+    author: PRIYA,
   },
   {
     title: 'India vs Thailand: Which Should You Visit First?',
@@ -120,6 +135,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=600&q=80',
     tag: 'Destination Compare',
     read: '7 min read',
+    author: ARJUN,
   },
   {
     title: 'Solo Female Travel in India: Honest Safety Guide 2026',
@@ -128,6 +144,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?w=600&q=80',
     tag: 'Solo Travel',
     read: '10 min read',
+    author: SNEHA,
   },
   {
     title: 'How to Plan a 2-Week India Trip on a $2,000 Budget',
@@ -136,6 +153,7 @@ const staticGuides = [
     image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=600&q=80',
     tag: 'Budget Travel',
     read: '8 min read',
+    author: PRIYA,
   },
 ];
 
@@ -247,7 +265,13 @@ export default function BlogsPage() {
                     {guide.description}
                   </p>
                   <div className="flex items-center justify-between text-caption text-primary/40 uppercase tracking-wider">
-                    <span>YlooTrips Editorial</span>
+                    <Link
+                      href={guide.author.href}
+                      onClick={e => e.stopPropagation()}
+                      className="hover:text-primary/70 transition-colors"
+                    >
+                      {guide.author.name}
+                    </Link>
                     <span>{guide.read}</span>
                   </div>
                 </div>
