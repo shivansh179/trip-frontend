@@ -1,35 +1,15 @@
-import type { Metadata } from 'next';
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowUpRight, MapPin, Clock, Heart, Globe, Users, Briefcase } from 'lucide-react';
+import { ArrowUpRight, MapPin, Clock, Heart, Globe, Users, Briefcase, ChevronDown, CheckCircle, Loader2, X } from 'lucide-react';
 import PageHero from '@/components/PageHero';
 
-export const metadata: Metadata = {
-  title: 'Careers at YlooTrips — Join India\'s Travel Experts',
-  description: 'Join YlooTrips India Pvt. Ltd. and help craft extraordinary journeys for travelers from 40+ countries. Based in New Delhi. View open positions.',
-  alternates: { canonical: 'https://www.ylootrips.com/careers' },
-};
-
 const perks = [
-  {
-    icon: Globe,
-    title: 'Travel the Country',
-    desc: 'Explore India\'s destinations firsthand. We believe our team should experience what we sell.',
-  },
-  {
-    icon: Heart,
-    title: 'Meaningful Work',
-    desc: 'Every booking you handle transforms someone\'s life. That\'s not a small thing.',
-  },
-  {
-    icon: Users,
-    title: 'Small, Close Team',
-    desc: 'No corporate bureaucracy. Your ideas are heard, your growth is a priority.',
-  },
-  {
-    icon: Clock,
-    title: 'Flexible Hours',
-    desc: 'We care about results, not clock-watching. Flexible work arrangements available.',
-  },
+  { icon: Globe,  title: 'Travel the Country',  desc: "Explore India's destinations firsthand. We believe our team should experience what we sell." },
+  { icon: Heart,  title: 'Meaningful Work',      desc: "Every booking you handle transforms someone's life. That's not a small thing." },
+  { icon: Users,  title: 'Small, Close Team',    desc: 'No corporate bureaucracy. Your ideas are heard, your growth is a priority.' },
+  { icon: Clock,  title: 'Flexible Hours',       desc: 'We care about results, not clock-watching. Flexible work arrangements available.' },
 ];
 
 const openings = [
@@ -56,7 +36,121 @@ const openings = [
   },
 ];
 
+interface FormState {
+  name: string;
+  email: string;
+  phone: string;
+  experience: string;
+  message: string;
+}
+
+const EMPTY_FORM: FormState = { name: '', email: '', phone: '', experience: '', message: '' };
+
+function ApplyForm({ role, onClose }: { role: string; onClose: () => void }) {
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const set = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    setForm(prev => ({ ...prev, [k]: e.target.value }));
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus('submitting');
+    setErrorMsg('');
+    try {
+      const res = await fetch('/api/careers/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, role }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Submission failed');
+      setStatus('success');
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong');
+      setStatus('error');
+    }
+  }
+
+  const inputCls = 'w-full px-4 py-3 border border-primary/20 bg-white text-primary text-sm placeholder:text-primary/35 focus:outline-none focus:border-primary/50 transition-colors';
+
+  if (status === 'success') {
+    return (
+      <div className="mt-6 p-8 bg-green-50 border border-green-200 rounded-xl text-center">
+        <CheckCircle className="w-10 h-10 text-green-600 mx-auto mb-3" />
+        <h4 className="font-display text-lg text-primary mb-2">Application sent!</h4>
+        <p className="text-sm text-primary/60 mb-4">We'll review your application and get back to you within 3–5 business days.</p>
+        <button onClick={onClose} className="text-sm text-primary/50 hover:text-primary transition-colors underline">Close</button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-6 border-t border-primary/10 pt-6 space-y-4">
+      <h4 className="font-display text-base text-primary mb-1">Apply for <span className="text-secondary">{role}</span></h4>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs uppercase tracking-wider text-primary/50 mb-1.5">Full Name *</label>
+          <input required value={form.name} onChange={set('name')} placeholder="Priya Sharma" className={inputCls} />
+        </div>
+        <div>
+          <label className="block text-xs uppercase tracking-wider text-primary/50 mb-1.5">Email *</label>
+          <input required type="email" value={form.email} onChange={set('email')} placeholder="priya@example.com" className={inputCls} />
+        </div>
+        <div>
+          <label className="block text-xs uppercase tracking-wider text-primary/50 mb-1.5">Phone</label>
+          <input type="tel" value={form.phone} onChange={set('phone')} placeholder="+91 98765 43210" className={inputCls} />
+        </div>
+        <div>
+          <label className="block text-xs uppercase tracking-wider text-primary/50 mb-1.5">Years of Experience</label>
+          <select value={form.experience} onChange={set('experience')} className={inputCls}>
+            <option value="">Select…</option>
+            <option>Fresher (0–1 year)</option>
+            <option>1–3 years</option>
+            <option>3–5 years</option>
+            <option>5+ years</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-xs uppercase tracking-wider text-primary/50 mb-1.5">Why do you want to join YlooTrips? *</label>
+        <textarea
+          required
+          rows={4}
+          value={form.message}
+          onChange={set('message')}
+          placeholder="Tell us about yourself, your passion for travel, and why you'd be a great fit…"
+          className={inputCls + ' resize-none'}
+        />
+      </div>
+
+      {status === 'error' && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-4 py-3 rounded-lg">{errorMsg}</p>
+      )}
+
+      <div className="flex items-center gap-3 pt-1">
+        <button
+          type="submit"
+          disabled={status === 'submitting'}
+          className="inline-flex items-center gap-2 bg-primary text-cream px-7 py-3 text-sm uppercase tracking-widest hover:bg-secondary transition-colors disabled:opacity-60"
+        >
+          {status === 'submitting' ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</> : 'Submit Application'}
+        </button>
+        <button type="button" onClick={onClose} className="text-sm text-primary/40 hover:text-primary transition-colors flex items-center gap-1">
+          <X className="w-4 h-4" /> Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
+
 export default function CareersPage() {
+  const [openForm, setOpenForm] = useState<string | null>(null);
+  const [openForm2, setOpenForm2] = useState(false); // open application
+
   return (
     <>
       <PageHero
@@ -79,7 +173,6 @@ export default function CareersPage() {
               Based in New Delhi, we serve travelers from 40+ countries. Our team is small, our standards are high, and our culture is built on trust.
             </p>
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {perks.map(({ icon: Icon, title, desc }) => (
               <div key={title} className="bg-cream-light border border-primary/8 p-7 text-center group hover:shadow-lg transition-all duration-300">
@@ -104,35 +197,37 @@ export default function CareersPage() {
 
           <div className="space-y-5">
             {openings.map((job) => (
-              <div key={job.title} className="bg-cream border border-primary/8 p-6 md:p-8 hover:shadow-md transition-all duration-300 group">
+              <div key={job.title} className="bg-cream border border-primary/8 p-6 md:p-8 hover:shadow-md transition-all duration-300">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
                   <div>
                     <div className="flex flex-wrap items-center gap-3 mb-2">
                       <h3 className="font-display text-xl md:text-2xl text-primary">{job.title}</h3>
-                      <span className="px-3 py-1 bg-accent/15 text-primary text-[10px] uppercase tracking-widest font-medium">
-                        {job.type}
-                      </span>
+                      <span className="px-3 py-1 bg-accent/15 text-primary text-[10px] uppercase tracking-widest font-medium">{job.type}</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-primary/50 text-sm">
                       <MapPin className="w-3.5 h-3.5" />
                       <span>{job.location}</span>
                     </div>
                   </div>
-                  <a
-                    href={`mailto:hello@ylootrips.com?subject=Application: ${encodeURIComponent(job.title)}&body=Hi YlooTrips team,%0A%0AI'd like to apply for the ${encodeURIComponent(job.title)} position.%0A%0A[Please attach your resume]`}
+                  <button
+                    onClick={() => setOpenForm(openForm === job.title ? null : job.title)}
                     className="shrink-0 inline-flex items-center gap-2 bg-primary text-cream px-6 py-3 text-sm uppercase tracking-widest hover:bg-secondary transition-colors"
                   >
-                    Apply Now <ArrowUpRight className="w-4 h-4" />
-                  </a>
+                    {openForm === job.title ? 'Close' : 'Apply Now'}
+                    <ChevronDown className={`w-4 h-4 transition-transform ${openForm === job.title ? 'rotate-180' : ''}`} />
+                  </button>
                 </div>
+
                 <p className="text-primary/65 text-sm leading-relaxed mb-5">{job.desc}</p>
                 <div className="flex flex-wrap gap-2">
                   {job.skills.map((skill) => (
-                    <span key={skill} className="px-3 py-1.5 border border-primary/12 text-primary/60 text-xs">
-                      {skill}
-                    </span>
+                    <span key={skill} className="px-3 py-1.5 border border-primary/12 text-primary/60 text-xs">{skill}</span>
                   ))}
                 </div>
+
+                {openForm === job.title && (
+                  <ApplyForm role={job.title} onClose={() => setOpenForm(null)} />
+                )}
               </div>
             ))}
           </div>
@@ -146,15 +241,19 @@ export default function CareersPage() {
             <Briefcase className="w-10 h-10 text-primary/25 mx-auto mb-5" />
             <h3 className="font-display text-2xl text-primary mb-3">Don't see the right role?</h3>
             <p className="text-primary/60 text-sm leading-relaxed mb-7">
-              We occasionally hire for guide, photography, and content roles. Send us your resume and tell us how you'd add value to the team.
+              We occasionally hire for guide, photography, and content roles. Send us your details and tell us how you'd add value to the team.
             </p>
-            <a
-              href="mailto:hello@ylootrips.com?subject=General Application — YlooTrips&body=Hi YlooTrips team,%0A%0AI'd love to explore opportunities at YlooTrips.%0A%0A[Tell us about yourself and attach your resume]"
-              className="inline-flex items-center gap-2 btn-primary"
-            >
-              Send Open Application
-              <ArrowUpRight className="w-4 h-4" />
-            </a>
+
+            {!openForm2 ? (
+              <button
+                onClick={() => setOpenForm2(true)}
+                className="inline-flex items-center gap-2 btn-primary"
+              >
+                Send Open Application <ArrowUpRight className="w-4 h-4" />
+              </button>
+            ) : (
+              <ApplyForm role="Open Application" onClose={() => setOpenForm2(false)} />
+            )}
           </div>
         </div>
       </section>
