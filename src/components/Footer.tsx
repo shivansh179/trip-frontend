@@ -14,7 +14,6 @@ export default function Footer() {
   const footerLinks = {
     explore: [
       { name: 'All Destinations', href: '/destinations' },
-      { name: 'Curated Experiences', href: '/trips' },
       { name: 'Hidden Gems', href: '/hidden-spots' },
       { name: 'Boutique Stays', href: '/hotels' },
       { name: 'The Journal', href: '/blogs' },
