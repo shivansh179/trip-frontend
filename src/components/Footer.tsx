@@ -15,7 +15,6 @@ export default function Footer() {
     explore: [
       { name: 'All Destinations', href: '/destinations' },
       { name: 'Hidden Gems', href: '/hidden-spots' },
-      { name: 'Boutique Stays', href: '/hotels' },
       { name: 'The Journal', href: '/blogs' },
     ],
     tours: [
