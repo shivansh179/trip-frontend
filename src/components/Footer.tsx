@@ -157,7 +157,7 @@ export default function Footer() {
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
               <div className="space-y-1">
                 <p className="text-[10px] text-cream/35 uppercase tracking-widest">
-                  © {currentYear} YlooTrips India Pvt. Ltd. · All rights reserved.
+                  © {currentYear} YlooTrips · All rights reserved.
                 </p>
                 <p className="text-[9px] text-cream/20">
                   Prices are inclusive of all taxes · No hidden fees · Currency shown based on your selection
