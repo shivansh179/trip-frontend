@@ -81,6 +81,8 @@ export default function ManaliTripGuide() {
         datePublished="2025-04-12"
         dateModified="2026-01-01"
         keywords={['Manali trip guide', 'Manali travel', 'Rohtang Pass', 'Manali winter', 'Manali budget']}
+        authorName="Priya Verma"
+        authorUrl="https://www.ylootrips.com/authors/priya-verma"
       />
       <FaqJsonLd faqs={faqs} />
 

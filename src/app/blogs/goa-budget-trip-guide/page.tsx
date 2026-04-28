@@ -79,6 +79,8 @@ export default function GoaBudgetTripGuide() {
         datePublished="2025-04-12"
         dateModified="2026-01-01"
         keywords={['Goa budget trip', 'cheap Goa', 'Goa under 15000', 'North Goa vs South Goa', 'Goa backpacker']}
+        authorName="Arjun Khanna"
+        authorUrl="https://www.ylootrips.com/authors/arjun-khanna"
       />
       <FaqJsonLd faqs={faqs} />
 

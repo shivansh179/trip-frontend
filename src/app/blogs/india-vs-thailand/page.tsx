@@ -98,6 +98,8 @@ export default function IndiaVsThailand() {
         datePublished="2024-11-01"
         dateModified="2025-04-01"
         keywords={['India vs Thailand', 'India or Thailand first', 'best Asia destination', 'India travel', 'Thailand travel']}
+        authorName="Arjun Khanna"
+        authorUrl="https://www.ylootrips.com/authors/arjun-khanna"
       />
       <div className="relative h-[40vh] min-h-[280px] overflow-hidden">
         <Image

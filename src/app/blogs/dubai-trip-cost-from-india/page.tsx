@@ -71,6 +71,8 @@ export default function DubaiTripCostPage() {
         datePublished="2026-01-20"
         dateModified="2026-04-09"
         keywords={['Dubai trip cost India', 'Dubai budget India', 'Dubai trip expenses', 'Dubai package price India 2026']}
+        authorName="Arjun Khanna"
+        authorUrl="https://www.ylootrips.com/authors/arjun-khanna"
       />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://www.ylootrips.com' },
@@ -96,7 +98,7 @@ export default function DubaiTripCostPage() {
                 <DollarSign className="w-3 h-3" /> Budget Guide
               </div>
               <h1 className="font-display text-display-lg text-white max-w-3xl">Dubai Trip Cost from India 2026 — Complete Budget Breakdown</h1>
-              <p className="text-white/70 mt-3 text-base">Updated April 2026 · 12 min read · YlooTrips Editorial</p>
+              <p className="text-white/70 mt-3 text-base">Updated April 2026 · 12 min read · Arjun Khanna</p>
             </div>
           </div>
         </div>

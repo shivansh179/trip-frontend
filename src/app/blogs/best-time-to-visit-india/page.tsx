@@ -68,6 +68,8 @@ export default function BestTimeToVisitIndia() {
         datePublished="2024-09-15"
         dateModified="2025-04-01"
         keywords={['best time visit India', 'India seasons', 'India weather', 'India monsoon', 'India festivals']}
+        authorName="Priya Verma"
+        authorUrl="https://www.ylootrips.com/authors/priya-verma"
       />
       <div className="relative h-[40vh] min-h-[280px] overflow-hidden">
         <Image

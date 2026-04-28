@@ -52,6 +52,8 @@ export default function BestTimeToBaliPage() {
         datePublished="2026-01-15"
         dateModified="2026-04-09"
         keywords={['best time Bali', 'Bali weather', 'Bali travel guide', 'Bali dry season', 'when to visit Bali']}
+        authorName="Arjun Khanna"
+        authorUrl="https://www.ylootrips.com/authors/arjun-khanna"
       />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://www.ylootrips.com' },
@@ -77,7 +79,7 @@ export default function BestTimeToBaliPage() {
                 <Calendar className="w-3 h-3" /> Destinations Guide
               </div>
               <h1 className="font-display text-display-lg text-white max-w-3xl">Best Time to Visit Bali — Complete 2026 Guide</h1>
-              <p className="text-white/70 mt-3 text-base">Updated April 2026 · 11 min read · YlooTrips Editorial</p>
+              <p className="text-white/70 mt-3 text-base">Updated April 2026 · 11 min read · Arjun Khanna</p>
             </div>
           </div>
         </div>

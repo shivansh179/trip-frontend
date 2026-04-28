@@ -86,6 +86,8 @@ export default function KedarnathYatraGuide() {
         datePublished="2025-04-12"
         dateModified="2026-01-01"
         keywords={['Kedarnath Yatra 2026', 'Kedarnath registration', 'Kedarnath trek', 'Gaurikund trek', 'Kedarnath budget']}
+        authorName="Priya Verma"
+        authorUrl="https://www.ylootrips.com/authors/priya-verma"
       />
       <FaqJsonLd faqs={faqs} />
 

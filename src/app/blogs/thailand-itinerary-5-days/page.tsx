@@ -134,6 +134,8 @@ export default function ThailandItinerary5DaysPage() {
         datePublished="2026-02-01"
         dateModified="2026-04-09"
         keywords={['Thailand itinerary 5 days', 'Bangkok Phuket 5 days', 'Thailand trip plan India', 'Thailand 6 days itinerary']}
+        authorName="Arjun Khanna"
+        authorUrl="https://www.ylootrips.com/authors/arjun-khanna"
       />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://www.ylootrips.com' },
@@ -159,7 +161,7 @@ export default function ThailandItinerary5DaysPage() {
                 <MapPin className="w-3 h-3" /> Itinerary Guide
               </div>
               <h1 className="font-display text-display-lg text-white max-w-3xl">Thailand Itinerary 5 Days — Bangkok to Phuket Perfect Plan 2026</h1>
-              <p className="text-white/70 mt-3 text-base">Updated April 2026 · 14 min read · YlooTrips Editorial</p>
+              <p className="text-white/70 mt-3 text-base">Updated April 2026 · 14 min read · Arjun Khanna</p>
             </div>
           </div>
         </div>

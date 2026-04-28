@@ -414,6 +414,7 @@ interface ArticleJsonLdProps {
   datePublished: string;
   dateModified?: string;
   authorName?: string;
+  authorUrl?: string;
   keywords?: string[];
 }
 
@@ -424,7 +425,8 @@ export function ArticleJsonLd({
   image,
   datePublished,
   dateModified,
-  authorName = 'YlooTrips Editorial Team',
+  authorName = 'Priya Verma',
+  authorUrl = 'https://www.ylootrips.com/authors/priya-verma',
   keywords = [],
 }: ArticleJsonLdProps) {
   const schema = {
@@ -439,7 +441,7 @@ export function ArticleJsonLd({
     author: {
       '@type': 'Person',
       name: authorName,
-      url: 'https://www.ylootrips.com/about',
+      url: authorUrl,
     },
     publisher: {
       '@type': 'Organization',

@@ -85,6 +85,8 @@ export default function KashmirTravelGuide() {
         datePublished="2025-04-12"
         dateModified="2026-01-01"
         keywords={['Kashmir travel guide', 'Kashmir itinerary', 'Gulmarg skiing', 'Srinagar houseboat', 'best time Kashmir']}
+        authorName="Priya Verma"
+        authorUrl="https://www.ylootrips.com/authors/priya-verma"
       />
       <FaqJsonLd faqs={faqs} />
 
