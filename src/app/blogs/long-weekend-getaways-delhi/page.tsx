@@ -100,7 +100,7 @@ export default function LongWeekendGetawaysDelhi() {
         dateModified="2026-01-01"
         keywords={['weekend trips from Delhi', 'long weekend getaways Delhi', 'places near Delhi', 'Delhi weekend trip 2026']}
         authorName="Sneha Joshi"
-        authorUrl="https://www.ylootrips.com/authors/sneha-joshi"
+        authorUrl="https://www.ylootrips.com/blogs/authors/sneha-joshi"
       />
       <FaqJsonLd faqs={faqs} />
 

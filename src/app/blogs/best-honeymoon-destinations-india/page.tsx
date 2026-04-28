@@ -102,7 +102,7 @@ export default function BestHoneymoonDestinationsIndia() {
         dateModified="2026-01-01"
         keywords={['honeymoon destinations India', 'romantic places India', 'Kashmir honeymoon', 'Andaman honeymoon', 'Kerala honeymoon']}
         authorName="Sneha Joshi"
-        authorUrl="https://www.ylootrips.com/authors/sneha-joshi"
+        authorUrl="https://www.ylootrips.com/blogs/authors/sneha-joshi"
       />
       <FaqJsonLd faqs={faqs} />
 

@@ -135,7 +135,7 @@ export default function ThailandItinerary5DaysPage() {
         dateModified="2026-04-09"
         keywords={['Thailand itinerary 5 days', 'Bangkok Phuket 5 days', 'Thailand trip plan India', 'Thailand 6 days itinerary']}
         authorName="Arjun Khanna"
-        authorUrl="https://www.ylootrips.com/authors/arjun-khanna"
+        authorUrl="https://www.ylootrips.com/blogs/authors/arjun-khanna"
       />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://www.ylootrips.com' },

@@ -54,7 +54,7 @@ export default function SoloFemaleTravelIndia() {
         dateModified="2025-04-01"
         keywords={['solo female travel India', 'India safety women', 'solo woman India', 'India solo travel tips']}
         authorName="Sneha Joshi"
-        authorUrl="https://www.ylootrips.com/authors/sneha-joshi"
+        authorUrl="https://www.ylootrips.com/blogs/authors/sneha-joshi"
       />
       <div className="relative h-[40vh] min-h-[280px] overflow-hidden">
         <Image

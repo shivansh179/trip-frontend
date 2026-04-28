@@ -426,7 +426,7 @@ export function ArticleJsonLd({
   datePublished,
   dateModified,
   authorName = 'Priya Verma',
-  authorUrl = 'https://www.ylootrips.com/authors/priya-verma',
+  authorUrl = 'https://www.ylootrips.com/blogs/authors/priya-verma',
   keywords = [],
 }: ArticleJsonLdProps) {
   const schema = {

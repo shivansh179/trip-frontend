@@ -47,7 +47,7 @@ export default function FirstTimeIndiaGuide() {
         dateModified="2025-04-01"
         keywords={['first time India', 'India travel guide', 'India visa', 'India safety', 'India travel tips']}
         authorName="Priya Verma"
-        authorUrl="https://www.ylootrips.com/authors/priya-verma"
+        authorUrl="https://www.ylootrips.com/blogs/authors/priya-verma"
       />
       <FaqJsonLd faqs={[
         { question: 'Is India safe for first-time travelers?', answer: 'Yes — India is safe for tourists, especially on established circuits like the Golden Triangle, Kerala, and Rajasthan. Use registered tour operators, avoid displaying valuables, and follow your guide\'s advice.' },

@@ -72,7 +72,7 @@ export default function DubaiTripCostPage() {
         dateModified="2026-04-09"
         keywords={['Dubai trip cost India', 'Dubai budget India', 'Dubai trip expenses', 'Dubai package price India 2026']}
         authorName="Arjun Khanna"
-        authorUrl="https://www.ylootrips.com/authors/arjun-khanna"
+        authorUrl="https://www.ylootrips.com/blogs/authors/arjun-khanna"
       />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://www.ylootrips.com' },

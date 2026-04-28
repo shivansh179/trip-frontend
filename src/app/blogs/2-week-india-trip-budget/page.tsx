@@ -72,7 +72,7 @@ export default function IndiaBudgetGuide() {
         dateModified="2025-04-01"
         keywords={['India trip budget', '2 week India cost', 'India travel cost', 'budget India trip', 'India $2000']}
         authorName="Priya Verma"
-        authorUrl="https://www.ylootrips.com/authors/priya-verma"
+        authorUrl="https://www.ylootrips.com/blogs/authors/priya-verma"
       />
       <div className="relative h-[40vh] min-h-[280px] overflow-hidden">
         <Image

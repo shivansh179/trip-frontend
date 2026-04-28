@@ -53,7 +53,7 @@ export default function BestTimeToBaliPage() {
         dateModified="2026-04-09"
         keywords={['best time Bali', 'Bali weather', 'Bali travel guide', 'Bali dry season', 'when to visit Bali']}
         authorName="Arjun Khanna"
-        authorUrl="https://www.ylootrips.com/authors/arjun-khanna"
+        authorUrl="https://www.ylootrips.com/blogs/authors/arjun-khanna"
       />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://www.ylootrips.com' },

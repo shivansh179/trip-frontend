@@ -64,7 +64,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: `${author.name} | YlooTrips Travel Writers`,
       description: author.bio.slice(0, 160),
-      url: `https://www.ylootrips.com/authors/${slug}`,
+      url: `https://www.ylootrips.com/blogs/authors/${slug}`,
     },
   };
 }
@@ -77,11 +77,11 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
   const personSchema = {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    '@id': `https://www.ylootrips.com/authors/${slug}`,
+    '@id': `https://www.ylootrips.com/blogs/authors/${slug}`,
     name: author.name,
     jobTitle: author.role,
     description: author.bio,
-    url: `https://www.ylootrips.com/authors/${slug}`,
+    url: `https://www.ylootrips.com/blogs/authors/${slug}`,
     worksFor: {
       '@type': 'Organization',
       name: 'YlooTrips',
@@ -95,8 +95,8 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }} />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://www.ylootrips.com' },
-        { name: 'Authors', url: 'https://www.ylootrips.com/authors' },
-        { name: author.name, url: `https://www.ylootrips.com/authors/${slug}` },
+        { name: 'Authors', url: 'https://www.ylootrips.com/blogs/authors' },
+        { name: author.name, url: `https://www.ylootrips.com/blogs/authors/${slug}` },
       ]} />
 
       <main className="min-h-screen bg-cream pt-20">
