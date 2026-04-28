@@ -104,8 +104,8 @@ export default function Footer() {
               {/* GST / Registration */}
               <div className="border border-white/8 rounded px-4 py-3 space-y-1">
                 <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">Company Details</p>
-                <p className="text-[10px] text-cream/35">MSME Registered · Govt. of India Licensed</p>
-                <p className="text-[10px] text-cream/35">GST Registered Travel Company</p>
+                <p className="text-[10px] text-cream/35">MSME: UDYAM-HR-05-0141455</p>
+                <p className="text-[10px] text-cream/35">GST: 07BATPV1942C1ZF</p>
                 <p className="text-[10px] text-cream/35">New Delhi, India · Est. 2022</p>
               </div>
 
