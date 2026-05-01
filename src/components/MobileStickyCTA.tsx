@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Compass, Ticket, Sparkles, Wallet, Globe, Mountain, X, Instagram } from 'lucide-react';
+import { Home, Compass, Ticket, Sparkles, Wallet, Globe, Mountain, X } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useWallet } from '@/context/WalletContext';
 
