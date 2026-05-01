@@ -44,87 +44,73 @@ export default function MobileStickyCTA() {
             {tripsOpen && (
                 <div
                     ref={popupRef}
-                    className="fixed bottom-[76px] left-3 right-3 z-[80] bg-white/95 backdrop-blur-2xl rounded-3xl overflow-hidden animate-in slide-in-from-bottom-4 duration-250"
-                    style={{ boxShadow: '0 -4px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.06)' }}
+                    className="fixed bottom-[76px] left-3 right-3 z-[80] rounded-3xl overflow-hidden animate-in slide-in-from-bottom-4 duration-250"
+                    style={{
+                        background: 'rgba(12,12,12,0.97)',
+                        backdropFilter: 'blur(24px)',
+                        border: '1px solid rgba(201,169,110,0.2)',
+                        boxShadow: '0 -8px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,169,110,0.08)',
+                    }}
                 >
                     {/* Header */}
-                    <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
+                    <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                         <div>
-                            <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Explore</span>
-                            <p className="text-sm font-bold text-gray-900 mt-0.5">Where to next?</p>
+                            <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: '#C9A96E' }}>Explore</span>
+                            <p className="text-sm font-semibold text-white mt-0.5">Where to next?</p>
                         </div>
-                        <button
-                            onClick={() => setTripsOpen(false)}
-                            className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center active:scale-90 transition-transform"
-                        >
-                            <X size={14} className="text-gray-500" />
+                        <button onClick={() => setTripsOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                            <X size={14} className="text-white/60" />
                         </button>
                     </div>
 
                     {/* 4-option grid */}
-                    <div className="grid grid-cols-2 gap-3 p-4">
-                        {/* Domestic */}
-                        <Link
-                            href="/destinations/domestic"
-                            onClick={() => setTripsOpen(false)}
-                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl bg-gradient-to-b from-gray-50 to-gray-100 border border-gray-200/80 active:scale-95 transition-all duration-150"
-                        >
-                            <div className="w-12 h-12 rounded-2xl bg-gray-900 flex items-center justify-center shadow-lg shadow-gray-900/30">
-                                <Mountain size={22} className="text-white" />
+                    <div className="grid grid-cols-2 gap-2.5 p-4">
+                        <Link href="/destinations/domestic" onClick={() => setTripsOpen(false)}
+                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl active:scale-95 transition-all duration-150"
+                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,169,110,0.15)' }}>
+                            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.15)', border: '1px solid rgba(201,169,110,0.3)' }}>
+                                <Mountain size={20} style={{ color: '#C9A96E' }} />
                             </div>
                             <div className="text-center">
-                                <div className="font-bold text-sm text-gray-900">Domestic</div>
-                                <div className="text-[10px] text-gray-500 font-semibold mt-0.5">150+ India trips</div>
+                                <div className="font-semibold text-sm text-white">Domestic</div>
+                                <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>150+ India trips</div>
                             </div>
-                            {isDomestic && <span className="text-[9px] font-bold text-gray-700 bg-gray-200 px-2 py-0.5 rounded-full border border-gray-300">● Active</span>}
                         </Link>
 
-                        {/* International */}
-                        <Link
-                            href="/destinations/international"
-                            onClick={() => setTripsOpen(false)}
-                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl bg-gradient-to-b from-blue-50 to-indigo-50 border border-blue-100/80 active:scale-95 transition-all duration-150"
-                        >
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-300/40">
-                                <Globe size={22} className="text-white" />
+                        <Link href="/destinations/international" onClick={() => setTripsOpen(false)}
+                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl active:scale-95 transition-all duration-150"
+                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,169,110,0.15)' }}>
+                            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.15)', border: '1px solid rgba(201,169,110,0.3)' }}>
+                                <Globe size={20} style={{ color: '#C9A96E' }} />
                             </div>
                             <div className="text-center">
-                                <div className="font-bold text-sm text-gray-900">International</div>
-                                <div className="text-[10px] text-blue-600 font-semibold mt-0.5">50+ countries</div>
+                                <div className="font-semibold text-sm text-white">International</div>
+                                <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>50+ countries</div>
                             </div>
-                            {isInternational && <span className="text-[9px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full border border-blue-200">● Active</span>}
                         </Link>
 
-                        {/* Real Trips (Reel → Trip) */}
-                        <Link
-                            href="/reel-to-trip"
-                            onClick={() => setTripsOpen(false)}
-                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl bg-gradient-to-b from-pink-50 to-purple-50 border border-pink-100/80 active:scale-95 transition-all duration-150"
-                        >
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-pink-300/40">
-                                <Instagram size={22} className="text-white" />
+                        <Link href="/reel-to-trip" onClick={() => setTripsOpen(false)}
+                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl active:scale-95 transition-all duration-150"
+                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,169,110,0.15)' }}>
+                            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.15)', border: '1px solid rgba(201,169,110,0.3)' }}>
+                                <Instagram size={20} style={{ color: '#C9A96E' }} />
                             </div>
                             <div className="text-center">
-                                <div className="font-bold text-sm text-gray-900">Real Trips</div>
-                                <div className="text-[10px] text-purple-600 font-semibold mt-0.5">Reel → Your trip ✨</div>
+                                <div className="font-semibold text-sm text-white">Real Trips</div>
+                                <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Reel → Your trip</div>
                             </div>
-                            {isReelTrip && <span className="text-[9px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full border border-purple-200">● Active</span>}
                         </Link>
 
-                        {/* Holiday Planner */}
-                        <Link
-                            href="/trip-planner"
-                            onClick={() => setTripsOpen(false)}
-                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl bg-gradient-to-b from-emerald-50 to-teal-50 border border-emerald-100/80 active:scale-95 transition-all duration-150"
-                        >
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-300/40">
-                                <Sparkles size={22} className="text-white" />
+                        <Link href="/trip-planner" onClick={() => setTripsOpen(false)}
+                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl active:scale-95 transition-all duration-150"
+                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,169,110,0.15)' }}>
+                            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.15)', border: '1px solid rgba(201,169,110,0.3)' }}>
+                                <Sparkles size={20} style={{ color: '#C9A96E' }} />
                             </div>
                             <div className="text-center">
-                                <div className="font-bold text-sm text-gray-900">Holiday Planner</div>
-                                <div className="text-[10px] text-emerald-600 font-semibold mt-0.5">AI plans your trip</div>
+                                <div className="font-semibold text-sm text-white">AI Planner</div>
+                                <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Plan with AI</div>
                             </div>
-                            {isPlannerActive && <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200">● Active</span>}
                         </Link>
                     </div>
 
@@ -134,12 +120,11 @@ export default function MobileStickyCTA() {
                             const dest = tag.split(' ')[0].toLowerCase();
                             const isIntl = ['bali', 'dubai', 'thailand'].includes(dest);
                             return (
-                                <Link
-                                    key={tag}
+                                <Link key={tag}
                                     href={isIntl ? `/destinations/international?q=${dest}` : `/destinations/domestic?q=${dest}`}
                                     onClick={() => setTripsOpen(false)}
-                                    className="text-[11px] font-semibold px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 active:scale-95 transition-transform hover:bg-gray-200"
-                                >
+                                    className="text-[11px] font-medium px-3 py-1.5 rounded-full active:scale-95 transition-transform"
+                                    style={{ background: 'rgba(201,169,110,0.1)', border: '1px solid rgba(201,169,110,0.2)', color: 'rgba(226,198,143,0.9)' }}>
                                     {tag}
                                 </Link>
                             );
@@ -153,80 +138,75 @@ export default function MobileStickyCTA() {
                 className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
                 style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
             >
-                {/* Glass background */}
-                <div className="mx-0 bg-white/90 backdrop-blur-2xl border-t border-gray-200/60" style={{ boxShadow: '0 -1px 0 rgba(0,0,0,0.06), 0 -8px 32px rgba(0,0,0,0.08)' }}>
+                <div
+                    className="mx-0 border-t"
+                    style={{
+                        background: 'rgba(10,10,10,0.97)',
+                        backdropFilter: 'blur(24px)',
+                        borderColor: 'rgba(201,169,110,0.15)',
+                        boxShadow: '0 -1px 0 rgba(201,169,110,0.08), 0 -12px 40px rgba(0,0,0,0.5)',
+                    }}
+                >
                     <div className="grid grid-cols-5 h-16 px-1">
 
                         {/* Home */}
-                        <Link
-                            href="/"
-                            className="relative flex flex-col items-center justify-center gap-1 transition-all duration-200 active:scale-90 select-none"
-                        >
-                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 ${isHome ? 'bg-gray-100' : ''}`}>
-                                <Home size={20} strokeWidth={isHome ? 2.5 : 1.8} className={isHome ? 'text-gray-900' : 'text-gray-400'} />
-                                <span className={`text-[10px] font-${isHome ? 'bold' : 'medium'} ${isHome ? 'text-gray-800' : 'text-gray-400'}`}>Home</span>
+                        <Link href="/" className="relative flex flex-col items-center justify-center gap-1 transition-all duration-200 active:scale-90 select-none">
+                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${isHome ? 'bg-white/8' : ''}`}>
+                                <Home size={20} strokeWidth={isHome ? 2.5 : 1.8} style={{ color: isHome ? '#C9A96E' : 'rgba(255,255,255,0.35)' }} />
+                                <span className="text-[10px] font-medium" style={{ color: isHome ? '#C9A96E' : 'rgba(255,255,255,0.35)' }}>Home</span>
                             </div>
-                            {isHome && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-gray-900" />}
+                            {isHome && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full" style={{ background: '#C9A96E' }} />}
                         </Link>
 
                         {/* Trips */}
-                        <button
-                            onClick={() => setTripsOpen(!tripsOpen)}
-                            className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none"
-                        >
-                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 ${isTrips || tripsOpen ? 'bg-gray-100' : ''}`}>
-                                <Compass size={20} strokeWidth={isTrips || tripsOpen ? 2.5 : 1.8} className={isTrips || tripsOpen ? 'text-gray-900' : 'text-gray-400'} />
-                                <span className={`text-[10px] font-${isTrips || tripsOpen ? 'bold' : 'medium'} ${isTrips || tripsOpen ? 'text-gray-800' : 'text-gray-400'}`}>Trips</span>
+                        <button onClick={() => setTripsOpen(!tripsOpen)} className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none">
+                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${isTrips || tripsOpen ? 'bg-white/8' : ''}`}>
+                                <Compass size={20} strokeWidth={isTrips || tripsOpen ? 2.5 : 1.8} style={{ color: isTrips || tripsOpen ? '#C9A96E' : 'rgba(255,255,255,0.35)' }} />
+                                <span className="text-[10px] font-medium" style={{ color: isTrips || tripsOpen ? '#C9A96E' : 'rgba(255,255,255,0.35)' }}>Trips</span>
                             </div>
-                            {(isTrips || tripsOpen) && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-gray-900" />}
-                            <span className={`absolute bottom-2 text-[7px] transition-transform duration-200 ${tripsOpen ? 'rotate-180 text-gray-900' : 'text-gray-300'}`}>▲</span>
+                            {(isTrips || tripsOpen) && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full" style={{ background: '#C9A96E' }} />}
                         </button>
 
-                        {/* AI Planner — centre raised button */}
-                        <Link
-                            href="/trip-planner"
-                            className="relative flex flex-col items-center justify-center select-none active:scale-90 transition-all duration-200"
-                        >
-                            <div className={`flex flex-col items-center justify-center w-[54px] h-[54px] -mt-7 rounded-[18px] transition-all duration-200 ${
-                                isPlannerActive
-                                    ? 'bg-gray-700 shadow-xl shadow-gray-900/40'
-                                    : 'bg-gray-900 shadow-xl shadow-gray-900/40'
-                            }`}>
-                                <Sparkles size={19} strokeWidth={2} className="text-white" />
-                                <span className="text-white text-[9px] font-black mt-0.5 leading-none tracking-tight">AI</span>
+                        {/* AI Planner — centre raised */}
+                        <Link href="/trip-planner" className="relative flex flex-col items-center justify-center select-none active:scale-90 transition-all duration-200">
+                            <div
+                                className="flex flex-col items-center justify-center w-[54px] h-[54px] -mt-7 rounded-[18px] transition-all duration-200"
+                                style={{
+                                    background: isPlannerActive
+                                        ? 'linear-gradient(135deg, #A07840, #C9A96E)'
+                                        : 'linear-gradient(135deg, #C9A96E, #E2C68F)',
+                                    boxShadow: '0 4px 20px rgba(201,169,110,0.45)',
+                                }}
+                            >
+                                <Sparkles size={19} strokeWidth={2} className="text-black" />
+                                <span className="text-black text-[9px] font-black mt-0.5 leading-none tracking-tight">AI</span>
                             </div>
-                            <span className={`text-[10px] font-bold mt-1 ${isPlannerActive ? 'text-gray-700' : 'text-gray-400'}`}>Plan Trip</span>
+                            <span className="text-[10px] font-semibold mt-1" style={{ color: isPlannerActive ? '#C9A96E' : 'rgba(255,255,255,0.4)' }}>Plan Trip</span>
                         </Link>
 
                         {/* Wallet */}
-                        <Link
-                            href="/cashback"
-                            className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none"
-                        >
-                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 relative ${isWallet ? 'bg-green-50' : balance > 0 ? 'bg-green-50/60' : ''}`}>
-                                <Wallet size={20} strokeWidth={isWallet ? 2.5 : 1.8} className={isWallet ? 'text-green-600' : balance > 0 ? 'text-green-500' : 'text-gray-400'} />
+                        <Link href="/cashback" className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none">
+                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 relative ${isWallet ? 'bg-white/8' : ''}`}>
+                                <Wallet size={20} strokeWidth={isWallet ? 2.5 : 1.8} style={{ color: isWallet ? '#C9A96E' : balance > 0 ? '#6ee7b7' : 'rgba(255,255,255,0.35)' }} />
                                 {balance > 0 && (
-                                    <span className="absolute -top-0.5 right-1.5 min-w-[18px] h-[14px] px-1 bg-green-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center leading-none">
+                                    <span className="absolute -top-0.5 right-1 min-w-[18px] h-[14px] px-1 text-black text-[8px] font-bold rounded-full flex items-center justify-center leading-none" style={{ background: '#C9A96E' }}>
                                         ₹{balance >= 1000 ? `${(balance / 1000).toFixed(1)}k` : balance}
                                     </span>
                                 )}
-                                <span className={`text-[10px] font-${isWallet ? 'bold' : 'medium'} ${isWallet ? 'text-green-600' : balance > 0 ? 'text-green-500' : 'text-gray-400'}`}>
+                                <span className="text-[10px] font-medium" style={{ color: isWallet ? '#C9A96E' : balance > 0 ? '#6ee7b7' : 'rgba(255,255,255,0.35)' }}>
                                     {balance > 0 ? 'Cash' : 'Wallet'}
                                 </span>
                             </div>
-                            {isWallet && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-green-500" />}
+                            {isWallet && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full" style={{ background: '#C9A96E' }} />}
                         </Link>
 
                         {/* My Trips */}
-                        <Link
-                            href="/my-booking"
-                            className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none"
-                        >
-                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 ${isMyTrips ? 'bg-gray-100' : ''}`}>
-                                <Ticket size={20} strokeWidth={isMyTrips ? 2.5 : 1.8} className={isMyTrips ? 'text-gray-900' : 'text-gray-400'} />
-                                <span className={`text-[10px] font-${isMyTrips ? 'bold' : 'medium'} ${isMyTrips ? 'text-gray-800' : 'text-gray-400'}`}>My Trips</span>
+                        <Link href="/my-booking" className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none">
+                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${isMyTrips ? 'bg-white/8' : ''}`}>
+                                <Ticket size={20} strokeWidth={isMyTrips ? 2.5 : 1.8} style={{ color: isMyTrips ? '#C9A96E' : 'rgba(255,255,255,0.35)' }} />
+                                <span className="text-[10px] font-medium" style={{ color: isMyTrips ? '#C9A96E' : 'rgba(255,255,255,0.35)' }}>My Trips</span>
                             </div>
-                            {isMyTrips && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-gray-900" />}
+                            {isMyTrips && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full" style={{ background: '#C9A96E' }} />}
                         </Link>
 
                     </div>
