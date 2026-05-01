@@ -710,6 +710,24 @@ export default function Home() {
         </div>
       )}
 
+      {/* Brand Story — What does "Yloo" mean? */}
+      <section className="py-12 md:py-16 bg-primary text-cream">
+        <div className="section-container">
+          <div className="max-w-3xl mx-auto text-center">
+            <p className="text-[10px] uppercase tracking-[0.35em] text-accent mb-5">The Name Behind the Journey</p>
+            <h2 className="font-display text-3xl md:text-4xl mb-6 leading-tight">
+              Why <span className="italic">Yloo</span>?
+            </h2>
+            <p className="text-cream/70 text-base md:text-lg leading-relaxed mb-6">
+              <strong className="text-cream">"Yloo"</strong> stands for <strong className="text-accent">Your Look at the World</strong> — because no two travelers see the world the same way. We don't sell packages. We build journeys around <em>your</em> story, your pace, and your curiosity.
+            </p>
+            <p className="text-cream/50 text-sm leading-relaxed">
+              Founded in New Delhi in 2022 · MSME Registered · GST: 07BATPV1942C1ZF · Trusted by 25,000+ travelers from 40+ countries
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Philosophy Section - CMS Driven */}
       <section className="py-10 md:py-16 bg-cream">
         <div className="section-container">
