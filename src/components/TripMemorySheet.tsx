@@ -78,17 +78,14 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
           });
 
           if (urlRes.ok) {
-            const { url, fields, fileUrl: gcsUrl } = await urlRes.json() as {
-              url: string; fields: Record<string, string>; fileUrl: string;
+            const { signedUrl, fileUrl: gcsUrl } = await urlRes.json() as {
+              signedUrl: string; fileUrl: string;
             };
 
-            setUploadStage('Uploading to cloud...');
+            setUploadStage('Uploading to Google Cloud...');
             setUploadProgress(15);
 
-            const gcsForm = new FormData();
-            Object.entries(fields).forEach(([k, v]) => gcsForm.append(k, v));
-            gcsForm.append('file', file);
-
+            // Direct PUT to GCS signed URL — bypasses Vercel entirely, supports large files
             await new Promise<void>((resolve, reject) => {
               const xhr = new XMLHttpRequest();
               xhr.upload.onprogress = (ev) => {
@@ -99,18 +96,19 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
               };
               xhr.onload = () => {
                 if (xhr.status >= 200 && xhr.status < 300) resolve();
-                else reject(new Error(`Upload failed: ${xhr.status}`));
+                else reject(new Error(`GCS upload failed (${xhr.status})`));
               };
-              xhr.onerror = () => reject(new Error('Network error'));
-              xhr.open('POST', url);
-              xhr.send(gcsForm);
+              xhr.onerror = () => reject(new Error('Network error during upload'));
+              xhr.open('PUT', signedUrl);
+              xhr.setRequestHeader('Content-Type', file.type);
+              xhr.send(file);
             });
 
             fileUrl = gcsUrl;
           }
-          // If urlRes not ok (GCS not configured) — silently continue without file
+          // GCS not configured → continue without file, post still saves
         } catch {
-          // File upload failed — continue without fileUrl so the post still gets saved
+          // File upload failed → continue, post saves without image
         }
 
         setUploadProgress(92);

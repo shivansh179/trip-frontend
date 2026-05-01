@@ -27,29 +27,30 @@ export async function POST(req: NextRequest) {
 
   const storage = getStorage();
   if (!storage) {
+    // GCS not configured — caller will skip file upload and save metadata only
     return NextResponse.json({ error: 'GCS not configured' }, { status: 503 });
   }
 
-  // Separate folders: trip-memories/photos/ and trip-memories/videos/
   const folder = mediaType === 'video' ? 'trip-memories/videos' : 'trip-memories/photos';
   const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
   const objectName = `${folder}/${Date.now()}-${safeName}`;
 
   try {
+    // Signed PUT URL — browser uploads directly with fetch PUT, no FormData needed
     const [signedUrl] = await storage
       .bucket(BUCKET)
       .file(objectName)
-      .generateSignedPostPolicyV4({
-        expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-        conditions: [
-          ['content-length-range', 0, 150 * 1024 * 1024], // up to 150 MB
-          ['starts-with', '$Content-Type', mediaType === 'video' ? 'video/' : 'image/'],
-        ],
-        fields: { 'Content-Type': contentType },
+      .getSignedUrl({
+        version: 'v4',
+        action: 'write',
+        expires: Date.now() + 15 * 60 * 1000, // 15 min window
+        contentType,
       });
 
+    // Public read URL (bucket must have allUsers Storage Object Viewer IAM)
     const fileUrl = `https://storage.googleapis.com/${BUCKET}/${objectName}`;
-    return NextResponse.json({ url: signedUrl.url, fields: signedUrl.fields, fileUrl });
+
+    return NextResponse.json({ signedUrl, fileUrl });
   } catch (err) {
     console.error('[upload-url]', err);
     return NextResponse.json({ error: 'Failed to generate upload URL' }, { status: 500 });
