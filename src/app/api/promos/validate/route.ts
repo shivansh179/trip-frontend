@@ -32,6 +32,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ valid: false, error: 'Invalid promo code. Please check and try again.' });
   }
 
+  // Admin-only codes require a valid admin session token
+  if ((promo as any).adminOnly) {
+    const adminToken = req.headers.get('x-admin-token') || req.headers.get('x-admin-secret');
+    const adminSecret = process.env.ADMIN_SECRET;
+    if (!adminSecret || adminToken !== adminSecret) {
+      return NextResponse.json({ valid: false, error: 'Invalid promo code. Please check and try again.' });
+    }
+  }
+
   if (new Date(promo.validTill) < new Date()) {
     return NextResponse.json({ valid: false, error: 'This promo code has expired.' });
   }
@@ -45,9 +54,9 @@ export async function POST(req: NextRequest) {
 
   const discount =
     promo.type === 'fixed_price'
-      ? Math.max(0, orderTotal - promo.value)   // discount = total - ₹10, so final = ₹10
+      ? Math.max(0, orderTotal - promo.value)
       : promo.type === 'percent'
-      ? Math.min(Math.round((orderTotal * promo.value) / 100), promo.maxDiscount ?? Infinity)
+      ? Math.min(Math.round((orderTotal * promo.value) / 100), (promo as any).maxDiscount ?? Infinity)
       : promo.value;
 
   console.log(`[promos/validate] code=${promo.code} orderTotal=${orderTotal} discount=${discount}`);

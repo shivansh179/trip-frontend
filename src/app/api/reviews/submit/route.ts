@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { appendReview } from '@/lib/reviews-sheet';
+import { isRateLimited, getClientIp } from '@/lib/ratelimit';
 
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req);
+  if (isRateLimited(`review:${ip}`, 3, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests. Please wait a moment.' }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const { name, email, phone, country, trip, rating, text } = body;
@@ -10,8 +16,12 @@ export async function POST(req: NextRequest) {
     if (!name || !email || !country || !trip || !rating || !text) {
       return NextResponse.json({ error: 'All fields are required.' }, { status: 400 });
     }
-    if (text.length > 1000) {
+    if (typeof text !== 'string' || text.length > 1000) {
       return NextResponse.json({ error: 'Review too long (max 1000 characters).' }, { status: 400 });
+    }
+    const ratingNum = Number(rating);
+    if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+      return NextResponse.json({ error: 'Invalid rating.' }, { status: 400 });
     }
 
     const id = `rev_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;

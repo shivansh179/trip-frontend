@@ -3,10 +3,9 @@ import { getReviews, updateReviewStatus, deleteReview } from '@/lib/reviews-shee
 
 function isAuthorised(req: NextRequest): boolean {
   const adminSecret = process.env.ADMIN_SECRET;
-  if (!adminSecret) return true;
-  if (req.headers.get('x-admin-secret') === adminSecret) return true;
-  if (req.headers.get('x-admin-token')) return true;
-  return false;
+  if (!adminSecret) return false; // no secret = deny all, never open by default
+  const token = req.headers.get('x-admin-secret') || req.headers.get('x-admin-token');
+  return token === adminSecret;
 }
 
 // GET — list reviews (admin)

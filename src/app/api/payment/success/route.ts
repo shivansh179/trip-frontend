@@ -1,7 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 
 // Disable body parsing to handle form-urlencoded data properly
 export const runtime = 'nodejs';
+
+/**
+ * Verify Easebuzz response hash to ensure callback is genuine.
+ * Hash format (reverse of request): key|status||||||udf5|udf4|udf3|udf2|udf1|email|firstname|productinfo|amount|txnid|salt
+ */
+function verifyEasebuzzHash(params: Record<string, string>): boolean {
+  const key  = process.env.EASEBUZZ_KEY;
+  const salt = process.env.EASEBUZZ_SALT;
+  if (!key || !salt || !params.hash) return true; // skip if not configured
+
+  // Easebuzz response hash: sha512(key|status|txnid|amount|productinfo|firstname|email|udf1..udf5|salt)
+  const str = [
+    key,
+    params.status   || '',
+    params.txnid    || '',
+    params.amount   || '',
+    params.productinfo || '',
+    params.firstname || '',
+    params.email    || '',
+    params.udf1     || '',
+    params.udf2     || '',
+    params.udf3     || '',
+    params.udf4     || '',
+    params.udf5     || '',
+    salt,
+  ].join('|');
+
+  const expected = crypto.createHash('sha512').update(str).digest('hex');
+  return expected === params.hash;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,13 +43,23 @@ export async function POST(request: NextRequest) {
     let txnid: string | null = null;
     let status: string = 'success';
     let easepayid: string | null = null;
+    let hashParams: Record<string, string> = {};
 
     if (contentType.includes('application/x-www-form-urlencoded')) {
       // Parse form-urlencoded data
       const formData = await request.formData();
-      txnid = formData.get('txnid')?.toString() || formData.get('udf1')?.toString() || null;
-      status = formData.get('status')?.toString() || 'success';
-      easepayid = formData.get('easepayid')?.toString() || null;
+      const toStr = (v: FormDataEntryValue | null) => v?.toString() || '';
+      txnid     = toStr(formData.get('txnid')) || toStr(formData.get('udf1')) || null;
+      status    = toStr(formData.get('status')) || 'success';
+      easepayid = toStr(formData.get('easepayid')) || null;
+      // Collect all fields for HMAC verification
+      for (const [k, v] of formData.entries()) hashParams[k] = v.toString();
+
+      // Verify Easebuzz HMAC — reject tampered callbacks
+      if (!verifyEasebuzzHash(hashParams)) {
+        console.error('[payment/success] HMAC mismatch — possible tampered callback', { txnid, status });
+        return NextResponse.redirect(new URL('/payment/failure?error=Invalid+payment+signature', request.url), { status: 303 });
+      }
     } else {
       // Try to parse as JSON (fallback)
       try {

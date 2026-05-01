@@ -1,16 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateTicket, logLeadToSheet } from '@/lib/leads';
+import { isRateLimited, getClientIp } from '@/lib/ratelimit';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@ylootrips.com';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req);
+  if (isRateLimited(`contact:${ip}`, 5, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests. Please wait a moment.' }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const { name, email, phone, destination, travelers, preferredDates, message } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: 'Name and email are required' }, { status: 400 });
+    }
+    if (typeof name !== 'string' || typeof email !== 'string' || name.length > 100 || email.length > 200) {
+      return NextResponse.json({ error: 'Invalid input.' }, { status: 400 });
     }
 
     const ticket = generateTicket();

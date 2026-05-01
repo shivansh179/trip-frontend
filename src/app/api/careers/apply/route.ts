@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { isRateLimited, getClientIp } from '@/lib/ratelimit';
 
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req);
+  if (isRateLimited(`careers:${ip}`, 3, 300_000)) { // 3 per 5 min
+    return NextResponse.json({ error: 'Too many applications. Please wait before trying again.' }, { status: 429 });
+  }
   try {
     const { name, email, phone, role, experience, message } = await req.json();
 
