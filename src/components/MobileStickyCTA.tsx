@@ -144,8 +144,8 @@ export default function MobileStickyCTA() {
 
             {/* Floating Share & Earn button — only on home */}
             {isHome && (
-              <button
-                onClick={() => setMemoryOpen(true)}
+              <Link
+                href="/share-and-earn"
                 className="fixed right-4 z-[45] flex items-center gap-1.5 px-3.5 py-2.5 rounded-full font-bold text-black text-[11px] shadow-lg active:scale-95 transition-all"
                 style={{
                   bottom: 88,
@@ -155,7 +155,7 @@ export default function MobileStickyCTA() {
               >
                 <Camera size={14} />
                 Share & Earn
-              </button>
+              </Link>
             )}
 
             {/* Bottom Nav */}

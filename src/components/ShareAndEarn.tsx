@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Camera, Video, Wallet, ArrowRight, Upload } from 'lucide-react';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
 const TripMemorySheet = dynamic(() => import('./TripMemorySheet'), { ssr: false });
@@ -77,15 +78,15 @@ export default function ShareAndEarn() {
               <p className="text-white/30 text-sm mt-1">Share your trip. Get paid. Repeat.</p>
             </div>
 
-            <button
-              onClick={() => setOpen(true)}
+            <Link
+              href="/share-and-earn"
               className="shrink-0 flex items-center gap-2.5 px-6 py-4 rounded-2xl font-black text-black text-sm transition-all active:scale-95 hover:scale-105"
               style={{ background: `linear-gradient(135deg, ${GOLD}, #E2C68F)`, boxShadow: '0 6px 24px rgba(201,169,110,0.35)' }}
             >
               <Upload size={18} />
-              Upload & Earn
+              View Feed & Earn
               <ArrowRight size={16} />
-            </button>
+            </Link>
           </div>
 
           {/* Fine print */}
