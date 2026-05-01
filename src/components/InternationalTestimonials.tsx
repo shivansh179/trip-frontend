@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Star, BadgeCheck, Quote, X, Loader2, CheckCircle, PenLine } from 'lucide-react';
 import Image from 'next/image';
 
@@ -441,7 +441,12 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
 export default function InternationalTestimonials() {
   const [showModal, setShowModal] = useState(false);
   const [dbReviews, setDbReviews] = useState<DBReview[]>([]);
-  const [showAll, setShowAll] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (dir: 'left' | 'right') => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollBy({ left: dir === 'left' ? -380 : 380, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     fetch('/api/reviews/approved')
@@ -502,12 +507,35 @@ export default function InternationalTestimonials() {
           </div>
         </div>
 
-        {/* ── Reviews Grid ────────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
-          {(showAll ? allReviews : allReviews.slice(0, 3)).map((r, i) => (
+        {/* ── Reviews Carousel ─────────────────────────────────────────── */}
+        <div className="relative mb-12">
+          {/* Arrow buttons */}
+          <button
+            onClick={() => scroll('left')}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-primary border border-white/20 hover:border-accent/60 flex items-center justify-center text-cream/70 hover:text-cream transition-all shadow-lg hidden md:flex"
+            aria-label="Scroll left"
+          >
+            ‹
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-primary border border-white/20 hover:border-accent/60 flex items-center justify-center text-cream/70 hover:text-cream transition-all shadow-lg hidden md:flex"
+            aria-label="Scroll right"
+          >
+            ›
+          </button>
+
+          {/* Scroll container */}
+          <div
+            ref={scrollRef}
+            className="flex gap-5 overflow-x-auto scroll-smooth pb-4"
+            style={{ scrollSnapType: 'x mandatory', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+          {allReviews.map((r, i) => (
             <article
               key={i}
-              className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.08] hover:-translate-y-1 transition-all duration-300 flex flex-col"
+              className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.08] transition-all duration-300 flex flex-col shrink-0"
+              style={{ width: '340px', scrollSnapAlign: 'start' }}
             >
               {/* Trip destination photo */}
               <div className="relative h-44 overflow-hidden shrink-0">
@@ -556,19 +584,8 @@ export default function InternationalTestimonials() {
               </div>
             </article>
           ))}
-        </div>
-
-        {/* ── Load More ───────────────────────────────────────────────── */}
-        {!showAll && allReviews.length > 3 && (
-          <div className="flex justify-center mb-10">
-            <button
-              onClick={() => setShowAll(true)}
-              className="flex items-center gap-2 border border-white/20 hover:border-accent/60 text-cream/70 hover:text-cream px-8 py-3 rounded-full text-sm tracking-wide transition-all duration-200 hover:bg-white/5"
-            >
-              View all {allReviews.length} reviews ↓
-            </button>
           </div>
-        )}
+        </div>
 
         {/* ── Write a Review CTA ──────────────────────────────────────── */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-center gap-6">
