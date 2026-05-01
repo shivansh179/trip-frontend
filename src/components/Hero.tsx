@@ -319,12 +319,20 @@ export default function Hero({ content, stats }: HeroProps) {
 
     const currentAd = ads[adIndex];
     const imageUrl = content?.imageUrl || 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1920&q=80';
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    useEffect(() => {
+        const v = videoRef.current;
+        if (!v) return;
+        v.muted = true;
+        v.play().catch(() => {});
+    }, []);
 
     return (
         <section className="relative min-h-[100svh] flex flex-col overflow-hidden">
             {/* Background */}
             <div className="absolute inset-0">
-                <video autoPlay muted loop playsInline poster={imageUrl} className="absolute inset-0 w-full h-full object-cover">
+                <video ref={videoRef} autoPlay muted loop playsInline preload="auto" poster={imageUrl} className="absolute inset-0 w-full h-full object-cover">
                     <source src="https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_30fps.mp4" type="video/mp4" />
                 </video>
                 <Image src={imageUrl} alt="India travel" fill priority className="object-cover -z-10" />
