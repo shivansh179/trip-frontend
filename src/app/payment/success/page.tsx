@@ -144,10 +144,38 @@ function PaymentSuccessContent() {
                         const pendingRaw = sessionStorage.getItem(`ylootrips-pending-${ref}`);
                         if (pendingRaw) {
                             try {
-                                const { walletDeduction, totalPrice, tripName, promoCashback } = JSON.parse(pendingRaw);
+                                const { walletDeduction, totalPrice, tripName, promoCashback, customerId } = JSON.parse(pendingRaw);
+
+                                const id = customerId
+                                    || bookingData.customerPhone
+                                    || bookingData.phone
+                                    || bookingData.customerEmail
+                                    || bookingData.email;
+
+                                if (id) {
+                                    // Server-side: credit cashback to persistent wallet
+                                    fetch('/api/wallet/credit', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ id, bookingRef: ref, bookingTotal: totalPrice, tripName }),
+                                    }).catch(() => {/* silent — localStorage fallback below */});
+
+                                    // Promo cashback credit
+                                    if (promoCashback > 0) {
+                                        fetch('/api/wallet/credit', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ id, bookingRef: `promo-${ref}`, bookingTotal: promoCashback * 10, tripName: 'Promo code reward' }),
+                                        }).catch(() => {});
+                                    }
+
+                                    // Store identifier for future wallet lookups
+                                    localStorage.setItem('ylootrips-wallet-id', id);
+                                }
+
+                                // localStorage fallback (keeps existing UX working)
                                 if (walletDeduction > 0) deductBalance(walletDeduction, ref);
                                 addCashback(totalPrice, ref, tripName);
-                                // Credit promo code discount to wallet
                                 if (promoCashback > 0) addCashback(promoCashback, `promo-${ref}`, `Promo code reward`);
                                 sessionStorage.removeItem(`ylootrips-pending-${ref}`);
                             } catch { /* malformed data, skip */ }

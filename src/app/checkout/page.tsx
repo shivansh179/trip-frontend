@@ -203,6 +203,7 @@ function CheckoutContent() {
                     totalPrice,
                     tripName: trip.title,
                     promoCashback,
+                    customerId: formData.customerPhone || formData.customerEmail,
                 }));
                 window.location.href = paymentData.paymentUrl;
             } else {

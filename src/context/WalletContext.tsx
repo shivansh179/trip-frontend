@@ -40,34 +40,57 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    try {
-      const savedTxns = JSON.parse(localStorage.getItem(TRANSACTIONS_KEY) || '[]') as WalletTransaction[];
-      const txns = Array.isArray(savedTxns) ? savedTxns : [];
-      let savedBalance = parseFloat(localStorage.getItem(BALANCE_KEY) || '0') || 0;
+    const init = async () => {
+      try {
+        const savedTxns = JSON.parse(localStorage.getItem(TRANSACTIONS_KEY) || '[]') as WalletTransaction[];
+        const txns = Array.isArray(savedTxns) ? savedTxns : [];
+        let savedBalance = parseFloat(localStorage.getItem(BALANCE_KEY) || '0') || 0;
 
-      // Grant welcome bonus to new users (only once)
-      if (!localStorage.getItem(WELCOME_BONUS_KEY)) {
-        const welcomeTxn: WalletTransaction = {
-          id: `welcome-${Date.now()}`,
-          date: new Date().toISOString(),
-          type: 'cashback',
-          amount: WELCOME_BONUS_AMOUNT,
-          bookingRef: 'WELCOME',
-          description: `🎁 Welcome bonus — ₹${WELCOME_BONUS_AMOUNT} WanderLoot credits`,
-        };
-        savedBalance += WELCOME_BONUS_AMOUNT;
-        txns.unshift(welcomeTxn);
-        localStorage.setItem(WELCOME_BONUS_KEY, '1');
-        localStorage.setItem(BALANCE_KEY, String(savedBalance));
-        localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(txns));
+        // Grant welcome bonus to new users (only once)
+        if (!localStorage.getItem(WELCOME_BONUS_KEY)) {
+          const welcomeTxn: WalletTransaction = {
+            id: `welcome-${Date.now()}`,
+            date: new Date().toISOString(),
+            type: 'cashback',
+            amount: WELCOME_BONUS_AMOUNT,
+            bookingRef: 'WELCOME',
+            description: `🎁 Welcome bonus — ₹${WELCOME_BONUS_AMOUNT} WanderLoot credits`,
+          };
+          savedBalance += WELCOME_BONUS_AMOUNT;
+          txns.unshift(welcomeTxn);
+          localStorage.setItem(WELCOME_BONUS_KEY, '1');
+          localStorage.setItem(BALANCE_KEY, String(savedBalance));
+          localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(txns));
+        }
+
+        setBalance(savedBalance);
+        setTransactions(txns);
+
+        // Sync from server if customer has identified themselves (post-booking)
+        const walletId = localStorage.getItem('ylootrips-wallet-id');
+        if (walletId) {
+          try {
+            const res = await fetch(`/api/wallet/balance?id=${encodeURIComponent(walletId)}`);
+            if (res.ok) {
+              const data = await res.json();
+              const serverBalance: number = data.balance ?? 0;
+              const serverTxns: WalletTransaction[] = Array.isArray(data.transactions) ? data.transactions : [];
+              // Use server balance if higher (server is source of truth after first booking)
+              if (serverBalance > 0) {
+                const merged = serverBalance + WELCOME_BONUS_AMOUNT;
+                setBalance(merged);
+                setTransactions([...serverTxns, ...txns.filter(t => t.bookingRef === 'WELCOME')]);
+                localStorage.setItem(BALANCE_KEY, String(merged));
+              }
+            }
+          } catch { /* server unavailable — use localStorage */ }
+        }
+      } catch {
+        /* ignore */
       }
-
-      setBalance(savedBalance);
-      setTransactions(txns);
-    } catch {
-      /* ignore */
-    }
-    setHydrated(true);
+      setHydrated(true);
+    };
+    init();
   }, []);
 
   const persist = useCallback((newBalance: number, newTxns: WalletTransaction[]) => {
