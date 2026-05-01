@@ -95,7 +95,7 @@ export default function WanderLootPage() {
               <p className="font-bold text-gray-900 text-sm">You have {fp(balance)} ready to use</p>
               <p className="text-gray-500 text-xs mt-0.5">Apply at checkout on your next trip — no minimum booking value.</p>
             </div>
-            <Link href="/trips"
+            <Link href="/destinations/domestic"
               className="shrink-0 flex items-center gap-2 bg-gray-900 text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full hover:bg-gray-800 transition-colors whitespace-nowrap">
               Browse Trips <ArrowRight size={13} />
             </Link>
@@ -106,7 +106,7 @@ export default function WanderLootPage() {
               <p className="font-bold text-gray-900 text-sm">Book a trip to start earning</p>
               <p className="text-gray-500 text-xs mt-0.5">10% cashback is credited instantly after your first booking.</p>
             </div>
-            <Link href="/trips"
+            <Link href="/destinations/domestic"
               className="shrink-0 flex items-center gap-2 bg-gray-900 text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full hover:bg-gray-800 transition-colors whitespace-nowrap">
               Browse Trips <ArrowRight size={13} />
             </Link>

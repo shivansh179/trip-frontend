@@ -184,7 +184,7 @@ export default function HiddenSpotsPage() {
               Plan My Hidden Gem Trip
             </a>
             <Link
-              href="/trips"
+              href="/destinations/domestic"
               className="inline-flex items-center justify-center gap-2 border border-cream/20 text-cream hover:border-cream/40 hover:bg-white/5 px-8 py-4 text-sm uppercase tracking-widest transition-all"
             >
               Browse All Trips

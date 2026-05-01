@@ -449,7 +449,7 @@ export default function TrendingPackages() {
               Prices drop with more guests
             </div>
             <Link
-              href="/trips"
+              href="/destinations/domestic"
               className="flex items-center gap-1.5 text-xs font-bold text-primary border border-primary/20 hover:bg-primary hover:text-cream px-4 py-2 rounded-full transition-all uppercase tracking-wider"
             >
               All Packages <ArrowUpRight className="w-3.5 h-3.5" />

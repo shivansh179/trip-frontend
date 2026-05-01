@@ -201,7 +201,7 @@ export default function HolidayPlanner() {
 
             <div className="mt-8 text-center">
               <Link
-                href="/trips"
+                href="/destinations/domestic"
                 className="inline-flex items-center gap-2 border border-primary/15 text-primary hover:bg-primary hover:text-cream px-8 py-3.5 text-xs uppercase tracking-widest transition-all"
               >
                 Browse All Trips

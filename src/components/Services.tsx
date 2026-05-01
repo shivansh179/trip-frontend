@@ -83,7 +83,7 @@ export default function Services() {
             </p>
           </div>
           <Link
-            href="/trips"
+            href="/destinations/domestic"
             className="shrink-0 self-start md:self-end inline-flex items-center gap-2 border border-white/10 text-white/70 hover:text-white hover:border-white/30 px-6 py-3 text-xs uppercase tracking-widest transition-all rounded-full"
           >
             Explore All Trips

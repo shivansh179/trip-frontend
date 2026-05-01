@@ -110,7 +110,7 @@ export default function ExitIntentPopup() {
             </a>
 
             <Link
-              href="/trips"
+              href="/destinations/domestic"
               onClick={handleClose}
               className="flex items-center justify-center w-full py-3 px-5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-semibold rounded-xl transition-all"
             >

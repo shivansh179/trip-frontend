@@ -152,7 +152,7 @@ export default function CuratedJourneys({ trips }: { trips: Trip[] }) {
         )}
 
         <div className="text-center mt-10 md:mt-14">
-          <Link href="/trips" className="btn-primary inline-flex items-center gap-2">
+          <Link href="/destinations/domestic" className="btn-primary inline-flex items-center gap-2">
             Explore All Trips
           </Link>
           <p className="text-[10px] text-primary/35 mt-3 uppercase tracking-wider">Free cancellation · No hidden fees · Custom itineraries</p>

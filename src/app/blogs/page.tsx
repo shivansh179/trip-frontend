@@ -412,7 +412,7 @@ export default function BlogsPage() {
                 className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-6 py-3 text-sm font-semibold uppercase tracking-widest transition-colors">
                 WhatsApp Us
               </a>
-              <Link href="/trips" className="inline-flex items-center justify-center gap-2 border border-cream/25 text-cream hover:bg-white/8 px-6 py-3 text-sm uppercase tracking-widest transition-all">
+              <Link href="/destinations/domestic" className="inline-flex items-center justify-center gap-2 border border-cream/25 text-cream hover:bg-white/8 px-6 py-3 text-sm uppercase tracking-widest transition-all">
                 Browse Trips
               </Link>
             </div>

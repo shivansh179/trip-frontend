@@ -307,7 +307,7 @@ export default function PlanningHub() {
                 </div>
               )}
               <div className="mt-8 text-center">
-                <Link href="/trips"
+                <Link href="/destinations/domestic"
                   className="inline-flex items-center gap-2 bg-white border border-gray-200 hover:bg-gray-900 hover:text-white hover:border-gray-900 text-gray-700 px-8 py-3 text-xs font-bold uppercase tracking-wider rounded-full transition-all">
                   Browse All Trips <ArrowUpRight className="w-4 h-4" />
                 </Link>
