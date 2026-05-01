@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { MapPin, Play, Wallet, Upload, Search, Bell, Camera, Video, Check, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
+import { useState, useEffect, useRef } from 'react';
+import { MapPin, Play, Wallet, Upload, Search, Bell, Camera, Video, ChevronRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
 const TripMemorySheet = dynamic(() => import('@/components/TripMemorySheet'), { ssr: false });
@@ -77,9 +76,10 @@ const TRIP_REELS = [
 ];
 
 // ── Feed Post Card ────────────────────────────────────────────────────────────
-function FeedPost({ post, onShare }: { post: Post; onShare: () => void }) {
-  const [imgLoaded, setImgLoaded] = useState(false);
+function FeedPost({ post }: { post: Post }) {
+  const [mediaLoaded, setMediaLoaded] = useState(false);
   const [saved, setSaved] = useState(false);
+  const isRealVideo = post.isReal && post.type === 'video';
 
   return (
     <article className="border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
@@ -87,7 +87,6 @@ function FeedPost({ post, onShare }: { post: Post; onShare: () => void }) {
       {/* Post header */}
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
-          {/* Avatar */}
           <div
             className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black text-black shrink-0"
             style={{ background: avatarGrad(post.name), boxShadow: `0 0 0 2px #0a0a0f, 0 0 0 3.5px ${GOLD}` }}
@@ -112,93 +111,68 @@ function FeedPost({ post, onShare }: { post: Post; onShare: () => void }) {
 
       {/* Media */}
       <div className="relative w-full bg-black" style={{ aspectRatio: '4/5' }}>
-        {!imgLoaded && (
+        {!mediaLoaded && (
           <div className="absolute inset-0 animate-pulse" style={{ background: 'rgba(255,255,255,0.04)' }} />
         )}
-        <img
-          src={post.src}
-          alt={post.caption}
-          className="w-full h-full object-cover"
-          onLoad={() => setImgLoaded(true)}
-          loading="lazy"
-        />
 
-        {/* Video overlay */}
-        {post.type === 'video' && (
+        {/* Real video from GCS → use <video> */}
+        {isRealVideo ? (
+          <video
+            src={post.src}
+            className="w-full h-full object-cover"
+            controls
+            playsInline
+            preload="metadata"
+            onLoadedMetadata={() => setMediaLoaded(true)}
+          />
+        ) : (
+          <img
+            src={post.src}
+            alt={post.caption}
+            className="w-full h-full object-cover"
+            onLoad={() => setMediaLoaded(true)}
+            loading="lazy"
+          />
+        )}
+
+        {/* Sample video overlay — decorative play button */}
+        {post.type === 'video' && !isRealVideo && (
           <>
-            <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.15)' }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', border: '2px solid rgba(255,255,255,0.3)' }}>
+            <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(0,0,0,0.15)' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center pointer-events-none" style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', border: '2px solid rgba(255,255,255,0.3)' }}>
               <Play size={24} className="text-white ml-1" />
-            </div>
-            <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: 'rgba(99,102,241,0.85)', backdropFilter: 'blur(8px)' }}>
-              <Video size={10} className="text-white" />
-              <span className="text-[9px] font-bold text-white">REEL</span>
             </div>
           </>
         )}
 
-        {/* Photo badge */}
-        {post.type === 'photo' && (
-          <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: 'rgba(201,169,110,0.85)', backdropFilter: 'blur(8px)' }}>
-            <Camera size={10} className="text-black" />
-            <span className="text-[9px] font-bold text-black">SNAP</span>
-          </div>
-        )}
+        {/* Badge */}
+        <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full pointer-events-none" style={{ background: post.type === 'video' ? 'rgba(99,102,241,0.85)' : 'rgba(201,169,110,0.85)', backdropFilter: 'blur(8px)' }}>
+          {post.type === 'video'
+            ? <><Video size={10} className="text-white" /><span className="text-[9px] font-bold text-white">REEL</span></>
+            : <><Camera size={10} className="text-black" /><span className="text-[9px] font-bold text-black">SNAP</span></>
+          }
+        </div>
       </div>
 
       {/* Post footer */}
       <div className="px-4 pt-3 pb-4">
-
         {/* Action row */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-4">
-            {/* Wanderlust button (like thumbs up — but called Wanderlust) */}
-            <button
-              onClick={() => setSaved(!saved)}
-              className="flex items-center gap-1.5 transition-all active:scale-90"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill={saved ? GOLD : 'none'} stroke={saved ? GOLD : 'rgba(255,255,255,0.5)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M17.5 3.5a5 5 0 0 1 0 7L12 17l-5.5-6a5 5 0 0 1 7-7l-1.5 1.5 1.5-1.5a5 5 0 0 1 5.5 6z" />
-              </svg>
-              {saved && <span className="text-xs font-bold" style={{ color: GOLD }}>Saved!</span>}
-            </button>
-
-            {/* Share button */}
-            <button onClick={onShare} className="flex items-center gap-1.5 active:scale-90 transition-all">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                <polyline points="16 6 12 2 8 6" />
-                <line x1="12" y1="2" x2="12" y2="15" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Time */}
+        <div className="flex items-center justify-between mb-2">
+          {/* Wanderlust (like) — only feedback visible to the person who tapped */}
+          <button onClick={() => setSaved(!saved)} className="flex items-center gap-1.5 transition-all active:scale-90">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill={saved ? GOLD : 'none'} stroke={saved ? GOLD : 'rgba(255,255,255,0.4)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17.5 3.5a5 5 0 0 1 0 7L12 17l-5.5-6a5 5 0 0 1 7-7l-1.5 1.5 1.5-1.5a5 5 0 0 1 5.5 6z" />
+            </svg>
+            {saved && <span className="text-xs font-bold" style={{ color: GOLD }}>Loved it!</span>}
+          </button>
           <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.2)' }}>{post.timeAgo} ago</span>
         </div>
 
         {/* Caption */}
-        <p className="text-white/80 text-sm leading-relaxed mb-3">
+        <p className="text-white/80 text-sm leading-relaxed">
           <span className="font-bold text-white">{post.name.split(' ')[0]} </span>
           {post.caption}
         </p>
-
-        {/* Earn prompt */}
-        <button
-          onClick={onShare}
-          className="w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all active:scale-[0.98]"
-          style={{ background: 'rgba(201,169,110,0.08)', border: '1px solid rgba(201,169,110,0.2)' }}
-        >
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: post.type === 'video' ? 'rgba(99,102,241,0.2)' : 'rgba(201,169,110,0.15)' }}>
-              {post.type === 'video' ? <Video size={13} style={{ color: '#818cf8' }} /> : <Camera size={13} style={{ color: GOLD }} />}
-            </div>
-            <span className="text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.55)' }}>
-              Share your {post.trip} trip → earn <span className="font-black" style={{ color: GOLD }}>₹{post.cashback}</span>
-            </span>
-          </div>
-          <ChevronRight size={14} style={{ color: GOLD }} />
-        </button>
       </div>
     </article>
   );
@@ -251,9 +225,9 @@ export default function ShareAndEarnPage() {
       >
         <div>
           <h1 className="font-black text-xl tracking-tight leading-none" style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            WanderFeed
+            YLOO Reels
           </h1>
-          <p className="text-[9px] font-bold uppercase tracking-[0.15em] mt-0.5" style={{ color: 'rgba(201,169,110,0.4)' }}>by YlooTrips</p>
+          <p className="text-[9px] font-bold uppercase tracking-[0.15em] mt-0.5" style={{ color: 'rgba(201,169,110,0.4)' }}>Share & Earn Money</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -375,7 +349,7 @@ export default function ShareAndEarnPage() {
         </div>
       ) : (
         displayed.map(post => (
-          <FeedPost key={post.id} post={post} onShare={() => setUploadOpen(true)} />
+          <FeedPost key={post.id} post={post} />
         ))
       )}
 
@@ -390,7 +364,7 @@ export default function ShareAndEarnPage() {
           style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})`, boxShadow: `0 4px 20px rgba(201,169,110,0.35)` }}
         >
           <Camera size={18} />
-          Share Your Trip Memory
+          Share & Earn Money
           <span className="ml-0.5 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: 'rgba(0,0,0,0.2)' }}>+₹500</span>
         </button>
       </div>

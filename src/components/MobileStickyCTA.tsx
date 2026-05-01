@@ -142,19 +142,30 @@ export default function MobileStickyCTA() {
                 </div>
             )}
 
-            {/* Floating Share & Earn button — only on home */}
-            {isHome && (
+            {/* YLOO Reels floating button — shown on all pages except hidden paths */}
+            {!pathname?.startsWith('/share-and-earn') && (
               <Link
                 href="/share-and-earn"
-                className="fixed right-4 z-[45] flex items-center gap-1.5 px-3.5 py-2.5 rounded-full font-bold text-black text-[11px] shadow-lg active:scale-95 transition-all"
-                style={{
-                  bottom: 88,
-                  background: 'linear-gradient(135deg, #C9A96E, #E2C68F)',
-                  boxShadow: '0 4px 16px rgba(201,169,110,0.45)',
-                }}
+                className="fixed right-3 z-[45] flex flex-col items-center active:scale-95 transition-all select-none"
+                style={{ bottom: 90 }}
               >
-                <Camera size={14} />
-                Share & Earn
+                {/* Pulsing ring */}
+                <span
+                  className="absolute inset-0 rounded-2xl animate-ping opacity-30 pointer-events-none"
+                  style={{ background: 'linear-gradient(135deg, #C9A96E, #E2C68F)', animationDuration: '2s' }}
+                />
+                <div
+                  className="relative flex flex-col items-center gap-0.5 px-3 pt-2.5 pb-2 rounded-2xl"
+                  style={{
+                    background: 'linear-gradient(135deg, #C9A96E, #E2C68F)',
+                    boxShadow: '0 6px 24px rgba(201,169,110,0.55), 0 0 0 1.5px rgba(255,255,255,0.2)',
+                    minWidth: 66,
+                  }}
+                >
+                  <Camera size={18} className="text-black" />
+                  <span className="text-black font-black text-[10px] leading-tight tracking-tight">YLOO Reels</span>
+                  <span className="text-black/60 font-bold text-[8px] leading-none text-center">📸 Earn ₹500/day</span>
+                </div>
               </Link>
             )}
 

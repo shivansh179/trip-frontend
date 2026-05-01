@@ -23,6 +23,8 @@ interface WalletContextValue {
   transactions: WalletTransaction[];
   /** Credit 10% cashback on a booking total. Returns the cashback amount. */
   addCashback: (bookingTotal: number, bookingRef: string, tripName?: string) => number;
+  /** Credit a fixed amount directly (e.g. memory upload reward). */
+  creditWallet: (amount: number, ref: string, description: string) => void;
   /** Deduct an amount from wallet. Returns false if insufficient balance. */
   deductBalance: (amount: number, bookingRef: string) => boolean;
 }
@@ -31,6 +33,7 @@ const WalletContext = createContext<WalletContextValue>({
   balance: 0,
   transactions: [],
   addCashback: () => 0,
+  creditWallet: () => {},
   deductBalance: () => false,
 });
 
@@ -128,6 +131,30 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     return cashbackAmount;
   }, []);
 
+  const creditWallet = useCallback((amount: number, ref: string, description: string) => {
+    if (amount <= 0) return;
+    const txn: WalletTransaction = {
+      id: `cr-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      date: new Date().toISOString(),
+      type: 'cashback',
+      amount,
+      bookingRef: ref,
+      description,
+    };
+    setBalance((prev) => {
+      const newBal = prev + amount;
+      setTransactions((prevTxns) => {
+        const newTxns = [txn, ...prevTxns];
+        try {
+          localStorage.setItem(BALANCE_KEY, String(newBal));
+          localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(newTxns));
+        } catch { /* ignore */ }
+        return newTxns;
+      });
+      return newBal;
+    });
+  }, []);
+
   const deductBalance = useCallback((amount: number, bookingRef: string) => {
     if (amount <= 0) return true;
     let success = false;
@@ -159,14 +186,14 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   if (!hydrated) {
     // Avoid hydration mismatch — render children but with zero balance until mounted
     return (
-      <WalletContext.Provider value={{ balance: 0, transactions: [], addCashback, deductBalance }}>
+      <WalletContext.Provider value={{ balance: 0, transactions: [], addCashback, creditWallet, deductBalance }}>
         {children}
       </WalletContext.Provider>
     );
   }
 
   return (
-    <WalletContext.Provider value={{ balance, transactions, addCashback, deductBalance }}>
+    <WalletContext.Provider value={{ balance, transactions, addCashback, creditWallet, deductBalance }}>
       {children}
     </WalletContext.Provider>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { X, Upload, Camera, Video, CheckCircle, ArrowRight, Wallet, RefreshCw, AlertCircle } from 'lucide-react';
+import { X, Camera, Video, CheckCircle, ArrowRight, Wallet, RefreshCw, AlertCircle, ImageIcon } from 'lucide-react';
 import { useWallet } from '@/context/WalletContext';
 
 const GOLD = '#C9A96E';
@@ -15,7 +15,7 @@ interface TripMemorySheetProps {
 type Step = 'pick' | 'details' | 'uploading' | 'success' | 'error';
 
 export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
-  const { balance, addCashback } = useWallet();
+  const { balance, creditWallet } = useWallet();
   const [step, setStep]           = useState<Step>('pick');
   const [mediaType, setMediaType] = useState<'photo' | 'video'>('photo');
   const [file, setFile]           = useState<File | null>(null);
@@ -29,7 +29,8 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
   const [cashbackEarned, setCashbackEarned] = useState(0);
   const [newBalance, setNewBalance]         = useState(balance);
   const [dragOver, setDragOver]             = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const fileRef   = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { setNewBalance(balance); }, [balance]);
 
@@ -141,7 +142,7 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
       const earned = json.cashback ?? (mediaType === 'video' ? CASHBACK_VIDEO : CASHBACK_PHOTO);
       setCashbackEarned(earned);
       setNewBalance(json.walletBalance ?? balance + earned);
-      addCashback(earned * 10, `MEM-${Date.now()}`, tripName.trim());
+      creditWallet(earned, `MEM-${Date.now()}`, `📸 YLOO Reels reward — ${tripName.trim()}`);
       setStep('success');
 
     } catch (err) {
@@ -153,92 +154,87 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex flex-col justify-end"
-      style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }}
-      onClick={onClose}
+      className="fixed inset-0 z-[9999] flex flex-col"
+      style={{ background: 'rgba(8,8,12,0.99)' }}
     >
+      {/* ── Top bar — always visible ── */}
       <div
-        className="rounded-t-3xl overflow-hidden animate-in slide-in-from-bottom-4 duration-300 max-h-[95vh] flex flex-col"
-        style={{ background: 'rgba(8,8,12,0.99)', border: '1px solid rgba(201,169,110,0.2)', borderBottom: 'none' }}
-        onClick={e => e.stopPropagation()}
+        className="flex items-center justify-between px-5 pt-safe-top pt-4 pb-3 shrink-0"
+        style={{ borderBottom: '1px solid rgba(201,169,110,0.12)' }}
       >
-        {/* Handle + close */}
-        <div className="flex items-center justify-between px-5 pt-3 pb-2 shrink-0">
-          <div className="w-10 h-1 rounded-full bg-white/20 mx-auto absolute left-1/2 -translate-x-1/2" />
-          <div />
-          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center ml-auto" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <X size={14} className="text-white/60" />
-          </button>
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: GOLD }}>YLOO Reels</p>
+          <h2 className="text-lg font-black text-white leading-tight mt-0.5">Upload Your Trip Memory</h2>
         </div>
+        <button
+          onClick={onClose}
+          className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+          style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}
+        >
+          <X size={16} className="text-white/60" />
+        </button>
+      </div>
 
-        <div className="overflow-y-auto flex-1 px-5 pb-10">
+      <div className="overflow-y-auto flex-1 px-5 pb-8">
 
-          {/* ── Step: Pick ── */}
-          {step === 'pick' && (
-            <div>
-              {/* Header */}
-              <div className="text-center mb-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3" style={{ background: 'rgba(201,169,110,0.15)', border: '1px solid rgba(201,169,110,0.3)' }}>
-                  <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: GOLD }}>Share & Earn</span>
+        {/* ── Step: Pick ── */}
+        {step === 'pick' && (
+          <div className="pt-5 flex flex-col gap-4">
+
+            {/* Hidden inputs */}
+            <input ref={cameraRef} type="file" accept="image/*,video/*" capture="environment" className="hidden" onChange={handleFileChange} />
+            <input ref={fileRef}   type="file" accept="image/*,video/*" className="hidden" onChange={handleFileChange} />
+
+            {/* Camera button */}
+            <button
+              onClick={() => cameraRef.current?.click()}
+              className="w-full flex items-center gap-5 px-6 py-6 rounded-3xl active:scale-[0.97] transition-all"
+              style={{ background: 'rgba(201,169,110,0.08)', border: '1.5px solid rgba(201,169,110,0.35)' }}
+            >
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style={{ background: `linear-gradient(135deg, ${GOLD}, #E2C68F)` }}>
+                <Camera size={28} className="text-black" />
+              </div>
+              <div className="text-left">
+                <p className="text-white font-black text-lg leading-tight">Open Camera</p>
+                <p className="text-white/40 text-sm mt-0.5">Take a photo or record a video</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: 'rgba(201,169,110,0.15)', color: GOLD }}>📸 ₹{CASHBACK_PHOTO}</span>
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: 'rgba(99,102,241,0.15)', color: '#818cf8' }}>🎬 ₹{CASHBACK_VIDEO}</span>
                 </div>
-                <h2 className="text-2xl font-black text-white leading-tight">Upload Your<br />Trip Memories</h2>
-                <p className="text-white/40 text-sm mt-2">Get instant cashback credited to your wallet</p>
               </div>
+            </button>
 
-              {/* Reward pills */}
-              <div className="grid grid-cols-2 gap-3 mb-6">
-                {[
-                  { icon: <Camera size={20} />, type: 'Photo', reward: CASHBACK_PHOTO, color: 'rgba(201,169,110,0.15)', border: 'rgba(201,169,110,0.3)' },
-                  { icon: <Video size={20} />, type: 'Video', reward: CASHBACK_VIDEO, color: 'rgba(99,102,241,0.15)', border: 'rgba(99,102,241,0.35)' },
-                ].map(({ icon, type, reward, color, border }) => (
-                  <div key={type} className="rounded-2xl p-4 text-center" style={{ background: color, border: `1px solid ${border}` }}>
-                    <div className="flex items-center justify-center mb-2" style={{ color: GOLD }}>{icon}</div>
-                    <p className="text-white font-bold text-sm">{type}</p>
-                    <p className="font-black text-lg mt-0.5" style={{ color: GOLD }}>₹{reward.toLocaleString('en-IN')}</p>
-                    <p className="text-white/30 text-[10px] mt-0.5">cashback</p>
-                  </div>
-                ))}
+            {/* Gallery button */}
+            <button
+              onClick={() => fileRef.current?.click()}
+              onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={handleDrop}
+              className="w-full flex items-center gap-5 px-6 py-6 rounded-3xl active:scale-[0.97] transition-all"
+              style={{
+                background: dragOver ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.04)',
+                border: `1.5px solid ${dragOver ? 'rgba(99,102,241,0.5)' : 'rgba(255,255,255,0.12)'}`,
+              }}
+            >
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                <ImageIcon size={28} className="text-white/60" />
               </div>
+              <div className="text-left">
+                <p className="text-white font-black text-lg leading-tight">Choose from Gallery</p>
+                <p className="text-white/40 text-sm mt-0.5">Pick a saved photo or video</p>
+                <p className="text-white/20 text-[10px] mt-1.5">or drag & drop here</p>
+              </div>
+            </button>
 
-              {/* Drop zone */}
-              <div
-                className="rounded-2xl border-2 border-dashed p-10 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all active:scale-[0.98]"
-                style={{
-                  borderColor: dragOver ? GOLD : 'rgba(201,169,110,0.3)',
-                  background: dragOver ? 'rgba(201,169,110,0.08)' : 'rgba(255,255,255,0.03)',
-                }}
-                onClick={() => fileRef.current?.click()}
-                onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={handleDrop}
-              >
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.12)', border: `1px solid rgba(201,169,110,0.3)` }}>
-                  <Upload size={24} style={{ color: GOLD }} />
-                </div>
-                <div className="text-center">
-                  <p className="text-white font-semibold text-sm">Tap to upload</p>
-                  <p className="text-white/30 text-xs mt-0.5">Photos up to 10 MB · Videos up to 100 MB</p>
-                </div>
-                <input ref={fileRef} type="file" accept="image/*,video/*" className="hidden" onChange={handleFileChange} />
-              </div>
-
-              {/* How it works */}
-              <div className="mt-5 rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-                <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(201,169,110,0.6)' }}>How it works</p>
-                {[
-                  ['📸', 'Upload a photo or video from your trip'],
-                  ['✍️', 'Tell us your name & trip details'],
-                  ['💰', 'Get ₹500–₹1000 credited to your wallet instantly'],
-                  ['🛒', 'Use cashback on your next YlooTrips booking'],
-                ].map(([emoji, text]) => (
-                  <div key={text} className="flex items-start gap-3 mb-2 last:mb-0">
-                    <span className="text-base shrink-0">{emoji}</span>
-                    <p className="text-white/50 text-xs leading-relaxed">{text}</p>
-                  </div>
-                ))}
-              </div>
+            {/* Reward strip */}
+            <div className="flex items-center justify-center gap-3 py-3 rounded-2xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <span className="text-white/30 text-xs">Earn instantly after posting:</span>
+              <span className="font-black text-xs" style={{ color: GOLD }}>Photo ₹{CASHBACK_PHOTO}</span>
+              <span className="text-white/20 text-xs">·</span>
+              <span className="font-black text-xs" style={{ color: '#818cf8' }}>Video ₹{CASHBACK_VIDEO}</span>
             </div>
-          )}
+          </div>
+        )}
 
           {/* ── Step: Details ── */}
           {step === 'details' && (
@@ -335,8 +331,8 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
                 </div>
                 {['🎉', '✨', '💰', '🌟'].map((emoji, i) => (
                   <span key={i} className="absolute text-xl animate-bounce" style={{
-                    top: ['−20%', '−20%', '85%', '85%'][i],
-                    left: ['−10%', '90%', '−10%', '90%'][i],
+                    top: ['-20%', '-20%', '85%', '85%'][i],
+                    left: ['-10%', '90%', '-10%', '90%'][i],
                     animationDelay: `${i * 0.15}s`,
                   }}>{emoji}</span>
                 ))}
@@ -396,7 +392,6 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
               </button>
             </div>
           )}
-        </div>
       </div>
     </div>
   );
