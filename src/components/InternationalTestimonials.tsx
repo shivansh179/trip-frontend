@@ -583,7 +583,6 @@ export default function InternationalTestimonials() {
 
                 {/* Author row */}
                 <div className="mt-5 flex items-center gap-3 border-t border-white/10 pt-4">
-                  <Avatar src={r.avatar} name={r.name} />
                   <div className="min-w-0">
                     <div className="text-sm font-semibold text-cream flex items-center gap-1.5 truncate">
                       {r.name} <span className="shrink-0">{r.flag}</span>
