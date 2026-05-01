@@ -12,7 +12,7 @@ function Avatar({ src, name }: { src: string; name: string }) {
   const colors = ['bg-orange-500','bg-rose-500','bg-violet-600','bg-teal-600','bg-amber-500','bg-blue-600','bg-green-600','bg-pink-600'];
   const color = colors[name.charCodeAt(0) % colors.length];
 
-  if (failed) {
+  if (failed || !src) {
     return (
       <div className={`w-12 h-12 rounded-full ${color} ring-2 ring-accent/40 shrink-0 flex items-center justify-center`}>
         <span className="text-white font-bold text-sm">{initials}</span>
