@@ -436,6 +436,177 @@ function FlightBookingCard({ data }: { data: Record<string, unknown> }) {
   );
 }
 
+/* ─── Client Login Sheet — lookup all bookings by phone/email ─── */
+function ClientLoginSheet({ onClose, onResults }: {
+  onClose: () => void;
+  onResults: (bookings: Record<string, unknown>[]) => void;
+}) {
+  const [contact, setContact] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleLookup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const val = contact.trim();
+    if (!val) { setError('Enter your phone number or email.'); return; }
+    setLoading(true); setError(null);
+
+    const isEmail = val.includes('@');
+    const params = new URLSearchParams(isEmail ? { email: val } : { phone: val });
+    try {
+      const res = await fetch(`/api/client/bookings?${params}`);
+      const json = await res.json();
+      if (!res.ok) { setError(json.error || 'Something went wrong.'); return; }
+      if (!json.data || json.data.length === 0) {
+        setError('No bookings found for this contact. Try your email or check the number.');
+        return;
+      }
+      onResults(json.data);
+    } catch {
+      setError('Connection error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[9999] flex flex-col justify-end bg-black/60 backdrop-blur-sm" onClick={onClose}>
+      <div
+        className="rounded-t-3xl overflow-hidden animate-in slide-in-from-bottom-4 duration-300"
+        style={{ background: 'rgba(10,10,10,0.98)', border: '1px solid rgba(201,169,110,0.2)', maxHeight: '85vh' }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 rounded-full bg-white/20" />
+        </div>
+        <div className="px-5 pb-8 pt-3 overflow-y-auto">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: '#C9A96E' }}>Client Portal</p>
+              <h2 className="text-lg font-black text-white mt-0.5">View All My Bookings</h2>
+              <p className="text-xs text-white/40 mt-0.5">Enter your registered phone or email</p>
+            </div>
+            <button onClick={onClose} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <X size={16} className="text-white/60" />
+            </button>
+          </div>
+
+          <form onSubmit={handleLookup} className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: 'rgba(201,169,110,0.7)' }}>Phone or Email</label>
+              <input
+                type="text"
+                value={contact}
+                onChange={e => setContact(e.target.value)}
+                placeholder="+91 98765 43210 or you@email.com"
+                className="w-full px-4 py-4 rounded-2xl text-white placeholder-white/20 focus:outline-none transition-all"
+                style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(201,169,110,0.25)', fontSize: 15 }}
+                autoFocus
+              />
+            </div>
+
+            {error && (
+              <div className="flex items-start gap-3 p-4 rounded-2xl" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                <AlertCircle size={16} className="text-red-400 shrink-0 mt-0.5" />
+                <p className="text-sm text-red-400">{error}</p>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 py-4 font-black rounded-2xl transition-all active:scale-[0.98] disabled:opacity-50"
+              style={{ background: 'linear-gradient(135deg, #C9A96E, #E2C68F)', color: '#000' }}
+            >
+              {loading ? <><RefreshCw size={18} className="animate-spin" />Looking up...</> : <><Search size={18} />Find My Bookings</>}
+            </button>
+          </form>
+
+          <p className="text-center text-xs text-white/20 mt-5">Your data is secure and only shown to you</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── All Bookings List ─── */
+function AllBookingsList({ bookings, onBack }: { bookings: Record<string, unknown>[]; onBack: () => void }) {
+  const getTypeLabel = (b: Record<string, unknown>) => {
+    const t = b._bookingType as string;
+    if (t === 'flight') return { label: 'Flight', emoji: '✈️', color: 'rgba(14,165,233,0.2)', border: 'rgba(14,165,233,0.3)', text: '#38bdf8' };
+    if (t === 'hotel') return { label: 'Hotel', emoji: '🏨', color: 'rgba(168,85,247,0.2)', border: 'rgba(168,85,247,0.3)', text: '#c084fc' };
+    if (t === 'market') return { label: 'Event', emoji: '🎉', color: 'rgba(236,72,153,0.2)', border: 'rgba(236,72,153,0.3)', text: '#f472b6' };
+    return { label: 'Trip', emoji: '🗺️', color: 'rgba(201,169,110,0.2)', border: 'rgba(201,169,110,0.3)', text: '#C9A96E' };
+  };
+
+  return (
+    <div className="min-h-screen pb-24" style={{ background: '#0a0a0f' }}>
+      <div className="max-w-lg mx-auto px-4 py-8">
+        <button onClick={onBack} className="flex items-center gap-2 text-sm text-white/40 hover:text-white/70 font-medium transition-colors mb-6">
+          <ArrowLeft size={16} />Back
+        </button>
+
+        <div className="mb-6">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: '#C9A96E' }}>Your History</p>
+          <h1 className="text-2xl font-black text-white mt-1">All Bookings</h1>
+          <p className="text-white/40 text-sm mt-0.5">{bookings.length} booking{bookings.length !== 1 ? 's' : ''} found</p>
+        </div>
+
+        <div className="space-y-3">
+          {bookings.map((b, i) => {
+            const { label, emoji, color, border, text } = getTypeLabel(b);
+            const ref = String(b.bookingReference || b.txnid || b.evtRef || b.id || '—');
+            const destination = String(b.packageName || b.tripTitle || b.destination || b.hotelName || b.eventName || b.productName || '');
+            const date = String(b.travelDate || b.checkIn || b.journeyDate || b.createdAt || b.savedAt || '');
+            const amount = Number(b.totalAmount || b.totalFare || b.amount || b.grandTotal || 0);
+            const status = String(b.status || b.paymentStatus || 'CONFIRMED');
+            return (
+              <div key={ref + i} className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-lg" style={{ background: color, border: `1px solid ${border}` }}>
+                    {emoji}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-bold text-white text-sm leading-tight truncate">{destination || label + ' Booking'}</p>
+                        <p className="text-[11px] font-mono mt-0.5" style={{ color: text }}>{ref}</p>
+                      </div>
+                      <StatusBadge status={status} />
+                    </div>
+                    <div className="flex items-center gap-3 mt-2 flex-wrap">
+                      {date && (
+                        <span className="text-[11px] text-white/40 flex items-center gap-1">
+                          <Calendar size={11} />
+                          {new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </span>
+                      )}
+                      {amount > 0 && (
+                        <span className="text-[11px] font-bold" style={{ color: '#C9A96E' }}>
+                          ₹{new Intl.NumberFormat('en-IN').format(Math.round(amount))}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <a
+          href="https://wa.me/918427831127?text=Hi!%20I%20need%20help%20with%20my%20booking."
+          target="_blank" rel="noopener noreferrer"
+          className="mt-6 flex items-center justify-center gap-3 w-full py-4 bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold rounded-2xl transition-all"
+        >
+          <MessageCircle size={18} />Need help? Chat on WhatsApp
+        </a>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Booking Search Sheet ─── */
 function BookingSearchSheet({ onClose, onResult }: {
   onClose: () => void;
@@ -574,7 +745,7 @@ function BookingSearchSheet({ onClose, onResult }: {
 }
 
 /* ─── Profile Page (MMT-style) ─── */
-function ProfilePage({ onOpenSearch }: { onOpenSearch: () => void }) {
+function ProfilePage({ onOpenSearch, onOpenClientLogin }: { onOpenSearch: () => void; onOpenClientLogin: () => void }) {
   const { balance } = useWallet();
 
   const menuSections = [
@@ -582,6 +753,7 @@ function ProfilePage({ onOpenSearch }: { onOpenSearch: () => void }) {
       title: 'My Trips',
       items: [
         { icon: <Ticket size={20} className="text-gray-600" />, label: 'Track / Find Booking', sub: 'BK · EVT · FLT reference', action: onOpenSearch, bg: 'bg-gray-100' },
+        { icon: <Search size={20} style={{ color: '#A07840' }} />, label: 'View All My Bookings', sub: 'Enter phone or email', action: onOpenClientLogin, bg: 'bg-amber-50' },
         { icon: <Heart size={20} className="text-rose-500" />, label: 'Wishlist', sub: 'Saved destinations', href: '/destinations/domestic', bg: 'bg-rose-50' },
       ],
     },
@@ -648,9 +820,10 @@ function ProfilePage({ onOpenSearch }: { onOpenSearch: () => void }) {
       {/* Quick Actions */}
       <div className="mx-4 -mt-5 relative z-10">
         <div className="bg-white rounded-2xl shadow-lg px-4 py-5">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-4 gap-2">
             {[
               { icon: <Search size={22} className="text-gray-600" />, label: 'Find Booking', action: onOpenSearch },
+              { icon: <Ticket size={22} style={{ color: '#A07840' }} />, label: 'All Bookings', action: onOpenClientLogin },
               { icon: <MessageCircle size={22} className="text-green-500" />, label: 'Support', href: 'https://wa.me/918427831127?text=Hi!%20I%20need%20help.' },
               { icon: <Bell size={22} className="text-blue-500" />, label: 'Notifications', badge: true },
             ].map(({ icon, label, action, href, badge }) => {
@@ -726,12 +899,18 @@ function MyBookingContent() {
   const prefillRef = searchParams.get('ref') || '';
 
   const [showSearch, setShowSearch] = useState(!!prefillRef);
+  const [showClientLogin, setShowClientLogin] = useState(false);
   const [result, setResult] = useState<{ type: 'trip' | 'event' | 'flight'; data: Record<string, unknown> } | null>(null);
+  const [allBookings, setAllBookings] = useState<Record<string, unknown>[] | null>(null);
 
   const handleResult = (r: { type: 'trip' | 'event' | 'flight'; data: Record<string, unknown> }) => {
     setShowSearch(false);
     setResult(r);
   };
+
+  if (allBookings) {
+    return <AllBookingsList bookings={allBookings} onBack={() => setAllBookings(null)} />;
+  }
 
   if (result) {
     return (
@@ -765,10 +944,15 @@ function MyBookingContent() {
 
   return (
     <>
-      <ProfilePage onOpenSearch={() => setShowSearch(true)} />
+      <ProfilePage onOpenSearch={() => setShowSearch(true)} onOpenClientLogin={() => setShowClientLogin(true)} />
       {showSearch && (
         <Suspense fallback={null}>
           <BookingSearchSheet onClose={() => setShowSearch(false)} onResult={handleResult} />
+        </Suspense>
+      )}
+      {showClientLogin && (
+        <Suspense fallback={null}>
+          <ClientLoginSheet onClose={() => setShowClientLogin(false)} onResults={(b) => { setShowClientLogin(false); setAllBookings(b); }} />
         </Suspense>
       )}
     </>
