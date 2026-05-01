@@ -441,6 +441,7 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
 export default function InternationalTestimonials() {
   const [showModal, setShowModal] = useState(false);
   const [dbReviews, setDbReviews] = useState<DBReview[]>([]);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     fetch('/api/reviews/approved')
@@ -503,7 +504,7 @@ export default function InternationalTestimonials() {
 
         {/* ── Reviews Grid ────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
-          {allReviews.map((r, i) => (
+          {(showAll ? allReviews : allReviews.slice(0, 3)).map((r, i) => (
             <article
               key={i}
               className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.08] hover:-translate-y-1 transition-all duration-300 flex flex-col"
@@ -556,6 +557,18 @@ export default function InternationalTestimonials() {
             </article>
           ))}
         </div>
+
+        {/* ── Load More ───────────────────────────────────────────────── */}
+        {!showAll && allReviews.length > 3 && (
+          <div className="flex justify-center mb-10">
+            <button
+              onClick={() => setShowAll(true)}
+              className="flex items-center gap-2 border border-white/20 hover:border-accent/60 text-cream/70 hover:text-cream px-8 py-3 rounded-full text-sm tracking-wide transition-all duration-200 hover:bg-white/5"
+            >
+              View all {allReviews.length} reviews ↓
+            </button>
+          </div>
+        )}
 
         {/* ── Write a Review CTA ──────────────────────────────────────── */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-center gap-6">
