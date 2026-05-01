@@ -4,45 +4,6 @@ import { useState, useEffect } from 'react';
 import { Star, BadgeCheck, Quote, X, Loader2, CheckCircle, PenLine } from 'lucide-react';
 import Image from 'next/image';
 
-// Luxury avatar — dark background with gold ring and elegant initials
-function Avatar({ src, name }: { src: string; name: string }) {
-  const [failed, setFailed] = useState(false);
-  const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  // Luxury dark palette — deterministic by name
-  const bgColors = [
-    '#1a1209', '#0f1a1a', '#1a0f1a', '#0d1a0d',
-    '#1a1510', '#0a0f1a', '#1a0a0f', '#12101a',
-  ];
-  const textColors = [
-    '#C9A96E', '#7EC8C8', '#C87EC8', '#7EC87E',
-    '#C9B96E', '#7E9EC8', '#C8807E', '#9E8EC8',
-  ];
-  const idx = name.charCodeAt(0) % bgColors.length;
-  const bg = bgColors[idx];
-  const fg = textColors[idx];
-
-  if (failed || !src) {
-    return (
-      <div
-        className="w-12 h-12 rounded-full shrink-0 flex items-center justify-center"
-        style={{ background: bg, boxShadow: `0 0 0 1.5px rgba(201,169,110,0.5), 0 0 0 3px rgba(201,169,110,0.12)` }}
-      >
-        <span style={{ color: fg, fontSize: '13px', fontWeight: 600, letterSpacing: '0.05em' }}>{initials}</span>
-      </div>
-    );
-  }
-
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={name}
-      onError={() => setFailed(true)}
-      className="w-12 h-12 rounded-full object-cover object-top shrink-0"
-      style={{ boxShadow: '0 0 0 1.5px rgba(201,169,110,0.5), 0 0 0 3px rgba(201,169,110,0.12)' }}
-    />
-  );
-}
 
 /* ─── DATA ─────────────────────────────────────────────────────────────── */
 
