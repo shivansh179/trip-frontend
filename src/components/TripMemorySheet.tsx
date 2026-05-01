@@ -65,53 +65,54 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
     try {
       let fileUrl: string | null = null;
 
-      // ── Step 1: upload file directly to GCS if a file was selected ──
+      // ── Step 1: try to upload file directly to GCS (optional — skipped if GCS not configured) ──
       if (file) {
         setUploadStage('Getting upload link...');
         setUploadProgress(5);
 
-        const urlRes = await fetch('/api/trip-memories/upload-url', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ mediaType, fileName: file.name, contentType: file.type }),
-        });
+        try {
+          const urlRes = await fetch('/api/trip-memories/upload-url', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mediaType, fileName: file.name, contentType: file.type }),
+          });
 
-        if (!urlRes.ok) {
-          const e = await urlRes.json() as { error?: string };
-          throw new Error(e.error || 'Could not get upload link');
+          if (urlRes.ok) {
+            const { url, fields, fileUrl: gcsUrl } = await urlRes.json() as {
+              url: string; fields: Record<string, string>; fileUrl: string;
+            };
+
+            setUploadStage('Uploading to cloud...');
+            setUploadProgress(15);
+
+            const gcsForm = new FormData();
+            Object.entries(fields).forEach(([k, v]) => gcsForm.append(k, v));
+            gcsForm.append('file', file);
+
+            await new Promise<void>((resolve, reject) => {
+              const xhr = new XMLHttpRequest();
+              xhr.upload.onprogress = (ev) => {
+                if (ev.lengthComputable) {
+                  const pct = Math.round((ev.loaded / ev.total) * 75) + 15;
+                  setUploadProgress(pct);
+                }
+              };
+              xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) resolve();
+                else reject(new Error(`Upload failed: ${xhr.status}`));
+              };
+              xhr.onerror = () => reject(new Error('Network error'));
+              xhr.open('POST', url);
+              xhr.send(gcsForm);
+            });
+
+            fileUrl = gcsUrl;
+          }
+          // If urlRes not ok (GCS not configured) — silently continue without file
+        } catch {
+          // File upload failed — continue without fileUrl so the post still gets saved
         }
 
-        const { url, fields, fileUrl: gcsUrl } = await urlRes.json() as {
-          url: string; fields: Record<string, string>; fileUrl: string;
-        };
-
-        // Upload directly to GCS via signed POST policy (bypasses Vercel size limit)
-        setUploadStage('Uploading to cloud...');
-        setUploadProgress(15);
-
-        const gcsForm = new FormData();
-        Object.entries(fields).forEach(([k, v]) => gcsForm.append(k, v));
-        gcsForm.append('file', file); // file must be last
-
-        // Use XHR for progress tracking
-        await new Promise<void>((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
-          xhr.upload.onprogress = (ev) => {
-            if (ev.lengthComputable) {
-              const pct = Math.round((ev.loaded / ev.total) * 75) + 15;
-              setUploadProgress(pct);
-            }
-          };
-          xhr.onload = () => {
-            if (xhr.status >= 200 && xhr.status < 300) { resolve(); }
-            else { reject(new Error(`GCS upload failed: ${xhr.status}`)); }
-          };
-          xhr.onerror = () => reject(new Error('Network error during upload'));
-          xhr.open('POST', url);
-          xhr.send(gcsForm);
-        });
-
-        fileUrl = gcsUrl;
         setUploadProgress(92);
       }
 
