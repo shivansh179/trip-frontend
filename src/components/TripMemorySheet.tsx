@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { X, Upload, Camera, Video, CheckCircle, ArrowRight, Wallet, RefreshCw, AlertCircle, Image as ImageIcon } from 'lucide-react';
+import { X, Upload, Camera, Video, CheckCircle, ArrowRight, Wallet, RefreshCw, AlertCircle } from 'lucide-react';
 import { useWallet } from '@/context/WalletContext';
 
 const GOLD = '#C9A96E';
@@ -16,28 +16,28 @@ type Step = 'pick' | 'details' | 'uploading' | 'success' | 'error';
 
 export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
   const { balance, addCashback } = useWallet();
-  const [step, setStep]         = useState<Step>('pick');
+  const [step, setStep]           = useState<Step>('pick');
   const [mediaType, setMediaType] = useState<'photo' | 'video'>('photo');
-  const [file, setFile]         = useState<File | null>(null);
-  const [preview, setPreview]   = useState<string | null>(null);
-  const [name, setName]         = useState('');
-  const [contact, setContact]   = useState('');
-  const [tripName, setTripName] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [file, setFile]           = useState<File | null>(null);
+  const [preview, setPreview]     = useState<string | null>(null);
+  const [name, setName]           = useState('');
+  const [contact, setContact]     = useState('');
+  const [tripName, setTripName]   = useState('');
+  const [errorMsg, setErrorMsg]   = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStage, setUploadStage]       = useState('');
   const [cashbackEarned, setCashbackEarned] = useState(0);
-  const [newBalance, setNewBalance] = useState(balance);
-  const [dragOver, setDragOver] = useState(false);
+  const [newBalance, setNewBalance]         = useState(balance);
+  const [dragOver, setDragOver]             = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // Sync balance on open
   useEffect(() => { setNewBalance(balance); }, [balance]);
 
   const processFile = useCallback((f: File) => {
     const isVideo = f.type.startsWith('video/');
     setMediaType(isVideo ? 'video' : 'photo');
     setFile(f);
-    const url = URL.createObjectURL(f);
-    setPreview(url);
+    setPreview(URL.createObjectURL(f));
     setStep('details');
   }, []);
 
@@ -59,32 +59,95 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
       setErrorMsg('Please fill all fields.'); return;
     }
     setStep('uploading');
+    setUploadProgress(0);
     setErrorMsg('');
 
     try {
-      const form = new FormData();
-      form.append('name', name.trim());
-      form.append('contact', contact.trim());
-      form.append('tripName', tripName.trim());
-      form.append('mediaType', mediaType);
-      if (file) form.append('file', file);
+      let fileUrl: string | null = null;
 
-      const res = await fetch('/api/trip-memories', { method: 'POST', body: form });
-      const json = await res.json() as { success?: boolean; cashback?: number; walletBalance?: number; error?: string };
+      // ── Step 1: upload file directly to GCS if a file was selected ──
+      if (file) {
+        setUploadStage('Getting upload link...');
+        setUploadProgress(5);
 
-      if (!res.ok || !json.success) {
-        setErrorMsg(json.error || 'Upload failed. Try again.');
-        setStep('error'); return;
+        const urlRes = await fetch('/api/trip-memories/upload-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mediaType, fileName: file.name, contentType: file.type }),
+        });
+
+        if (!urlRes.ok) {
+          const e = await urlRes.json() as { error?: string };
+          throw new Error(e.error || 'Could not get upload link');
+        }
+
+        const { url, fields, fileUrl: gcsUrl } = await urlRes.json() as {
+          url: string; fields: Record<string, string>; fileUrl: string;
+        };
+
+        // Upload directly to GCS via signed POST policy (bypasses Vercel size limit)
+        setUploadStage('Uploading to cloud...');
+        setUploadProgress(15);
+
+        const gcsForm = new FormData();
+        Object.entries(fields).forEach(([k, v]) => gcsForm.append(k, v));
+        gcsForm.append('file', file); // file must be last
+
+        // Use XHR for progress tracking
+        await new Promise<void>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.upload.onprogress = (ev) => {
+            if (ev.lengthComputable) {
+              const pct = Math.round((ev.loaded / ev.total) * 75) + 15;
+              setUploadProgress(pct);
+            }
+          };
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) { resolve(); }
+            else { reject(new Error(`GCS upload failed: ${xhr.status}`)); }
+          };
+          xhr.onerror = () => reject(new Error('Network error during upload'));
+          xhr.open('POST', url);
+          xhr.send(gcsForm);
+        });
+
+        fileUrl = gcsUrl;
+        setUploadProgress(92);
       }
 
+      // ── Step 2: save metadata + credit cashback ──
+      setUploadStage('Crediting cashback...');
+      setUploadProgress(95);
+
+      const metaRes = await fetch('/api/trip-memories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:      name.trim(),
+          contact:   contact.trim(),
+          tripName:  tripName.trim(),
+          mediaType,
+          fileUrl,
+          fileName:   file?.name || '',
+          fileSizeKB: file ? Math.round(file.size / 1024) : 0,
+        }),
+      });
+
+      const json = await metaRes.json() as { success?: boolean; cashback?: number; walletBalance?: number; error?: string };
+      if (!metaRes.ok || !json.success) {
+        throw new Error(json.error || 'Failed to save memory');
+      }
+
+      setUploadProgress(100);
       const earned = json.cashback ?? (mediaType === 'video' ? CASHBACK_VIDEO : CASHBACK_PHOTO);
       setCashbackEarned(earned);
       setNewBalance(json.walletBalance ?? balance + earned);
-      // Also credit local wallet so it reflects immediately
-      addCashback(earned * 10, `MEM-${Date.now()}`, tripName.trim()); // *10 because addCashback applies 10%
+      addCashback(earned * 10, `MEM-${Date.now()}`, tripName.trim());
       setStep('success');
-    } catch {
-      setErrorMsg('Connection error. Please try again.');
+
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong. Try again.';
+      setErrorMsg(msg);
       setStep('error');
     }
   };
@@ -244,13 +307,21 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
 
           {/* ── Step: Uploading ── */}
           {step === 'uploading' && (
-            <div className="py-16 flex flex-col items-center gap-5 text-center">
+            <div className="py-16 flex flex-col items-center gap-6 text-center">
               <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.15)', border: '1px solid rgba(201,169,110,0.3)' }}>
                 <RefreshCw size={32} className="animate-spin" style={{ color: GOLD }} />
               </div>
-              <div>
-                <p className="text-white font-bold text-lg">Uploading your memory...</p>
-                <p className="text-white/30 text-sm mt-1">Hang tight, crediting your cashback</p>
+              <div className="w-full max-w-xs">
+                <p className="text-white font-bold text-lg mb-1">Uploading your memory...</p>
+                <p className="text-white/30 text-sm mb-4">{uploadStage || 'Please wait'}</p>
+                {/* Progress bar */}
+                <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                  <div
+                    className="h-full rounded-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%`, background: `linear-gradient(90deg, ${GOLD}, #E2C68F)` }}
+                  />
+                </div>
+                <p className="text-right text-xs mt-1.5" style={{ color: GOLD }}>{uploadProgress}%</p>
               </div>
             </div>
           )}
