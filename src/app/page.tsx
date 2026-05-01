@@ -23,6 +23,7 @@ import { useCurrency } from '@/context/CurrencyContext';
 import PaymentOptions from '@/components/PaymentOptions';
 import PromoCodeInput from '@/components/PromoCodeInput';
 import ShareAndEarn from '@/components/ShareAndEarn';
+import TripGallery from '@/components/TripGallery';
 
 interface CmsContent {
   pageKey: string;
@@ -823,6 +824,9 @@ export default function Home() {
 
       {/* Share & Earn — upload trip memories, get cashback */}
       <ShareAndEarn />
+
+      {/* Traveller Gallery — community photos & videos */}
+      <TripGallery />
 
       {/* International Testimonials — static, from real traveler countries */}
       <InternationalTestimonials />

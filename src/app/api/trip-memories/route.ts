@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
       fileSizeKB,
       originalFileName,
       cashbackAmount: cashback,
-      status: 'pending_review',
+      status: 'approved',
       createdAt: new Date().toISOString(),
     });
 
@@ -180,4 +180,20 @@ export async function GET(req: NextRequest) {
   await connectDB();
   const docs = await TripMemory.find({}).sort({ createdAt: -1 }).lean();
   return NextResponse.json({ data: docs, total: docs.length });
+}
+
+export async function PATCH(req: NextRequest) {
+  // Admin-only: approve or reject a memory
+  const adminSecret = process.env.ADMIN_SECRET;
+  const token = req.headers.get('x-admin-secret') || req.headers.get('x-admin-token');
+  if (adminSecret && token !== adminSecret) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const { ref, status } = await req.json() as { ref: string; status: string };
+  if (!ref || !['approved', 'rejected'].includes(status)) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+  }
+  await connectDB();
+  await TripMemory.findOneAndUpdate({ ref }, { $set: { status } });
+  return NextResponse.json({ success: true });
 }
