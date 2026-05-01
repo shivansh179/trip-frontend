@@ -2,9 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Compass, Ticket, Sparkles, Wallet, Globe, Mountain, X } from 'lucide-react';
+import { Home, Compass, Ticket, Sparkles, Wallet, Globe, Mountain, X, Camera } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useWallet } from '@/context/WalletContext';
+import dynamic from 'next/dynamic';
+
+const TripMemorySheet = dynamic(() => import('./TripMemorySheet'), { ssr: false });
 
 const HIDDEN_PATHS = ['/checkout', '/payment', '/admin'];
 
@@ -37,6 +40,7 @@ export default function MobileStickyCTA() {
     const isPlannerActive = pathname?.startsWith('/trip-planner');
     const isWallet = pathname?.startsWith('/cashback');
     const isMyTrips = pathname?.startsWith('/my-booking');
+    const [memoryOpen, setMemoryOpen] = useState(false);
 
     return (
         <>
@@ -138,6 +142,22 @@ export default function MobileStickyCTA() {
                 </div>
             )}
 
+            {/* Floating Share & Earn button — only on home */}
+            {isHome && (
+              <button
+                onClick={() => setMemoryOpen(true)}
+                className="fixed right-4 z-[45] flex items-center gap-1.5 px-3.5 py-2.5 rounded-full font-bold text-black text-[11px] shadow-lg active:scale-95 transition-all"
+                style={{
+                  bottom: 88,
+                  background: 'linear-gradient(135deg, #C9A96E, #E2C68F)',
+                  boxShadow: '0 4px 16px rgba(201,169,110,0.45)',
+                }}
+              >
+                <Camera size={14} />
+                Share & Earn
+              </button>
+            )}
+
             {/* Bottom Nav */}
             <nav
                 className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
@@ -217,6 +237,8 @@ export default function MobileStickyCTA() {
                     </div>
                 </div>
             </nav>
+
+            {memoryOpen && <TripMemorySheet onClose={() => setMemoryOpen(false)} />}
         </>
     );
 }

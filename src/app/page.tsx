@@ -22,6 +22,7 @@ import { formatPriceWithCurrency } from '@/lib/utils';
 import { useCurrency } from '@/context/CurrencyContext';
 import PaymentOptions from '@/components/PaymentOptions';
 import PromoCodeInput from '@/components/PromoCodeInput';
+import ShareAndEarn from '@/components/ShareAndEarn';
 
 interface CmsContent {
   pageKey: string;
@@ -819,6 +820,9 @@ export default function Home() {
 
       {/* Hidden Gems section */}
       <HiddenSpots />
+
+      {/* Share & Earn — upload trip memories, get cashback */}
+      <ShareAndEarn />
 
       {/* International Testimonials — static, from real traveler countries */}
       <InternationalTestimonials />
