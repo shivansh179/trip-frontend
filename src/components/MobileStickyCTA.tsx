@@ -92,12 +92,17 @@ export default function MobileStickyCTA() {
                         <Link href="/reel-to-trip" onClick={() => setTripsOpen(false)}
                             className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl active:scale-95 transition-all duration-150"
                             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,169,110,0.15)' }}>
-                            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.15)', border: '1px solid rgba(201,169,110,0.3)' }}>
-                                <Instagram size={20} style={{ color: '#C9A96E' }} />
+                            <div className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden" style={{ background: 'linear-gradient(135deg, #f9ce34, #ee2a7b, #6228d7)' }}>
+                                {/* Instagram brand icon */}
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                                    <rect x="2" y="2" width="20" height="20" rx="5.5" stroke="white" strokeWidth="2"/>
+                                    <circle cx="12" cy="12" r="4.5" stroke="white" strokeWidth="2"/>
+                                    <circle cx="17.5" cy="6.5" r="1.2" fill="white"/>
+                                </svg>
                             </div>
                             <div className="text-center">
-                                <div className="font-semibold text-sm text-white">Real Trips</div>
-                                <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Reel → Your trip</div>
+                                <div className="font-semibold text-sm text-white">Reel to Trip</div>
+                                <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Paste Insta URL</div>
                             </div>
                         </Link>
 
