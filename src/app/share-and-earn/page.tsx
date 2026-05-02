@@ -1,30 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin, Play, Upload, Search, Camera, Video, Flame, Zap, Star } from 'lucide-react';
+import { MapPin, Play, Upload, Search, Camera, Video } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
 const TripMemorySheet = dynamic(() => import('@/components/TripMemorySheet'), { ssr: false });
 
-const GOLD = '#C9A96E';
-const GOLD_LIGHT = '#E2C68F';
-const PURPLE = '#8b5cf6';
-const PINK = '#ec4899';
+const GOLD  = '#C9A96E';
+const GOLD2 = '#E2C68F';
+const BG    = '#07070b';
 
-// ── Avatar colours ───────────────────────────────────────────────────────────
-const AVATAR_GRADIENTS = [
-  'linear-gradient(135deg,#C9A96E,#E2C68F)',
-  'linear-gradient(135deg,#6366f1,#8b5cf6)',
-  'linear-gradient(135deg,#ec4899,#f43f5e)',
-  'linear-gradient(135deg,#06b6d4,#3b82f6)',
-  'linear-gradient(135deg,#10b981,#34d399)',
-  'linear-gradient(135deg,#f59e0b,#ef4444)',
-  'linear-gradient(135deg,#8b5cf6,#ec4899)',
-  'linear-gradient(135deg,#14b8a6,#06b6d4)',
-];
-function avatarGrad(name: string) {
-  return AVATAR_GRADIENTS[name.charCodeAt(0) % AVATAR_GRADIENTS.length];
-}
+// ── Avatar — monogram on dark gold ───────────────────────────────────────────
 function initials(name: string) {
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 }
@@ -63,121 +49,105 @@ const SAMPLE_POSTS: Post[] = [
   { id: 's18', name: 'Pooja D.',   trip: 'Varanasi',     src: 'https://images.unsplash.com/photo-1561361058-c24cecae35ca?w=800&q=85', type: 'photo',  caption: 'ganga aarti at dawn 🪔 kuch cheezein describe nahi hoti, bas anubhav karo\n#varanasi #banaras', cashback: 500,  timeAgo: '6d' },
 ];
 
-const FILTERS = ['✨ All', '🔥 Trending', '🌊 Beach', '⛰️ Mountains', '🏙️ City', '🌴 International'];
+const FILTERS = ['All', 'Trending', 'Beach', 'Mountains', 'City', 'International'];
 
 // ── Feed Post Card ────────────────────────────────────────────────────────────
-function FeedPost({ post, index }: { post: Post; index: number }) {
+function FeedPost({ post }: { post: Post }) {
   const [mediaLoaded, setMediaLoaded] = useState(false);
   const [liked, setLiked] = useState(false);
-  const [likeAnim, setLikeAnim] = useState(false);
   const isRealVideo = post.isReal && post.type === 'video';
-  const isTrending = index < 3;
-
-  const handleLike = () => {
-    setLiked(l => !l);
-    setLikeAnim(true);
-    setTimeout(() => setLikeAnim(false), 600);
-  };
 
   return (
-    <article className="mb-1" style={{ background: '#0d0d14' }}>
+    <article style={{ background: BG, borderBottom: '1px solid rgba(201,169,110,0.07)' }}>
       {/* Post header */}
-      <div className="flex items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-2.5">
+      <div className="flex items-center justify-between px-4 py-3.5">
+        <div className="flex items-center gap-3">
+          {/* Monogram avatar */}
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-black text-white shrink-0"
-            style={{ background: avatarGrad(post.name), boxShadow: post.isReal ? `0 0 0 2px #0d0d14, 0 0 0 3.5px ${GOLD}` : `0 0 0 2px #0d0d14, 0 0 0 3px rgba(255,255,255,0.1)` }}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-black shrink-0 tracking-wide"
+            style={{
+              background: post.isReal
+                ? `linear-gradient(135deg, ${GOLD}, ${GOLD2})`
+                : 'rgba(201,169,110,0.12)',
+              color: post.isReal ? '#000' : GOLD,
+              border: `1px solid ${post.isReal ? 'transparent' : 'rgba(201,169,110,0.2)'}`,
+            }}
           >
             {initials(post.name)}
           </div>
           <div>
-            <div className="flex items-center gap-1.5">
-              <p className="text-white font-bold text-sm leading-tight">{post.name}</p>
-              {post.isReal && <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(201,169,110,0.2)', color: GOLD }}>✓ verified</span>}
-              {isTrending && !post.isReal && (
-                <span className="flex items-center gap-0.5 text-[9px] font-black px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(239,68,68,0.15)', color: '#f87171' }}>
-                  <Flame size={8} />trending
+            <div className="flex items-center gap-2">
+              <p className="text-white font-semibold text-sm leading-tight tracking-wide">{post.name}</p>
+              {post.isReal && (
+                <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-sm" style={{ background: 'rgba(201,169,110,0.15)', color: GOLD, letterSpacing: '0.1em' }}>
+                  VERIFIED
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-1">
-              <MapPin size={9} style={{ color: 'rgba(201,169,110,0.5)' }} />
-              <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.45)' }}>{post.trip}</span>
+            <div className="flex items-center gap-1 mt-0.5">
+              <MapPin size={8} style={{ color: 'rgba(201,169,110,0.4)' }} />
+              <span className="text-[10px] tracking-widest uppercase" style={{ color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em' }}>{post.trip}</span>
             </div>
           </div>
         </div>
-        {/* Cashback earned badge */}
-        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full" style={{ background: post.type === 'video' ? 'rgba(139,92,246,0.15)' : 'rgba(201,169,110,0.12)', border: `1px solid ${post.type === 'video' ? 'rgba(139,92,246,0.3)' : 'rgba(201,169,110,0.25)'}` }}>
-          <Zap size={10} style={{ color: post.type === 'video' ? PURPLE : GOLD }} />
-          <span className="text-[10px] font-black" style={{ color: post.type === 'video' ? PURPLE : GOLD }}>₹{post.cashback} earned</span>
+        {/* Cashback pill — understated */}
+        <div className="text-right">
+          <p className="text-[11px] font-black" style={{ color: GOLD }}>₹{post.cashback.toLocaleString('en-IN')}</p>
+          <p className="text-[8px] uppercase tracking-widest" style={{ color: 'rgba(201,169,110,0.4)' }}>cashback</p>
         </div>
       </div>
 
-      {/* Media — full bleed with gradient overlay */}
-      <div className="relative w-full bg-black overflow-hidden" style={{ aspectRatio: '4/5' }}>
+      {/* Media */}
+      <div className="relative w-full overflow-hidden" style={{ aspectRatio: '4/5', background: '#0a0a0e' }}>
         {!mediaLoaded && (
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(201,169,110,0.05), rgba(139,92,246,0.05))' }}>
-            <div className="absolute inset-0 animate-pulse" style={{ background: 'rgba(255,255,255,0.03)' }} />
-          </div>
+          <div className="absolute inset-0 animate-pulse" style={{ background: 'linear-gradient(180deg, rgba(201,169,110,0.04) 0%, rgba(0,0,0,0) 100%)' }} />
         )}
-
         {isRealVideo ? (
           <video src={post.src} className="w-full h-full object-cover" controls playsInline preload="metadata" onLoadedMetadata={() => setMediaLoaded(true)} />
         ) : (
           <img src={post.src} alt={post.caption} className="w-full h-full object-cover" onLoad={() => setMediaLoaded(true)} loading="lazy" />
         )}
 
-        {/* Gradient overlay bottom */}
-        <div className="absolute inset-x-0 bottom-0 h-32 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(13,13,20,0.9) 0%, transparent 100%)' }} />
+        {/* Elegant vignette */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, transparent 60%, rgba(7,7,11,0.5) 100%)' }} />
+        <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none" style={{ background: `linear-gradient(to top, ${BG} 0%, transparent 100%)` }} />
 
-        {/* Top-right badges */}
-        <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5 pointer-events-none">
-          <div className="flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: post.type === 'video' ? 'rgba(139,92,246,0.9)' : 'rgba(201,169,110,0.9)', backdropFilter: 'blur(8px)' }}>
+        {/* Type badge — top left, minimal */}
+        <div className="absolute top-3 left-3 pointer-events-none">
+          <div className="flex items-center gap-1 px-2 py-1 rounded-sm" style={{ background: 'rgba(7,7,11,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(201,169,110,0.2)' }}>
             {post.type === 'video'
-              ? <><Video size={10} className="text-white" /><span className="text-[9px] font-black text-white">REEL</span></>
-              : <><Camera size={10} className="text-black" /><span className="text-[9px] font-black text-black">SNAP</span></>
+              ? <><Video size={9} style={{ color: GOLD }} /><span className="text-[8px] font-black uppercase tracking-widest" style={{ color: GOLD }}>Reel</span></>
+              : <><Camera size={9} style={{ color: GOLD }} /><span className="text-[8px] font-black uppercase tracking-widest" style={{ color: GOLD }}>Photo</span></>
             }
           </div>
         </div>
 
-        {/* Sample video play overlay */}
+        {/* Video play */}
         {post.type === 'video' && !isRealVideo && (
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', border: '2px solid rgba(255,255,255,0.25)' }}>
-              <Play size={24} className="text-white ml-1" fill="white" />
-            </div>
-          </div>
-        )}
-
-        {/* Like animation overlay */}
-        {likeAnim && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 5 }}>
-            <div className="animate-ping">
-              <svg width="80" height="80" viewBox="0 0 24 24" fill={GOLD} style={{ opacity: 0.8 }}>
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-              </svg>
+            <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'rgba(7,7,11,0.65)', backdropFilter: 'blur(16px)', border: `1px solid rgba(201,169,110,0.35)` }}>
+              <Play size={20} style={{ color: GOLD, marginLeft: 2 }} fill={GOLD} />
             </div>
           </div>
         )}
       </div>
 
       {/* Post footer */}
-      <div className="px-4 pt-2.5 pb-4">
-        <div className="flex items-center justify-between mb-2">
-          <button onDoubleClick={handleLike} onClick={handleLike} className="flex items-center gap-2 transition-all active:scale-90">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill={liked ? '#f43f5e' : 'none'} stroke={liked ? '#f43f5e' : 'rgba(255,255,255,0.35)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.2s', transform: liked ? 'scale(1.2)' : 'scale(1)' }}>
+      <div className="px-4 pt-3 pb-5">
+        <div className="flex items-center justify-between mb-2.5">
+          <button onClick={() => setLiked(l => !l)} className="flex items-center gap-2 transition-all active:scale-90">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill={liked ? GOLD : 'none'} stroke={liked ? GOLD : 'rgba(201,169,110,0.3)'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.25s' }}>
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
             </svg>
-            {liked && <span className="text-xs font-bold" style={{ color: '#f43f5e' }}>❤️</span>}
+            {liked && <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: GOLD }}>Loved</span>}
           </button>
-          <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.2)' }}>{post.timeAgo} ago</span>
+          <span className="text-[9px] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.15)' }}>{post.timeAgo} ago</span>
         </div>
-
-        <p className="text-white/80 text-sm leading-relaxed whitespace-pre-line">
-          <span className="font-bold text-white">{post.name.split(' ')[0]} </span>
+        <p className="text-white/60 text-sm leading-relaxed whitespace-pre-line" style={{ fontWeight: 300 }}>
+          <span className="font-semibold text-white/90">{post.name.split(' ')[0]} </span>
           {post.caption.split('\n').map((line, i) =>
             line.startsWith('#') ? (
-              <span key={i} className="font-semibold" style={{ color: PURPLE, opacity: 0.85 }}>{'\n'}{line}</span>
+              <span key={i} style={{ color: 'rgba(201,169,110,0.55)', fontWeight: 400 }}>{'\n'}{line}</span>
             ) : i === 0 ? line : <span key={i}>{'\n'}{line}</span>
           )}
         </p>
@@ -242,144 +212,140 @@ export default function ShareAndEarnPage() {
   });
 
   return (
-    <div className="min-h-screen pb-32" style={{ background: '#08080e' }}>
+    <div className="min-h-screen pb-32" style={{ background: BG }}>
 
       {/* ── Top Bar ── */}
-      <header className="sticky top-0 z-40" style={{ background: 'rgba(8,8,14,0.97)', backdropFilter: 'blur(24px)', borderBottom: '1px solid rgba(139,92,246,0.15)' }}>
-        <div className="flex items-center justify-between px-4 py-3">
+      <header className="sticky top-0 z-40" style={{ background: `rgba(7,7,11,0.96)`, backdropFilter: 'blur(30px)', borderBottom: '1px solid rgba(201,169,110,0.1)' }}>
+        <div className="flex items-center justify-between px-5 py-4">
           <div>
-            <h1 className="font-black text-2xl tracking-tight leading-none" style={{ background: `linear-gradient(135deg, ${GOLD} 0%, ${PINK} 60%, ${PURPLE} 100%)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              YLOO Reels
+            <h1 className="font-black text-xl tracking-[0.04em] leading-none" style={{ color: GOLD, letterSpacing: '0.06em' }}>
+              YLOO REELS
             </h1>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#4ade80' }} />
-              <span className="text-[9px] font-bold" style={{ color: 'rgba(255,255,255,0.35)' }}>{liveCount.toLocaleString('en-IN')} earning right now</span>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="w-1 h-1 rounded-full" style={{ background: GOLD, opacity: 0.6 }} />
+              <span className="text-[9px] uppercase tracking-[0.2em]" style={{ color: 'rgba(201,169,110,0.4)' }}>
+                {liveCount.toLocaleString('en-IN')} earning today
+              </span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <div className="relative">
               <input
                 type="text"
                 value={searchQ}
                 onChange={e => setSearchQ(e.target.value)}
                 placeholder="search..."
-                className="w-28 pl-8 pr-3 py-2 rounded-full text-white placeholder-white/20 text-xs focus:outline-none focus:w-36 transition-all"
-                style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
+                className="w-24 pl-7 pr-3 py-2 text-white placeholder-white/20 text-xs focus:outline-none"
+                style={{ background: 'rgba(201,169,110,0.06)', border: '1px solid rgba(201,169,110,0.15)', borderRadius: 2 }}
               />
-              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/30" />
+              <Search size={11} className="absolute left-2 top-1/2 -translate-y-1/2" style={{ color: 'rgba(201,169,110,0.4)' }} />
             </div>
             <button
               onClick={() => setUploadOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-full font-black text-black text-xs transition-all active:scale-95"
-              style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})`, boxShadow: `0 4px 14px rgba(201,169,110,0.4)` }}
+              className="flex items-center gap-1.5 px-4 py-2 font-bold text-black text-xs transition-all active:scale-95"
+              style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD2})`, borderRadius: 2, letterSpacing: '0.08em' }}
             >
-              <Upload size={12} />Post
+              <Upload size={11} />POST
             </button>
           </div>
         </div>
 
-        {/* Filter pills */}
-        <div className="flex gap-2 px-4 pb-3 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+        {/* Filter pills — minimal horizontal line style */}
+        <div className="flex gap-0 px-5 overflow-x-auto" style={{ scrollbarWidth: 'none', borderTop: '1px solid rgba(201,169,110,0.07)' }}>
           {FILTERS.map(f => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className="shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95"
+              className="shrink-0 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all"
               style={filter === f
-                ? { background: `linear-gradient(135deg, ${PURPLE}, ${PINK})`, color: '#fff', boxShadow: `0 3px 12px rgba(139,92,246,0.4)` }
-                : { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.08)' }
+                ? { color: GOLD, borderBottom: `1px solid ${GOLD}` }
+                : { color: 'rgba(255,255,255,0.25)', borderBottom: '1px solid transparent' }
               }
             >{f}</button>
           ))}
         </div>
       </header>
 
-      {/* ── Hero Earn Banner ── */}
-      <div className="mx-3 mt-3 mb-2 rounded-3xl overflow-hidden relative" style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #0d1a2e 50%, #0a1a0d 100%)', border: '1px solid rgba(139,92,246,0.3)' }}>
-        {/* Decorative glow blobs */}
-        <div className="absolute top-0 left-0 w-32 h-32 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${PURPLE}33 0%, transparent 70%)` }} />
-        <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${GOLD}22 0%, transparent 70%)` }} />
+      {/* ── Luxury Earn Card ── */}
+      <div className="mx-4 mt-4 mb-3">
+        <button
+          onClick={() => setUploadOpen(true)}
+          className="relative w-full text-left active:scale-[0.995] transition-all overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #0e0c09 0%, #111008 100%)', border: `1px solid rgba(201,169,110,0.3)`, borderRadius: 4 }}
+        >
+          {/* Corner accent lines */}
+          <div className="absolute top-0 left-0 w-8 h-px" style={{ background: GOLD }} />
+          <div className="absolute top-0 left-0 w-px h-8" style={{ background: GOLD }} />
+          <div className="absolute bottom-0 right-0 w-8 h-px" style={{ background: GOLD }} />
+          <div className="absolute bottom-0 right-0 w-px h-8" style={{ background: GOLD }} />
 
-        <button onClick={() => setUploadOpen(true)} className="relative w-full p-4 text-left active:scale-[0.99] transition-all">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1">
-              <div className="flex items-center gap-1.5 mb-2">
-                <Flame size={14} style={{ color: '#f87171' }} />
-                <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: '#f87171' }}>Daily Earning Challenge</span>
+          <div className="p-5">
+            <p className="text-[8px] font-black uppercase tracking-[0.3em] mb-3" style={{ color: 'rgba(201,169,110,0.5)' }}>Members Earn Daily</p>
+            <div className="flex items-center justify-between gap-4 mb-4">
+              <div>
+                <p className="text-white text-lg font-light leading-tight" style={{ letterSpacing: '0.02em' }}>
+                  Share your journey.<br />
+                  <span className="font-black" style={{ color: GOLD }}>Earn up to ₹1,000</span>
+                  <span className="font-light text-white"> instantly.</span>
+                </p>
               </div>
-              <p className="text-white font-black text-lg leading-tight mb-1">Post a trip pic or reel<br /><span style={{ background: `linear-gradient(135deg, ${GOLD}, ${PINK})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>earn ₹500–₹1,000 instantly</span></p>
-              <p className="text-white/40 text-xs">Max 5 posts/day · Credited in seconds</p>
-            </div>
-            <div className="flex flex-col items-center gap-2 shrink-0">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})`, boxShadow: `0 6px 20px rgba(201,169,110,0.5)` }}>
-                <Camera size={24} className="text-black" />
+              <div className="shrink-0 w-12 h-12 flex items-center justify-center" style={{ border: `1px solid rgba(201,169,110,0.4)`, borderRadius: 2 }}>
+                <Camera size={20} style={{ color: GOLD }} />
               </div>
-              <span className="text-[10px] font-black text-white/60">tap to post</span>
             </div>
-          </div>
-
-          {/* Reward chips */}
-          <div className="flex gap-2 mt-3">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: 'rgba(201,169,110,0.12)', border: '1px solid rgba(201,169,110,0.25)' }}>
-              <Camera size={11} style={{ color: GOLD }} />
-              <span className="text-xs font-black" style={{ color: GOLD }}>Photo = ₹500</span>
-            </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.25)' }}>
-              <Video size={11} style={{ color: PURPLE }} />
-              <span className="text-xs font-black" style={{ color: PURPLE }}>Reel = ₹1,000</span>
-            </div>
-            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full" style={{ background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)' }}>
-              <Zap size={11} style={{ color: '#4ade80' }} />
-              <span className="text-xs font-black" style={{ color: '#4ade80' }}>Instant</span>
+            <div className="flex items-center gap-4">
+              <div style={{ borderLeft: `2px solid rgba(201,169,110,0.3)`, paddingLeft: 10 }}>
+                <p className="text-[10px] uppercase tracking-widest" style={{ color: 'rgba(201,169,110,0.5)' }}>Photo</p>
+                <p className="font-black text-sm" style={{ color: GOLD }}>₹500</p>
+              </div>
+              <div style={{ borderLeft: `2px solid rgba(201,169,110,0.3)`, paddingLeft: 10 }}>
+                <p className="text-[10px] uppercase tracking-widest" style={{ color: 'rgba(201,169,110,0.5)' }}>Reel</p>
+                <p className="font-black text-sm" style={{ color: GOLD }}>₹1,000</p>
+              </div>
+              <div style={{ borderLeft: `2px solid rgba(201,169,110,0.3)`, paddingLeft: 10 }}>
+                <p className="text-[10px] uppercase tracking-widest" style={{ color: 'rgba(201,169,110,0.5)' }}>Daily Max</p>
+                <p className="font-black text-sm" style={{ color: GOLD }}>₹5,000</p>
+              </div>
             </div>
           </div>
         </button>
       </div>
 
-      {/* ── Social proof strip ── */}
-      <div className="mx-3 mb-3 flex items-center justify-between px-4 py-2.5 rounded-2xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-        <div className="flex -space-x-2">
-          {AVATAR_GRADIENTS.slice(0, 5).map((g, i) => (
-            <div key={i} className="w-6 h-6 rounded-full border" style={{ background: g, borderColor: '#08080e' }} />
-          ))}
-        </div>
-        <div className="flex items-center gap-1.5">
-          <Star size={10} fill={GOLD} style={{ color: GOLD }} />
-          <span className="text-white/50 text-[10px] font-medium">₹1.5 Cr+ paid out to 2,000+ travellers</span>
-        </div>
+      {/* ── Social proof — one liner ── */}
+      <div className="flex items-center justify-center gap-3 mb-4 px-5">
+        <div className="flex-1 h-px" style={{ background: 'rgba(201,169,110,0.1)' }} />
+        <p className="text-[9px] uppercase tracking-[0.2em] shrink-0" style={{ color: 'rgba(201,169,110,0.35)' }}>₹1.5 Cr+ paid · 2,000+ travellers</p>
+        <div className="flex-1 h-px" style={{ background: 'rgba(201,169,110,0.1)' }} />
       </div>
 
       {/* ── Feed ── */}
       {posts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <div className="w-16 h-16 rounded-2xl flex items-center justify-center animate-pulse" style={{ background: `linear-gradient(135deg, rgba(139,92,246,0.2), rgba(201,169,110,0.1))` }}>
-            <Camera size={28} style={{ color: GOLD }} />
+        <div className="flex flex-col items-center justify-center py-24 gap-4">
+          <div className="w-12 h-12 flex items-center justify-center animate-pulse" style={{ border: `1px solid rgba(201,169,110,0.2)` }}>
+            <Camera size={20} style={{ color: 'rgba(201,169,110,0.4)' }} />
           </div>
-          <p className="text-white/30 text-sm font-medium">Loading memories...</p>
+          <p className="text-[10px] uppercase tracking-[0.2em]" style={{ color: 'rgba(255,255,255,0.2)' }}>Loading memories</p>
         </div>
       ) : displayed.length === 0 ? (
         <div className="flex flex-col items-center py-20 gap-2">
-          <p className="text-white/30 text-sm">No results for &quot;{searchQ}&quot;</p>
+          <p className="text-[10px] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.2)' }}>No results for &quot;{searchQ}&quot;</p>
         </div>
       ) : (
-        <div style={{ gap: 2, display: 'flex', flexDirection: 'column' }}>
-          {displayed.map((post, i) => (
-            <FeedPost key={post.id} post={post} index={i} />
-          ))}
-        </div>
+        displayed.map(post => <FeedPost key={post.id} post={post} />)
       )}
 
-      {/* ── Bottom CTA ── */}
-      <div className="fixed bottom-[64px] left-0 right-0 px-4 py-3 z-30" style={{ background: 'rgba(8,8,14,0.97)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(139,92,246,0.15)' }}>
-        <button
-          onClick={() => setUploadOpen(true)}
-          className="relative w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-black text-black text-sm transition-all active:scale-[0.98] overflow-hidden"
-          style={{ background: `linear-gradient(135deg, ${GOLD} 0%, ${GOLD_LIGHT} 40%, ${PINK} 100%)`, boxShadow: `0 6px 30px rgba(236,72,153,0.35), 0 2px 12px rgba(201,169,110,0.3)` }}
-        >
-          <Camera size={19} />
-          <span>Post Your Trip · Earn Cashback</span>
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: 'rgba(0,0,0,0.2)' }}>up to ₹1,000</span>
-        </button>
+      {/* ── Bottom CTA — luxury bar ── */}
+      <div className="fixed bottom-[64px] left-0 right-0 z-30" style={{ background: `rgba(7,7,11,0.97)`, backdropFilter: 'blur(30px)', borderTop: '1px solid rgba(201,169,110,0.12)' }}>
+        <div className="px-4 py-3">
+          <button
+            onClick={() => setUploadOpen(true)}
+            className="w-full flex items-center justify-center gap-3 py-3.5 font-black text-black text-xs tracking-[0.12em] transition-all active:scale-[0.99]"
+            style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD2})`, borderRadius: 2, boxShadow: `0 4px 24px rgba(201,169,110,0.25)`, letterSpacing: '0.1em' }}
+          >
+            <Camera size={16} />
+            POST YOUR TRIP · EARN CASHBACK
+          </button>
+        </div>
       </div>
 
       {uploadOpen && (
