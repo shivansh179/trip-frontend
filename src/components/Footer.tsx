@@ -183,15 +183,15 @@ export default function Footer() {
                   Prices are inclusive of all taxes · No hidden fees · Currency shown based on your selection
                 </p>
               </div>
-              {/* Admin button — small lock icon, visible but discreet */}
+              {/* Admin button */}
               <button
                 onClick={() => setShowAdminModal(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all active:scale-95"
+                style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)' }}
                 aria-label="Admin Portal"
               >
-                <Lock className="w-3 h-3 text-cream/30" />
-                <span className="text-[9px] uppercase tracking-widest text-cream/25">Admin</span>
+                <Lock className="w-3.5 h-3.5 text-white/70" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Admin</span>
               </button>
             </div>
           </div>
