@@ -128,13 +128,24 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+  const body = await req.json() as { ref: string; status?: string; fileUrl?: string };
+  const { ref, status, fileUrl } = body;
+  if (!ref) return NextResponse.json({ error: 'ref required' }, { status: 400 });
+
+  // fileUrl update — called by client after background GCS upload, no auth needed
+  if (fileUrl !== undefined) {
+    await connectDB();
+    await TripMemory.findOneAndUpdate({ ref }, { $set: { fileUrl } });
+    return NextResponse.json({ success: true });
+  }
+
+  // Status change — admin only
   const adminSecret = process.env.ADMIN_SECRET;
   const token = req.headers.get('x-admin-secret') || req.headers.get('x-admin-token');
   if (adminSecret && token !== adminSecret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const { ref, status } = await req.json() as { ref: string; status: string };
-  if (!ref || !['approved', 'rejected'].includes(status)) {
+  if (!status || !['approved', 'rejected'].includes(status)) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
   await connectDB();

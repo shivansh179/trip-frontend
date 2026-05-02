@@ -60,65 +60,12 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
       setErrorMsg('Please fill all fields.'); return;
     }
     setStep('uploading');
-    setUploadProgress(0);
+    setUploadStage('Saving your post...');
+    setUploadProgress(30);
     setErrorMsg('');
 
     try {
-      let fileUrl: string | null = null;
-
-      // ── Step 1: try to upload file directly to GCS (optional — skipped if GCS not configured) ──
-      if (file) {
-        setUploadStage('Getting upload link...');
-        setUploadProgress(5);
-
-        try {
-          const urlRes = await fetch('/api/trip-memories/upload-url', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mediaType, fileName: file.name, contentType: file.type }),
-          });
-
-          if (urlRes.ok) {
-            const { signedUrl, fileUrl: gcsUrl } = await urlRes.json() as {
-              signedUrl: string; fileUrl: string;
-            };
-
-            setUploadStage('Uploading to Google Cloud...');
-            setUploadProgress(15);
-
-            // Direct PUT to GCS signed URL — bypasses Vercel entirely, supports large files
-            await new Promise<void>((resolve, reject) => {
-              const xhr = new XMLHttpRequest();
-              xhr.upload.onprogress = (ev) => {
-                if (ev.lengthComputable) {
-                  const pct = Math.round((ev.loaded / ev.total) * 75) + 15;
-                  setUploadProgress(pct);
-                }
-              };
-              xhr.onload = () => {
-                if (xhr.status >= 200 && xhr.status < 300) resolve();
-                else reject(new Error(`GCS upload failed (${xhr.status})`));
-              };
-              xhr.onerror = () => reject(new Error('Network error during upload'));
-              xhr.open('PUT', signedUrl);
-              xhr.setRequestHeader('Content-Type', file.type);
-              xhr.send(file);
-            });
-
-            fileUrl = gcsUrl;
-          }
-          // GCS not configured → continue without file, post still saves
-        } catch {
-          // File upload failed → continue, post saves without image
-        }
-
-        setUploadProgress(92);
-      }
-
-      // ── Step 2: save metadata + credit cashback ──
-      setUploadStage('Crediting cashback...');
-      setUploadProgress(95);
-
+      // ── Step 1: save metadata immediately (no file) — fast, instant cashback ──
       const metaRes = await fetch('/api/trip-memories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -127,23 +74,66 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
           contact:   contact.trim(),
           tripName:  tripName.trim(),
           mediaType,
-          fileUrl,
+          fileUrl:    null,
           fileName:   file?.name || '',
           fileSizeKB: file ? Math.round(file.size / 1024) : 0,
         }),
       });
 
-      const json = await metaRes.json() as { success?: boolean; cashback?: number; walletBalance?: number; error?: string };
+      const json = await metaRes.json() as { success?: boolean; ref?: string; cashback?: number; walletBalance?: number; error?: string };
       if (!metaRes.ok || !json.success) {
-        throw new Error(json.error || 'Failed to save memory');
+        throw new Error(json.error || 'Failed to save post');
       }
 
-      setUploadProgress(100);
-      const earned = json.cashback ?? (mediaType === 'video' ? CASHBACK_VIDEO : CASHBACK_PHOTO);
+      setUploadProgress(70);
+
+      // ── Step 2: credit wallet instantly ──
+      const earned = (json.cashback && json.cashback > 0)
+        ? json.cashback
+        : (mediaType === 'video' ? CASHBACK_VIDEO : CASHBACK_PHOTO);
+      const ref = json.ref ?? `MEM-${Date.now()}`;
+
       setCashbackEarned(earned);
-      setNewBalance(json.walletBalance ?? balance + earned);
-      creditWallet(earned, `MEM-${Date.now()}`, `📸 YLOO Reels reward — ${tripName.trim()}`);
+      setNewBalance(json.walletBalance && json.walletBalance > 0 ? json.walletBalance : balance + earned);
+      creditWallet(earned, ref, `📸 YLOO Reels reward — ${tripName.trim()}`);
+
+      setUploadProgress(100);
       setStep('success');
+
+      // ── Step 3: upload file to GCS in the background (user doesn't wait) ──
+      if (file && json.ref) {
+        const savedRef = json.ref;
+        const uploadFile = file;
+        (async () => {
+          try {
+            const urlRes = await fetch('/api/trip-memories/upload-url', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ mediaType, fileName: uploadFile.name, contentType: uploadFile.type }),
+            });
+            if (!urlRes.ok) return;
+            const { signedUrl, fileUrl: gcsUrl } = await urlRes.json() as { signedUrl: string; fileUrl: string };
+
+            await new Promise<void>((resolve, reject) => {
+              const xhr = new XMLHttpRequest();
+              xhr.onload = () => xhr.status >= 200 && xhr.status < 300 ? resolve() : reject();
+              xhr.onerror = () => reject();
+              xhr.open('PUT', signedUrl);
+              xhr.setRequestHeader('Content-Type', uploadFile.type);
+              xhr.send(uploadFile);
+            });
+
+            // Attach the file URL to the saved record
+            await fetch('/api/trip-memories', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ref: savedRef, fileUrl: gcsUrl }),
+            });
+          } catch {
+            // Background upload failed — post is already saved, just no media URL
+          }
+        })();
+      }
 
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Something went wrong. Try again.';
@@ -307,8 +297,8 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
                 <RefreshCw size={32} className="animate-spin" style={{ color: GOLD }} />
               </div>
               <div className="w-full max-w-xs">
-                <p className="text-white font-bold text-lg mb-1">Uploading your memory...</p>
-                <p className="text-white/30 text-sm mb-4">{uploadStage || 'Please wait'}</p>
+                <p className="text-white font-bold text-lg mb-1">Almost done...</p>
+                <p className="text-white/30 text-sm mb-4">{uploadStage || 'Crediting cashback'}</p>
                 {/* Progress bar */}
                 <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
                   <div
