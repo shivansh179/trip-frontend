@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin, Play, Wallet, Upload, Search, Bell, Camera, Video, ChevronRight } from 'lucide-react';
+import { MapPin, Play, Wallet, Upload, Search, Camera, Video, Flame, Zap, Star } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
 const TripMemorySheet = dynamic(() => import('@/components/TripMemorySheet'), { ssr: false });
 
 const GOLD = '#C9A96E';
 const GOLD_LIGHT = '#E2C68F';
+const PURPLE = '#8b5cf6';
+const PINK = '#ec4899';
 
 // ── Avatar colours ───────────────────────────────────────────────────────────
 const AVATAR_GRADIENTS = [
@@ -61,108 +63,121 @@ const SAMPLE_POSTS: Post[] = [
   { id: 's18', name: 'Pooja D.',   trip: 'Varanasi',     src: 'https://images.unsplash.com/photo-1561361058-c24cecae35ca?w=800&q=85', type: 'photo',  caption: 'ganga aarti at dawn 🪔 kuch cheezein describe nahi hoti, bas anubhav karo\n#varanasi #banaras', cashback: 500,  timeAgo: '6d' },
 ];
 
+const FILTERS = ['✨ All', '🔥 Trending', '🌊 Beach', '⛰️ Mountains', '🏙️ City', '🌴 International'];
+
 // ── Feed Post Card ────────────────────────────────────────────────────────────
-function FeedPost({ post }: { post: Post }) {
+function FeedPost({ post, index }: { post: Post; index: number }) {
   const [mediaLoaded, setMediaLoaded] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likeAnim, setLikeAnim] = useState(false);
   const isRealVideo = post.isReal && post.type === 'video';
+  const isTrending = index < 3;
+
+  const handleLike = () => {
+    setLiked(l => !l);
+    setLikeAnim(true);
+    setTimeout(() => setLikeAnim(false), 600);
+  };
 
   return (
-    <article className="border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-
+    <article className="mb-1" style={{ background: '#0d0d14' }}>
       {/* Post header */}
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2.5">
           <div
-            className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-black text-black shrink-0"
-            style={{ background: avatarGrad(post.name), boxShadow: post.isReal ? `0 0 0 2px #0a0a0f, 0 0 0 3px ${GOLD}` : '0 0 0 1.5px rgba(255,255,255,0.1)' }}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-black text-white shrink-0"
+            style={{ background: avatarGrad(post.name), boxShadow: post.isReal ? `0 0 0 2px #0d0d14, 0 0 0 3.5px ${GOLD}` : `0 0 0 2px #0d0d14, 0 0 0 3px rgba(255,255,255,0.1)` }}
           >
             {initials(post.name)}
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <p className="text-white font-semibold text-sm leading-tight">{post.name}</p>
-              {post.isReal && <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(201,169,110,0.15)', color: GOLD }}>✓</span>}
+              <p className="text-white font-bold text-sm leading-tight">{post.name}</p>
+              {post.isReal && <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(201,169,110,0.2)', color: GOLD }}>✓ verified</span>}
+              {isTrending && !post.isReal && (
+                <span className="flex items-center gap-0.5 text-[9px] font-black px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(239,68,68,0.15)', color: '#f87171' }}>
+                  <Flame size={8} />trending
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-1">
-              <MapPin size={9} style={{ color: 'rgba(255,255,255,0.35)' }} />
-              <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>{post.trip}</span>
+              <MapPin size={9} style={{ color: 'rgba(201,169,110,0.5)' }} />
+              <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.45)' }}>{post.trip}</span>
             </div>
           </div>
         </div>
-
-        {/* Subtle cashback — only show for real posts, or as muted text for samples */}
-        <div className="flex items-center gap-1 px-2 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.05)' }}>
-          <Wallet size={10} style={{ color: post.isReal ? GOLD : 'rgba(255,255,255,0.25)' }} />
-          <span className="text-[10px] font-bold" style={{ color: post.isReal ? GOLD : 'rgba(255,255,255,0.3)' }}>₹{post.cashback}</span>
+        {/* Cashback earned badge */}
+        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full" style={{ background: post.type === 'video' ? 'rgba(139,92,246,0.15)' : 'rgba(201,169,110,0.12)', border: `1px solid ${post.type === 'video' ? 'rgba(139,92,246,0.3)' : 'rgba(201,169,110,0.25)'}` }}>
+          <Zap size={10} style={{ color: post.type === 'video' ? PURPLE : GOLD }} />
+          <span className="text-[10px] font-black" style={{ color: post.type === 'video' ? PURPLE : GOLD }}>₹{post.cashback} earned</span>
         </div>
       </div>
 
-      {/* Media */}
-      <div className="relative w-full bg-black" style={{ aspectRatio: '4/5' }}>
+      {/* Media — full bleed with gradient overlay */}
+      <div className="relative w-full bg-black overflow-hidden" style={{ aspectRatio: '4/5' }}>
         {!mediaLoaded && (
-          <div className="absolute inset-0 animate-pulse" style={{ background: 'rgba(255,255,255,0.04)' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(201,169,110,0.05), rgba(139,92,246,0.05))' }}>
+            <div className="absolute inset-0 animate-pulse" style={{ background: 'rgba(255,255,255,0.03)' }} />
+          </div>
         )}
 
-        {/* Real video from GCS → use <video> */}
         {isRealVideo ? (
-          <video
-            src={post.src}
-            className="w-full h-full object-cover"
-            controls
-            playsInline
-            preload="metadata"
-            onLoadedMetadata={() => setMediaLoaded(true)}
-          />
+          <video src={post.src} className="w-full h-full object-cover" controls playsInline preload="metadata" onLoadedMetadata={() => setMediaLoaded(true)} />
         ) : (
-          <img
-            src={post.src}
-            alt={post.caption}
-            className="w-full h-full object-cover"
-            onLoad={() => setMediaLoaded(true)}
-            loading="lazy"
-          />
+          <img src={post.src} alt={post.caption} className="w-full h-full object-cover" onLoad={() => setMediaLoaded(true)} loading="lazy" />
         )}
 
-        {/* Sample video overlay — decorative play button */}
-        {post.type === 'video' && !isRealVideo && (
-          <>
-            <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(0,0,0,0.15)' }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center pointer-events-none" style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', border: '2px solid rgba(255,255,255,0.3)' }}>
-              <Play size={24} className="text-white ml-1" />
-            </div>
-          </>
-        )}
+        {/* Gradient overlay bottom */}
+        <div className="absolute inset-x-0 bottom-0 h-32 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(13,13,20,0.9) 0%, transparent 100%)' }} />
 
-        {/* Badge */}
-        <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full pointer-events-none" style={{ background: post.type === 'video' ? 'rgba(99,102,241,0.85)' : 'rgba(201,169,110,0.85)', backdropFilter: 'blur(8px)' }}>
-          {post.type === 'video'
-            ? <><Video size={10} className="text-white" /><span className="text-[9px] font-bold text-white">REEL</span></>
-            : <><Camera size={10} className="text-black" /><span className="text-[9px] font-bold text-black">SNAP</span></>
-          }
+        {/* Top-right badges */}
+        <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5 pointer-events-none">
+          <div className="flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: post.type === 'video' ? 'rgba(139,92,246,0.9)' : 'rgba(201,169,110,0.9)', backdropFilter: 'blur(8px)' }}>
+            {post.type === 'video'
+              ? <><Video size={10} className="text-white" /><span className="text-[9px] font-black text-white">REEL</span></>
+              : <><Camera size={10} className="text-black" /><span className="text-[9px] font-black text-black">SNAP</span></>
+            }
+          </div>
         </div>
+
+        {/* Sample video play overlay */}
+        {post.type === 'video' && !isRealVideo && (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', border: '2px solid rgba(255,255,255,0.25)' }}>
+              <Play size={24} className="text-white ml-1" fill="white" />
+            </div>
+          </div>
+        )}
+
+        {/* Like animation overlay */}
+        {likeAnim && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 5 }}>
+            <div className="animate-ping">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill={GOLD} style={{ opacity: 0.8 }}>
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Post footer */}
-      <div className="px-4 pt-3 pb-4">
-        {/* Action row */}
+      <div className="px-4 pt-2.5 pb-4">
         <div className="flex items-center justify-between mb-2">
-          {/* Wanderlust (like) — only feedback visible to the person who tapped */}
-          <button onClick={() => setSaved(!saved)} className="flex items-center gap-1.5 transition-all active:scale-90">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill={saved ? GOLD : 'none'} stroke={saved ? GOLD : 'rgba(255,255,255,0.4)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17.5 3.5a5 5 0 0 1 0 7L12 17l-5.5-6a5 5 0 0 1 7-7l-1.5 1.5 1.5-1.5a5 5 0 0 1 5.5 6z" />
+          <button onDoubleClick={handleLike} onClick={handleLike} className="flex items-center gap-2 transition-all active:scale-90">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill={liked ? '#f43f5e' : 'none'} stroke={liked ? '#f43f5e' : 'rgba(255,255,255,0.35)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.2s', transform: liked ? 'scale(1.2)' : 'scale(1)' }}>
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
             </svg>
-            {saved && <span className="text-xs font-bold" style={{ color: GOLD }}>Loved it!</span>}
+            {liked && <span className="text-xs font-bold" style={{ color: '#f43f5e' }}>❤️</span>}
           </button>
-          <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.2)' }}>{post.timeAgo} ago</span>
+          <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.2)' }}>{post.timeAgo} ago</span>
         </div>
 
-        {/* Caption */}
-        <p className="text-white/75 text-sm leading-relaxed whitespace-pre-line">
-          <span className="font-semibold text-white">{post.name.split(' ')[0]} </span>
+        <p className="text-white/80 text-sm leading-relaxed whitespace-pre-line">
+          <span className="font-bold text-white">{post.name.split(' ')[0]} </span>
           {post.caption.split('\n').map((line, i) =>
             line.startsWith('#') ? (
-              <span key={i} style={{ color: GOLD, opacity: 0.7 }}>{'\n'}{line}</span>
+              <span key={i} className="font-semibold" style={{ color: PURPLE, opacity: 0.85 }}>{'\n'}{line}</span>
             ) : i === 0 ? line : <span key={i}>{'\n'}{line}</span>
           )}
         </p>
@@ -173,10 +188,17 @@ function FeedPost({ post }: { post: Post }) {
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function ShareAndEarnPage() {
-  const [uploadOpen, setUploadOpen]   = useState(false);
-  const [posts, setPosts]             = useState<Post[]>([]);
-  const [searchOpen, setSearchOpen]   = useState(false);
-  const [searchQ, setSearchQ]         = useState('');
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [posts, setPosts]           = useState<Post[]>([]);
+  const [searchQ, setSearchQ]       = useState('');
+  const [filter, setFilter]         = useState('✨ All');
+  const [liveCount, setLiveCount]   = useState(2847);
+
+  // Animate live earners count
+  useEffect(() => {
+    const t = setInterval(() => setLiveCount(n => n + Math.floor(Math.random() * 3)), 4000);
+    return () => clearInterval(t);
+  }, []);
 
   // Fetch real posts and merge with samples
   useEffect(() => {
@@ -203,134 +225,161 @@ export default function ShareAndEarnPage() {
     })();
   }, []);
 
-  const displayed = searchQ
-    ? posts.filter(p => p.trip.toLowerCase().includes(searchQ.toLowerCase()) || p.name.toLowerCase().includes(searchQ.toLowerCase()))
-    : posts;
+  const BEACH_TRIPS = ['Goa', 'Andaman', 'Maldives', 'Thailand'];
+  const MOUNTAIN_TRIPS = ['Manali', 'Leh Ladakh', 'Spiti Valley', 'Kashmir', 'Kedarnath', 'Himachal', 'Rishikesh'];
+  const CITY_TRIPS = ['Dubai', 'Singapore', 'Paris', 'Varanasi', 'Rajasthan'];
+
+  const displayed = posts.filter(p => {
+    const matchesSearch = !searchQ || p.trip.toLowerCase().includes(searchQ.toLowerCase()) || p.name.toLowerCase().includes(searchQ.toLowerCase());
+    if (!matchesSearch) return false;
+    if (filter === '✨ All') return true;
+    if (filter === '🔥 Trending') return posts.indexOf(p) < 5;
+    if (filter === '🌊 Beach') return BEACH_TRIPS.some(t => p.trip.includes(t));
+    if (filter === '⛰️ Mountains') return MOUNTAIN_TRIPS.some(t => p.trip.includes(t));
+    if (filter === '🏙️ City') return CITY_TRIPS.some(t => p.trip.includes(t));
+    if (filter === '🌴 International') return ['Bali', 'Thailand', 'Dubai', 'Maldives', 'Singapore', 'Paris', 'Santorini'].some(t => p.trip.includes(t));
+    return true;
+  });
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: '#0a0a0f' }}>
+    <div className="min-h-screen pb-32" style={{ background: '#08080e' }}>
 
       {/* ── Top Bar ── */}
-      <header
-        className="sticky top-0 z-40 flex items-center justify-between px-4 py-3"
-        style={{ background: 'rgba(8,8,12,0.97)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(201,169,110,0.12)' }}
-      >
-        <div>
-          <h1 className="font-black text-xl tracking-tight leading-none" style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            YLOO Reels
-          </h1>
-          <p className="text-[9px] font-bold uppercase tracking-[0.15em] mt-0.5" style={{ color: 'rgba(201,169,110,0.4)' }}>Share & Earn Money</p>
+      <header className="sticky top-0 z-40" style={{ background: 'rgba(8,8,14,0.97)', backdropFilter: 'blur(24px)', borderBottom: '1px solid rgba(139,92,246,0.15)' }}>
+        <div className="flex items-center justify-between px-4 py-3">
+          <div>
+            <h1 className="font-black text-2xl tracking-tight leading-none" style={{ background: `linear-gradient(135deg, ${GOLD} 0%, ${PINK} 60%, ${PURPLE} 100%)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              YLOO Reels
+            </h1>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#4ade80' }} />
+              <span className="text-[9px] font-bold" style={{ color: 'rgba(255,255,255,0.35)' }}>{liveCount.toLocaleString('en-IN')} earning right now</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQ}
+                onChange={e => setSearchQ(e.target.value)}
+                placeholder="search..."
+                className="w-28 pl-8 pr-3 py-2 rounded-full text-white placeholder-white/20 text-xs focus:outline-none focus:w-36 transition-all"
+                style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
+              />
+              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/30" />
+            </div>
+            <button
+              onClick={() => setUploadOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-full font-black text-black text-xs transition-all active:scale-95"
+              style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})`, boxShadow: `0 4px 14px rgba(201,169,110,0.4)` }}
+            >
+              <Upload size={12} />Post
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setSearchOpen(!searchOpen)}
-            className="w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90"
-            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
-          >
-            <Search size={16} className="text-white/50" />
-          </button>
-          <button
-            className="w-9 h-9 rounded-full flex items-center justify-center relative transition-all active:scale-90"
-            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
-          >
-            <Bell size={16} className="text-white/50" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style={{ background: GOLD }} />
-          </button>
-          <button
-            onClick={() => setUploadOpen(true)}
-            className="w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90"
-            style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})` }}
-          >
-            <Upload size={15} className="text-black" />
-          </button>
+        {/* Filter pills */}
+        <div className="flex gap-2 px-4 pb-3 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+          {FILTERS.map(f => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className="shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95"
+              style={filter === f
+                ? { background: `linear-gradient(135deg, ${PURPLE}, ${PINK})`, color: '#fff', boxShadow: `0 3px 12px rgba(139,92,246,0.4)` }
+                : { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.08)' }
+              }
+            >{f}</button>
+          ))}
         </div>
       </header>
 
-      {/* ── Search Bar ── */}
-      {searchOpen && (
-        <div className="px-4 py-2" style={{ background: 'rgba(8,8,12,0.97)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-          <input
-            autoFocus
-            type="text"
-            value={searchQ}
-            onChange={e => setSearchQ(e.target.value)}
-            placeholder="Search destinations or travellers..."
-            className="w-full px-4 py-2.5 rounded-xl text-white placeholder-white/20 text-sm focus:outline-none"
-            style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(201,169,110,0.2)' }}
-          />
-        </div>
-      )}
+      {/* ── Hero Earn Banner ── */}
+      <div className="mx-3 mt-3 mb-2 rounded-3xl overflow-hidden relative" style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #0d1a2e 50%, #0a1a0d 100%)', border: '1px solid rgba(139,92,246,0.3)' }}>
+        {/* Decorative glow blobs */}
+        <div className="absolute top-0 left-0 w-32 h-32 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${PURPLE}33 0%, transparent 70%)` }} />
+        <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${GOLD}22 0%, transparent 70%)` }} />
 
-      {/* ── Earn Banner ── */}
-      <div className="mx-4 mt-3 mb-1 rounded-2xl overflow-hidden">
-        <button
-          onClick={() => setUploadOpen(true)}
-          className="w-full flex items-center justify-between px-4 py-3.5 transition-all active:scale-[0.99]"
-          style={{ background: `linear-gradient(135deg, rgba(201,169,110,0.18), rgba(201,169,110,0.08))`, border: '1px solid rgba(201,169,110,0.3)' }}
-        >
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.15)' }}>
-                <Camera size={15} style={{ color: GOLD }} />
+        <button onClick={() => setUploadOpen(true)} className="relative w-full p-4 text-left active:scale-[0.99] transition-all">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-1.5 mb-2">
+                <Flame size={14} style={{ color: '#f87171' }} />
+                <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: '#f87171' }}>Daily Earning Challenge</span>
               </div>
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(99,102,241,0.15)' }}>
-                <Video size={15} style={{ color: '#818cf8' }} />
-              </div>
+              <p className="text-white font-black text-lg leading-tight mb-1">Post a trip pic or reel<br /><span style={{ background: `linear-gradient(135deg, ${GOLD}, ${PINK})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>earn ₹500–₹1,000 instantly</span></p>
+              <p className="text-white/40 text-xs">Max 5 posts/day · Credited in seconds</p>
             </div>
-            <div className="text-left">
-              <p className="text-white font-bold text-xs">Share Your Trip Memory</p>
-              <p className="text-[10px] mt-0.5" style={{ color: 'rgba(201,169,110,0.7)' }}>
-                📸 ₹500 cashback · 🎬 ₹1,000 cashback
-              </p>
+            <div className="flex flex-col items-center gap-2 shrink-0">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})`, boxShadow: `0 6px 20px rgba(201,169,110,0.5)` }}>
+                <Camera size={24} className="text-black" />
+              </div>
+              <span className="text-[10px] font-black text-white/60">tap to post</span>
             </div>
           </div>
-          <div className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-black text-black" style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})` }}>
-            Earn Now <ChevronRight size={12} />
+
+          {/* Reward chips */}
+          <div className="flex gap-2 mt-3">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: 'rgba(201,169,110,0.12)', border: '1px solid rgba(201,169,110,0.25)' }}>
+              <Camera size={11} style={{ color: GOLD }} />
+              <span className="text-xs font-black" style={{ color: GOLD }}>Photo = ₹500</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.25)' }}>
+              <Video size={11} style={{ color: PURPLE }} />
+              <span className="text-xs font-black" style={{ color: PURPLE }}>Reel = ₹1,000</span>
+            </div>
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full" style={{ background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)' }}>
+              <Zap size={11} style={{ color: '#4ade80' }} />
+              <span className="text-xs font-black" style={{ color: '#4ade80' }}>Instant</span>
+            </div>
           </div>
         </button>
       </div>
 
-      {/* Divider */}
-      <div className="mt-3" style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
+      {/* ── Social proof strip ── */}
+      <div className="mx-3 mb-3 flex items-center justify-between px-4 py-2.5 rounded-2xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="flex -space-x-2">
+          {AVATAR_GRADIENTS.slice(0, 5).map((g, i) => (
+            <div key={i} className="w-6 h-6 rounded-full border" style={{ background: g, borderColor: '#08080e' }} />
+          ))}
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Star size={10} fill={GOLD} style={{ color: GOLD }} />
+          <span className="text-white/50 text-[10px] font-medium">₹1.5 Cr+ paid out to 2,000+ travellers</span>
+        </div>
+      </div>
 
       {/* ── Feed ── */}
       {posts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center animate-pulse" style={{ background: 'rgba(201,169,110,0.1)' }}>
-            <Camera size={24} style={{ color: GOLD }} />
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center animate-pulse" style={{ background: `linear-gradient(135deg, rgba(139,92,246,0.2), rgba(201,169,110,0.1))` }}>
+            <Camera size={28} style={{ color: GOLD }} />
           </div>
-          <p className="text-white/30 text-sm">Loading memories...</p>
+          <p className="text-white/30 text-sm font-medium">Loading memories...</p>
         </div>
       ) : displayed.length === 0 ? (
         <div className="flex flex-col items-center py-20 gap-2">
           <p className="text-white/30 text-sm">No results for &quot;{searchQ}&quot;</p>
         </div>
       ) : (
-        displayed.map(post => (
-          <FeedPost key={post.id} post={post} />
-        ))
+        <div style={{ gap: 2, display: 'flex', flexDirection: 'column' }}>
+          {displayed.map((post, i) => (
+            <FeedPost key={post.id} post={post} index={i} />
+          ))}
+        </div>
       )}
 
-      {/* ── Sticky Bottom Upload Bar ── */}
-      <div
-        className="fixed bottom-[64px] left-0 right-0 px-4 py-3 z-30"
-        style={{ background: 'rgba(8,8,12,0.96)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(201,169,110,0.12)' }}
-      >
+      {/* ── Bottom CTA ── */}
+      <div className="fixed bottom-[64px] left-0 right-0 px-4 py-3 z-30" style={{ background: 'rgba(8,8,14,0.97)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(139,92,246,0.15)' }}>
         <button
           onClick={() => setUploadOpen(true)}
-          className="w-full flex items-center justify-center gap-3 py-3.5 rounded-2xl font-black text-black text-sm transition-all active:scale-[0.98]"
-          style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})`, boxShadow: `0 4px 20px rgba(201,169,110,0.35)` }}
+          className="relative w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-black text-black text-sm transition-all active:scale-[0.98] overflow-hidden"
+          style={{ background: `linear-gradient(135deg, ${GOLD} 0%, ${GOLD_LIGHT} 40%, ${PINK} 100%)`, boxShadow: `0 6px 30px rgba(236,72,153,0.35), 0 2px 12px rgba(201,169,110,0.3)` }}
         >
-          <Camera size={18} />
-          Share & Earn Money
-          <span className="ml-0.5 px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: 'rgba(0,0,0,0.2)' }}>+₹500</span>
+          <Camera size={19} />
+          <span>Post Your Trip · Earn Cashback</span>
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-black" style={{ background: 'rgba(0,0,0,0.2)' }}>up to ₹1,000</span>
         </button>
-      </div>
-
-      {/* ── Earned total strip ── */}
-      <div className="text-center py-4">
-        <p className="text-white/15 text-[11px]">₹15,00,000+ cashback earned by YlooTrips travellers · Join the community</p>
       </div>
 
       {uploadOpen && (
