@@ -1,41 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import mongoose from 'mongoose';
+import { Firestore } from '@google-cloud/firestore';
 
-const TripMemory =
-  (mongoose.models.TripMemory as mongoose.Model<Record<string, unknown>>) ||
-  mongoose.model<Record<string, unknown>>(
-    'TripMemory',
-    new mongoose.Schema({}, { strict: false, collection: 'trip_memories' }),
-  );
-
-export const revalidate = 60; // ISR: revalidate every 60s
+function getFirestore(): Firestore | null {
+  try {
+    const raw = process.env.GOOGLE_CLOUD_CREDENTIALS_JSON || '';
+    if (!raw) return null;
+    const credentials = JSON.parse(raw);
+    return new Firestore({ credentials, projectId: credentials.project_id });
+  } catch {
+    return null;
+  }
+}
 
 export async function GET(req: NextRequest) {
   const limit = Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '50'), 100);
-  const page  = Math.max(parseInt(req.nextUrl.searchParams.get('page') || '1'), 1);
-  const skip  = (page - 1) * limit;
 
-  await connectDB();
+  const db = getFirestore();
+  if (!db) return NextResponse.json({ data: [], total: 0, page: 1, limit });
 
-  const docs = await TripMemory
-    .find({ status: 'approved' })
-    .sort({ createdAt: -1 })
-    .skip(skip)
+  const snap = await db
+    .collection('trip_memories')
+    .where('status', '==', 'approved')
+    .orderBy('createdAt', 'desc')
     .limit(limit)
-    .lean();
+    .get();
 
-  // Return only public-safe fields
-  const safe = (docs as Record<string, unknown>[]).map(d => ({
-    ref:       d.ref,
-    name:      (String(d.name || '')).split(' ')[0] + (String(d.name || '').includes(' ') ? ' ' + String(d.name || '').split(' ').slice(1).map((w: string) => w[0] + '.').join(' ') : ''),
-    tripName:  d.tripName,
-    mediaType: d.mediaType,
-    fileUrl:   d.fileUrl,
-    createdAt: d.createdAt,
-  }));
+  const safe = snap.docs.map(d => {
+    const doc = d.data() as Record<string, unknown>;
+    const fullName = String(doc.name || '');
+    const parts = fullName.split(' ');
+    const displayName = parts[0] + (parts.length > 1 ? ' ' + parts.slice(1).map(w => w[0] + '.').join(' ') : '');
+    return {
+      ref:       doc.ref,
+      name:      displayName,
+      tripName:  doc.tripName,
+      mediaType: doc.mediaType,
+      fileUrl:   doc.fileUrl,
+      createdAt: doc.createdAt,
+    };
+  });
 
-  const total = await TripMemory.countDocuments({ status: 'approved' });
-
-  return NextResponse.json({ data: safe, total, page, limit });
+  return NextResponse.json({ data: safe, total: safe.length, page: 1, limit });
 }
