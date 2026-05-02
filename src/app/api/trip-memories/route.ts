@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import mongoose from 'mongoose';
+import { Firestore } from '@google-cloud/firestore';
 
 const REDIS_URL   = process.env.UPSTASH_REDIS_REST_URL;
 const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
@@ -9,12 +8,16 @@ const CASHBACK_PHOTO = 500;
 const CASHBACK_VIDEO = 1000;
 const MAX_UPLOADS_PER_DAY = 5;
 
-const TripMemory =
-  (mongoose.models.TripMemory as mongoose.Model<Record<string, unknown>>) ||
-  mongoose.model<Record<string, unknown>>(
-    'TripMemory',
-    new mongoose.Schema({}, { strict: false, collection: 'trip_memories' }),
-  );
+function getFirestore(): Firestore | null {
+  try {
+    const raw = process.env.GOOGLE_CLOUD_CREDENTIALS_JSON || '';
+    if (!raw) return null;
+    const credentials = JSON.parse(raw);
+    return new Firestore({ credentials, projectId: credentials.project_id });
+  } catch {
+    return null;
+  }
+}
 
 async function redisCmd<T = unknown>(...args: (string | number)[]): Promise<T | null> {
   if (!REDIS_URL || !REDIS_TOKEN) return null;
@@ -92,25 +95,27 @@ export async function POST(req: NextRequest) {
 
     const newBalance = parseInt(String(await redisCmd<string>('GET', `wl:bal:${walletId}`) || '0'), 10);
 
-    // ── Save to MongoDB (best-effort — DB issues must NOT block the user) ──
+    // ── Save to Firestore (best-effort — DB issues must NOT block the user) ──
     try {
-      await connectDB();
-      await TripMemory.create({
-        ref,
-        name:      name.trim(),
-        contact:   contact.trim(),
-        walletId,
-        tripName:  tripName.trim(),
-        mediaType,
-        fileUrl,
-        fileName,
-        fileSizeKB,
-        cashbackAmount: cashback,
-        status: 'approved',
-        createdAt: new Date().toISOString(),
-      });
+      const db = getFirestore();
+      if (db) {
+        await db.collection('trip_memories').doc(ref).set({
+          ref,
+          name:           name.trim(),
+          contact:        contact.trim(),
+          walletId,
+          tripName:       tripName.trim(),
+          mediaType,
+          fileUrl,
+          fileName,
+          fileSizeKB,
+          cashbackAmount: cashback,
+          status:         'approved',
+          createdAt:      new Date().toISOString(),
+        });
+      }
     } catch (dbErr) {
-      console.error('[trip-memories POST] MongoDB write failed (non-fatal):', dbErr);
+      console.error('[trip-memories POST] Firestore write failed (non-fatal):', dbErr);
     }
 
     return NextResponse.json({ success: true, ref, cashback: credited, walletBalance: newBalance });
@@ -126,8 +131,10 @@ export async function GET(req: NextRequest) {
   if (adminSecret && token !== adminSecret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  await connectDB();
-  const docs = await TripMemory.find({}).sort({ createdAt: -1 }).lean();
+  const db = getFirestore();
+  if (!db) return NextResponse.json({ data: [], total: 0 });
+  const snap = await db.collection('trip_memories').orderBy('createdAt', 'desc').get();
+  const docs = snap.docs.map(d => d.data());
   return NextResponse.json({ data: docs, total: docs.length });
 }
 
@@ -136,10 +143,12 @@ export async function PATCH(req: NextRequest) {
   const { ref, status, fileUrl } = body;
   if (!ref) return NextResponse.json({ error: 'ref required' }, { status: 400 });
 
+  const db = getFirestore();
+  if (!db) return NextResponse.json({ error: 'Storage not configured' }, { status: 503 });
+
   // fileUrl update — called by client after background GCS upload, no auth needed
   if (fileUrl !== undefined) {
-    await connectDB();
-    await TripMemory.findOneAndUpdate({ ref }, { $set: { fileUrl } });
+    await db.collection('trip_memories').doc(ref).update({ fileUrl });
     return NextResponse.json({ success: true });
   }
 
@@ -152,7 +161,6 @@ export async function PATCH(req: NextRequest) {
   if (!status || !['approved', 'rejected'].includes(status)) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
-  await connectDB();
-  await TripMemory.findOneAndUpdate({ ref }, { $set: { status } });
+  await db.collection('trip_memories').doc(ref).update({ status });
   return NextResponse.json({ success: true });
 }
