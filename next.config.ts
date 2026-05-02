@@ -38,6 +38,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
+  serverExternalPackages: ['@google-cloud/firestore', '@google-cloud/storage'],
 
   async headers() {
     return [
