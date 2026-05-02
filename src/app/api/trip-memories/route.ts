@@ -55,6 +55,9 @@ export async function POST(req: NextRequest) {
       ? contact.trim().toLowerCase()
       : contact.replace(/\D/g, '').replace(/^91(\d{10})$/, '$1');
 
+    const cashback = mediaType === 'video' ? CASHBACK_VIDEO : CASHBACK_PHOTO;
+    const ref = `MEM-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+
     // Rate limit: max 5 uploads per contact per day
     const today = new Date().toISOString().slice(0, 10);
     const rateKey = `tm:rate:${walletId}:${today}`;
@@ -63,27 +66,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Max 5 uploads per day. Try again tomorrow!' }, { status: 429 });
     }
 
-    await connectDB();
-
-    const cashback = mediaType === 'video' ? CASHBACK_VIDEO : CASHBACK_PHOTO;
-    const ref = `MEM-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-
-    await TripMemory.create({
-      ref,
-      name:      name.trim(),
-      contact:   contact.trim(),
-      walletId,
-      tripName:  tripName.trim(),
-      mediaType,
-      fileUrl,
-      fileName,
-      fileSizeKB,
-      cashbackAmount: cashback,
-      status: 'approved',
-      createdAt: new Date().toISOString(),
-    });
-
-    // Credit fixed cashback to wallet
+    // ── Credit wallet via Redis FIRST (fast, never blocked by DB issues) ──
     let credited = 0;
     const dedupKey = `tm:done:${ref}`;
     const dedupSet = await redisCmd<string>('SET', dedupKey, '1', 'NX', 'EX', String(60 * 60 * 24 * 365));
@@ -108,6 +91,27 @@ export async function POST(req: NextRequest) {
     await redisCmd('EXPIRE', rateKey, 86400);
 
     const newBalance = parseInt(String(await redisCmd<string>('GET', `wl:bal:${walletId}`) || '0'), 10);
+
+    // ── Save to MongoDB (best-effort — DB issues must NOT block the user) ──
+    try {
+      await connectDB();
+      await TripMemory.create({
+        ref,
+        name:      name.trim(),
+        contact:   contact.trim(),
+        walletId,
+        tripName:  tripName.trim(),
+        mediaType,
+        fileUrl,
+        fileName,
+        fileSizeKB,
+        cashbackAmount: cashback,
+        status: 'approved',
+        createdAt: new Date().toISOString(),
+      });
+    } catch (dbErr) {
+      console.error('[trip-memories POST] MongoDB write failed (non-fatal):', dbErr);
+    }
 
     return NextResponse.json({ success: true, ref, cashback: credited, walletBalance: newBalance });
   } catch (err) {
