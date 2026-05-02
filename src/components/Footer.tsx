@@ -153,8 +153,28 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/8">
-          <div className="section-container py-5">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
+          {/* Social icons row — always visible on mobile above sticky nav */}
+          <div className="section-container pt-5 pb-2">
+            <div className="flex items-center justify-center sm:justify-end gap-6">
+              <a href="https://www.instagram.com/ylootrips/" target="_blank" rel="noopener noreferrer"
+                className="text-cream/50 hover:text-white transition-colors" aria-label="Instagram">
+                <Instagram className="w-6 h-6" />
+              </a>
+              <a href="https://www.facebook.com/profile.php?id=61574908545709" target="_blank" rel="noopener noreferrer"
+                className="text-cream/50 hover:text-white transition-colors" aria-label="Facebook">
+                <Facebook className="w-6 h-6" />
+              </a>
+              <a href="https://www.youtube.com/@ylootrips" target="_blank" rel="noopener noreferrer"
+                className="text-cream/50 hover:text-white transition-colors" aria-label="YouTube">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div className="section-container py-4 pb-28 sm:pb-5">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 text-center sm:text-left">
               <div className="space-y-1">
                 <p className="text-[10px] text-cream/35 uppercase tracking-widest">
                   © {currentYear} YlooTrips · All rights reserved.
@@ -163,26 +183,16 @@ export default function Footer() {
                   Prices are inclusive of all taxes · No hidden fees · Currency shown based on your selection
                 </p>
               </div>
-              <div className="flex items-center gap-5">
-                <a href="https://www.instagram.com/ylootrips/" target="_blank" rel="noopener noreferrer"
-                  className="text-cream/35 hover:text-white/80 transition-colors" aria-label="Instagram">
-                  <Instagram className="w-5 h-5" />
-                </a>
-                <a href="https://www.facebook.com/profile.php?id=61574908545709" target="_blank" rel="noopener noreferrer"
-                  className="text-cream/35 hover:text-white/80 transition-colors" aria-label="Facebook">
-                  <Facebook className="w-5 h-5" />
-                </a>
-                <a href="https://www.youtube.com/@ylootrips" target="_blank" rel="noopener noreferrer"
-                  className="text-cream/35 hover:text-white/80 transition-colors" aria-label="YouTube">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                  </svg>
-                </a>
-                {/* Hidden admin */}
-                <button onClick={() => setShowAdminModal(true)}
-                  className="w-1.5 h-1.5 rounded-full bg-cream/8 hover:bg-accent/40 transition-colors ml-1"
-                  aria-label="Admin" title="" />
-              </div>
+              {/* Admin button — small lock icon, visible but discreet */}
+              <button
+                onClick={() => setShowAdminModal(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                aria-label="Admin Portal"
+              >
+                <Lock className="w-3 h-3 text-cream/30" />
+                <span className="text-[9px] uppercase tracking-widest text-cream/25">Admin</span>
+              </button>
             </div>
           </div>
         </div>
