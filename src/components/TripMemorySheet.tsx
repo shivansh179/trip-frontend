@@ -20,10 +20,12 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
   const [mediaType, setMediaType] = useState<'photo' | 'video'>('photo');
   const [file, setFile]           = useState<File | null>(null);
   const [preview, setPreview]     = useState<string | null>(null);
-  const [name, setName]           = useState('');
-  const [contact, setContact]     = useState('');
-  const [tripName, setTripName]   = useState('');
-  const [errorMsg, setErrorMsg]   = useState('');
+  const [name, setName]         = useState('');
+  const [contact, setContact]   = useState('');
+  const [tripName, setTripName] = useState('');
+  const [hashtags, setHashtags] = useState('');
+  const [tagline, setTagline]   = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStage, setUploadStage]       = useState('');
   const [cashbackEarned, setCashbackEarned] = useState(0);
@@ -77,6 +79,8 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
           fileUrl:    null,
           fileName:   file?.name || '',
           fileSizeKB: file ? Math.round(file.size / 1024) : 0,
+          hashtags:   hashtags.trim(),
+          tagline:    tagline.trim(),
         }),
       });
 
@@ -247,15 +251,16 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
               <p className="text-white/40 text-sm mb-5">Fill in your details to claim your cashback</p>
 
               <form onSubmit={handleSubmit} className="space-y-3">
+                {/* Required fields */}
                 {[
-                  { label: 'Your Name', value: name, set: setName, placeholder: 'e.g. Priya Sharma', type: 'text' },
-                  { label: 'Phone or Email', value: contact, set: setContact, placeholder: '+91 98765 43210 or email', type: 'text' },
-                  { label: 'Trip Destination', value: tripName, set: setTripName, placeholder: 'e.g. Manali, Bali, Kedarnath...', type: 'text' },
-                ].map(({ label, value, set, placeholder, type }) => (
+                  { label: 'Your Name', value: name, set: setName, placeholder: 'e.g. Priya Sharma' },
+                  { label: 'Phone or Email', value: contact, set: setContact, placeholder: '+91 98765 43210 or email' },
+                  { label: 'Trip Destination', value: tripName, set: setTripName, placeholder: 'e.g. Manali, Bali, Kedarnath...' },
+                ].map(({ label, value, set, placeholder }) => (
                   <div key={label}>
                     <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'rgba(201,169,110,0.6)' }}>{label}</label>
                     <input
-                      type={type}
+                      type="text"
                       value={value}
                       onChange={e => set(e.target.value)}
                       placeholder={placeholder}
@@ -265,6 +270,37 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
                     />
                   </div>
                 ))}
+
+                {/* Optional fields */}
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12, marginTop: 4 }}>
+                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-3" style={{ color: 'rgba(255,255,255,0.2)' }}>Optional — add a caption</p>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'rgba(201,169,110,0.4)' }}>Tagline</label>
+                      <input
+                        type="text"
+                        value={tagline}
+                        onChange={e => setTagline(e.target.value)}
+                        placeholder="e.g. Best trip of my life! 🌄"
+                        maxLength={120}
+                        className="w-full px-4 py-3 rounded-xl text-white placeholder-white/15 focus:outline-none text-sm"
+                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'rgba(201,169,110,0.4)' }}>Hashtags</label>
+                      <input
+                        type="text"
+                        value={hashtags}
+                        onChange={e => setHashtags(e.target.value)}
+                        placeholder="#manali #travel #ylootrips"
+                        maxLength={200}
+                        className="w-full px-4 py-3 rounded-xl text-white placeholder-white/15 focus:outline-none text-sm"
+                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                      />
+                    </div>
+                  </div>
+                </div>
 
                 {errorMsg && (
                   <div className="flex items-start gap-2 p-3 rounded-xl" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
@@ -355,7 +391,7 @@ export default function TripMemorySheet({ onClose }: TripMemorySheetProps) {
                   Back to Explore
                 </button>
                 <button
-                  onClick={() => { setStep('pick'); setFile(null); setPreview(null); setName(''); setContact(''); setTripName(''); }}
+                  onClick={() => { setStep('pick'); setFile(null); setPreview(null); setName(''); setContact(''); setTripName(''); setHashtags(''); setTagline(''); }}
                   className="w-full py-3 rounded-2xl font-bold text-white/50 text-sm"
                   style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
                 >

@@ -7,7 +7,6 @@ const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
 const CASHBACK_PHOTO = 500;
 const CASHBACK_VIDEO = 1000;
-const MAX_UPLOADS_PER_DAY = 5;
 
 const TripMemory =
   (mongoose.models.TripMemory as mongoose.Model<Record<string, unknown>>) ||
@@ -41,9 +40,11 @@ export async function POST(req: NextRequest) {
       fileUrl?: string;
       fileName?: string;
       fileSizeKB?: number;
+      hashtags?: string;
+      tagline?: string;
     };
 
-    const { name, contact, tripName, mediaType, fileUrl = null, fileName = '', fileSizeKB = 0 } = body;
+    const { name, contact, tripName, mediaType, fileUrl = null, fileName = '', fileSizeKB = 0, hashtags = '', tagline = '' } = body;
 
     if (!name?.trim() || !contact?.trim() || !tripName?.trim()) {
       return NextResponse.json({ error: 'Name, contact and trip name are required.' }, { status: 400 });
@@ -58,12 +59,14 @@ export async function POST(req: NextRequest) {
     const cashback = mediaType === 'video' ? CASHBACK_VIDEO : CASHBACK_PHOTO;
     const ref = `MEM-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 
-    // Rate limit: max 5 uploads per contact per day
+    // Rate limit: max 1 photo + 1 video per user per day (separate counters)
     const today = new Date().toISOString().slice(0, 10);
-    const rateKey = `tm:rate:${walletId}:${today}`;
+    const rateKey = `tm:rate:${mediaType}:${walletId}:${today}`;
     const currentCount = parseInt(String(await redisCmd<string>('GET', rateKey) || '0'), 10);
-    if (currentCount >= MAX_UPLOADS_PER_DAY) {
-      return NextResponse.json({ error: 'Max 5 uploads per day. Try again tomorrow!' }, { status: 429 });
+    if (currentCount >= 1) {
+      return NextResponse.json({
+        error: `You already earned cashback for a ${mediaType} today. Come back tomorrow!`,
+      }, { status: 429 });
     }
 
     // ── Credit wallet via Redis FIRST (fast, never blocked by DB issues) ──
@@ -105,6 +108,8 @@ export async function POST(req: NextRequest) {
         fileUrl,
         fileName,
         fileSizeKB,
+        hashtags:       hashtags.trim(),
+        tagline:        tagline.trim(),
         cashbackAmount: cashback,
         status:         'approved',
         createdAt:      new Date().toISOString(),
