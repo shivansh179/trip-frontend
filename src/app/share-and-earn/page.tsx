@@ -41,38 +41,24 @@ interface Post {
 }
 
 const SAMPLE_POSTS: Post[] = [
-  { id: 's1',  name: 'Arjun Mehta',    trip: 'Manali',       src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=85', type: 'photo',  caption: 'Woke up at 4am just to see this. Worth every shiver. 🏔️❄️', cashback: 500,  timeAgo: '2h' },
-  { id: 's2',  name: 'Priya Sharma',   trip: 'Andaman',      src: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=85', type: 'video',  caption: 'Crystal clear waters, vibrant coral, total bliss. 🐠🌊', cashback: 1000, timeAgo: '4h' },
-  { id: 's3',  name: 'Rahul Kumar',    trip: 'Bali',         src: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=85', type: 'photo',  caption: 'Tanah Lot at sunset — no filter needed. 🌅🇮🇩', cashback: 500,  timeAgo: '6h' },
-  { id: 's4',  name: 'Sneha Patel',    trip: 'Leh Ladakh',   src: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=85', type: 'video',  caption: 'Pangong Lake — the blue you see in movies, in real life. 🚗💙', cashback: 1000, timeAgo: '8h' },
-  { id: 's5',  name: 'Vikram Tiwari',  trip: 'Spiti Valley', src: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=85', type: 'photo',  caption: 'Key Monastery at golden hour. No words. ⛪✨', cashback: 500,  timeAgo: '12h' },
-  { id: 's6',  name: 'Anjali Reddy',   trip: 'Dubai',        src: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=85', type: 'photo',  caption: 'From the top of the world. Burj Khalifa at night hits different. 🌃', cashback: 500,  timeAgo: '1d' },
-  { id: 's7',  name: 'Dev Chopra',     trip: 'Kedarnath',    src: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=85', type: 'video',  caption: 'The 16km trek. Hardest. Most rewarding. Har Har Mahadev 🙏', cashback: 1000, timeAgo: '1d' },
-  { id: 's8',  name: 'Meera Lal',      trip: 'Thailand',     src: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&q=85', type: 'photo',  caption: 'Phi Phi islands literally look like a screensaver. 🌴😍', cashback: 500,  timeAgo: '2d' },
-  { id: 's9',  name: 'Karthik Nair',   trip: 'Goa',          src: 'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=800&q=85', type: 'photo',  caption: 'Sunset + chai + nowhere to be. Living. ☕🌅', cashback: 500,  timeAgo: '2d' },
-  { id: 's10', name: 'Divya Rajan',    trip: 'Rishikesh',    src: 'https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=800&q=85', type: 'video',  caption: 'Class 4 rapids, zero control, 100% fun. 🚣💦', cashback: 1000, timeAgo: '3d' },
-  { id: 's11', name: 'Aditya Bose',    trip: 'Kashmir',      src: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=85', type: 'photo',  caption: 'Dal Lake shikara at sunrise. Paradise is real. 🛶🌸', cashback: 500,  timeAgo: '3d' },
-  { id: 's12', name: 'Kavita Mishra',  trip: 'Santorini',    src: 'https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?w=800&q=85', type: 'photo',  caption: 'Blue domes and white walls — Greece delivered. 🇬🇷🌊', cashback: 500,  timeAgo: '4d' },
-  { id: 's13', name: 'Rohan Verma',    trip: 'Rajasthan',    src: 'https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=800&q=85', type: 'video',  caption: 'Camel safari at dusk. This is Rajasthan in one frame. 🐪🔥', cashback: 1000, timeAgo: '4d' },
-  { id: 's14', name: 'Nisha Gupta',    trip: 'Paris',        src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&q=85', type: 'photo',  caption: 'Golden hour under the iron lady. Oui, it was magical. 🗼💛', cashback: 500,  timeAgo: '5d' },
-  { id: 's15', name: 'Saurabh Jain',   trip: 'Maldives',     src: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=85', type: 'photo',  caption: 'Woke up to this every morning for 5 days. Still not over it. 🌊🌞', cashback: 500,  timeAgo: '5d' },
-  { id: 's16', name: 'Tanvi Singh',    trip: 'Himachal',     src: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=85', type: 'video',  caption: 'Triund camping. Stars above, valleys below. Life is good. 🏕️⭐', cashback: 1000, timeAgo: '6d' },
-  { id: 's17', name: 'Mohit Aggarwal', trip: 'Singapore',    src: 'https://images.unsplash.com/photo-1512036666432-2181c1f26420?w=800&q=85', type: 'photo',  caption: 'Gardens by the Bay — nature meets the future. 🌿🏙️', cashback: 500,  timeAgo: '1w' },
-  { id: 's18', name: 'Pooja Dubey',    trip: 'Varanasi',     src: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=800&q=85', type: 'photo',  caption: 'Ganga Aarti at dawn. Spiritual and surreal. 🪔🕊️', cashback: 500,  timeAgo: '1w' },
-];
-
-// Trip Reels data (stories-like circles)
-const TRIP_REELS = [
-  { name: 'Manali',     src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200&q=80', hasNew: true },
-  { name: 'Bali',       src: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=200&q=80', hasNew: true },
-  { name: 'Leh',        src: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=200&q=80', hasNew: true },
-  { name: 'Goa',        src: 'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=200&q=80', hasNew: false },
-  { name: 'Kedarnath',  src: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=200&q=80', hasNew: true },
-  { name: 'Dubai',      src: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=200&q=80', hasNew: false },
-  { name: 'Kashmir',    src: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=80', hasNew: false },
-  { name: 'Thailand',   src: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=200&q=80', hasNew: true },
-  { name: 'Maldives',   src: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&q=80', hasNew: false },
-  { name: 'Rishikesh',  src: 'https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=200&q=80', hasNew: false },
+  { id: 's1',  name: 'Arjun M.',      trip: 'Manali',       src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=85', type: 'photo',  caption: 'bhai 4 baje uthke yahan aaya tha 😭 bilkul worth it tha\n#manali #mountains #ylootrips', cashback: 500,  timeAgo: '7m' },
+  { id: 's2',  name: 'Priya S.',      trip: 'Andaman',      src: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=85', type: 'video',  caption: 'andaman ka pani dekh ke aankhe khul gayi 😍🐠 ek baar zaroor aao\n#andaman #scuba #travel', cashback: 1000, timeAgo: '23m' },
+  { id: 's3',  name: 'Rahul K.',      trip: 'Bali',         src: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=85', type: 'photo',  caption: 'Tanah Lot 🌅 no filter, no edits. bali you are unreal\n#bali #Indonesia', cashback: 500,  timeAgo: '1h' },
+  { id: 's4',  name: 'Sneha P.',      trip: 'Leh Ladakh',   src: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=85', type: 'video',  caption: 'Pangong lake is EXACTLY like the movies omg 💙🚗 drove 5 hours to see this', cashback: 1000, timeAgo: '2h' },
+  { id: 's5',  name: 'Vikram T.',     trip: 'Spiti Valley', src: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=85', type: 'photo',  caption: 'Key monastery golden hour ⛪ spiti is literally on another planet\n#spiti #himachal', cashback: 500,  timeAgo: '3h' },
+  { id: 's6',  name: 'Anjali R.',     trip: 'Dubai',        src: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=85', type: 'photo',  caption: 'burj khalifa raat ko alag hi vibe deta hai ngl 🌃✨', cashback: 500,  timeAgo: '5h' },
+  { id: 's7',  name: 'Dev C.',        trip: 'Kedarnath',    src: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=85', type: 'video',  caption: '16km trek. pair dard kar rahe the. aankhon mein paani tha. puri life badal gayi 🙏\nHar Har Mahadev', cashback: 1000, timeAgo: '6h' },
+  { id: 's8',  name: 'Meera L.',      trip: 'Thailand',     src: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&q=85', type: 'photo',  caption: 'phi phi islands ko screensaver mat samjho yaar, yahan sach mein aao 🌴\n#thailand #phiphi', cashback: 500,  timeAgo: '9h' },
+  { id: 's9',  name: 'Karthik N.',    trip: 'Goa',          src: 'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=800&q=85', type: 'photo',  caption: 'sunset + chai + kuch kaam nahi ☕🌅 yahi toh zindagi hai\n#goa #beachlife', cashback: 500,  timeAgo: '11h' },
+  { id: 's10', name: 'Divya R.',      trip: 'Rishikesh',    src: 'https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=800&q=85', type: 'video',  caption: 'class 4 rapids mein ghus gayi 🚣 zero control 100% maza\n#rishikesh #rafting #adventure', cashback: 1000, timeAgo: '14h' },
+  { id: 's11', name: 'Aditya B.',     trip: 'Kashmir',      src: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=85', type: 'photo',  caption: 'dal lake shikara at 6am 🛶🌸 kashmir is heaven and thats not debatable', cashback: 500,  timeAgo: '1d' },
+  { id: 's12', name: 'Kavita M.',     trip: 'Santorini',    src: 'https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?w=800&q=85', type: 'photo',  caption: 'greece ticked ✅ bucket list 5 items baki hai 😂🇬🇷\n#santorini #greece #europe', cashback: 500,  timeAgo: '1d' },
+  { id: 's13', name: 'Rohan V.',      trip: 'Rajasthan',    src: 'https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=800&q=85', type: 'video',  caption: 'camel safari at sunset 🐪🔥 rajasthan mein dil laga gaya yaar', cashback: 1000, timeAgo: '2d' },
+  { id: 's14', name: 'Nisha G.',      trip: 'Paris',        src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&q=85', type: 'photo',  caption: 'paris golden hour 🗼💛 uss ladke ne propose kiya yahaan. maine haan bol diya 😭💍', cashback: 500,  timeAgo: '2d' },
+  { id: 's15', name: 'Saurabh J.',    trip: 'Maldives',     src: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=85', type: 'photo',  caption: '5 din yahan raha 🌊🌞 ghar wapas aana nahi tha honestly\n#maldives #overwater', cashback: 500,  timeAgo: '3d' },
+  { id: 's16', name: 'Tanvi S.',      trip: 'Himachal',     src: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=85', type: 'video',  caption: 'triund camping ⛺ upar tare the neeche ghati thi aur phone off tha. perfect.\n#triund #camping', cashback: 1000, timeAgo: '4d' },
+  { id: 's17', name: 'Mohit A.',      trip: 'Singapore',    src: 'https://images.unsplash.com/photo-1512036666432-2181c1f26420?w=800&q=85', type: 'photo',  caption: 'gardens by the bay 🌿🏙️ singapore ne impress kar diya yaar\n#singapore #travel', cashback: 500,  timeAgo: '5d' },
+  { id: 's18', name: 'Pooja D.',      trip: 'Varanasi',     src: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=800&q=85', type: 'photo',  caption: 'ganga aarti at dawn 🪔 kuch cheezein describe nahi hoti, bas anubhav karo\n#varanasi #banaras', cashback: 500,  timeAgo: '6d' },
 ];
 
 // ── Feed Post Card ────────────────────────────────────────────────────────────
@@ -86,26 +72,29 @@ function FeedPost({ post }: { post: Post }) {
 
       {/* Post header */}
       <div className="flex items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black text-black shrink-0"
-            style={{ background: avatarGrad(post.name), boxShadow: `0 0 0 2px #0a0a0f, 0 0 0 3.5px ${GOLD}` }}
+            className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-black text-black shrink-0"
+            style={{ background: avatarGrad(post.name), boxShadow: post.isReal ? `0 0 0 2px #0a0a0f, 0 0 0 3px ${GOLD}` : '0 0 0 1.5px rgba(255,255,255,0.1)' }}
           >
             {initials(post.name)}
           </div>
           <div>
-            <p className="text-white font-bold text-sm leading-tight">{post.name}</p>
+            <div className="flex items-center gap-1.5">
+              <p className="text-white font-semibold text-sm leading-tight">{post.name}</p>
+              {post.isReal && <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(201,169,110,0.15)', color: GOLD }}>✓</span>}
+            </div>
             <div className="flex items-center gap-1">
-              <MapPin size={10} style={{ color: GOLD }} />
-              <span className="text-[11px] font-medium" style={{ color: GOLD }}>{post.trip}</span>
+              <MapPin size={9} style={{ color: 'rgba(255,255,255,0.35)' }} />
+              <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>{post.trip}</span>
             </div>
           </div>
         </div>
 
-        {/* Cashback badge */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: 'rgba(201,169,110,0.12)', border: '1px solid rgba(201,169,110,0.25)' }}>
-          <Wallet size={11} style={{ color: GOLD }} />
-          <span className="text-[11px] font-black" style={{ color: GOLD }}>₹{post.cashback} earned</span>
+        {/* Subtle cashback — only show for real posts, or as muted text for samples */}
+        <div className="flex items-center gap-1 px-2 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.05)' }}>
+          <Wallet size={10} style={{ color: post.isReal ? GOLD : 'rgba(255,255,255,0.25)' }} />
+          <span className="text-[10px] font-bold" style={{ color: post.isReal ? GOLD : 'rgba(255,255,255,0.3)' }}>₹{post.cashback}</span>
         </div>
       </div>
 
@@ -169,9 +158,13 @@ function FeedPost({ post }: { post: Post }) {
         </div>
 
         {/* Caption */}
-        <p className="text-white/80 text-sm leading-relaxed">
-          <span className="font-bold text-white">{post.name.split(' ')[0]} </span>
-          {post.caption}
+        <p className="text-white/75 text-sm leading-relaxed whitespace-pre-line">
+          <span className="font-semibold text-white">{post.name.split(' ')[0]} </span>
+          {post.caption.split('\n').map((line, i) =>
+            line.startsWith('#') ? (
+              <span key={i} style={{ color: GOLD, opacity: 0.7 }}>{'\n'}{line}</span>
+            ) : i === 0 ? line : <span key={i}>{'\n'}{line}</span>
+          )}
         </p>
       </div>
     </article>
