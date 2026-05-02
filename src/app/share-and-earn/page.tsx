@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin, Play, Wallet, Upload, Search, Camera, Video, Flame, Zap, Star } from 'lucide-react';
+import { MapPin, Play, Upload, Search, Camera, Video, Flame, Zap, Star } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
 const TripMemorySheet = dynamic(() => import('@/components/TripMemorySheet'), { ssr: false });
