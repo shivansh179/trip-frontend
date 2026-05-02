@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { MapPin, Play, Wallet, Upload, Search, Bell, Camera, Video, ChevronRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
@@ -184,7 +184,6 @@ export default function ShareAndEarnPage() {
   const [posts, setPosts]             = useState<Post[]>([]);
   const [searchOpen, setSearchOpen]   = useState(false);
   const [searchQ, setSearchQ]         = useState('');
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Fetch real posts and merge with samples
   useEffect(() => {
@@ -299,41 +298,8 @@ export default function ShareAndEarnPage() {
         </button>
       </div>
 
-      {/* ── Trip Reels (Stories row) ── */}
-      <div className="mt-3 mb-1">
-        <div
-          ref={scrollRef}
-          className="flex gap-4 px-4 overflow-x-auto pb-3"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {/* Add Your Story */}
-          <button onClick={() => setUploadOpen(true)} className="flex flex-col items-center gap-1.5 shrink-0 active:scale-95 transition-transform">
-            <div className="relative w-[66px] h-[66px] rounded-full flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.04)', border: '2px dashed rgba(201,169,110,0.4)' }}>
-              <Upload size={20} style={{ color: GOLD }} />
-              <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-black font-black text-xs" style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})` }}>+</div>
-            </div>
-            <span className="text-[10px] font-semibold text-white/50 w-16 text-center truncate">Your Reel</span>
-          </button>
-
-          {/* Destination reels */}
-          {TRIP_REELS.map((r) => (
-            <button key={r.name} className="flex flex-col items-center gap-1.5 shrink-0 active:scale-95 transition-transform">
-              <div
-                className="w-[66px] h-[66px] rounded-full overflow-hidden"
-                style={{ padding: 2.5, background: r.hasNew ? `linear-gradient(135deg, ${GOLD}, #f59e0b, #ef4444)` : 'rgba(255,255,255,0.15)' }}
-              >
-                <div className="w-full h-full rounded-full overflow-hidden" style={{ border: '2px solid #0a0a0f' }}>
-                  <img src={r.src} alt={r.name} className="w-full h-full object-cover" loading="lazy" />
-                </div>
-              </div>
-              <span className="text-[10px] font-semibold text-white/60 w-16 text-center truncate">{r.name}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Divider */}
-        <div style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
-      </div>
+      {/* Divider */}
+      <div className="mt-3" style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
 
       {/* ── Feed ── */}
       {posts.length === 0 ? (
