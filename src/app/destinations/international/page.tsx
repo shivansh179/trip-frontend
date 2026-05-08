@@ -238,6 +238,7 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
   const [chargeNow, setChargeNow] = useState<number | null>(null);
   const [paymentMode, setPaymentMode] = useState<'full' | 'emi' | 'partial'>('full');
   const [paymentMethod, setPaymentMethod] = useState<string>('upi');
+  const [emiTenure, setEmiTenure] = useState<number | null>(null);
   const [promoCode, setPromoCode] = useState<string | null>(null);
   const [promoCashback, setPromoCashback] = useState(0);
   const [applyWallet, setApplyWallet] = useState(false);
@@ -260,10 +261,11 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
   const walletDeduction = applyWallet ? Math.min(walletBalance, maxWalletUsable) : 0;
   const finalPrice = Math.max(0, totalPrice - walletDeduction);
 
-  const handlePaymentSelected = (payload: { mode: 'full' | 'emi' | 'partial'; amountNow: number; paymentMethod?: string }) => {
+  const handlePaymentSelected = (payload: { mode: 'full' | 'emi' | 'partial'; amountNow: number; paymentMethod?: string; emiPlan?: { months: number } }) => {
     setChargeNow(payload.amountNow);
     setPaymentMode(payload.mode);
     setPaymentMethod(payload.paymentMethod ?? 'upi');
+    setEmiTenure(payload.emiPlan?.months ?? null);
     setPayStep('form');
   };
 
@@ -285,7 +287,7 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
           sourceUrl: `https://ylootrips.com${d.href}`,
           ourPrice: finalPrice,
           chargeNow: chargeNow ?? finalPrice,
-          paymentMode, paymentMethod,
+          paymentMode, paymentMethod, emiTenure,
           marketPrice: totalPrice,
           priceDiff: 0,
         }),

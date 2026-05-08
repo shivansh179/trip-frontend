@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { name, email, phone, packageTitle, destination, sourceUrl, ourPrice, chargeNow, paymentMode, paymentMethod, marketPrice, priceDiff, guests } = body;
+    const { name, email, phone, packageTitle, destination, sourceUrl, ourPrice, chargeNow, paymentMode, paymentMethod, emiTenure, marketPrice, priceDiff, guests } = body;
 
     if (!name || !email || !phone || !ourPrice) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -128,14 +128,16 @@ ACTION: Book from source above after payment confirms.
           ? `${(packageTitle || destination || 'Package').substring(0, 80)} (EMI)`
           : (packageTitle || destination || 'Package').substring(0, 100);
 
-        // Map paymentMethod → Easebuzz show_payment_mode
+        // Map paymentMethod → Easebuzz payment_options
         const methodMap: Record<string, string> = {
           upi: 'UPI',
           credit_card: 'CC',
           debit_card: 'DC',
+          net_banking: 'NB',
           netbanking: 'NB',
+          wallet: 'WALLET',
         };
-        const showMode = paymentMode === 'emi'
+        const paymentOptions = paymentMode === 'emi'
           ? 'EMI'
           : (paymentMethod && methodMap[paymentMethod]) || '';
 
@@ -167,8 +169,9 @@ ACTION: Book from source above after payment confirms.
           hash,
           surl: `${SITE_URL}/market/booking-success?ticket=${ticket}&txnid=${txnid}`,
           furl: `${SITE_URL}/market/booking-failure?ticket=${ticket}`,
-          ...(showMode && { show_payment_mode: showMode }),
-        });
+          ...(paymentOptions ? { payment_options: paymentOptions } : {}),
+          ...(emiTenure ? { emi_tenure: String(emiTenure) } : {}),
+        } as Record<string, string>);
 
         const ebRes = await fetch(payUrl, {
           method: 'POST',
