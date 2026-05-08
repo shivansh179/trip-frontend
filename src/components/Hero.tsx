@@ -141,10 +141,15 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (code: s
     );
 }
 
+// All destinations listed on ylootrips.com
 const CITY_SUGGESTIONS = [
-    'Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad',
-    'Jaipur', 'Goa', 'Kochi', 'Ahmedabad', 'Pune', 'Agra',
-    'New York', 'London', 'Dubai', 'Singapore', 'Sydney', 'Toronto',
+    'Manali', 'Goa', 'Kashmir', 'Kerala', 'Auli', 'Jibhi', 'Tirthan Valley',
+    'Kedarnath', 'Lakshadweep', 'Coorg', 'Spiti Valley', 'Chopta', 'Kedarkantha',
+    'Kheerganga', 'Hampta Pass', 'Sar Pass', 'Prashar Lake', 'Har Ki Dun',
+    'Roopkund', 'Chadar Trek', 'Ladakh', 'Leh', 'Kasol', 'Solang Valley',
+    'Munnar', 'Alleppey', 'Kochi', 'Srinagar', 'Gulmarg', 'Pahalgam',
+    'Bali', 'Dubai', 'Thailand', 'Singapore', 'Maldives', 'Sri Lanka',
+    'Bangkok', 'Phuket', 'Marina Bay', 'Sentosa',
 ];
 
 // Only locations actually listed on ylootrips.com
@@ -656,14 +661,26 @@ export default function Hero({ content, stats }: HeroProps) {
                                                             onFocus={() => setShowToSug(toCity.length > 0)}
                                                             onBlur={() => setTimeout(() => setShowToSug(false), 150)}
                                                             className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100" />
-                                                        {showToSug && toSuggestions.length > 0 && (
-                                                            <ul className="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl z-50">
+                                                        {showToSug && (
+                                                            <ul className="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
                                                                 {toSuggestions.map(s => (
                                                                     <li key={s} onMouseDown={() => { setToCity(s); setShowToSug(false); }}
                                                                         className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50 cursor-pointer">
                                                                         <MapPin size={11} className="text-gray-400" />{s}
                                                                     </li>
                                                                 ))}
+                                                                {toSuggestions.length === 0 && toCity.length > 0 && (
+                                                                    <li onMouseDown={() => { router.push(`/trip-planner?q=${encodeURIComponent(toCity)}`); setShowToSug(false); }}
+                                                                        className="flex items-center gap-2 px-3 py-2.5 text-sm cursor-pointer bg-violet-50 hover:bg-violet-100 text-violet-700 font-semibold border-t border-violet-100">
+                                                                        ✨ Plan custom trip to "{toCity}" →
+                                                                    </li>
+                                                                )}
+                                                                {toSuggestions.length > 0 && (
+                                                                    <li onMouseDown={() => { router.push('/trip-planner'); setShowToSug(false); }}
+                                                                        className="flex items-center gap-2 px-3 py-2 text-xs cursor-pointer bg-gray-50 hover:bg-gray-100 text-gray-400 border-t border-gray-100">
+                                                                        ✨ Don't see your destination? Plan a custom trip →
+                                                                    </li>
+                                                                )}
                                                             </ul>
                                                         )}
                                                     </div>
