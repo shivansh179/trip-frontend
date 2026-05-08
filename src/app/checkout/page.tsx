@@ -234,8 +234,7 @@ function CheckoutContent() {
     const tripBasePrice = trip ? (typeof trip.price === 'number' ? trip.price : parseFloat(trip.price.toString())) : 0;
     const pricePerPerson = priceParam || tripBasePrice;
     const basePrice = pricePerPerson * formData.numberOfGuests;
-    // 3% discount only when user explicitly selects UPI (not the default), and not for EMI
-    const discountPercent = (upiExplicitlySelected && formData.paymentMethod === 'upi' && selectedEmi === null) ? 3 : 0;
+    const discountPercent = 0;
     const discountAmount = (basePrice * discountPercent) / 100;
     // Promo discount is credited to WanderLoot wallet after payment, not deducted from price
     const promoCashback = promoDiscount; // credited to wallet post-payment
