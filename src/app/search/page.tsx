@@ -1,4 +1,5 @@
 'use client';
+import { initiateEasebuzzPayment } from '@/lib/easebuzz-checkout';
 
 import { Suspense, useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -124,7 +125,15 @@ function MarketCard({ pkg, guests }: { pkg: MarketPackage; guests: string }) {
         }),
       });
       const data = await res.json();
-      if (data.paymentUrl) {
+      if (data.accessKey) {
+        initiateEasebuzzPayment({
+          accessKey: data.accessKey,
+          onSuccess: () => { window.location.href = `/payment/success?txnid=${data.txnid}&ticket=${data.ticket}`; },
+          onFailure: () => { window.location.href = `/payment/failure?txnid=${data.txnid}`; },
+        }).catch(() => {
+          if (data.paymentUrl) window.location.href = data.paymentUrl;
+        });
+      } else if (data.paymentUrl) {
         window.location.href = data.paymentUrl;
       } else {
         setPayError(data.error || 'Payment failed. Please try again.');

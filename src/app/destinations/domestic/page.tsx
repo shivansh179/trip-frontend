@@ -1,4 +1,5 @@
 'use client';
+import { initiateEasebuzzPayment } from '@/lib/easebuzz-checkout';
 
 import { useState, useMemo, Suspense, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -989,7 +990,13 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
         }),
       });
       const data = await res.json();
-      if (data.paymentUrl) { window.location.href = data.paymentUrl; }
+      if (data.accessKey) {
+        initiateEasebuzzPayment({
+          accessKey: data.accessKey,
+          onSuccess: () => { window.location.href = `/payment/success?txnid=${data.txnid}&ticket=${data.ticket}`; },
+          onFailure: () => { window.location.href = `/payment/failure?txnid=${data.txnid}`; },
+        }).catch(() => { if (data.paymentUrl) window.location.href = data.paymentUrl; });
+      } else if (data.paymentUrl) { window.location.href = data.paymentUrl; }
       else { setPayError(data.error || 'Payment failed. Please try again.'); }
     } catch { setPayError('Network error. Please try again.'); }
     finally { setPaying(false); }

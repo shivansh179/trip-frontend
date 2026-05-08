@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
           ? 'https://pay.easebuzz.in'
           : 'https://testpay.easebuzz.in';
         return NextResponse.json({
-          paymentUrl: `${redirectBase}/pay/${ebJson.data}`,
+          paymentUrl: `${redirectBase}/pay/${ebJson.data}`, accessKey: ebJson.data,
           txnid,
           isPartial: true,
           chargeNow,

@@ -1,4 +1,5 @@
 'use client';
+import { initiateEasebuzzPayment } from '@/lib/easebuzz-checkout';
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -77,12 +78,20 @@ function BookingModal({ hotel, nights, checkIn, checkOut, rooms, adults, onClose
         body: JSON.stringify({ hotel, guest, checkIn, checkOut, rooms, adults, nights }),
       });
       const data = await res.json();
-      if (!res.ok || !data.paymentUrl) {
+      if (!res.ok || (!data.paymentUrl && !data.accessKey)) {
         setError(data.error || 'Failed to initiate payment. Please try again.');
         setLoading(false);
         return;
       }
-      window.location.href = data.paymentUrl;
+      if (data.accessKey) {
+        initiateEasebuzzPayment({
+          accessKey: data.accessKey,
+          onSuccess: () => { window.location.href = `/hotels/booking-success?txnid=${data.txnid}`; },
+          onFailure: () => { window.location.href = `/hotels?error=payment_failed`; },
+        }).catch(() => { if (data.paymentUrl) window.location.href = data.paymentUrl; });
+      } else {
+        window.location.href = data.paymentUrl;
+      }
     } catch {
       setError('Something went wrong. Please try again.');
       setLoading(false);

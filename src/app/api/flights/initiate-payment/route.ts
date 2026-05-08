@@ -192,7 +192,7 @@ export async function POST(req: NextRequest) {
                 const redirectBase = EASEBUZZ_ENV === 'production'
                     ? 'https://pay.easebuzz.in'
                     : 'https://testpay.easebuzz.in';
-                return NextResponse.json({ paymentUrl: `${redirectBase}/pay/${ebJson.data}`, txnid });
+                return NextResponse.json({ paymentUrl: `${redirectBase}/pay/${ebJson.data}`, accessKey: ebJson.data, txnid });
             }
 
             return NextResponse.json(

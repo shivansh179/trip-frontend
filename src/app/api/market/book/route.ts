@@ -185,7 +185,7 @@ ACTION: Book from source above after payment confirms.
             ? 'https://pay.easebuzz.in'
             : 'https://testpay.easebuzz.in';
           return NextResponse.json({
-            paymentUrl: `${redirectBase}/pay/${ebJson.data}`,
+            paymentUrl: `${redirectBase}/pay/${ebJson.data}`, accessKey: ebJson.data,
             txnid, ticket,
             chargeNow: amountToCharge,
             totalAmount: totalPayable,

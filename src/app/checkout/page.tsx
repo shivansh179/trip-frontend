@@ -1,4 +1,5 @@
 'use client';
+import { initiateEasebuzzPayment } from '@/lib/easebuzz-checkout';
 
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -197,7 +198,7 @@ function CheckoutContent() {
             const paymentData = await payRes.json();
             if (!payRes.ok) throw new Error(paymentData.error || 'Payment initiation failed');
 
-            if (paymentData.paymentUrl) {
+            if (paymentData.accessKey || paymentData.paymentUrl) {
                 // Store pending wallet/cashback info — credited only after payment confirmed
                 sessionStorage.setItem(`ylootrips-pending-${booking.bookingReference}`, JSON.stringify({
                     walletDeduction,
@@ -206,7 +207,15 @@ function CheckoutContent() {
                     promoCashback,
                     customerId: formData.customerPhone || formData.customerEmail,
                 }));
-                window.location.href = paymentData.paymentUrl;
+                if (paymentData.accessKey) {
+                    initiateEasebuzzPayment({
+                        accessKey: paymentData.accessKey,
+                        onSuccess: () => { window.location.href = `/payment/success?ref=${booking.bookingReference}`; },
+                        onFailure: () => { window.location.href = `/payment/failure?ref=${booking.bookingReference}`; },
+                    }).catch(() => { if (paymentData.paymentUrl) window.location.href = paymentData.paymentUrl; });
+                } else {
+                    window.location.href = paymentData.paymentUrl;
+                }
             } else {
                 throw new Error(paymentData.error || 'Failed to get payment URL from Easebuzz. Please check your payment gateway configuration.');
             }
