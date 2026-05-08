@@ -1,33 +1,4 @@
-/* Easebuzz JS SDK utility — opens a mobile-friendly payment modal on our page */
-
-declare global {
-  interface Window {
-    EasebuzzCheckout: new (key: string, env: string) => {
-      initiatePayment: (options: Record<string, unknown>) => void;
-    };
-  }
-}
-
-const SDK_URL = 'https://ebz-static.s3.ap-south-1.amazonaws.com/easecheckout/easebuzz-checkout.js';
-
-function loadSDK(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (typeof window === 'undefined') return reject(new Error('Not in browser'));
-    if (window.EasebuzzCheckout) return resolve();
-    const existing = document.getElementById('easebuzz-sdk');
-    if (existing) {
-      existing.addEventListener('load', () => resolve());
-      existing.addEventListener('error', () => reject(new Error('SDK load failed')));
-      return;
-    }
-    const script = document.createElement('script');
-    script.id = 'easebuzz-sdk';
-    script.src = SDK_URL;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Failed to load Easebuzz SDK'));
-    document.head.appendChild(script);
-  });
-}
+/* Easebuzz payment utility — redirects to full payment page with all options */
 
 export interface EasebuzzResponse {
   status: string;
@@ -40,6 +11,11 @@ export interface EasebuzzResponse {
   [key: string]: string;
 }
 
+/**
+ * Initiates Easebuzz payment.
+ * Uses direct redirect to the Easebuzz hosted page which shows all payment
+ * modes (UPI, Credit Card, Debit Card, NetBanking, EMI) on both mobile & desktop.
+ */
 export async function initiateEasebuzzPayment({
   accessKey,
   onSuccess,
@@ -49,25 +25,8 @@ export async function initiateEasebuzzPayment({
   onSuccess: (response: EasebuzzResponse) => void;
   onFailure: (response: EasebuzzResponse) => void;
 }): Promise<void> {
-  const key = process.env.NEXT_PUBLIC_EASEBUZZ_KEY || '';
-  const rawEnv = (process.env.NEXT_PUBLIC_EASEBUZZ_ENV || 'production').trim();
-  const env = rawEnv === 'production' ? 'prod' : 'test';
-
-  if (!key) {
-    throw new Error('NEXT_PUBLIC_EASEBUZZ_KEY is not set');
-  }
-
-  await loadSDK();
-
-  const checkout = new window.EasebuzzCheckout(key, env);
-  checkout.initiatePayment({
-    access_key: accessKey,
-    onResponse: (response: EasebuzzResponse) => {
-      if (response.status === 'success') {
-        onSuccess(response);
-      } else {
-        onFailure(response);
-      }
-    },
-  });
+  const env = (process.env.NEXT_PUBLIC_EASEBUZZ_ENV || 'production').trim();
+  const base = env === 'production' ? 'https://pay.easebuzz.in' : 'https://testpay.easebuzz.in';
+  // Redirect to full Easebuzz payment page — shows all payment methods
+  window.location.href = `${base}/pay/${accessKey}`;
 }
