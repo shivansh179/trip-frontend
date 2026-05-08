@@ -402,12 +402,15 @@ function TrendingCard({ trip, rank, onBook }: { trip: Trip; rank: number; onBook
 
 /* ── Static fallback packages (shown if API fails or returns empty) ── */
 const STATIC_TRENDING: Trip[] = [
+  // ── International ────────────────────────────────────────────────
+  { id: 9010, title: 'Thailand Budget Trip', destination: 'Bangkok + Phuket, Thailand', duration: '5N/6D', price: 49499, originalPrice: 62000, rating: 4.8, reviewCount: 374, imageUrl: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'International', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 10, slug: 'thailand-budget-trip' } as any,
   { id: 9001, title: 'Bali Honeymoon Package', destination: 'Bali, Indonesia', duration: '6N/7D', price: 52499, originalPrice: 65999, rating: 4.9, reviewCount: 312, imageUrl: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'International', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 2, slug: 'bali-honeymoon-package' } as any,
-  { id: 9002, title: 'Kashmir Paradise Tour', destination: 'Srinagar, Kashmir', duration: '6N/7D', price: 18999, originalPrice: 24999, rating: 4.9, reviewCount: 428, imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'Domestic', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 10, slug: 'kashmir-tour-package' } as any,
-  { id: 9003, title: 'Kerala Backwaters & Beaches', destination: 'Kerala, India', duration: '7N/8D', price: 22499, originalPrice: 28999, rating: 4.8, reviewCount: 356, imageUrl: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'Domestic', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 10, slug: 'kerala-tour-package' } as any,
-  { id: 9004, title: 'Dubai Luxury Escape', destination: 'Dubai, UAE', duration: '5N/6D', price: 45999, originalPrice: 57999, rating: 4.8, reviewCount: 289, imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'International', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 6, slug: 'dubai-tour-package-from-delhi' } as any,
-  { id: 9005, title: 'Maldives Luxury Package', destination: 'Maldives', duration: '5N/6D', price: 89999, originalPrice: 115000, rating: 4.9, reviewCount: 198, imageUrl: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'International', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 4, slug: 'maldives-luxury-package' } as any,
-  { id: 9006, title: 'Goa Beach Holiday', destination: 'Goa, India', duration: '4N/5D', price: 12999, originalPrice: 16999, rating: 4.7, reviewCount: 512, imageUrl: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'Domestic', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 10, slug: 'goa-tour-package' } as any,
+  { id: 9004, title: 'Dubai Tour Package', destination: 'Dubai, UAE', duration: '5N/6D', price: 36499, originalPrice: 46000, rating: 4.8, reviewCount: 289, imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'International', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 6, slug: 'dubai-tour-package-from-delhi' } as any,
+  { id: 9011, title: 'Singapore Tour Package', destination: 'Singapore', duration: '4N/5D', price: 32999, originalPrice: 41000, rating: 4.8, reviewCount: 241, imageUrl: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'International', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 8, slug: 'singapore-tour-package' } as any,
+  // ── Domestic ─────────────────────────────────────────────────────
+  { id: 9012, title: 'Manali Tour Package', destination: 'Manali, Himachal Pradesh', duration: '5N/6D', price: 6999, originalPrice: 8999, rating: 4.8, reviewCount: 487, imageUrl: 'https://images.unsplash.com/photo-1542401886-65d6c61db217?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'Domestic', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 15, slug: 'manali-tour-package' } as any,
+  { id: 9002, title: 'Kashmir Paradise Tour', destination: 'Srinagar, Kashmir', duration: '6N/7D', price: 18999, originalPrice: 24999, rating: 4.9, reviewCount: 428, imageUrl: 'https://images.unsplash.com/photo-1566552881560-0be862a7c445?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'Domestic', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 10, slug: 'kashmir-tour-package' } as any,
+  { id: 9006, title: 'Goa Beach Holiday', destination: 'Goa, India', duration: '4N/5D', price: 9999, originalPrice: 12999, rating: 4.7, reviewCount: 512, imageUrl: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'Domestic', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 10, slug: 'goa-tour-package' } as any,
 ];
 
 /* ── Main Component ───────────────────────────────────────────────── */
@@ -417,19 +420,9 @@ export default function TrendingPackages() {
   const [activeBooking, setActiveBooking] = useState<Trip | null>(null);
 
   useEffect(() => {
-    api.getTrendingTrips()
-      .then(r => {
-        const data = (r.data || []).slice(0, 6);
-        setTrips(data.length >= 3 ? data : STATIC_TRENDING);
-      })
-      .catch(() =>
-        api.getFeaturedTrips()
-          .then(r => {
-            const data = (r.data || []).slice(0, 6);
-            setTrips(data.length >= 3 ? data : STATIC_TRENDING);
-          })
-          .catch(() => setTrips(STATIC_TRENDING))
-      )
+    // Always use curated STATIC_TRENDING for consistent featured trips
+    setTrips(STATIC_TRENDING);
+    Promise.resolve()
       .finally(() => setLoading(false));
   }, []);
 
