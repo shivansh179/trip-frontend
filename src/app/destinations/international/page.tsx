@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MapPin, Globe, MessageCircle, Star, Clock, Users, X, CreditCard, Loader2, CheckCircle } from 'lucide-react';
+import { ArrowUpRight, MapPin, Globe, MessageCircle, Star, Clock, Users, X, CreditCard, Loader2, CheckCircle } from 'lucide-react';
 import PageHero from '@/components/PageHero';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatPriceWithCurrency } from '@/lib/utils';
