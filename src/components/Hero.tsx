@@ -178,6 +178,9 @@ export default function Hero({ content, stats }: HeroProps) {
     // Tours / Hotels fields
     const [fromCity, setFromCity] = useState('');
     const [toCity, setToCity] = useState('');
+    const [tourQuery, setTourQuery] = useState('');
+    const [tourSuggestions, setTourSuggestions] = useState<string[]>([]);
+    const [showTourSug, setShowTourSug] = useState(false);
     const [checkIn, setCheckIn] = useState('');
     const [checkOut, setCheckOut] = useState('');
     const [guests, setGuests] = useState(2);
@@ -261,9 +264,8 @@ export default function Hero({ content, stats }: HeroProps) {
     }, [flightDate, flightFrom, flightTo, flightPax]);
 
     const handleTourSearch = useCallback(() => {
-        const to = toCity.trim();
-        const from = fromCity.trim();
-        if (!to && !from) return;
+        const q = tourQuery.trim();
+        if (!q) return;
 
         const OUR_KEYWORDS = [
             'manali','goa','kashmir','kerala','bali','dubai','thailand','singapore','maldives',
@@ -271,22 +273,17 @@ export default function Hero({ content, stats }: HeroProps) {
             'kedarkantha','kheerganga','hampta','sar pass','prashar','har ki dun','roopkund',
             'chadar','ladakh','leh','kasol','solang','munnar','alleppey','kochi','srinagar',
             'gulmarg','pahalgam','ubud','seminyak','bangkok','phuket','marina bay','sentosa',
+            'kullu','lahaul','honeymoon','bike trip','tirthan valley','prashar lake',
         ];
 
-        const query = (to || from).toLowerCase();
-        const isListed = OUR_KEYWORDS.some((k) => query.includes(k));
+        const isListed = OUR_KEYWORDS.some((k) => q.toLowerCase().includes(k));
 
         if (isListed) {
-            const params = new URLSearchParams();
-            if (to) params.set('to', to);
-            if (from) params.set('from', from);
-            if (guests) params.set('guests', String(guests));
-            if (checkIn) params.set('date', checkIn);
-            router.push(`/search?${params.toString()}`);
+            router.push(`/search?to=${encodeURIComponent(q)}`);
         } else {
-            router.push(`/trip-planner?q=${encodeURIComponent(to || from)}`);
+            router.push(`/trip-planner?q=${encodeURIComponent(q)}`);
         }
-    }, [toCity, fromCity, guests, checkIn, router]);
+    }, [tourQuery, router]);
 
     const handleHotelSearch = useCallback(() => {
         router.push(`/hotels${toCity ? `?q=${encodeURIComponent(toCity)}` : ''}`);
@@ -622,103 +619,55 @@ export default function Hero({ content, stats }: HeroProps) {
                                     {/* ── TOURS TAB ── */}
                                     {activeTab === 'trips' && (
                                         <>
-                                            <div className="flex flex-col sm:flex-row gap-2">
-                                                {/* From */}
+                                            {/* Single Google-style search */}
+                                            <div className="flex gap-2">
                                                 <div className="relative flex-1">
-                                                    <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">From</label>
-                                                    <div className="relative">
-                                                        <MapPin size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                                                        <input type="text" placeholder="Your city / origin" value={fromCity}
-                                                            onChange={e => { const v = e.target.value; setFromCity(v); setFromSuggestions(filterSuggestions(v)); setShowFromSug(v.length > 0); }}
-                                                            onFocus={() => setShowFromSug(fromCity.length > 0)}
-                                                            onBlur={() => setTimeout(() => setShowFromSug(false), 150)}
-                                                            className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100" />
-                                                        {showFromSug && fromSuggestions.length > 0 && (
-                                                            <ul className="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl z-50">
-                                                                {fromSuggestions.map(s => (
-                                                                    <li key={s} onMouseDown={() => { setFromCity(s); setShowFromSug(false); }}
-                                                                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50 cursor-pointer">
-                                                                        <MapPin size={11} className="text-gray-400" />{s}
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                                <button onClick={swapTourCities}
-                                                    className="self-center w-8 h-8 shrink-0 rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-300 flex items-center justify-center transition-all hover:rotate-180 duration-300">
-                                                    <ArrowLeftRight size={13} className="text-gray-600" />
-                                                </button>
-
-                                                {/* To */}
-                                                <div className="relative flex-1">
-                                                    <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">To</label>
-                                                    <div className="relative">
-                                                        <MapPin size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                                                        <input type="text" placeholder="Where do you want to go?" value={toCity}
-                                                            onChange={e => { const v = e.target.value; setToCity(v); setToSuggestions(filterSuggestions(v)); setShowToSug(v.length > 0); }}
-                                                            onFocus={() => setShowToSug(toCity.length > 0)}
-                                                            onBlur={() => setTimeout(() => setShowToSug(false), 150)}
-                                                            className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100" />
-                                                        {showToSug && (
-                                                            <ul className="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
-                                                                {toSuggestions.map(s => (
-                                                                    <li key={s} onMouseDown={() => { setToCity(s); setShowToSug(false); }}
-                                                                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50 cursor-pointer">
-                                                                        <MapPin size={11} className="text-gray-400" />{s}
-                                                                    </li>
-                                                                ))}
-                                                                {toSuggestions.length === 0 && toCity.length > 0 && (
-                                                                    <li onMouseDown={() => { router.push(`/trip-planner?q=${encodeURIComponent(toCity)}`); setShowToSug(false); }}
-                                                                        className="flex items-center gap-2 px-3 py-2.5 text-sm cursor-pointer bg-violet-50 hover:bg-violet-100 text-violet-700 font-semibold border-t border-violet-100">
-                                                                        ✨ Plan custom trip to "{toCity}" →
-                                                                    </li>
-                                                                )}
-                                                                {toSuggestions.length > 0 && (
-                                                                    <li onMouseDown={() => { router.push('/trip-planner'); setShowToSug(false); }}
-                                                                        className="flex items-center gap-2 px-3 py-2 text-xs cursor-pointer bg-gray-50 hover:bg-gray-100 text-gray-400 border-t border-gray-100">
-                                                                        ✨ Don't see your destination? Plan a custom trip →
-                                                                    </li>
-                                                                )}
-                                                            </ul>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                                {/* Date */}
-                                                <div className="relative sm:w-36">
-                                                    <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">Travel Date</label>
-                                                    <div className="relative">
-                                                        <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                                                        <input type="date" value={checkIn} min={todayStr} onChange={e => setCheckIn(e.target.value)}
-                                                            className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
-                                                    </div>
-                                                </div>
-
-                                                {/* Guests */}
-                                                <div className="relative sm:w-28 shrink-0">
-                                                    <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">Guests</label>
-                                                    <button onClick={() => setShowGuestPicker(!showGuestPicker)}
-                                                        className="w-full flex items-center pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm text-left hover:border-gray-300 transition-colors">
-                                                        <Users size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                                                        <span className="text-gray-700">{guests} {guests > 1 ? 'Guests' : 'Guest'}</span>
-                                                        <ChevronDown size={12} className="ml-auto text-gray-400" />
-                                                    </button>
-                                                    {showGuestPicker && (
-                                                        <div className="absolute top-full mt-2 left-0 bg-white border border-gray-200 rounded-xl shadow-xl p-4 z-50 w-40">
-                                                            <div className="flex items-center justify-between">
-                                                                <button onClick={() => setGuests(Math.max(1, guests - 1))} className="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-50 flex items-center justify-center text-lg">−</button>
-                                                                <span className="text-lg font-semibold w-8 text-center">{guests}</span>
-                                                                <button onClick={() => setGuests(Math.min(20, guests + 1))} className="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-50 flex items-center justify-center text-lg">+</button>
-                                                            </div>
-                                                            <button onClick={() => setShowGuestPicker(false)} className="mt-3 w-full py-1.5 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-gray-800">Done</button>
-                                                        </div>
+                                                    <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Search trips, destinations, or experiences…"
+                                                        value={tourQuery}
+                                                        autoComplete="off"
+                                                        onChange={e => {
+                                                            const v = e.target.value;
+                                                            setTourQuery(v);
+                                                            setTourSuggestions(
+                                                                v.length > 0
+                                                                    ? CITY_SUGGESTIONS.filter(c => c.toLowerCase().includes(v.toLowerCase())).slice(0, 6)
+                                                                    : []
+                                                            );
+                                                            setShowTourSug(v.length > 0);
+                                                        }}
+                                                        onFocus={() => { if (tourQuery.length > 0) setShowTourSug(true); }}
+                                                        onBlur={() => setTimeout(() => setShowTourSug(false), 150)}
+                                                        onKeyDown={e => { if (e.key === 'Enter') handleTourSearch(); }}
+                                                        className="w-full pl-9 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                                                    />
+                                                    {showTourSug && (
+                                                        <ul className="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                                                            {tourSuggestions.map(s => (
+                                                                <li key={s} onMouseDown={() => { setTourQuery(s); setShowTourSug(false); setTimeout(handleTourSearch, 50); }}
+                                                                    className="flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-gray-50 cursor-pointer text-gray-800">
+                                                                    <MapPin size={11} className="text-gray-400 shrink-0" />{s}
+                                                                </li>
+                                                            ))}
+                                                            {tourSuggestions.length === 0 && tourQuery.length > 0 && (
+                                                                <li onMouseDown={() => { router.push(`/trip-planner?q=${encodeURIComponent(tourQuery)}`); setShowTourSug(false); }}
+                                                                    className="flex items-center gap-2 px-3 py-2.5 text-sm cursor-pointer bg-violet-50 hover:bg-violet-100 text-violet-700 font-semibold">
+                                                                    ✨ Plan custom trip to &ldquo;{tourQuery}&rdquo; with AI →
+                                                                </li>
+                                                            )}
+                                                            {tourSuggestions.length > 0 && (
+                                                                <li onMouseDown={() => { router.push('/trip-planner'); setShowTourSug(false); }}
+                                                                    className="flex items-center gap-2 px-3 py-2 text-xs cursor-pointer bg-gray-50 hover:bg-gray-100 text-gray-400 border-t border-gray-100">
+                                                                    ✨ Don&apos;t see your destination? Plan a custom trip →
+                                                                </li>
+                                                            )}
+                                                        </ul>
                                                     )}
                                                 </div>
-
                                                 <button onClick={handleTourSearch}
-                                                    className="flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-xl transition-all shadow-lg shadow-gray-900/20 active:scale-95 shrink-0">
+                                                    className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-xl transition-all shadow-lg shadow-gray-900/20 active:scale-95 shrink-0">
                                                     <Search size={16} /><span>Search</span>
                                                 </button>
                                             </div>
