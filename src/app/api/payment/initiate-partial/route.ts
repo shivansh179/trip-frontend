@@ -48,6 +48,15 @@ export async function POST(req: NextRequest) {
         ? 'https://pay.easebuzz.in/payment/initiateLink'
         : 'https://testpay.easebuzz.in/payment/initiateLink';
 
+      const methodMap: Record<string, string> = {
+        credit_card: 'CC',
+        debit_card: 'DC',
+        net_banking: 'NB',
+        wallet: 'WALLET',
+        upi: 'UPI',
+      };
+      const paymentOptions = emiTenure ? 'EMI' : (methodMap[paymentMethod] || '');
+
       const formData = new URLSearchParams({
         key: EASEBUZZ_KEY,
         txnid,
@@ -64,22 +73,10 @@ export async function POST(req: NextRequest) {
         hash,
         surl: `${SITE_URL}/payment/success?ref=${bookingReference}`,
         furl: `${SITE_URL}/payment/failure?ref=${bookingReference}`,
-        // Accept international cards (Visa/Mastercard from any country)
         allow_international: '1',
-        // Pre-select payment method on Easebuzz page
-        ...(() => {
-          if (emiTenure) return { payment_options: 'EMI', emi_tenure: String(emiTenure) };
-          const methodMap: Record<string, string> = {
-            credit_card: 'CC',
-            debit_card: 'DC',
-            net_banking: 'NB',
-            wallet: 'WALLET',
-            upi: 'UPI',
-          };
-          const pg = methodMap[paymentMethod] || '';
-          return pg ? { payment_options: pg } : {};
-        })(),
-      });
+        ...(paymentOptions ? { payment_options: paymentOptions } : {}),
+        ...(emiTenure ? { emi_tenure: String(emiTenure) } : {}),
+      } as Record<string, string>);
 
       const ebRes = await fetch(payUrl, {
         method: 'POST',
