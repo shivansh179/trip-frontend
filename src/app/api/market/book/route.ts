@@ -7,8 +7,8 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ylootrips.com'
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@ylootrips.com';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
-const EASEBUZZ_KEY = process.env.EASEBUZZ_KEY || '';
-const EASEBUZZ_SALT = process.env.EASEBUZZ_SALT || '';
+const EASEBUZZ_KEY = (process.env.EASEBUZZ_KEY || '').trim();
+const EASEBUZZ_SALT = (process.env.EASEBUZZ_SALT || '').trim();
 const EASEBUZZ_ENV = (process.env.EASEBUZZ_ENV || 'production').trim();
 const MARKET_EVENT_ID = process.env.HOTEL_EVENT_ID
   ? Number(process.env.HOTEL_EVENT_ID)
@@ -116,6 +116,7 @@ ACTION: Book from source above after payment confirms.
     }
 
     // ── Direct Easebuzz (supports partial/EMI chargeNow amounts) ─────────────
+    console.log('[market/book] EASEBUZZ_KEY set:', !!EASEBUZZ_KEY, 'SALT set:', !!EASEBUZZ_SALT, 'ENV:', EASEBUZZ_ENV, 'MARKET_EVENT_ID:', MARKET_EVENT_ID);
     if (EASEBUZZ_KEY && EASEBUZZ_SALT) {
       try {
         const amount = String(amountToCharge.toFixed(2));
