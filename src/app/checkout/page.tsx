@@ -189,6 +189,7 @@ function CheckoutContent() {
                     customerEmail: formData.customerEmail,
                     customerPhone: formData.customerPhone,
                     tripTitle: trip.title,
+                    paymentMethod: effectiveMethod,
                     // Pass EMI tenure so Easebuzz can pre-select EMI payment flow
                     emiTenure: selectedEmi?.tenure || null,
                 }),

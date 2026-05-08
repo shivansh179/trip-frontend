@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { bookingReference, chargeNow, totalAmount, customerName, customerEmail, customerPhone, tripTitle, emiTenure } = body;
+    const { bookingReference, chargeNow, totalAmount, customerName, customerEmail, customerPhone, tripTitle, emiTenure, paymentMethod } = body;
 
     if (!bookingReference || !chargeNow || chargeNow <= 0) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -66,8 +66,19 @@ export async function POST(req: NextRequest) {
         furl: `${SITE_URL}/payment/failure?ref=${bookingReference}`,
         // Accept international cards (Visa/Mastercard from any country)
         allow_international: '1',
-        // EMI flow when selected
-        ...(emiTenure ? { payment_options: 'EMI', emi_tenure: String(emiTenure) } : {}),
+        // Pre-select payment method on Easebuzz page
+        ...(() => {
+          if (emiTenure) return { payment_options: 'EMI', emi_tenure: String(emiTenure) };
+          const methodMap: Record<string, string> = {
+            credit_card: 'CC',
+            debit_card: 'DC',
+            net_banking: 'NB',
+            wallet: 'WALLET',
+            upi: 'UPI',
+          };
+          const pg = methodMap[paymentMethod] || '';
+          return pg ? { payment_options: pg } : {};
+        })(),
       });
 
       const ebRes = await fetch(payUrl, {
