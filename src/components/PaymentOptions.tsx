@@ -116,8 +116,8 @@ export default function PaymentOptions({ tripPrice, tripTitle, onProceed }: Paym
 
   const canProceed =
     tab === 'full' ||
-    tab === 'partial';
-    // EMI is not live yet — never allow proceeding from EMI tab
+    tab === 'partial' ||
+    (tab === 'emi' && selectedEmi !== null && selectedBank !== null);
 
   const handleProceed = () => {
     if (!canProceed) return;
@@ -182,7 +182,6 @@ export default function PaymentOptions({ tripPrice, tripTitle, onProceed }: Paym
           <TabButton active={tab === 'emi'}     onClick={() => setTab('emi')}>
             <span className="flex items-center justify-center gap-1.5">
               <Percent className="w-3.5 h-3.5" />Pay in EMI
-              <span className="text-[9px] bg-amber-400 text-primary px-1 py-0.5 rounded font-bold leading-none">SOON</span>
             </span>
           </TabButton>
           <TabButton active={tab === 'partial'} onClick={() => setTab('partial')}>
@@ -252,12 +251,12 @@ export default function PaymentOptions({ tripPrice, tripTitle, onProceed }: Paym
         {/* PAY IN EMI */}
         {tab === 'emi' && (
           <div className="space-y-4 pt-3">
-            {/* Coming soon notice */}
-            <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            {/* EMI info */}
+            <div className="flex items-start gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+              <CheckCircle className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-semibold text-amber-800">EMI activation in progress</p>
-                <p className="text-[11px] text-amber-700 mt-0.5">Our EMI feature is being activated with the payment gateway. Until then, please use <strong>Pay Full</strong> or <strong>Pay 20% Now</strong>. We will notify you once EMI goes live.</p>
+                <p className="text-xs font-semibold text-green-800">Card EMI available</p>
+                <p className="text-[11px] text-green-700 mt-0.5">Select your EMI plan and bank below. The full amount is charged once — your bank converts it to EMI automatically.</p>
               </div>
             </div>
             {/* Eligibility note */}
@@ -472,15 +471,6 @@ export default function PaymentOptions({ tripPrice, tripTitle, onProceed }: Paym
 
       {/* ── Proceed button ───────────────────────────────────────────────── */}
       <div className="px-4 sm:px-5 pb-5">
-        {tab === 'emi' && (
-          <button
-            type="button"
-            onClick={() => setTab('full')}
-            className="w-full flex items-center justify-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary font-semibold text-sm py-3.5 rounded-xl transition-all mb-3 border border-primary/20"
-          >
-            Switch to Pay Full Instead
-          </button>
-        )}
         <button
           type="button"
           onClick={handleProceed}

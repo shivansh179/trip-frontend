@@ -544,7 +544,7 @@ export default function Home() {
               { label: 'Kashmir', price: '₹18,999', priceNum: 18999, nights: '5N/6D', tag: 'Trending', href: '/kashmir-tour-package' },
               { label: 'Dubai', price: '₹35,999', priceNum: 35999, nights: '5N/6D', tag: 'International', href: '/dubai-tour-package-from-delhi' },
               { label: 'Bali', price: '₹42,999', priceNum: 42999, nights: '6N/7D', tag: 'Honeymoon', href: '/bali-honeymoon-package' },
-              { label: 'Singapore', price: '₹32,999', priceNum: 32999, nights: '4N/5D', tag: 'New', href: '/singapore-tour-package' },
+              { label: 'Singapore', price: '₹44,999', priceNum: 44999, nights: '4N/5D', tag: 'New', href: '/singapore-tour-package' },
               { label: 'Thailand', price: '₹28,999', priceNum: 28999, nights: '5N/6D', tag: 'Budget', href: '/thailand-budget-trip' },
               { label: 'Maldives', price: '₹89,999', priceNum: 89999, nights: '4N/5D', tag: 'Luxury', href: '/maldives-luxury-package' },
             ] as HomePkg[]).map((pkg) => (

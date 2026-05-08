@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowUpRight, Instagram, Facebook, ShieldCheck, Lock, Star, Phone, Mail, MapPin } from 'lucide-react';
+import { ArrowUpRight, Instagram, Facebook, ShieldCheck, Star, Phone, Mail, MapPin } from 'lucide-react';
 import AdminLoginModal from './AdminLoginModal';
 
 export default function Footer() {
@@ -186,12 +186,21 @@ export default function Footer() {
               {/* Admin button */}
               <button
                 onClick={() => setShowAdminModal(true)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all active:scale-95"
-                style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)' }}
                 aria-label="Admin Portal"
+                style={{
+                  background: 'rgba(255,255,255,0.22)',
+                  border: '2px solid rgba(255,255,255,0.45)',
+                  borderRadius: 8,
+                  padding: '6px 16px',
+                  color: '#ffffff',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: '0.15em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                }}
               >
-                <Lock className="w-3.5 h-3.5 text-white/70" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Admin</span>
+                ADMIN
               </button>
             </div>
           </div>

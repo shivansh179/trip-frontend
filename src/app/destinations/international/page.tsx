@@ -93,7 +93,7 @@ const INTERNATIONAL_DESTINATIONS: IntlDestination[] = [
     region: 'Southeast Asia',
     image: 'https://images.unsplash.com/photo-1508964942454-1a56651d54ac?w=800&q=80',
     description: 'Futuristic gardens, Universal Studios, Marina Bay Sands and Michelin-starred street food.',
-    priceINR: 32999,
+    priceINR: 44999,
     duration: '4 Nights / 5 Days',
     rating: 4.8,
     reviews: 892,

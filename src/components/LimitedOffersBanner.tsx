@@ -16,7 +16,7 @@ const PACKAGES = [
   { label: 'Dubai', price: '₹35,999', priceNum: 35999, nights: '5N', tag: 'International' },
   { label: 'Bali', price: '₹42,999', priceNum: 42999, nights: '6N', tag: 'Honeymoon' },
   { label: 'Thailand', price: '₹28,999', priceNum: 28999, nights: '5N', tag: 'Budget' },
-  { label: 'Singapore', price: '₹32,999', priceNum: 32999, nights: '4N', tag: 'New' },
+  { label: 'Singapore', price: '₹44,999', priceNum: 44999, nights: '4N', tag: 'New' },
   { label: 'Maldives', price: '₹89,999', priceNum: 89999, nights: '4N', tag: 'Luxury' },
 ];
 

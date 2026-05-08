@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import PackagePageLayout, { type PackageData } from '@/components/PackagePageLayout';
 
 export const metadata: Metadata = {
-  title: 'Singapore Tour Package from India 2026 — 4 Nights Starting ₹32,999',
-  description: 'Book Singapore tour packages from India starting ₹32,999. 4 nights / 5 days — Gardens by the Bay, Universal Studios, Sentosa, Marina Bay Sands. Flights + hotel + transfers included.',
+  title: 'Singapore Tour Package from India 2026 — 4 Nights Starting ₹44,999',
+  description: 'Book Singapore tour packages from India starting ₹44,999. 4 nights / 5 days — Gardens by the Bay, Universal Studios, Sentosa, Marina Bay Sands. Flights + hotel + transfers included.',
   keywords: 'Singapore tour package from India, Singapore trip from India, Singapore package 2026, Singapore holiday package India, Singapore 4 nights 5 days, cheapest Singapore tour India, Singapore trip cost India',
   openGraph: {
-    title: 'Singapore Tour Package from India 2026 — ₹32,999 Onwards',
+    title: 'Singapore Tour Package from India 2026 — ₹44,999 Onwards',
     description: 'All-inclusive Singapore holiday from India — flights, hotel, Gardens by the Bay, Universal Studios, Marina Bay Sands. Book with ₹5,000 advance.',
     url: 'https://www.ylootrips.com/singapore-tour-package',
     type: 'website',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Singapore Tour Package from India — ₹32,999 Onwards | YlooTrips',
+    title: 'Singapore Tour Package from India — ₹44,999 Onwards | YlooTrips',
     description: 'Flights + Hotel + Gardens by the Bay + Universal Studios + Sentosa. Book now with ₹5,000 advance.',
     images: ['https://images.unsplash.com/photo-1508964942454-1a56651d54ac?w=1200&q=80'],
   },
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
 const pkg: PackageData = {
   slug: 'singapore-tour-package',
   canonicalUrl: 'https://www.ylootrips.com/singapore-tour-package',
-  metaTitle: 'Singapore Tour Package from India 2026 — 4 Nights Starting ₹32,999',
-  metaDescription: 'Book Singapore tour packages from India starting ₹32,999. 4 nights 5 days — Gardens by the Bay, Universal Studios, Marina Bay Sands. Flights included.',
+  metaTitle: 'Singapore Tour Package from India 2026 — 4 Nights Starting ₹44,999',
+  metaDescription: 'Book Singapore tour packages from India starting ₹44,999. 4 nights 5 days — Gardens by the Bay, Universal Studios, Marina Bay Sands. Flights included.',
   keywords: 'Singapore tour package from India',
   ogImage: 'https://images.unsplash.com/photo-1508964942454-1a56651d54ac?w=1200&q=80',
 
@@ -39,7 +39,7 @@ const pkg: PackageData = {
   difficulty: 'Easy (All Ages)',
   startLocation: 'Delhi / Mumbai → Singapore (SIN)',
 
-  priceINR: 32999,
+  priceINR: 44999,
   priceUSD: 396,
   originalPriceINR: 42999,
   depositPercent: 25,
@@ -186,7 +186,7 @@ const pkg: PackageData = {
   faqs: [
     {
       question: 'How much does a Singapore trip from India cost in 2026?',
-      answer: 'Our all-inclusive Singapore package from India starts at ₹32,999 per person for 4 nights. This includes return flights, visa, 4-star hotel, breakfast, airport transfers, and entry tickets to Gardens by the Bay, Universal Studios, Marina Bay Sands SkyPark, and S.E.A. Aquarium. Budget ₹5,000–₹8,000 extra per person for additional meals, shopping, and optional activities like Night Safari or cable car.',
+      answer: 'Our all-inclusive Singapore package from India starts at ₹44,999 per person for 4 nights. This includes return flights, visa, 4-star hotel, breakfast, airport transfers, and entry tickets to Gardens by the Bay, Universal Studios, Marina Bay Sands SkyPark, and S.E.A. Aquarium. Budget ₹5,000–₹8,000 extra per person for additional meals, shopping, and optional activities like Night Safari or cable car.',
     },
     {
       question: 'Do I need a visa for Singapore from India?',
@@ -216,7 +216,7 @@ const pkg: PackageData = {
     { title: 'Dubai Tour Package from Delhi — 5 Nights', href: '/dubai-tour-package-from-delhi', priceINR: 36499, image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80' },
   ],
 
-  whatsappMsg: "Hi! I'm interested in the Singapore Tour Package from India (4 nights ₹32,999). Please share availability and details.",
+  whatsappMsg: "Hi! I'm interested in the Singapore Tour Package from India (4 nights ₹44,999). Please share availability and details.",
   bookingHref: '/contact?package=singapore-tour-package',
 
   schemaHighlights: ['Gardens by the Bay Flower Dome & Cloud Forest', 'Universal Studios Singapore', 'Marina Bay Sands SkyPark', 'Sentosa Island & S.E.A. Aquarium', 'Return flights from India'],
