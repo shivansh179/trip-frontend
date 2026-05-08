@@ -9,7 +9,7 @@ import {
   MessageCircle, ArrowUpRight, Mountain, Waves, Castle, TreePine,
   Sailboat, Sun, Shield, Users, Globe, Clock, Star, Check,
   CreditCard, MapPin, Phone, BadgeCheck, ChevronDown, ChevronUp,
-  Calendar, Tag, X, Loader2, CheckCircle, BadgePercent, ShieldCheck,
+  Calendar, X, Loader2, CheckCircle, BadgePercent, ShieldCheck,
 } from 'lucide-react';
 import PageHero from '@/components/PageHero';
 import { useVisitor } from '@/context/VisitorContext';
@@ -1283,7 +1283,6 @@ function TripDetailsModal({ trip, onClose, onBook }: { trip: DomesticTrip; onClo
 }
 
 function TripCard({ trip }: { trip: DomesticTrip }) {
-  const [showItinerary, setShowItinerary] = useState(false);
   const [imgSrc, setImgSrc] = useState(trip.image);
   const discount = Math.round(((trip.originalPriceINR - trip.priceINR) / trip.originalPriceINR) * 100);
 
@@ -1349,24 +1348,6 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
           )}
         </div>
 
-        {/* Itinerary accordion */}
-        <button
-          onClick={() => setShowItinerary((v) => !v)}
-          className="flex items-center justify-between w-full text-xs text-secondary border border-sand/50 rounded-lg px-3 py-2 hover:bg-cream-light transition-colors mb-3"
-        >
-          <span className="flex items-center gap-1.5"><Tag size={11} />View itinerary ({trip.itinerary.length} days)</span>
-          {showItinerary ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-        </button>
-        {showItinerary && (
-          <div className="bg-cream-light rounded-xl p-3 mb-3 space-y-2">
-            {trip.itinerary.map((item) => (
-              <div key={item.day} className="flex gap-2 text-xs">
-                <span className="font-bold text-gray-600 shrink-0 w-10">{item.day}</span>
-                <span className="text-primary/70">{item.desc}</span>
-              </div>
-            ))}
-          </div>
-        )}
 
         <div className="flex-1" />
 
