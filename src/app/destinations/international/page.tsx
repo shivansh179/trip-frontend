@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, MapPin, Globe, MessageCircle, Star, Clock, Users, X, CreditCard, Loader2, CheckCircle, ShieldCheck, BadgePercent } from 'lucide-react';
+import { MapPin, Globe, MessageCircle, Star, Clock, Users, X, CreditCard, Loader2, CheckCircle } from 'lucide-react';
 import PageHero from '@/components/PageHero';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatPriceWithCurrency } from '@/lib/utils';
@@ -627,12 +627,6 @@ function IntlCard({ d }: { d: IntlDestination }) {
               <span className="text-[10px] text-secondary"> / person</span>
             </div>
             <div className="flex gap-2">
-              <Link
-                href={d.href}
-                className="flex items-center gap-1 text-primary/60 text-xs font-medium px-3 py-2.5 rounded-full border border-primary/15 hover:border-primary/40 transition-colors"
-              >
-                Details <ArrowUpRight className="w-3 h-3" />
-              </Link>
               <button
                 onClick={() => setShowDrawer(true)}
                 className="flex items-center gap-1.5 bg-primary text-cream text-xs font-bold px-4 py-2.5 rounded-full hover:bg-primary/90 transition-colors"
