@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowUpRight, Instagram, Facebook, ShieldCheck, Star, Phone, Mail, MapPin } from 'lucide-react';
+import { ArrowUpRight, Instagram, Facebook, ShieldCheck, Lock, Star, Phone, Mail, MapPin } from 'lucide-react';
 import AdminLoginModal from './AdminLoginModal';
 
 export default function Footer() {
