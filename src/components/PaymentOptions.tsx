@@ -117,7 +117,7 @@ export default function PaymentOptions({ tripPrice, tripTitle, onProceed }: Paym
   const canProceed =
     tab === 'full' ||
     tab === 'partial' ||
-    (tab === 'emi' && selectedEmi !== null && selectedBank !== null);
+    (tab === 'emi' && selectedEmi !== null);
 
   const handleProceed = () => {
     if (!canProceed) return;
