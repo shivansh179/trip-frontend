@@ -379,19 +379,12 @@ function TrendingCard({ trip, rank, onBook }: { trip: Trip; rank: number; onBook
           </div>
 
           {/* CTAs */}
-          <div className="grid grid-cols-5 gap-2">
-            <button
-              onClick={() => onBook(trip)}
-              className="col-span-3 flex items-center justify-center gap-1.5 bg-primary text-cream py-2.5 text-xs uppercase tracking-widest font-bold hover:bg-secondary transition-colors rounded-lg shadow-md hover:shadow-lg"
-            >
-              Book Now
-            </button>
+          <div className="flex">
             <Link
               href={detailHref}
-              className="col-span-2 flex items-center justify-center gap-1 border border-primary/20 text-primary py-2.5 text-xs uppercase tracking-widest hover:bg-primary/5 transition-all rounded-lg"
+              className="w-full flex items-center justify-center gap-1.5 bg-primary text-cream py-2.5 text-xs uppercase tracking-widest font-bold hover:bg-secondary transition-colors rounded-lg shadow-md hover:shadow-lg"
             >
-              Details
-              <ArrowUpRight className="w-3 h-3" />
+              Book Now
             </Link>
           </div>
         </div>
