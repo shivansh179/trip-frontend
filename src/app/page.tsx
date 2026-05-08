@@ -457,7 +457,6 @@ export default function Home() {
   const fp = (p: number) => formatPriceWithCurrency(p, currency);
   const [content, setContent] = useState<CmsContent | null>(null);
   const [destinations, setDestinations] = useState<Destination[]>([]);
-  const [activePackage, setActivePackage] = useState<HomePkg | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [referralCopied, setReferralCopied] = useState(false);
@@ -554,7 +553,7 @@ export default function Home() {
               { label: 'Thailand', price: '₹28,999', priceNum: 28999, nights: '5N/6D', tag: 'Budget', href: '/thailand-budget-trip' },
               { label: 'Maldives', price: '₹89,999', priceNum: 89999, nights: '4N/5D', tag: 'Luxury', href: '/maldives-luxury-package' },
             ] as HomePkg[]).map((pkg) => (
-              <button key={pkg.href} onClick={() => setActivePackage(pkg)}
+              <Link key={pkg.href} href={pkg.href}
                 className="group flex-shrink-0 relative bg-white border border-gray-200 hover:border-gray-400 rounded-2xl overflow-hidden transition-all duration-300 active:scale-95 text-left shadow-sm hover:shadow-md"
                 style={{ minWidth: '148px' }}>
                 {/* Header bar */}
@@ -568,10 +567,10 @@ export default function Home() {
                   <p className="text-gray-900 font-bold text-base leading-tight">{pkg.label}</p>
                   <p className="text-gray-700 font-bold text-sm leading-tight mt-0.5">{pkg.price} <span className="text-gray-400 font-normal text-[10px]">/ person</span></p>
                   <div className="mt-3 bg-gray-900 group-hover:bg-gray-800 text-white text-[10px] font-bold uppercase tracking-widest text-center rounded-xl py-2 transition-colors">
-                    View →
+                    Book Now →
                   </div>
                 </div>
-              </button>
+              </Link>
             ))}
           </div>
         </div>
@@ -836,7 +835,6 @@ export default function Home() {
       <InternationalTestimonials />
 
       {/* Home package booking drawer */}
-      {activePackage && <HomeBookingDrawer pkg={activePackage} onClose={() => setActivePackage(null)} />}
     </>
   );
 }
