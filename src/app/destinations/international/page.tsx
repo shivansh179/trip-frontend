@@ -229,7 +229,7 @@ const INTERNATIONAL_DESTINATIONS: IntlDestination[] = [
 
 // ── Booking Drawer ────────────────────────────────────────────────────────────
 function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void }) {
-  const [tab, setTab] = useState<'pay' | 'callback'>('pay');
+  const [tab, setTab] = useState<'details' | 'pay' | 'callback'>('details');
   const [guests, setGuests] = useState('2');
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [paying, setPaying] = useState(false);
@@ -349,12 +349,20 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
         {/* Tab switcher */}
         <div className="flex border-b border-gray-100">
           <button
+            onClick={() => setTab('details')}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold transition-colors ${
+              tab === 'details' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            📋 Details
+          </button>
+          <button
             onClick={() => setTab('pay')}
             className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold transition-colors ${
               tab === 'pay' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'
             }`}
           >
-            <CreditCard size={15} /> Book & Pay Now
+            <CreditCard size={15} /> Book & Pay
           </button>
           <button
             onClick={() => setTab('callback')}
@@ -362,11 +370,81 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
               tab === 'callback' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'
             }`}
           >
-            📞 Free Callback
+            📞 Callback
           </button>
         </div>
 
         <div className="overflow-y-auto flex-1">
+          {/* ── DETAILS TAB ── */}
+          {tab === 'details' && (
+            <div className="flex flex-col">
+              {/* Hero image */}
+              <div className="relative w-full h-48 shrink-0">
+                <img src={d.image} alt={d.name} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-3 left-4">
+                  <span className="text-white font-bold text-lg leading-tight">{d.name}</span>
+                  <p className="text-white/80 text-xs mt-0.5">{d.region} · {d.country}</p>
+                </div>
+              </div>
+
+              <div className="p-4 space-y-4">
+                {/* Quick stats */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-gray-50 rounded-xl p-3 text-center">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">Duration</p>
+                    <p className="text-xs font-bold text-gray-900">{d.duration}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3 text-center">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">Rating</p>
+                    <p className="text-xs font-bold text-gray-900">⭐ {d.rating} ({d.reviews.toLocaleString()})</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3 text-center">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">Visa</p>
+                    <p className="text-xs font-bold text-gray-900">{d.visa}</p>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <p className="text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wide">About</p>
+                  <p className="text-sm text-gray-600 leading-relaxed">{d.description}</p>
+                </div>
+
+                {/* Highlights */}
+                <div>
+                  <p className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Highlights</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {d.highlights.map((h) => (
+                      <div key={h} className="flex items-start gap-2 bg-gray-50 rounded-xl px-3 py-2.5">
+                        <span className="text-green-500 mt-0.5 shrink-0">✓</span>
+                        <span className="text-xs text-gray-700 font-medium">{h}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Price + CTA */}
+                <div className="bg-gray-900 rounded-2xl p-4">
+                  <div className="flex items-baseline justify-between mb-3">
+                    <div>
+                      <p className="text-[10px] text-gray-400 uppercase tracking-wide">Starting from</p>
+                      <p className="text-2xl font-bold text-white">₹{d.priceINR.toLocaleString('en-IN')}</p>
+                      <p className="text-[10px] text-gray-400">per person · all taxes included</p>
+                    </div>
+                    <span className="text-xs bg-green-500/20 text-green-400 font-semibold px-2 py-1 rounded-lg">No hidden fees</span>
+                  </div>
+                  <button
+                    onClick={() => setTab('pay')}
+                    className="w-full flex items-center justify-center gap-2 bg-white text-gray-900 font-bold text-sm py-3 rounded-xl hover:bg-gray-100 transition-colors"
+                  >
+                    <CreditCard size={15} /> Book Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* ── PAY TAB ── */}
           {tab === 'pay' && (
             <div className="p-4 space-y-4">
@@ -542,7 +620,6 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
 // ── Card ──────────────────────────────────────────────────────────────────────
 function IntlCard({ d }: { d: IntlDestination }) {
   const { currency } = useCurrency();
-  const [showDrawer, setShowDrawer] = useState(false);
 
   return (
     <>
@@ -627,18 +704,16 @@ function IntlCard({ d }: { d: IntlDestination }) {
               <span className="text-[10px] text-secondary"> / person</span>
             </div>
             <div className="flex gap-2">
-              <button
-                onClick={() => setShowDrawer(true)}
+              <Link
+                href={d.href}
                 className="flex items-center gap-1.5 bg-primary text-cream text-xs font-bold px-4 py-2.5 rounded-full hover:bg-primary/90 transition-colors"
               >
                 <CreditCard className="w-3.5 h-3.5" /> Book Now
-              </button>
+              </Link>
             </div>
           </div>
         </div>
       </div>
-
-      {showDrawer && <BookingDrawer d={d} onClose={() => setShowDrawer(false)} />}
     </>
   );
 }

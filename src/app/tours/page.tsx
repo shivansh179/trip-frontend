@@ -220,23 +220,22 @@ export default function ToursPage() {
                         )}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="flex flex-col gap-3">
+                        <Link
+                          href={`/tours/${tour.slug}`}
+                          className="flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-cream px-4 py-3.5 text-xs uppercase tracking-widest font-semibold transition-colors w-full"
+                        >
+                          Book Now
+                        </Link>
                         <a
                           href={`https://wa.me/918427831127?text=${waText}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-4 py-3.5 text-xs uppercase tracking-widest font-semibold transition-colors"
+                          className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-4 py-3.5 text-xs uppercase tracking-widest font-semibold transition-colors w-full"
                         >
                           <MessageCircle className="w-3.5 h-3.5" />
-                          Enquire
+                          Enquire on WhatsApp
                         </a>
-                        <Link
-                          href={`/tours/${tour.slug}`}
-                          className="flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-cream px-4 py-3.5 text-xs uppercase tracking-widest font-semibold transition-colors"
-                        >
-                          Full Details
-                          <ArrowUpRight className="w-3.5 h-3.5" />
-                        </Link>
                       </div>
                     </div>
                   </div>

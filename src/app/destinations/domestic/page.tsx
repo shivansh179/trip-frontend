@@ -1284,8 +1284,6 @@ function TripDetailsModal({ trip, onClose, onBook }: { trip: DomesticTrip; onClo
 
 function TripCard({ trip }: { trip: DomesticTrip }) {
   const [showItinerary, setShowItinerary] = useState(false);
-  const [showDrawer, setShowDrawer] = useState(false);
-  const [drawerTab, setDrawerTab] = useState<'pay' | 'callback'>('pay');
   const [imgSrc, setImgSrc] = useState(trip.image);
   const discount = Math.round(((trip.originalPriceINR - trip.priceINR) / trip.originalPriceINR) * 100);
 
@@ -1389,23 +1387,15 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
         </div>
 
         {/* CTA */}
-        <div className="grid grid-cols-2 gap-2 pt-3 border-t border-primary/8">
-          <button
-            onClick={() => { setDrawerTab('pay'); setShowDrawer(true); }}
-            className="flex items-center justify-center gap-1.5 bg-gray-900 text-white text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl hover:bg-gray-800 transition-colors"
-          >
-            <CreditCard size={12} /> Book Now
-          </button>
+        <div className="pt-3 border-t border-primary/8">
           <Link
             href={`/destinations/domestic/${trip.slug}`}
-            className="flex items-center justify-center gap-1.5 border border-primary/20 text-primary text-xs font-medium uppercase tracking-wide py-2.5 rounded-xl hover:bg-primary hover:text-cream transition-all"
+            className="flex items-center justify-center gap-1.5 bg-gray-900 text-white text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl hover:bg-gray-800 transition-colors w-full"
           >
-            <ArrowUpRight size={12} /> Details
+            <CreditCard size={12} /> Book Now
           </Link>
         </div>
       </div>
-
-      {showDrawer && <DomesticBookingDrawer trip={trip} initialTab={drawerTab} onClose={() => setShowDrawer(false)} />}
     </div>
   );
 }
@@ -1560,9 +1550,8 @@ function DomesticDestinationsContent() {
                       <Check className="w-3.5 h-3.5" /> English guide · Private car · All tickets
                     </div>
                     <div className="flex-1" />
-                    <div className="grid grid-cols-2 gap-2 pt-3 border-t border-primary/8">
-                      <Link href={tour.checkoutHref} className="flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-gray-800 text-white text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl transition-colors">Book Now</Link>
-                      <Link href={tour.href} className="flex items-center justify-center gap-1 border border-primary/20 text-primary text-xs font-medium uppercase tracking-wide py-2.5 rounded-xl hover:bg-primary hover:text-cream transition-all">Details <ArrowUpRight className="w-3 h-3" /></Link>
+                    <div className="pt-3 border-t border-primary/8">
+                      <Link href={tour.href} className="flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-gray-800 text-white text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl transition-colors w-full">Book Now</Link>
                     </div>
                   </div>
                 </div>

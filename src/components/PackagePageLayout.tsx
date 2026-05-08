@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { TourJsonLd, BreadcrumbJsonLd, FaqJsonLd } from '@/components/JsonLd';
 import { useWallet } from '@/context/WalletContext';
-import PaymentOptions from '@/components/PaymentOptions';
 import PromoCodeInput from '@/components/PromoCodeInput';
 
 /* ─────────────────────────────────────────────────────────────────── */
@@ -134,10 +133,6 @@ function PackageBookingDrawer({ pkg, onClose }: { pkg: PackageData; onClose: () 
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState('');
-  // payment flow: 'options' → show PaymentOptions, 'form' → show customer details
-  const [payStep, setPayStep] = useState<'options' | 'form'>('options');
-  const [chargeNow, setChargeNow] = useState<number | null>(null);
-  const [paymentMode, setPaymentMode] = useState<'full' | 'emi' | 'partial'>('full');
   const [cbName, setCbName] = useState('');
   const [cbPhone, setCbPhone] = useState('');
   const [cbSent, setCbSent] = useState(false);
@@ -146,14 +141,7 @@ function PackageBookingDrawer({ pkg, onClose }: { pkg: PackageData; onClose: () 
   const [promoDiscount, setPromoDiscount] = useState(0);
 
   const totalPrice = pkg.priceINR * Number(guests || 2);
-  const discountAmt = Math.round(totalPrice * 0.05);
-  const finalPrice = Math.max(0, totalPrice - discountAmt - promoDiscount);
-
-  const handlePaymentSelected = (payload: { mode: 'full' | 'emi' | 'partial'; amountNow: number }) => {
-    setChargeNow(payload.amountNow);
-    setPaymentMode(payload.mode);
-    setPayStep('form');
-  };
+  const finalPrice = Math.max(0, totalPrice - promoDiscount);
 
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -172,8 +160,8 @@ function PackageBookingDrawer({ pkg, onClose }: { pkg: PackageData; onClose: () 
           destination: pkg.heroTitle,
           sourceUrl: pkg.canonicalUrl,
           ourPrice: finalPrice,
-          chargeNow: chargeNow ?? finalPrice,
-          paymentMode,
+          chargeNow: finalPrice,
+          paymentMode: 'full',
           marketPrice: totalPrice,
           priceDiff: totalPrice - finalPrice,
         }),
@@ -247,73 +235,59 @@ function PackageBookingDrawer({ pkg, onClose }: { pkg: PackageData; onClose: () 
                 <label className="block text-xs font-semibold text-gray-700 mb-1.5">Number of Guests</label>
                 <div className="flex gap-2">
                   {['1','2','3','4','5','6'].map(n => (
-                    <button key={n} onClick={() => { setGuests(n); setPayStep('options'); setChargeNow(null); setPromoCode(null); setPromoDiscount(0); }}
+                    <button key={n} onClick={() => { setGuests(n); setPromoCode(null); setPromoDiscount(0); }}
                       className={`w-10 h-10 rounded-xl text-sm font-bold border transition-all ${guests === n ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'}`}>{n}</button>
                   ))}
                 </div>
               </div>
 
               {/* Promo code */}
-              {payStep === 'options' && (
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Promo Code</label>
-                  <PromoCodeInput
-                    orderTotal={totalPrice - discountAmt}
-                    appliedCode={promoCode}
-                    discountAmount={promoDiscount}
-                    onApply={(code, discount) => { setPromoCode(code); setPromoDiscount(discount); }}
-                    onRemove={() => { setPromoCode(null); setPromoDiscount(0); }}
-                  />
+              <PromoCodeInput
+                orderTotal={totalPrice}
+                appliedCode={promoCode}
+                discountAmount={promoDiscount}
+                onApply={(code, discount) => { setPromoCode(code); setPromoDiscount(discount); }}
+                onRemove={() => { setPromoCode(null); setPromoDiscount(0); }}
+              />
+
+              {/* Price summary */}
+              <div className="bg-gray-50 rounded-xl p-3 space-y-1.5">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">₹{pkg.priceINR.toLocaleString('en-IN')} × {guests} guests</span>
+                  <span className="font-medium">₹{totalPrice.toLocaleString('en-IN')}</span>
                 </div>
-              )}
-
-              {/* Step 1: Payment Options */}
-              {payStep === 'options' && (
-                <PaymentOptions
-                  tripPrice={finalPrice}
-                  tripTitle={pkg.heroTitle}
-                  onProceed={(payload) => handlePaymentSelected(payload)}
-                />
-              )}
-
-              {/* Step 2: Customer details form */}
-              {payStep === 'form' && (
-                <div className="space-y-3">
-                  {/* Selected plan summary */}
-                  <div className="bg-green-50 border border-green-200 rounded-xl p-3 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-bold text-green-800">
-                        {paymentMode === 'partial' ? '20% Advance Selected' : paymentMode === 'emi' ? 'EMI Selected' : 'Full Payment Selected'}
-                      </p>
-                      <p className="text-[11px] text-green-600 mt-0.5">
-                        Paying now: ₹{(chargeNow ?? finalPrice).toLocaleString('en-IN')}
-                      </p>
-                    </div>
-                    <button onClick={() => { setPayStep('options'); setPayError(''); }}
-                      className="text-xs text-green-700 underline">Change</button>
+                {promoDiscount > 0 && (
+                  <div className="flex justify-between text-sm text-green-700">
+                    <span>Promo discount</span>
+                    <span>−₹{promoDiscount.toLocaleString('en-IN')}</span>
                   </div>
-
-                  <form onSubmit={handlePay} className="space-y-2.5">
-                    <p className="text-xs font-semibold text-gray-700">Enter your details to continue</p>
-                    <input required type="text" placeholder="Full name"
-                      value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                      className="w-full px-4 py-3.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
-                    <input required type="email" placeholder="Email address"
-                      value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                      className="w-full px-4 py-3.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
-                    <input required type="tel" placeholder="Phone number"
-                      value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
-                      className="w-full px-4 py-3.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
-                    {payError && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{payError}</p>}
-                    <button type="submit" disabled={paying}
-                      className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white font-bold text-sm py-3.5 rounded-xl hover:bg-gray-800 disabled:opacity-60 transition-colors">
-                      {paying ? <Loader2 size={14} className="animate-spin" /> : <CreditCard size={14} />}
-                      {paying ? 'Redirecting…' : `Pay ₹${(chargeNow ?? finalPrice).toLocaleString('en-IN')} via Easebuzz`}
-                    </button>
-                    <p className="text-[10px] text-gray-400 text-center">🔒 Secured by Easebuzz · No hidden charges · Full refund policy</p>
-                  </form>
+                )}
+                <div className="border-t border-gray-200 pt-1.5 flex justify-between font-bold text-gray-900">
+                  <span>Total</span>
+                  <span>₹{finalPrice.toLocaleString('en-IN')}</span>
                 </div>
-              )}
+              </div>
+
+              {/* Customer details form */}
+              <form onSubmit={handlePay} className="space-y-2.5">
+                <p className="text-xs font-semibold text-gray-700">Your details</p>
+                <input required type="text" placeholder="Full name"
+                  value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
+                  className="w-full px-4 py-3.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
+                <input required type="email" placeholder="Email address"
+                  value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
+                  className="w-full px-4 py-3.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
+                <input required type="tel" placeholder="Phone number"
+                  value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
+                  className="w-full px-4 py-3.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
+                {payError && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{payError}</p>}
+                <button type="submit" disabled={paying}
+                  className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white font-bold text-sm py-4 rounded-xl hover:bg-gray-800 disabled:opacity-60 transition-colors">
+                  {paying ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
+                  {paying ? 'Redirecting…' : `Pay ₹${finalPrice.toLocaleString('en-IN')} — Choose Payment`}
+                </button>
+                <p className="text-[10px] text-gray-400 text-center">🔒 UPI · Cards · Net Banking · EMI — all on next page</p>
+              </form>
             </div>
           )}
 
@@ -386,9 +360,7 @@ function PackageBookingDrawer({ pkg, onClose }: { pkg: PackageData; onClose: () 
 function BookingSidebar({ pkg }: { pkg: PackageData }) {
   const [guests, setGuests] = useState(1);
   const [date, setDate] = useState('');
-  const [step, setStep] = useState<'config' | 'payment' | 'details'>('config');
-  const [chargeNow, setChargeNow] = useState<number | null>(null);
-  const [paymentMode, setPaymentMode] = useState<'full' | 'emi' | 'partial'>('full');
+  const [step, setStep] = useState<'config' | 'details'>('config');
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState('');
@@ -404,12 +376,6 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
   const maxWalletUsable = Math.round(Math.max(0, total - promoDiscount) * 0.10);
   const walletDeduction = applyWallet ? Math.min(walletBalance, maxWalletUsable) : 0;
   const effectiveTotal = Math.max(0, total - promoDiscount - walletDeduction);
-
-  const handlePaymentSelected = (payload: { mode: 'full' | 'emi' | 'partial'; amountNow: number }) => {
-    setChargeNow(payload.amountNow);
-    setPaymentMode(payload.mode);
-    setStep('details');
-  };
 
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -428,8 +394,8 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
           destination: pkg.heroTitle,
           sourceUrl: pkg.canonicalUrl,
           ourPrice: effectiveTotal,
-          chargeNow: chargeNow ?? effectiveTotal,
-          paymentMode,
+          chargeNow: effectiveTotal,
+          paymentMode: 'full',
           marketPrice: total,
           priceDiff: promoDiscount + walletDeduction,
         }),
@@ -543,7 +509,7 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
 
             {/* Book button */}
             <button
-              onClick={() => setStep('payment')}
+              onClick={() => setStep('details')}
               className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-cream py-4 rounded-xl text-sm font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
             >
               <Zap className="w-4 h-4" />
@@ -577,15 +543,15 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
           </div>
         )}
 
-        {/* Step: Payment Options */}
-        {step === 'payment' && (
+        {/* Step: Customer Details */}
+        {step === 'details' && (
           <div className="p-4 space-y-3">
-            <div className="flex items-center gap-2">
-              <button onClick={() => setStep('config')} className="text-xs text-primary/50 hover:text-primary flex items-center gap-1">
+            <div className="flex items-center gap-2 mb-1">
+              <button onClick={() => { setStep('config'); setPayError(''); }} className="text-xs text-primary/50 hover:text-primary flex items-center gap-1">
                 ← Back
               </button>
               <span className="text-xs text-primary/40">·</span>
-              <span className="text-xs text-primary/60">{guests} {guests === 1 ? 'traveler' : 'travelers'} · {fmt(total)}</span>
+              <span className="text-xs text-primary/60">{guests} {guests === 1 ? 'traveler' : 'travelers'} · {fmt(effectiveTotal)}</span>
             </div>
 
             {/* Promo code */}
@@ -593,8 +559,8 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
               orderTotal={total}
               appliedCode={promoCode}
               discountAmount={promoDiscount}
-              onApply={(code, discount) => { setPromoCode(code); setPromoDiscount(discount); setChargeNow(null); }}
-              onRemove={() => { setPromoCode(null); setPromoDiscount(0); setChargeNow(null); }}
+              onApply={(code, discount) => { setPromoCode(code); setPromoDiscount(discount); }}
+              onRemove={() => { setPromoCode(null); setPromoDiscount(0); }}
             />
 
             {/* WanderLoot wallet */}
@@ -606,7 +572,7 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
                     <p className="text-xs text-amber-700">Balance: {fmt(walletBalance)} · Use up to {fmt(maxWalletUsable)}</p>
                   </div>
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" checked={applyWallet} onChange={e => { setApplyWallet(e.target.checked); setChargeNow(null); }} className="w-4 h-4 accent-amber-500" />
+                    <input type="checkbox" checked={applyWallet} onChange={e => setApplyWallet(e.target.checked)} className="w-4 h-4 accent-amber-500" />
                     <span className="text-xs font-semibold text-amber-800">Apply</span>
                   </label>
                 </div>
@@ -619,30 +585,8 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
               </div>
             )}
 
-            <PaymentOptions
-              tripPrice={effectiveTotal}
-              tripTitle={pkg.heroTitle}
-              onProceed={handlePaymentSelected}
-            />
-          </div>
-        )}
-
-        {/* Step: Customer Details */}
-        {step === 'details' && (
-          <div className="p-4 space-y-3">
-            <div className="bg-green-50 border border-green-200 rounded-xl p-3 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold text-green-800">
-                  {paymentMode === 'partial' ? '20% Advance Selected' : paymentMode === 'emi' ? 'EMI Selected' : 'Full Payment Selected'}
-                </p>
-                <p className="text-[11px] text-green-600 mt-0.5">
-                  Paying now: ₹{(chargeNow ?? effectiveTotal).toLocaleString('en-IN')}
-                </p>
-              </div>
-              <button onClick={() => { setStep('payment'); setPayError(''); }} className="text-xs text-green-700 underline">Change</button>
-            </div>
             <form onSubmit={handlePay} className="space-y-2.5">
-              <p className="text-xs font-semibold text-gray-700">Enter your details to continue</p>
+              <p className="text-xs font-semibold text-gray-700">Enter your details to pay</p>
               <input required type="text" placeholder="Full name"
                 value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-primary" />
@@ -654,11 +598,11 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-primary" />
               {payError && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{payError}</p>}
               <button type="submit" disabled={paying}
-                className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-cream font-bold text-sm py-3.5 rounded-xl disabled:opacity-60 transition-colors">
-                {paying ? <Loader2 size={14} className="animate-spin" /> : <CreditCard size={14} />}
-                {paying ? 'Redirecting…' : `Pay ₹${(chargeNow ?? effectiveTotal).toLocaleString('en-IN')} via Easebuzz`}
+                className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-cream font-bold text-sm py-4 rounded-xl disabled:opacity-60 transition-colors shadow-lg">
+                {paying ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
+                {paying ? 'Redirecting to Easebuzz…' : `Pay ₹${effectiveTotal.toLocaleString('en-IN')} — Choose Payment`}
               </button>
-              <p className="text-[10px] text-gray-400 text-center">🔒 Secured by Easebuzz · No hidden charges</p>
+              <p className="text-[10px] text-gray-400 text-center">🔒 UPI · Cards · Net Banking · EMI — all on next page</p>
             </form>
           </div>
         )}

@@ -4,11 +4,10 @@ import { useRef } from 'react';
 import type { MouseEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MapPin, Clock, Star, ArrowUpRight, ShoppingCart } from 'lucide-react';
+import { MapPin, Clock, Star, ShoppingCart } from 'lucide-react';
 import { Trip } from '@/types';
 import { formatPriceWithCurrency, calculateDiscount } from '@/lib/utils';
 import { useCurrency } from '@/context/CurrencyContext';
-import { useVisitor } from '@/context/VisitorContext';
 import WishlistButton from '@/components/WishlistButton';
 import { getDestinationImageUrl } from '@/lib/destinationImages';
 
@@ -76,8 +75,7 @@ interface TripCardProps {
 
 export default function TripCard({ trip, index = 0, variant = 'default' }: TripCardProps) {
     const { currency } = useCurrency();
-    const { visitor } = useVisitor();
-    const bookNowHref = visitor === 'foreigner' ? '/tours' : `/checkout?tripId=${trip.id}`;
+    const bookNowHref = `/trips/${trip.id}`;
     const discount = trip.originalPrice
         ? calculateDiscount(trip.originalPrice, trip.price)
         : 0;
@@ -234,22 +232,15 @@ export default function TripCard({ trip, index = 0, variant = 'default' }: TripC
                     <span className="text-[10px] text-primary/45 uppercase tracking-widest">per person · no hidden fees</span>
                 </div>
 
-                {/* CTA row — Book Now + View Details */}
-                <div className="grid grid-cols-2 gap-2 pt-1">
+                {/* CTA row — Book Now */}
+                <div className="pt-1">
                     <Link
                         href={bookNowHref}
                         onClick={(e) => e.stopPropagation()}
-                        className="flex items-center justify-center gap-1.5 bg-primary text-cream px-3 py-2.5 text-xs uppercase tracking-widest hover:bg-secondary transition-colors font-semibold"
+                        className="flex items-center justify-center gap-1.5 bg-primary text-cream px-3 py-2.5 text-xs uppercase tracking-widest hover:bg-secondary transition-colors font-semibold w-full"
                     >
                         <ShoppingCart className="w-3.5 h-3.5" />
                         Book Now
-                    </Link>
-                    <Link
-                        href={`/trips/${trip.id}`}
-                        className="flex items-center justify-center gap-1.5 border border-primary/20 text-primary px-3 py-2.5 text-xs uppercase tracking-widest hover:bg-primary hover:text-cream transition-all"
-                    >
-                        Details
-                        <ArrowUpRight className="w-3.5 h-3.5" />
                     </Link>
                 </div>
 
