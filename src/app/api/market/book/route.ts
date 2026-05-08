@@ -9,7 +9,7 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@ylootrips.com';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const EASEBUZZ_KEY = process.env.EASEBUZZ_KEY || '';
 const EASEBUZZ_SALT = process.env.EASEBUZZ_SALT || '';
-const EASEBUZZ_ENV = process.env.EASEBUZZ_ENV || 'production';
+const EASEBUZZ_ENV = (process.env.EASEBUZZ_ENV || 'production').trim();
 const MARKET_EVENT_ID = process.env.HOTEL_EVENT_ID
   ? Number(process.env.HOTEL_EVENT_ID)
   : process.env.FLIGHT_EVENT_ID
