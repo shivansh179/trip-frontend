@@ -65,7 +65,7 @@ function CheckoutContent() {
         numberOfGuests: guests,
         travelDate: date,
         specialRequests: '',
-        paymentMethod: 'upi',
+        paymentMethod: '',
     });
 
     // Auto-fill from URL params (handles hydration delay where searchParams arrives after useState init)
@@ -135,7 +135,7 @@ function CheckoutContent() {
             // paymentMethod sent to backend — empty string signals "show all Easebuzz modes"
             const effectiveMethod = formData.paymentMethod === 'half_payment'
                 ? (halfPaymentCardType === 'credit' ? 'credit_card' : 'debit_card')
-                : formData.paymentMethod || 'upi';
+                : formData.paymentMethod || '';
 
             // Amount to charge NOW
             // For EMI: Easebuzz receives FULL amount — the bank converts it to EMI on the customer's card.
@@ -654,7 +654,7 @@ function CheckoutContent() {
                                             } else {
                                                 setSelectedEmi(null);
                                                 setAdvanceAmountNow(null); // full payment
-                                                const method = payload.paymentMethod || 'upi';
+                                                const method = payload.paymentMethod || '';
                                                 setFormData(f => ({ ...f, paymentMethod: method }));
                                                 setUpiExplicitlySelected(method === 'upi');
                                             }
