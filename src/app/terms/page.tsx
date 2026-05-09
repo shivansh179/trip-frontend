@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 const sections = [
+  { id: 'tcs', label: 'TCS on Overseas Packages' },
   { id: 'bookings', label: 'Bookings & Payments' },
   { id: 'cancellation', label: 'Cancellation Policy' },
   { id: 'refunds', label: 'Refund Policy' },
@@ -70,6 +71,49 @@ export default function TermsPage() {
                 <a href="mailto:hello@ylootrips.com" className="underline font-semibold">hello@ylootrips.com</a>.
               </p>
             </div>
+
+            {/* TCS on Overseas Tour Packages */}
+            <section id="tcs" className="bg-blue-50 border border-blue-200 rounded-2xl p-6 md:p-8">
+              <div className="flex items-start gap-3 mb-4">
+                <span className="text-2xl mt-0.5">🏛️</span>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">TCS on Overseas Tour Packages</h2>
+                  <p className="text-blue-700 text-xs font-semibold mt-0.5 uppercase tracking-wide">Important — Effective April 1, 2026</p>
+                </div>
+              </div>
+              <div className="space-y-3 text-gray-700 text-sm leading-relaxed">
+                <p>
+                  As mandated by the Government of India under <strong>Section 206C of the Income Tax Act</strong>, Tax Collected at Source (TCS) applies to all overseas tour packages and LRS (Liberalised Remittance Scheme) remittances.
+                </p>
+                <p>
+                  Under the revised norms effective <strong>April 1, 2026</strong>, a flat <strong>2% TCS</strong> is levied on the booking amount for overseas tour program packages (removing all previous higher rates and thresholds).
+                </p>
+
+                <div className="bg-white border border-blue-200 rounded-xl p-4 space-y-2">
+                  <p className="font-semibold text-gray-900 text-sm">How this works for your booking:</p>
+                  <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
+                    <li>2% TCS will be <strong>collected by YlooTrips</strong> over and above your package price at the time of booking.</li>
+                    <li>This TCS amount is <strong>deposited with the Government of India</strong> on your behalf under your PAN.</li>
+                    <li>It is <strong>fully refundable / adjustable</strong> — you can claim it as a tax credit when filing your Income Tax Return (ITR).</li>
+                    <li>TCS is <strong>not an additional cost</strong> to you; it is simply an advance tax payment that you recover through ITR.</li>
+                  </ul>
+                </div>
+
+                <p className="text-gray-600">
+                  <strong>Example:</strong> If your overseas package costs ₹50,000, we will collect ₹51,000 (₹50,000 + ₹1,000 TCS at 2%). The ₹1,000 TCS will reflect in your Form 26AS and can be claimed back in your ITR filing.
+                </p>
+
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                  <p className="text-amber-800 text-sm font-medium">
+                    ⚠️ Please provide your PAN number at the time of booking. TCS is collected against your PAN and without it, the deduction may be at a higher rate (as applicable under the Income Tax Act).
+                  </p>
+                </div>
+
+                <p className="text-xs text-gray-400">
+                  This provision applies to all international trip packages booked through YlooTrips. Domestic packages are not subject to this TCS. For any TCS-related queries, please contact us at <a href="mailto:hello@ylootrips.com" className="text-amber-600 underline">hello@ylootrips.com</a>.
+                </p>
+              </div>
+            </section>
 
             {/* Bookings & Payments */}
             <section id="bookings" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-8">
