@@ -238,7 +238,7 @@ export default function AdminDashboard() {
                     const adsRes = await api.admin.getAds();
                     setAds(Array.isArray(adsRes.data) ? adsRes.data : []);
                     break;
-                case 'package-prices':
+                case 'package-prices': {
                     const ppRes = await fetch('/api/admin/package-prices', { headers: { 'x-admin-token': 'admin' } });
                     const ppJson = await ppRes.json();
                     const prices = Array.isArray(ppJson.data) ? ppJson.data : [];
@@ -252,6 +252,7 @@ export default function AdminDashboard() {
                     });
                     setPriceEdits(edits);
                     break;
+                }
             }
             setLoadedTabs(prev => ({ ...prev, [tab]: true }));
             setCurrentPage(prev => ({ ...prev, [tab]: 1 }));
