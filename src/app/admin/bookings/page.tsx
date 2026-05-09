@@ -161,6 +161,36 @@ export default function AdminBookingsPage() {
         await updateFlightStatus(b.txnid, 'TICKET_SENT');
     };
 
+    const [markingPaid, setMarkingPaid] = useState<string | null>(null);
+
+    const markTripAsPaid = async (b: Record<string, unknown>) => {
+        const id = b.id as number;
+        const ref = String(b.bookingReference || '');
+        const email = String(b.customerEmail || '');
+        if (!id || !email) return;
+        const key = String(id);
+        setMarkingPaid(key);
+        try {
+            // 1. Update status to CONFIRMED in backend
+            await api.admin.updateBookingStatus(id, 'CONFIRMED');
+            // 2. Update local state immediately
+            setTripBookings(prev => prev.map(t =>
+                t.id === id ? { ...t, status: 'CONFIRMED', paymentStatus: 'SUCCESS' } : t
+            ));
+            // 3. Send confirmation email to client
+            await fetch('/api/send-confirmation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ to: email, booking: b }),
+            });
+            alert(`✅ Booking ${ref} marked as CONFIRMED and confirmation email sent to ${email}`);
+        } catch {
+            alert('Failed to update status. Please try again.');
+        } finally {
+            setMarkingPaid(null);
+        }
+    };
+
     // Stats
     const flightRevenue = flightBookings.reduce((s, b) => s + (b.flight?.price || 0), 0);
     const tripRevenue = tripBookings.reduce((s: number, b: Record<string, unknown>) => s + Number(b.finalAmount || b.totalAmount || 0), 0);
@@ -595,6 +625,16 @@ export default function AdminBookingsPage() {
                                                         )}
                                                         <p className="text-[10px] text-gray-400">{b.createdAt ? fmtDate(String(b.createdAt)) : ''}</p>
                                                     </div>
+                                                    {isPending && (
+                                                        <button
+                                                            onClick={() => markTripAsPaid(b)}
+                                                            disabled={markingPaid === String(b.id)}
+                                                            className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition-colors whitespace-nowrap"
+                                                            title="Mark as Paid & send confirmation email"
+                                                        >
+                                                            {markingPaid === String(b.id) ? '...' : '✓ Mark Paid'}
+                                                        </button>
+                                                    )}
                                                     <a href={`mailto:${String(b.customerEmail || '')}?subject=Your Trip Booking - ${String(b.bookingReference || '')}`}
                                                         className="p-2 rounded-lg hover:bg-blue-50 text-blue-500 transition-colors" title="Email customer">
                                                         <Mail size={16} />
