@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { isRateLimited, getClientIp } from '@/lib/ratelimit';
 
-const EASEBUZZ_KEY = process.env.EASEBUZZ_KEY || '';
-const EASEBUZZ_SALT = process.env.EASEBUZZ_SALT || '';
-const EASEBUZZ_ENV = process.env.EASEBUZZ_ENV || 'production';
+const EASEBUZZ_KEY = (process.env.EASEBUZZ_KEY || '').trim();
+const EASEBUZZ_SALT = (process.env.EASEBUZZ_SALT || '').trim();
+const EASEBUZZ_ENV = (process.env.EASEBUZZ_ENV || 'production').trim();
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ylootrips.com';
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
 
@@ -28,9 +28,10 @@ export async function POST(req: NextRequest) {
     const email = customerEmail || 'traveler@ylootrips.com';
     const rawPhone = (customerPhone || '').replace(/\D/g, '');
     const phone = rawPhone.length >= 10 ? rawPhone.slice(-10) : (rawPhone || '9999999999').padStart(10, '0');
-    const productinfo = tripTitle
-      ? `${tripTitle.substring(0, 100)} (Advance)`
-      : `Trip Advance Payment - ${bookingReference}`;
+    const rawProductinfo = tripTitle
+      ? `${tripTitle} (Advance)`
+      : `Trip Payment - ${bookingReference}`;
+    const productinfo = rawProductinfo.replace(/[^a-zA-Z0-9 _.,()\-\/]/g, '').substring(0, 100);
 
     // ── Direct Easebuzz with partial amount ───────────────────────────────────
     if (EASEBUZZ_KEY && EASEBUZZ_SALT) {

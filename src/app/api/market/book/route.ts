@@ -123,11 +123,12 @@ ACTION: Book from source above after payment confirms.
         const firstname = name.split(' ')[0] || name;
         const rawPhone = phone.replace(/\D/g, '');
         const cleanPhone = rawPhone.length >= 10 ? rawPhone.slice(-10) : rawPhone.padStart(10, '0');
-        const productinfo = paymentMode === 'partial'
-          ? `${(packageTitle || destination || 'Package').substring(0, 80)} (20% Advance)`
+        const baseTitle = (packageTitle || destination || 'Package').replace(/[^a-zA-Z0-9 _.,()\-\/]/g, '');
+        const productinfo = (paymentMode === 'partial'
+          ? `${baseTitle} (20% Advance)`
           : paymentMode === 'emi'
-          ? `${(packageTitle || destination || 'Package').substring(0, 80)} (EMI)`
-          : (packageTitle || destination || 'Package').substring(0, 100);
+          ? `${baseTitle} (EMI)`
+          : baseTitle).substring(0, 100);
 
         // Map paymentMethod → Easebuzz payment_options
         const methodMap: Record<string, string> = {
