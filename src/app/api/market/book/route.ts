@@ -4,17 +4,11 @@ import { generateTicket, logLeadToSheet } from '@/lib/leads';
 import { isRateLimited, getClientIp } from '@/lib/ratelimit';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ylootrips.com';
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@ylootrips.com';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const EASEBUZZ_KEY = (process.env.EASEBUZZ_KEY || '').trim();
 const EASEBUZZ_SALT = (process.env.EASEBUZZ_SALT || '').trim();
 const EASEBUZZ_ENV = (process.env.EASEBUZZ_ENV || 'production').trim();
-const MARKET_EVENT_ID = process.env.HOTEL_EVENT_ID
-  ? Number(process.env.HOTEL_EVENT_ID)
-  : process.env.FLIGHT_EVENT_ID
-  ? Number(process.env.FLIGHT_EVENT_ID)
-  : null;
 
 export async function POST(req: NextRequest) {
   // 10 booking attempts per minute per IP
@@ -115,8 +109,7 @@ ACTION: Book from source above after payment confirms.
       }).catch(() => {});
     }
 
-    // ── Direct Easebuzz (supports partial/EMI chargeNow amounts) ─────────────
-    console.log('[market/book] EASEBUZZ_KEY set:', !!EASEBUZZ_KEY, 'SALT set:', !!EASEBUZZ_SALT, 'ENV:', EASEBUZZ_ENV, 'MARKET_EVENT_ID:', MARKET_EVENT_ID);
+    // ── Direct Easebuzz ───────────────────────────────────────────────────────
     if (EASEBUZZ_KEY && EASEBUZZ_SALT) {
       try {
         const amount = String(amountToCharge.toFixed(2));
@@ -205,68 +198,7 @@ ACTION: Book from source above after payment confirms.
       }
     }
 
-    // ── Easebuzz via backend event proxy ─────────────────────────────────────
-    if (MARKET_EVENT_ID) {
-      try {
-        const specialRequests = JSON.stringify({ txnid, ticket, packageTitle, destination, sourceUrl, guest: { name, email, phone }, guests });
-
-        const createRes = await fetch(`${BACKEND_URL}/event-bookings`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            eventId: MARKET_EVENT_ID,
-            customerName: name,
-            customerEmail: email,
-            customerPhone: cleanPhone,
-            eventDate: new Date().toISOString().slice(0, 10),
-            paymentMethod: 'upi',
-            numberOfTickets: amountToCharge,
-            specialRequests,
-          }),
-        });
-
-        if (!createRes.ok) {
-          const errTxt = await createRes.text().catch(() => '');
-          console.error('Market book: event booking failed', createRes.status, errTxt);
-          return NextResponse.json({ error: 'Payment gateway unavailable. Please try again.' }, { status: 502 });
-        }
-
-        const createData = await createRes.json();
-        const ref = createData.bookingReference;
-        if (!ref) {
-          return NextResponse.json({ error: 'Booking creation failed. Please try again.' }, { status: 502 });
-        }
-
-        // Save EVT ref → MKT txnid mapping
-        try {
-          await fetch(`${SITE_URL}/api/admin/market-bookings`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json', ...(process.env.ADMIN_SECRET ? { 'x-admin-secret': process.env.ADMIN_SECRET } : {}) },
-            body: JSON.stringify({ txnid, evtRef: ref }),
-          });
-        } catch { /* non-fatal */ }
-
-        const payRes = await fetch(`${BACKEND_URL}/payment/event/initiate/${ref}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (!payRes.ok) {
-          return NextResponse.json({ error: 'Could not initiate payment. Please try again.' }, { status: 502 });
-        }
-
-        const payData = await payRes.json();
-        if (payData.paymentUrl) {
-          return NextResponse.json({ paymentUrl: payData.paymentUrl, txnid, ticket });
-        }
-        return NextResponse.json({ error: payData.error || 'No payment URL received.' }, { status: 502 });
-      } catch (err) {
-        console.error('Market book: proxy error', err);
-        return NextResponse.json({ error: 'Payment gateway error. Please try again.' }, { status: 500 });
-      }
-    }
-
-    // WhatsApp fallback
+    // WhatsApp fallback (if Easebuzz not configured)
     const waMsg = encodeURIComponent(
       `🌍 New Market Trip Booking!\n\nPackage: ${packageTitle}\nDestination: ${destination}\n\nGuest: ${name}\nEmail: ${email}\nPhone: ${phone}\nGuests: ${guests || 'N/A'}\n\nAmount: ₹${totalPayable.toLocaleString('en-IN')}\nTicket: ${ticket}\nSource: ${sourceUrl || 'N/A'}`
     );
