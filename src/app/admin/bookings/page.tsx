@@ -167,6 +167,9 @@ export default function AdminBookingsPage() {
         const id = b.id as number;
         const ref = String(b.bookingReference || '');
         const email = String(b.customerEmail || '');
+        const phone = String(b.customerPhone || '').replace(/\D/g, '');
+        const tripTitle = String((b.trip as Record<string, unknown>)?.title || b.tripTitle || 'Trip');
+        const bookingTotal = Number(b.finalAmount || b.totalAmount || 0);
         if (!id || !email) return;
         const key = String(id);
         setMarkingPaid(key);
@@ -177,13 +180,27 @@ export default function AdminBookingsPage() {
             setTripBookings(prev => prev.map(t =>
                 t.id === id ? { ...t, status: 'CONFIRMED', paymentStatus: 'SUCCESS' } : t
             ));
-            // 3. Send confirmation email to client
+            // 3. Credit 10% WanderLoot cashback to client's wallet (non-fatal)
+            let cashbackCredited = 0;
+            if (phone && bookingTotal > 0) {
+                try {
+                    const cbRes = await fetch('/api/wallet/credit', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: phone, bookingRef: ref, bookingTotal, tripName: tripTitle }),
+                    });
+                    const cbData = await cbRes.json();
+                    cashbackCredited = cbData.credited || 0;
+                } catch { /* non-fatal */ }
+            }
+            // 4. Send confirmation email to client
             await fetch('/api/send-confirmation', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ to: email, booking: b }),
             });
-            alert(`✅ Booking ${ref} marked as CONFIRMED and confirmation email sent to ${email}`);
+            const cashbackMsg = cashbackCredited > 0 ? ` + ₹${cashbackCredited} WanderLoot cashback credited.` : '';
+            alert(`✅ Booking ${ref} confirmed. Email sent to ${email}.${cashbackMsg}`);
         } catch {
             alert('Failed to update status. Please try again.');
         } finally {
