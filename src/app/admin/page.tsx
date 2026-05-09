@@ -3905,7 +3905,7 @@ export default function AdminDashboard() {
                                                     </button>
                                                 </div>
                                             </div>
-                                            {pkg.updatedAt && (
+                                            {!!pkg.updatedAt && (
                                                 <p className="text-xs text-gray-400 mt-3 pt-3 border-t border-gray-100">
                                                     Last updated: {new Date(pkg.updatedAt as string).toLocaleString('en-IN')}
                                                 </p>
