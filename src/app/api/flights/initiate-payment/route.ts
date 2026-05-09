@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 
-const EASEBUZZ_KEY = process.env.EASEBUZZ_KEY || '';
-const EASEBUZZ_SALT = process.env.EASEBUZZ_SALT || '';
-const EASEBUZZ_ENV = process.env.EASEBUZZ_ENV || 'test';
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:6002';
+const EASEBUZZ_KEY = (process.env.EASEBUZZ_KEY || '').trim();
+const EASEBUZZ_SALT = (process.env.EASEBUZZ_SALT || '').trim();
+const EASEBUZZ_ENV = (process.env.EASEBUZZ_ENV || 'production').trim();
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ylootrips.com';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@ylootrips.com';
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
-// Create a "Flight Booking" event in your backend with price = 1 (₹1/unit),
-// then set FLIGHT_EVENT_ID to its numeric ID. numberOfTickets = totalPayable gives correct charge.
-const FLIGHT_EVENT_ID = process.env.FLIGHT_EVENT_ID ? Number(process.env.FLIGHT_EVENT_ID) : null;
 
 export async function POST(req: NextRequest) {
     try {
@@ -68,84 +64,7 @@ export async function POST(req: NextRequest) {
             });
         } catch { /* non-fatal */ }
 
-        // ── Option 1: Backend event proxy (no frontend Easebuzz keys needed) ──────────
-        if (FLIGHT_EVENT_ID) {
-            try {
-                const specialRequests = JSON.stringify({
-                    txnid,
-                    flight,
-                    passengers,
-                    contact,
-                });
-
-                // numberOfTickets = totalPayable (₹1-per-unit event gives correct charge)
-                const createRes = await fetch(`${BACKEND_URL}/event-bookings`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        eventId: FLIGHT_EVENT_ID,
-                        customerName: `${firstname} ${passengers[0].lastName || ''}`.trim(),
-                        customerEmail: email,
-                        customerPhone: phone || contact.phone,
-                        eventDate: flight.date || new Date().toISOString().split('T')[0],
-                        paymentMethod: paymentMethod || 'upi',
-                        numberOfTickets: totalPayable,
-                        specialRequests,
-                    }),
-                });
-
-                if (!createRes.ok) {
-                    const errBody = await createRes.text().catch(() => '');
-                    console.error('Flight proxy: event booking creation failed', createRes.status, errBody);
-                    return NextResponse.json(
-                        { error: 'Payment gateway unavailable. Please try again or contact support.' },
-                        { status: 502 }
-                    );
-                }
-
-                const createData = await createRes.json();
-                const ref = createData.bookingReference; // EVT-XXXXXXXX
-                if (!ref) {
-                    console.error('Flight proxy: no bookingReference in response', createData);
-                    return NextResponse.json({ error: 'Booking creation failed. Please try again.' }, { status: 502 });
-                }
-
-                // Save evtRef → fltTxnid mapping so success handler knows to redirect to flight page
-                try {
-                    await fetch(`${SITE_URL}/api/admin/flight-bookings`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json', ...(process.env.ADMIN_SECRET ? { 'x-admin-secret': process.env.ADMIN_SECRET } : {}) },
-                        body: JSON.stringify({ txnid, evtRef: ref }),
-                    });
-                } catch { /* non-fatal */ }
-
-                const payRes = await fetch(`${BACKEND_URL}/payment/event/initiate/${ref}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                });
-                if (!payRes.ok) {
-                    const errBody = await payRes.text().catch(() => '');
-                    console.error('Flight proxy: payment initiation failed', payRes.status, errBody);
-                    return NextResponse.json(
-                        { error: 'Could not initiate payment. Please try again.' },
-                        { status: 502 }
-                    );
-                }
-                const payData = await payRes.json();
-                if (payData.paymentUrl) {
-                    return NextResponse.json({ paymentUrl: payData.paymentUrl, txnid, evtRef: ref });
-                }
-                return NextResponse.json(
-                    { error: payData.error || 'No payment URL received from gateway.' },
-                    { status: 502 }
-                );
-            } catch (err) {
-                console.error('Flight proxy: unexpected error', err);
-                return NextResponse.json({ error: 'Payment gateway error. Please try again.' }, { status: 500 });
-            }
-        }
-
-        // ── Option 2: Direct Easebuzz (when keys are configured in .env.local) ────────
+        // ── Direct Easebuzz (all payment options) ────────────────────────────
         if (EASEBUZZ_KEY && EASEBUZZ_SALT) {
             const amount = String(totalPayable.toFixed(2));
             const productinfo = `Flight ${flight.flightNum} ${flight.from}-${flight.to} ${flight.date}`;
