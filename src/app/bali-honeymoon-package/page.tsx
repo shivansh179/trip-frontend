@@ -3,11 +3,11 @@ import PackagePageLayout, { type PackageData } from '@/components/PackagePageLay
 
 export const metadata: Metadata = {
   title: 'Bali Honeymoon Package 2026 — 6 Nights Starting ₹52,499 | YlooTrips',
-  description: 'Romantic Bali honeymoon packages from India starting ₹52,499 for 2. 6 nights in Ubud + Seminyak — private villa, rice terraces, temple tours, sunset dinner. Flights included.',
+  description: 'Romantic Bali honeymoon packages from India starting ₹52,499 for 2. 6 nights in Ubud + Seminyak — private villa, rice terraces, temple tours, sunset dinner. Hotel + transfers + activities included.',
   keywords: 'Bali honeymoon package, Bali tour package from India, Bali trip cost from India 2026, Bali romantic holiday, honeymoon packages under 1 lakh, Bali Indonesia tour',
   openGraph: {
     title: 'Bali Honeymoon Package 2026 — ₹52,499 Per Person | YlooTrips',
-    description: 'Romantic Bali honeymoon — private villa in Ubud, sunrise at Tegalalang, couples spa, sunset at Tanah Lot. Flights + visa free for Indians.',
+    description: 'Romantic Bali honeymoon — private villa in Ubud, sunrise at Tegalalang, couples spa, sunset at Tanah Lot. Visa free for Indians.',
     url: 'https://www.ylootrips.com/bali-honeymoon-package',
     images: [{ url: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1200&q=80', width: 1200, height: 630, alt: 'Bali honeymoon package rice terraces Ubud Indonesia' }],
   },
@@ -24,7 +24,7 @@ const pkg: PackageData = {
   slug: 'bali-honeymoon-package',
   canonicalUrl: 'https://www.ylootrips.com/bali-honeymoon-package',
   metaTitle: 'Bali Honeymoon Package 2026 — 6 Nights Starting ₹52,499',
-  metaDescription: 'Romantic Bali honeymoon packages from India starting ₹52,499 per person. 6 nights in Ubud & Seminyak — private villa, Tegalalang, Tanah Lot. Flights included.',
+  metaDescription: 'Romantic Bali honeymoon packages from India starting ₹52,499 per person. 6 nights in Ubud & Seminyak — private villa, Tegalalang, Tanah Lot. Hotel + transfers + activities included.',
   keywords: 'Bali honeymoon package India',
   ogImage: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1200&q=80',
 
@@ -47,7 +47,7 @@ const pkg: PackageData = {
     'Bali — Indonesia\'s Island of Gods — is the world\'s most romantic honeymoon destination and easily India\'s top choice for couples. With its emerald-green rice terraces, ancient Hindu temples, world-class spa culture, dramatic cliff-top ocean views, and warm Balinese hospitality, Bali casts a spell that brings couples back again and again.',
     'Our 6-night Bali honeymoon package splits your time between Ubud (Bali\'s cultural and spiritual heart, surrounded by jungle and rice paddies) and Seminyak (the chic beach town famous for sunset cocktails and luxury boutiques). Stay in a private pool villa — your own slice of paradise — and enjoy curated romantic experiences including a sunrise Tegalalang rice terrace walk, a traditional Balinese couples\' spa treatment, a private sunset dinner at Tanah Lot temple, and a guided walk through the Sacred Monkey Forest.',
     'Bali is visa-free for Indian passport holders (30-day visa on arrival, extendable). It\'s also incredibly affordable — world-class food, transport, and activities cost a fraction of what you\'d pay in Europe or the Maldives. Our package is fully customizable: add more nights, upgrade to a 5-star resort, or extend to Lombok or Nusa Penida island.',
-    'We take care of everything from your Indian airport to your Bali villa — flights, visa, transfers, and all activities are pre-booked so you arrive and start making memories immediately.',
+    'We take care of everything from your Bali arrival to your villa — visa assistance, transfers, and all activities are pre-booked so you arrive and start making memories immediately.',
   ],
 
   highlights: [
@@ -82,8 +82,7 @@ const pkg: PackageData = {
   ],
 
   includes: [
-    'Return economy flights India ↔ Bali (via Singapore/KL, major Indian cities)',
-    'Bali Visa on Arrival fee (free for Indian passport holders)',
+    'Bali Visa on Arrival assistance (free for Indian passport holders)',
     '3 nights private pool villa in Ubud (jungle view)',
     '3 nights boutique villa/resort in Seminyak (ocean view)',
     'Daily breakfast at both properties',
@@ -99,6 +98,7 @@ const pkg: PackageData = {
   ],
 
   excludes: [
+    'International flights India ↔ Bali (book separately)',
     'Travel insurance (strongly recommended)',
     'Meals other than daily breakfast and stated dinners',
     'Mount Batur sunrise trek (optional add-on — ₹3,500/couple)',
@@ -120,7 +120,7 @@ const pkg: PackageData = {
   reviewCount: 623,
 
   faqs: [
-    { question: 'How much does a Bali honeymoon trip from India cost in 2026?', answer: 'Our Bali honeymoon package starts at ₹52,499 per person (₹1,04,998 for a couple) for 6 nights. This includes return flights, private pool villa, breakfast, all listed activities, and transfers. Budget ₹15,000–₹25,000 extra per couple for additional dining, shopping, and optional activities like Mount Batur trek or Nusa Penida.' },
+    { question: 'How much does a Bali honeymoon trip from India cost in 2026?', answer: 'Our Bali honeymoon package starts at ₹52,499 per person (₹1,04,998 for a couple) for 6 nights. This includes private pool villa, breakfast, all listed activities, and transfers. International flights are booked separately. Budget ₹30,000–₹50,000 extra per couple for flights, additional dining, shopping, and optional activities like Mount Batur trek or Nusa Penida.' },
     { question: 'Do Indians need a visa for Bali?', answer: 'No! Indian passport holders get a free Visa on Arrival in Bali (Indonesia) for 30 days. You just need a valid Indian passport with 6+ months validity, a return ticket, proof of hotel booking, and USD $50 equivalent in cash or card for the visa fee (which our package includes as an assistance service).' },
     { question: 'Which is the best time to visit Bali for a honeymoon?', answer: 'April to October is Bali\'s dry season — the best time to visit. July and August are the busiest months but also the most beautiful. November to March is the wet season with heavier afternoon showers but fewer tourists and lower prices. We recommend avoiding July–August if you prefer quieter experiences.' },
     { question: 'Is Ubud or Seminyak better for a Bali honeymoon?', answer: 'Both! Ubud is Bali\'s cultural heart — jungle, rice terraces, temples, and spiritual experiences. Seminyak is the chic beach side — sunset cocktails, luxury boutiques, infinity pools, and world-class dining. Our package gives you the best of both worlds with 3 nights in each.' },

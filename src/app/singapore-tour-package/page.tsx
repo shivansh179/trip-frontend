@@ -3,11 +3,11 @@ import PackagePageLayout, { type PackageData } from '@/components/PackagePageLay
 
 export const metadata: Metadata = {
   title: 'Singapore Tour Package from India 2026 — 4 Nights Starting ₹44,999',
-  description: 'Book Singapore tour packages from India starting ₹44,999. 4 nights / 5 days — Gardens by the Bay, Universal Studios, Sentosa, Marina Bay Sands. Flights + hotel + transfers included.',
+  description: 'Book Singapore tour packages from India starting ₹44,999. 4 nights / 5 days — Gardens by the Bay, Universal Studios, Sentosa, Marina Bay Sands. Hotel + transfers + activities included.',
   keywords: 'Singapore tour package from India, Singapore trip from India, Singapore package 2026, Singapore holiday package India, Singapore 4 nights 5 days, cheapest Singapore tour India, Singapore trip cost India',
   openGraph: {
     title: 'Singapore Tour Package from India 2026 — ₹44,999 Onwards',
-    description: 'All-inclusive Singapore holiday from India — flights, hotel, Gardens by the Bay, Universal Studios, Marina Bay Sands. Book with ₹5,000 advance.',
+    description: 'Singapore holiday from India — hotel, Gardens by the Bay, Universal Studios, Marina Bay Sands. Book with ₹5,000 advance.',
     url: 'https://www.ylootrips.com/singapore-tour-package',
     type: 'website',
     images: [{ url: 'https://images.unsplash.com/photo-1508964942454-1a56651d54ac?w=1200&q=80', width: 1200, height: 630, alt: 'Singapore Marina Bay Sands skyline tour package from India' }],
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Singapore Tour Package from India — ₹44,999 Onwards | YlooTrips',
-    description: 'Flights + Hotel + Gardens by the Bay + Universal Studios + Sentosa. Book now with ₹5,000 advance.',
+    description: 'Hotel + Gardens by the Bay + Universal Studios + Sentosa. Book now with ₹5,000 advance.',
     images: ['https://images.unsplash.com/photo-1508964942454-1a56651d54ac?w=1200&q=80'],
   },
   alternates: { canonical: 'https://www.ylootrips.com/singapore-tour-package' },
@@ -25,7 +25,7 @@ const pkg: PackageData = {
   slug: 'singapore-tour-package',
   canonicalUrl: 'https://www.ylootrips.com/singapore-tour-package',
   metaTitle: 'Singapore Tour Package from India 2026 — 4 Nights Starting ₹44,999',
-  metaDescription: 'Book Singapore tour packages from India starting ₹44,999. 4 nights 5 days — Gardens by the Bay, Universal Studios, Marina Bay Sands. Flights included.',
+  metaDescription: 'Book Singapore tour packages from India starting ₹44,999. 4 nights 5 days — Gardens by the Bay, Universal Studios, Marina Bay Sands. Hotel + transfers + activities included.',
   keywords: 'Singapore tour package from India',
   ogImage: 'https://images.unsplash.com/photo-1508964942454-1a56651d54ac?w=1200&q=80',
 
@@ -46,13 +46,12 @@ const pkg: PackageData = {
 
   overview: [
     'Singapore — Asia\'s most dazzling city-state — packs an astonishing amount into just 730 square kilometres. World-class theme parks, futuristic gardens, a stunning waterfront, and Michelin-starred street food sit side by side in one of the world\'s safest and cleanest cities. No wonder it\'s India\'s most popular Southeast Asia destination.',
-    'Our 4-night Singapore package from India covers everything that makes the Lion City unforgettable: return flights, a well-located hotel, the mesmerising Gardens by the Bay with its Supertree light show, the thrilling Universal Studios Singapore, the iconic Marina Bay Sands infinity pool observation, a full day on Sentosa Island, and a taste of the famous Singapore hawker food scene.',
+    'Our 4-night Singapore package from India covers everything that makes the Lion City unforgettable: a well-located hotel, the mesmerising Gardens by the Bay with its Supertree light show, the thrilling Universal Studios Singapore, the iconic Marina Bay Sands infinity pool observation, a full day on Sentosa Island, and a taste of the famous Singapore hawker food scene.',
     'Singapore is extremely easy for Indian travelers — no language barrier, excellent Indian food everywhere, and one of the smoothest airport experiences in the world. Our package handles all logistics: airport transfers, attraction tickets, and 24/7 WhatsApp support so you can focus entirely on enjoying the trip.',
     'Pay just ₹5,000 to confirm your booking. Balance due 30 days before travel. Free cancellation up to 14 days before departure.',
   ],
 
   highlights: [
-    'Return flights from Delhi or Mumbai to Singapore',
     'Gardens by the Bay — Flower Dome, Cloud Forest & Supertree Grove night show',
     'Universal Studios Singapore (full-day ticket)',
     'Marina Bay Sands SkyPark Observation Deck',
@@ -76,7 +75,7 @@ const pkg: PackageData = {
     {
       day: 1,
       title: 'Arrive Singapore — Merlion & Marina Bay Evening',
-      description: 'Fly from Delhi or Mumbai on IndiGo / Air India / Singapore Airlines (approx. 5h 30m from Delhi, 5h from Mumbai). On arrival at Changi Airport — consistently ranked the world\'s best — your YlooTrips representative will be waiting. Transfer to your hotel in the city centre. After check-in and freshen up, head out to the iconic Merlion Park for your first Singapore photo. Stroll along the Marina Bay waterfront and take in the glittering skyline. If you arrive early enough, catch the spectacular free Garden Rhapsody light show at Gardens by the Bay Supertrees (7:45 PM and 8:45 PM). Welcome dinner at a nearby hawker centre to try Hainanese chicken rice and laksa.',
+      description: 'Arrive Singapore on your flight from Delhi or Mumbai (approx. 5h 30m from Delhi, 5h from Mumbai — book separately). On arrival at Changi Airport — consistently ranked the world\'s best — your YlooTrips representative will be waiting. Transfer to your hotel in the city centre. After check-in and freshen up, head out to the iconic Merlion Park for your first Singapore photo. Stroll along the Marina Bay waterfront and take in the glittering skyline. If you arrive early enough, catch the spectacular free Garden Rhapsody light show at Gardens by the Bay Supertrees (7:45 PM and 8:45 PM). Welcome dinner at a nearby hawker centre to try Hainanese chicken rice and laksa.',
       meals: 'None',
       hotel: '4★ Hotel in City Centre',
       activities: ['Airport pickup', 'Hotel check-in', 'Merlion Park photos', 'Marina Bay waterfront walk', 'Supertree light show (if time permits)'],
@@ -116,8 +115,7 @@ const pkg: PackageData = {
   ],
 
   includes: [
-    'Return economy class flights India ↔ Singapore (IndiGo/Air India/Singapore Airlines)',
-    'Singapore Tourist Visa (e-Visa, eligible nationalities)',
+    'Singapore Tourist Visa assistance (e-Visa, eligible nationalities)',
     '4 nights in a 4-star hotel in the city centre',
     'Daily breakfast (buffet)',
     'All airport transfers in Singapore (4 legs, private AC vehicle)',
@@ -131,6 +129,7 @@ const pkg: PackageData = {
   ],
 
   excludes: [
+    'International flights India ↔ Singapore (book separately)',
     'Travel insurance (strongly recommended — from ₹800/person)',
     'Meals other than daily breakfast',
     'Singapore Cable Car (optional — approx. SGD 35/person)',
@@ -186,7 +185,7 @@ const pkg: PackageData = {
   faqs: [
     {
       question: 'How much does a Singapore trip from India cost in 2026?',
-      answer: 'Our all-inclusive Singapore package from India starts at ₹44,999 per person for 4 nights. This includes return flights, visa, 4-star hotel, breakfast, airport transfers, and entry tickets to Gardens by the Bay, Universal Studios, Marina Bay Sands SkyPark, and S.E.A. Aquarium. Budget ₹5,000–₹8,000 extra per person for additional meals, shopping, and optional activities like Night Safari or cable car.',
+      answer: 'Our Singapore package from India starts at ₹44,999 per person for 4 nights. This includes visa assistance, 4-star hotel, breakfast, airport transfers, and entry tickets to Gardens by the Bay, Universal Studios, Marina Bay Sands SkyPark, and S.E.A. Aquarium. International flights are booked separately. Budget ₹20,000–₹30,000 extra per person for flights, additional meals, shopping, and optional activities like Night Safari or cable car.',
     },
     {
       question: 'Do I need a visa for Singapore from India?',
@@ -219,7 +218,7 @@ const pkg: PackageData = {
   whatsappMsg: "Hi! I'm interested in the Singapore Tour Package from India (4 nights ₹44,999). Please share availability and details.",
   bookingHref: '/contact?package=singapore-tour-package',
 
-  schemaHighlights: ['Gardens by the Bay Flower Dome & Cloud Forest', 'Universal Studios Singapore', 'Marina Bay Sands SkyPark', 'Sentosa Island & S.E.A. Aquarium', 'Return flights from India'],
+  schemaHighlights: ['Gardens by the Bay Flower Dome & Cloud Forest', 'Universal Studios Singapore', 'Marina Bay Sands SkyPark', 'Sentosa Island & S.E.A. Aquarium', 'Singapore Tourist Visa included'],
 };
 
 export default function SingaporeTourPackagePage() {

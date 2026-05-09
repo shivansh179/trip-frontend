@@ -3,11 +3,11 @@ import PackagePageLayout, { type PackageData } from '@/components/PackagePageLay
 
 export const metadata: Metadata = {
   title: 'Maldives Luxury Package from India 2026 — 4 Nights Starting ₹89,999',
-  description: 'Book Maldives luxury packages from India starting ₹89,999. 4 nights / 5 days — overwater bungalow, snorkeling, dolphin cruise, couples spa, private beach. Flights + resort + transfers included.',
+  description: 'Book Maldives luxury packages from India starting ₹89,999. 4 nights / 5 days — overwater bungalow, snorkeling, dolphin cruise, couples spa, private beach. Resort + transfers + all activities included.',
   keywords: 'maldives luxury package from india, maldives trip from india cost, maldives honeymoon package india, maldives overwater bungalow india, maldives 5 days package',
   openGraph: {
     title: 'Maldives Luxury Package from India 2026 — ₹89,999 Onwards',
-    description: 'All-inclusive Maldives luxury holiday from India — flights, overwater bungalow, snorkeling, dolphin cruise, couples spa. Book with ₹10,000 advance.',
+    description: 'Maldives luxury holiday from India — overwater bungalow, snorkeling, dolphin cruise, couples spa. Book with ₹10,000 advance.',
     url: 'https://www.ylootrips.com/maldives-luxury-package',
     type: 'website',
     images: [{ url: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1200&q=80', width: 1200, height: 630, alt: 'Maldives overwater bungalow luxury package from India' }],
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Maldives Luxury Package from India — ₹89,999 Onwards | YlooTrips',
-    description: 'Flights + Overwater Bungalow + Snorkeling + Dolphin Cruise + Spa. Book now with ₹10,000 advance.',
+    description: 'Overwater Bungalow + Snorkeling + Dolphin Cruise + Spa. Book now with ₹10,000 advance.',
     images: ['https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1200&q=80'],
   },
   alternates: { canonical: 'https://www.ylootrips.com/maldives-luxury-package' },
@@ -25,7 +25,7 @@ const pkg: PackageData = {
   slug: 'maldives-luxury-package',
   canonicalUrl: 'https://www.ylootrips.com/maldives-luxury-package',
   metaTitle: 'Maldives Luxury Package from India 2026 — 4 Nights Starting ₹89,999',
-  metaDescription: 'Book Maldives luxury packages from India starting ₹89,999. 4 nights 5 days — overwater bungalow, snorkeling, dolphin cruise, couples spa, private beach. Flights included.',
+  metaDescription: 'Book Maldives luxury packages from India starting ₹89,999. 4 nights 5 days — overwater bungalow, snorkeling, dolphin cruise, couples spa, private beach. Resort + transfers + all activities included.',
   keywords: 'maldives luxury package from india, maldives trip from india cost, maldives honeymoon package india',
   ogImage: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1200&q=80',
 
@@ -48,11 +48,10 @@ const pkg: PackageData = {
     'The Maldives — 1,200 coral islands scattered across the Indian Ocean like jewels on silk — is the world\'s most sought-after luxury destination. And it\'s closer than you think: just a 3–4 hour flight from Mumbai or Delhi, with no visa required for Indian passport holders.',
     'Our Maldives Luxury Package from India is built around the centrepiece every traveller dreams of: a private overwater bungalow perched above a turquoise lagoon, with a glass floor panel revealing the reef below and direct ladder access into the warm Indian Ocean. Your 4 nights are spent in a premium water villa at a 5-star resort on a private atoll — fully secluded, utterly breathtaking.',
     'The itinerary balances adventure and relaxation in perfect measure: sunrise snorkeling over a house reef teeming with sea turtles and manta rays, a sunset dolphin cruise where pods of spinner dolphins race the boat, a full couples\' spa day with traditional Maldivian healing therapies, and long golden afternoons on your private sundeck with nothing but ocean as far as the eye can see.',
-    'Every detail is handled by YlooTrips: return flights from Mumbai or Delhi, speedboat transfer from Malé airport to your resort, all meals (breakfast, lunch, and dinner at the resort), and a dedicated coordinator available around the clock. Pay just ₹10,000 advance to lock in your dates — the Maldives waits for no one.',
+    'Every detail is handled by YlooTrips: speedboat transfer from Malé airport to your resort, all meals (breakfast, lunch, and dinner at the resort), and a dedicated coordinator available around the clock. Pay just ₹10,000 advance to lock in your dates — the Maldives waits for no one.',
   ],
 
   highlights: [
-    'Return flights from Mumbai or Delhi to Malé (MLE)',
     'Overwater bungalow / water villa (5-star resort, private atoll)',
     'Sunrise snorkeling over the house reef — turtles & manta rays',
     'Sunset dolphin cruise (spinner dolphins guaranteed)',
@@ -79,7 +78,7 @@ const pkg: PackageData = {
       description: 'Depart Mumbai or Delhi on your morning flight to Malé (MLE). Most IndiGo, Air India, or SriLankan Airlines flights arrive in the early afternoon. After clearing the swift immigration (no visa required for Indians), our representative will escort you to the speedboat jetty for a scenic 30–45 minute transfer across the glittering Indian Ocean to your private-island resort. Check in to your overwater bungalow — take a moment to stand on your glass floor panel and watch the reef life swimming beneath your feet. The afternoon is yours: dive straight from your private deck ladder into the warm lagoon, order a welcome coconut on the sundeck, or simply lie back and absorb the impossible blue of the horizon. Welcome dinner at the resort\'s overwater restaurant as the sun melts into the sea.',
       meals: 'Dinner',
       hotel: '5★ Overwater Water Villa',
-      activities: ['Flight Mumbai/Delhi → Malé', 'Speedboat transfer to resort', 'Overwater bungalow check-in', 'Private deck swim', 'Welcome dinner at overwater restaurant'],
+      activities: ['Arrive Malé (MLE)', 'Speedboat transfer to resort', 'Overwater bungalow check-in', 'Private deck swim', 'Welcome dinner at overwater restaurant'],
     },
     {
       day: 2,
@@ -116,7 +115,6 @@ const pkg: PackageData = {
   ],
 
   includes: [
-    'Return economy class flights Mumbai or Delhi ↔ Malé (IndiGo/Air India/SriLankan)',
     'Speedboat airport transfers Malé ↔ resort (both legs)',
     '4 nights in a premium overwater bungalow / water villa (5-star resort)',
     'Full-board meals — breakfast, lunch & dinner throughout',
@@ -131,6 +129,7 @@ const pkg: PackageData = {
   ],
 
   excludes: [
+    'International flights India ↔ Malé (book separately)',
     'Travel insurance (strongly recommended — from ₹1,200/person)',
     'Alcoholic beverages and premium minibar items',
     'Motorised watersports (jet ski, parasailing — resort rates apply)',
@@ -188,7 +187,7 @@ const pkg: PackageData = {
   faqs: [
     {
       question: 'What is the actual total cost of a Maldives trip from India in 2026?',
-      answer: 'Our all-inclusive Maldives luxury package from India starts at ₹89,999 per person for 4 nights, covering return flights, overwater bungalow, full-board meals, snorkeling, dolphin cruise, spa, and all transfers. Budget an additional ₹8,000–₹15,000 per person for alcoholic drinks, motorised watersports, scuba diving, and personal expenses. The total Maldives trip cost from India for a couple is typically ₹1,80,000–₹2,10,000 all-in.',
+      answer: 'Our Maldives luxury package from India starts at ₹89,999 per person for 4 nights, covering overwater bungalow, full-board meals, snorkeling, dolphin cruise, spa, and all resort transfers. International flights are booked separately (typically ₹15,000–₹25,000 per person return). Budget an additional ₹8,000–₹15,000 per person for alcoholic drinks, motorised watersports, scuba diving, and personal expenses. The total Maldives trip cost from India for a couple is typically ₹2,10,000–₹2,50,000 all-in including flights.',
     },
     {
       question: 'Do Indians need a visa to visit the Maldives?',
@@ -227,7 +226,7 @@ const pkg: PackageData = {
     'Sunset dolphin cruise on traditional dhoni boat',
     '90-minute couples spa with Maldivian massage',
     'Private sandbank picnic excursion',
-    'Return flights from Mumbai or Delhi',
+    'Full-board dining at 5-star resort',
   ],
 };
 
