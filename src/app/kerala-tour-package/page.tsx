@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PackagePageLayout, { type PackageData } from '@/components/PackagePageLayout';
+import { getPackagePrice } from '@/lib/packagePrices';
 
 export const metadata: Metadata = {
   title: 'Kerala Tour Package 2026 — 5 Nights Starting ₹15,999 | YlooTrips',
@@ -232,6 +233,7 @@ const pkg: PackageData = {
   schemaHighlights: ['Alleppey houseboat overnight in Kerala backwaters', 'Munnar tea gardens and Eravikulam', 'Thekkady Periyar Tiger Reserve boat safari', 'Kovalam beach and Ayurvedic massage', 'Return flights from Delhi'],
 };
 
-export default function KeralaToursPackagePage() {
-  return <PackagePageLayout pkg={pkg} />;
+export default async function KeralaToursPackagePage() {
+  const prices = await getPackagePrice('kerala-tour-package');
+  return <PackagePageLayout pkg={{ ...pkg, ...prices }} />;
 }

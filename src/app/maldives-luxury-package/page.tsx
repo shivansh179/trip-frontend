@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PackagePageLayout, { type PackageData } from '@/components/PackagePageLayout';
+import { getPackagePrice } from '@/lib/packagePrices';
 
 export const metadata: Metadata = {
   title: 'Maldives Luxury Package from India 2026 — 4 Nights Starting ₹89,999',
@@ -230,6 +231,7 @@ const pkg: PackageData = {
   ],
 };
 
-export default function MaldivesLuxuryPackagePage() {
-  return <PackagePageLayout pkg={pkg} />;
+export default async function MaldivesLuxuryPackagePage() {
+  const prices = await getPackagePrice('maldives-luxury-package');
+  return <PackagePageLayout pkg={{ ...pkg, ...prices }} />;
 }

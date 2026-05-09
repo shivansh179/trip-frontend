@@ -33,6 +33,19 @@ export const MarketBooking = bookingModel('MarketBooking', 'market_bookings');
 export const HotelBooking  = bookingModel('HotelBooking',  'hotel_bookings');
 export const FlightBooking = bookingModel('FlightBooking', 'flight_bookings');
 
+// ── Package Price overrides (admin-editable prices for featured pages) ────────
+const packagePriceSchema = new mongoose.Schema({
+  slug:             { type: String, required: true, unique: true },
+  label:            String,
+  priceINR:         { type: Number, required: true },
+  originalPriceINR: { type: Number },
+  updatedAt:        { type: String },
+}, { collection: 'package_prices' });
+
+export const PackagePrice =
+  (mongoose.models.PackagePrice as mongoose.Model<mongoose.InferSchemaType<typeof packagePriceSchema>>) ||
+  mongoose.model('PackagePrice', packagePriceSchema);
+
 // ── Trip seat tracking (confirmed bookings per date) ─────────────────────────
 const tripSeatSchema = new mongoose.Schema({
   tripId:      { type: Number, required: true },

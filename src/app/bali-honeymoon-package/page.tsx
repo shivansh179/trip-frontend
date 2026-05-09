@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PackagePageLayout, { type PackageData } from '@/components/PackagePageLayout';
+import { getPackagePrice } from '@/lib/packagePrices';
 
 export const metadata: Metadata = {
   title: 'Bali Honeymoon Package 2026 — 6 Nights Starting ₹52,499 | YlooTrips',
@@ -139,6 +140,7 @@ const pkg: PackageData = {
   schemaHighlights: ['Tegalalang Rice Terrace sunrise', 'Private pool villa Ubud', 'Tanah Lot sunset dinner', 'Balinese couples spa', 'Uluwatu Kecak Fire Dance'],
 };
 
-export default function BaliHoneymoonPage() {
-  return <PackagePageLayout pkg={pkg} />;
+export default async function BaliHoneymoonPage() {
+  const prices = await getPackagePrice('bali-honeymoon-package');
+  return <PackagePageLayout pkg={{ ...pkg, ...prices }} />;
 }

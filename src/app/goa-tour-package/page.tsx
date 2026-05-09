@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PackagePageLayout, { type PackageData } from '@/components/PackagePageLayout';
+import { getPackagePrice } from '@/lib/packagePrices';
 
 export const metadata: Metadata = {
   title: 'Goa Tour Package 2026 — 3 Nights Starting ₹9,999 | YlooTrips',
@@ -212,6 +213,7 @@ const pkg: PackageData = {
   schemaHighlights: ['North Goa beaches and water sports', 'Dudhsagar Waterfall jeep safari', 'Old Goa UNESCO heritage churches', 'Mandovi River sunset cruise', 'South Goa Palolem beach'],
 };
 
-export default function GoaTourPackagePage() {
-  return <PackagePageLayout pkg={pkg} />;
+export default async function GoaTourPackagePage() {
+  const prices = await getPackagePrice('goa-tour-package');
+  return <PackagePageLayout pkg={{ ...pkg, ...prices }} />;
 }

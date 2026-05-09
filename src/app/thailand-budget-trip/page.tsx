@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PackagePageLayout, { type PackageData } from '@/components/PackagePageLayout';
+import { getPackagePrice } from '@/lib/packagePrices';
 
 export const metadata: Metadata = {
   title: 'Thailand Budget Trip 2026 — 5 Nights from ₹49,499 | YlooTrips',
@@ -136,6 +137,7 @@ const pkg: PackageData = {
   schemaHighlights: ['Phi Phi Islands speedboat trip', 'Grand Palace Bangkok', 'Damnoen Saduak floating market', 'Ethical elephant sanctuary', 'Bangla Road nightlife'],
 };
 
-export default function ThailandBudgetTripPage() {
-  return <PackagePageLayout pkg={pkg} />;
+export default async function ThailandBudgetTripPage() {
+  const prices = await getPackagePrice('thailand-budget-trip');
+  return <PackagePageLayout pkg={{ ...pkg, ...prices }} />;
 }

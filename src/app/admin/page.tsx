@@ -8,7 +8,7 @@ import {
     MessageSquare, BookOpen, Settings, LogOut, ChevronRight,
     Save, RefreshCw, Plus, Trash2, Eye, ChevronDown, ChevronUp,
     ShoppingBag, CheckCircle, XCircle, Clock, Mail, User, Calendar, Phone,
-    Megaphone, Star, Activity, Upload, Copy, Link2, X, ExternalLink, Zap
+    Megaphone, Star, Activity, Upload, Copy, Link2, X, ExternalLink, Zap, Tag
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import ImagePreview from '@/components/ImagePreview';
@@ -66,6 +66,9 @@ export default function AdminDashboard() {
     const [expandedBlogs, setExpandedBlogs] = useState<Record<number, boolean>>({});
     const [inquiries, setInquiries] = useState<Record<string, unknown>[]>([]);
     const [ads, setAds] = useState<Record<string, unknown>[]>([]);
+    const [packagePrices, setPackagePrices] = useState<Record<string, unknown>[]>([]);
+    const [savingPrice, setSavingPrice] = useState<string | null>(null);
+    const [priceEdits, setPriceEdits] = useState<Record<string, { priceINR: string; originalPriceINR: string }>>({});
     const [uploadingImage, setUploadingImage] = useState(false);
     const [uploadFile, setUploadFile] = useState<File | null>(null);
     const [uploadFolder, setUploadFolder] = useState('admin');
@@ -234,6 +237,20 @@ export default function AdminDashboard() {
                 case 'ads':
                     const adsRes = await api.admin.getAds();
                     setAds(Array.isArray(adsRes.data) ? adsRes.data : []);
+                    break;
+                case 'package-prices':
+                    const ppRes = await fetch('/api/admin/package-prices', { headers: { 'x-admin-token': 'admin' } });
+                    const ppJson = await ppRes.json();
+                    const prices = Array.isArray(ppJson.data) ? ppJson.data : [];
+                    setPackagePrices(prices);
+                    const edits: Record<string, { priceINR: string; originalPriceINR: string }> = {};
+                    prices.forEach((p: Record<string, unknown>) => {
+                        edits[p.slug as string] = {
+                            priceINR: String(p.priceINR),
+                            originalPriceINR: String(p.originalPriceINR),
+                        };
+                    });
+                    setPriceEdits(edits);
                     break;
             }
             setLoadedTabs(prev => ({ ...prev, [tab]: true }));
@@ -1000,6 +1017,7 @@ export default function AdminDashboard() {
     };
 
     const sidebarItems = [
+        { id: 'package-prices', icon: Tag, label: 'Package Prices' },
         { id: 'custom-trips', icon: Zap, label: 'Custom Trip Link' },
         { id: 'destinations', icon: MapPin, label: 'Destinations' },
         { id: 'experiences', icon: Compass, label: 'Experiences' },
@@ -3812,6 +3830,98 @@ export default function AdminDashboard() {
                             )}
                         </div>
                     )}
+                    {activeTab === 'package-prices' && (
+                        <div className="space-y-6">
+                            <div className="mb-4">
+                                <h2 className="text-xl font-medium text-primary">Package Prices</h2>
+                                <p className="text-sm text-primary/50 mt-1">Update the selling price shown on each featured trip page. Changes go live immediately.</p>
+                            </div>
+
+                            <div className="grid gap-4">
+                                {packagePrices.map((pkg) => {
+                                    const slug = pkg.slug as string;
+                                    const edit = priceEdits[slug] || { priceINR: String(pkg.priceINR), originalPriceINR: String(pkg.originalPriceINR) };
+                                    const isInt = slug === 'thailand-budget-trip' || slug === 'bali-honeymoon-package' || slug === 'dubai-tour-package-from-delhi' || slug === 'singapore-tour-package' || slug === 'maldives-luxury-package';
+                                    return (
+                                        <div key={slug} className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+                                            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isInt ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                                                            {isInt ? 'International' : 'Domestic'}
+                                                        </span>
+                                                        <a href={`/${slug}`} target="_blank" rel="noreferrer" className="text-amber-600 hover:underline text-xs flex items-center gap-1">
+                                                            View page <ExternalLink className="w-3 h-3" />
+                                                        </a>
+                                                    </div>
+                                                    <p className="font-semibold text-gray-900 text-sm">{pkg.label as string}</p>
+                                                    <p className="text-xs text-gray-400 mt-0.5">Default: ₹{(pkg.defaultPriceINR as number).toLocaleString('en-IN')}</p>
+                                                </div>
+                                                <div className="flex flex-wrap items-end gap-3">
+                                                    <div>
+                                                        <label className="text-xs text-gray-500 font-medium block mb-1">Sale Price (₹)</label>
+                                                        <input
+                                                            type="number"
+                                                            value={edit.priceINR}
+                                                            onChange={e => setPriceEdits(prev => ({ ...prev, [slug]: { ...edit, priceINR: e.target.value } }))}
+                                                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-32 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="text-xs text-gray-500 font-medium block mb-1">Original / MRP (₹)</label>
+                                                        <input
+                                                            type="number"
+                                                            value={edit.originalPriceINR}
+                                                            onChange={e => setPriceEdits(prev => ({ ...prev, [slug]: { ...edit, originalPriceINR: e.target.value } }))}
+                                                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-36 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        disabled={savingPrice === slug}
+                                                        onClick={async () => {
+                                                            setSavingPrice(slug);
+                                                            try {
+                                                                const res = await fetch('/api/admin/package-prices', {
+                                                                    method: 'PUT',
+                                                                    headers: { 'Content-Type': 'application/json', 'x-admin-token': 'admin' },
+                                                                    body: JSON.stringify({ slug, priceINR: Number(edit.priceINR), originalPriceINR: Number(edit.originalPriceINR) }),
+                                                                });
+                                                                if (res.ok) {
+                                                                    setMessage({ type: 'success', text: `Price updated for ${pkg.label}` });
+                                                                    setPackagePrices(prev => prev.map(p => p.slug === slug ? { ...p, priceINR: Number(edit.priceINR), originalPriceINR: Number(edit.originalPriceINR) } : p));
+                                                                } else {
+                                                                    setMessage({ type: 'error', text: 'Failed to update price' });
+                                                                }
+                                                            } catch {
+                                                                setMessage({ type: 'error', text: 'Network error' });
+                                                            }
+                                                            setSavingPrice(null);
+                                                        }}
+                                                        className="px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap"
+                                                    >
+                                                        {savingPrice === slug ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                                                        Save
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            {pkg.updatedAt && (
+                                                <p className="text-xs text-gray-400 mt-3 pt-3 border-t border-gray-100">
+                                                    Last updated: {new Date(pkg.updatedAt as string).toLocaleString('en-IN')}
+                                                </p>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                                {packagePrices.length === 0 && (
+                                    <div className="text-center py-12 text-primary/50">
+                                        <Tag className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                                        <p>Loading package prices...</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             </main>
         </div>

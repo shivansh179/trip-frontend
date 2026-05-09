@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PackagePageLayout, { type PackageData } from '@/components/PackagePageLayout';
+import { getPackagePrice } from '@/lib/packagePrices';
 
 export const metadata: Metadata = {
   title: 'Singapore Tour Package from India 2026 — 4 Nights Starting ₹44,999',
@@ -221,6 +222,7 @@ const pkg: PackageData = {
   schemaHighlights: ['Gardens by the Bay Flower Dome & Cloud Forest', 'Universal Studios Singapore', 'Marina Bay Sands SkyPark', 'Sentosa Island & S.E.A. Aquarium', 'Singapore Tourist Visa included'],
 };
 
-export default function SingaporeTourPackagePage() {
-  return <PackagePageLayout pkg={pkg} />;
+export default async function SingaporeTourPackagePage() {
+  const prices = await getPackagePrice('singapore-tour-package');
+  return <PackagePageLayout pkg={{ ...pkg, ...prices }} />;
 }

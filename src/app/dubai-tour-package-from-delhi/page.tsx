@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PackagePageLayout, { type PackageData } from '@/components/PackagePageLayout';
+import { getPackagePrice } from '@/lib/packagePrices';
 
 export const metadata: Metadata = {
   title: 'Dubai Tour Package from Delhi 2026 — 5 Nights Starting ₹36,499',
@@ -138,6 +139,7 @@ const pkg: PackageData = {
   schemaHighlights: ['Burj Khalifa observation deck', 'Desert Safari with BBQ dinner', 'Dubai Mall and Aquarium', 'Palm Jumeirah monorail', 'UAE Tourist Visa included'],
 };
 
-export default function DubaiTourPackagePage() {
-  return <PackagePageLayout pkg={pkg} />;
+export default async function DubaiTourPackagePage() {
+  const prices = await getPackagePrice('dubai-tour-package-from-delhi');
+  return <PackagePageLayout pkg={{ ...pkg, ...prices }} />;
 }
