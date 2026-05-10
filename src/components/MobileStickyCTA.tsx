@@ -15,6 +15,7 @@ export default function MobileStickyCTA() {
     const pathname = usePathname();
     const { balance } = useWallet();
     const [tripsOpen, setTripsOpen] = useState(false);
+    const [memoryOpen, setMemoryOpen] = useState(false);
     const popupRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -40,7 +41,6 @@ export default function MobileStickyCTA() {
     const isPlannerActive = pathname?.startsWith('/trip-planner');
     const isWallet = pathname?.startsWith('/cashback');
     const isMyTrips = pathname?.startsWith('/my-booking');
-    const [memoryOpen, setMemoryOpen] = useState(false);
 
     return (
         <>
