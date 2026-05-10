@@ -75,26 +75,34 @@ export async function GET(req: NextRequest) {
     // MongoDB unavailable — continue with trip bookings only
   }
 
-  // Fetch trip bookings from backend (best effort)
+  // Fetch trip bookings from Java backend (best effort)
   let tripBookings: Record<string, unknown>[] = [];
   try {
-    const adminToken = process.env.ADMIN_TOKEN || process.env.ADMIN_SECRET || '';
-    if (adminToken) {
-      const res = await fetch(`${BACKEND}/admin/bookings?limit=500`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${adminToken}`,
-        },
-        signal: AbortSignal.timeout(8000),
-      });
-      if (res.ok) {
-        const raw = await res.json();
-        const list: Record<string, unknown>[] = Array.isArray(raw) ? raw
-          : Array.isArray(raw?.data) ? raw.data
-          : Array.isArray(raw?.data?.data) ? raw.data.data
-          : [];
-        tripBookings = list.filter(b => matchesContact(b, email, phone));
-      }
+    const adminSecret = process.env.ADMIN_SECRET || process.env.ADMIN_TOKEN || '';
+    // Build URL — try phone/email filter on backend to reduce payload
+    const filterParams = new URLSearchParams({ limit: '500' });
+    if (phone) filterParams.set('customerPhone', phone);
+    if (email) filterParams.set('customerEmail', email);
+
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (adminSecret) {
+      headers['x-admin-secret'] = adminSecret;
+      headers['Authorization'] = `Bearer ${adminSecret}`;
+    }
+
+    const res = await fetch(`${BACKEND}/admin/bookings?${filterParams}`, {
+      headers,
+      signal: AbortSignal.timeout(10000),
+    });
+    if (res.ok) {
+      const raw = await res.json();
+      const list: Record<string, unknown>[] = Array.isArray(raw) ? raw
+        : Array.isArray(raw?.data) ? raw.data
+        : Array.isArray(raw?.data?.data) ? raw.data.data
+        : Array.isArray(raw?.bookings) ? raw.bookings
+        : [];
+      // Filter client-side in case backend ignored the phone/email params
+      tripBookings = list.filter(b => matchesContact(b, email, phone));
     }
   } catch {
     // non-fatal — return what we have from MongoDB
