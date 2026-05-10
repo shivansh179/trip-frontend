@@ -341,10 +341,12 @@ export default function TripsContent() {
     const HIDDEN_TRIP_IDS = [525];
 
     // Visitor filter — hide all international-destination trips from foreigners
+    // Also hide CUSTOM category trips (internal/backend-only)
     const visitorFiltered = (visitor === 'foreigner'
         ? trips.filter((t) => !isInternationalTrip(t))
         : trips
-    ).filter((t) => !HIDDEN_TRIP_IDS.includes(t.id));
+    ).filter((t) => !HIDDEN_TRIP_IDS.includes(t.id))
+     .filter((t) => (t.category || '').toLowerCase() !== 'custom');
 
     // Budget filter
     const budgetOpt = BUDGET_OPTIONS[budgetIdx];
@@ -368,9 +370,12 @@ export default function TripsContent() {
     // Sort
     const displayedTrips = sortTrips(durationFiltered, sortBy);
 
-    const displayedCategories = visitor === 'foreigner'
-        ? categories.filter((c) => c.toLowerCase() !== 'international')
-        : categories;
+    const displayedCategories = categories.filter((c) => {
+        const lc = c.toLowerCase();
+        if (lc === 'custom') return false;
+        if (visitor === 'foreigner' && lc === 'international') return false;
+        return true;
+    });
 
     const activeLabel = searchQuery
         ? `"${searchQuery}"`
