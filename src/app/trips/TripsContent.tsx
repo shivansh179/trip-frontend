@@ -199,9 +199,10 @@ export default function TripsContent() {
     const { visitor } = useVisitor();
     const searchParams = useSearchParams();
 
-    // Read ?category= and ?q= from URL on first render
+    // Read ?category=, ?q=, and ?destination= from URL on first render
     const urlCategory = searchParams.get('category') || 'All';
     const urlQuery    = searchParams.get('q') || '';
+    const urlDest     = searchParams.get('destination') || '';
 
     const [trips, setTrips] = useState<Trip[]>([]);
     const [loading, setLoading] = useState(true);
@@ -266,7 +267,17 @@ export default function TripsContent() {
 
             let response;
 
-            if (searchQuery) {
+            if (urlDest) {
+                // Admin-shared destination link: fetch all and filter by destination
+                response = await api.getTripsPaginated({ page: 0, size: 500 });
+                const destLower = urlDest.toLowerCase();
+                const destTrips = (response.data.content as Trip[]).filter(
+                    (t) => (t.destination || '').toLowerCase().includes(destLower)
+                );
+                setTrips(destTrips);
+                setHasMore(false);
+                setTotalElements(destTrips.length);
+            } else if (searchQuery) {
                 response = await api.searchTrips(searchQuery);
                 setTrips(response.data);
                 setHasMore(false);
@@ -304,12 +315,12 @@ export default function TripsContent() {
             setLoading(false);
             setLoadingMore(false);
         }
-    }, [activeCategory, searchQuery]);
+    }, [activeCategory, searchQuery, urlDest]);
 
     useEffect(() => {
         setPage(0);
         fetchTrips(0, false);
-    }, [activeCategory, searchQuery, fetchTrips]);
+    }, [activeCategory, searchQuery, urlDest, fetchTrips]);
 
     const handleCategoryClick = (category: string) => {
         setActiveCategory(category);
@@ -340,13 +351,24 @@ export default function TripsContent() {
     // Hide known bad trips that can't be deleted (e.g. has a booking constraint)
     const HIDDEN_TRIP_IDS = [525];
 
+    // Destinations that are admin-only — hidden from normal public browsing.
+    // Trips in these destinations only appear when an admin shares a direct link
+    // with ?destination=<name> (e.g. /trips?destination=spiti).
+    const PRIVATE_DESTINATIONS = ['spiti'];
+
     // Visitor filter — hide all international-destination trips from foreigners
     // Also hide CUSTOM category trips (internal/backend-only)
+    // Also hide private-destination trips unless the URL has ?destination= set
     const visitorFiltered = (visitor === 'foreigner'
         ? trips.filter((t) => !isInternationalTrip(t))
         : trips
     ).filter((t) => !HIDDEN_TRIP_IDS.includes(t.id))
-     .filter((t) => (t.category || '').toLowerCase() !== 'custom');
+     .filter((t) => (t.category || '').toLowerCase() !== 'custom')
+     .filter((t) => {
+         if (urlDest) return true; // admin-shared link — show all matching trips
+         const dest = (t.destination || '').toLowerCase();
+         return !PRIVATE_DESTINATIONS.some((pd) => dest.includes(pd));
+     });
 
     // Budget filter
     const budgetOpt = BUDGET_OPTIONS[budgetIdx];
