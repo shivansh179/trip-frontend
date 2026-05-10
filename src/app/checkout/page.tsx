@@ -173,9 +173,16 @@ function CheckoutContent() {
                 emiInterestRate: selectedEmi?.interestRate || null,
             };
 
-            const bookingResponse = await api.createBooking(bookingData);
-            const booking = bookingResponse.data;
-            setBookingReference(booking.bookingReference);
+            // Try backend booking creation; fall back to local ref for custom trips
+            let bookingRef: string;
+            try {
+                const bookingResponse = await api.createBooking(bookingData);
+                bookingRef = bookingResponse.data.bookingReference;
+            } catch {
+                // Backend may not support custom/admin-created trips — generate local ref
+                bookingRef = `CUSTOM-${trip.id}-${Date.now()}`;
+            }
+            setBookingReference(bookingRef);
 
             // Always use our direct Easebuzz route — gives exact amount control + shows all payment methods
             // (UPI, Cards, EMI, Net Banking, Wallets). Java backend event proxy only shows UPI.
@@ -183,7 +190,7 @@ function CheckoutContent() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    bookingReference: booking.bookingReference,
+                    bookingReference: bookingRef,
                     chargeNow,
                     totalAmount: totalPrice,
                     customerName: formData.customerName,
@@ -200,7 +207,7 @@ function CheckoutContent() {
 
             if (paymentData.accessKey || paymentData.paymentUrl) {
                 // Store pending wallet/cashback info — credited only after payment confirmed
-                sessionStorage.setItem(`ylootrips-pending-${booking.bookingReference}`, JSON.stringify({
+                sessionStorage.setItem(`ylootrips-pending-${bookingRef}`, JSON.stringify({
                     walletDeduction,
                     totalPrice,
                     tripName: trip.title,
@@ -210,8 +217,8 @@ function CheckoutContent() {
                 if (paymentData.accessKey) {
                     initiateEasebuzzPayment({
                         accessKey: paymentData.accessKey,
-                        onSuccess: () => { window.location.href = `/payment/success?ref=${booking.bookingReference}`; },
-                        onFailure: () => { window.location.href = `/payment/failure?ref=${booking.bookingReference}`; },
+                        onSuccess: () => { window.location.href = `/payment/success?ref=${bookingRef}`; },
+                        onFailure: () => { window.location.href = `/payment/failure?ref=${bookingRef}`; },
                     }).catch(() => { if (paymentData.paymentUrl) window.location.href = paymentData.paymentUrl; });
                 } else {
                     window.location.href = paymentData.paymentUrl;
