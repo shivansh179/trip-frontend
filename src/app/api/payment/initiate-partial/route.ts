@@ -23,15 +23,15 @@ export async function POST(req: NextRequest) {
     }
 
     const amount = String(Number(chargeNow).toFixed(2));
-    const txnid = `TRP-${bookingReference}-${Date.now()}`;
+    const txnid = `TRP-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
     const firstname = (customerName || 'Traveler').split(' ')[0];
     const email = customerEmail || 'traveler@ylootrips.com';
     const rawPhone = (customerPhone || '').replace(/\D/g, '');
     const phone = rawPhone.length >= 10 ? rawPhone.slice(-10) : (rawPhone || '9999999999').padStart(10, '0');
     const rawProductinfo = tripTitle
-      ? `${tripTitle} (Advance)`
-      : `Trip Payment - ${bookingReference}`;
-    const productinfo = rawProductinfo.replace(/[^a-zA-Z0-9 _.,()\-\/]/g, '').substring(0, 100);
+      ? `${tripTitle} Advance`
+      : `Trip Payment ${bookingReference.replace(/[^a-zA-Z0-9]/g, '').substring(0, 20)}`;
+    const productinfo = rawProductinfo.replace(/[^a-zA-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 100);
 
     // ── Direct Easebuzz with partial amount ───────────────────────────────────
     if (EASEBUZZ_KEY && EASEBUZZ_SALT) {
