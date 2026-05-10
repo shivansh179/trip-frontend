@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     // ── Direct Easebuzz (all payment options) ────────────────────────────────
     if (EASEBUZZ_KEY && EASEBUZZ_SALT) {
       const amount = String(totalPayable.toFixed(2));
-      const productinfo = `Hotel: ${hotel.name} | ${checkIn} to ${checkOut} | ${rooms} room(s)`;
+      const productinfo = (`Hotel ${hotel.name} ${checkIn} to ${checkOut} ${rooms} rooms`).replace(/[^a-zA-Z0-9 _.-]/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 100);
       const udf1 = txnid;
       const udf2 = email;
       const hashStr = [

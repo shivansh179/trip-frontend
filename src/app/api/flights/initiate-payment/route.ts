@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
         // ── Direct Easebuzz (all payment options) ────────────────────────────
         if (EASEBUZZ_KEY && EASEBUZZ_SALT) {
             const amount = String(totalPayable.toFixed(2));
-            const productinfo = `Flight ${flight.flightNum} ${flight.from}-${flight.to} ${flight.date}`;
+            const productinfo = (`Flight ${flight.flightNum} ${flight.from} to ${flight.to} ${flight.date}`).replace(/[^a-zA-Z0-9 _.-]/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 100);
             const udf1 = txnid;
             const udf2 = email;
             const hashStr = [
