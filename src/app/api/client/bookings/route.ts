@@ -37,8 +37,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Provide email or phone' }, { status: 400 });
   }
 
-  await connectDB();
-
   // Build MongoDB query
   const orClauses: Record<string, unknown>[] = [];
   if (email) {
@@ -62,11 +60,20 @@ export async function GET(req: NextRequest) {
 
   const query = orClauses.length > 0 ? { $or: orClauses } : {};
 
-  const [flightDocs, marketDocs, hotelDocs] = await Promise.all([
-    FlightBooking.find(query).sort({ savedAt: -1 }).lean(),
-    MarketBooking.find(query).sort({ createdAt: -1 }).lean(),
-    HotelBooking.find(query).sort({ createdAt: -1 }).lean(),
-  ]);
+  // MongoDB flight/market/hotel bookings — non-fatal if DB unavailable
+  let flightDocs: Record<string, unknown>[] = [];
+  let marketDocs: Record<string, unknown>[] = [];
+  let hotelDocs: Record<string, unknown>[] = [];
+  try {
+    await connectDB();
+    [flightDocs, marketDocs, hotelDocs] = await Promise.all([
+      FlightBooking.find(query).sort({ savedAt: -1 }).lean() as Promise<Record<string, unknown>[]>,
+      MarketBooking.find(query).sort({ createdAt: -1 }).lean() as Promise<Record<string, unknown>[]>,
+      HotelBooking.find(query).sort({ createdAt: -1 }).lean() as Promise<Record<string, unknown>[]>,
+    ]);
+  } catch {
+    // MongoDB unavailable — continue with trip bookings only
+  }
 
   // Fetch trip bookings from backend (best effort)
   let tripBookings: Record<string, unknown>[] = [];

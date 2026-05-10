@@ -621,7 +621,7 @@ function BookingSearchSheet({ onClose, onResult }: {
 
   const handleLookup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reference.trim() || !email.trim()) { setError('Enter your booking reference and email.'); return; }
+    if (!reference.trim()) { setError('Enter your booking reference.'); return; }
     setLoading(true); setError(null);
     const ref = reference.trim().toUpperCase();
     try {
@@ -629,28 +629,23 @@ function BookingSearchSheet({ onClose, onResult }: {
         const res = await fetch(`/api/admin/flight-bookings?txnid=${encodeURIComponent(ref)}`);
         const json = await res.json();
         if (!json.data) { setError('Booking not found. Check your reference and try again.'); return; }
-        if ((json.data.contact?.email as string || '').toLowerCase() !== email.trim().toLowerCase()) { setError("Email doesn't match our records."); return; }
         onResult({ type: 'flight', data: json.data });
       } else if (ref.startsWith('EVT-')) {
         const flightRes = await fetch(`/api/admin/flight-bookings?evtRef=${encodeURIComponent(ref)}`);
         const flightJson = await flightRes.json();
         if (flightJson.data) {
-          const b = flightJson.data as Record<string, unknown>;
-          if (((b.contact as Record<string, unknown>)?.email as string || '').toLowerCase() !== email.trim().toLowerCase()) { setError("Email doesn't match our records."); return; }
-          onResult({ type: 'flight', data: b }); return;
+          onResult({ type: 'flight', data: flightJson.data as Record<string, unknown> }); return;
         }
         const apiUrl = process.env.NEXT_PUBLIC_API_URL;
         const res = await fetch(`${apiUrl}/event-bookings/${encodeURIComponent(ref)}`);
         if (!res.ok) { setError('Booking not found. Check your reference.'); return; }
         const booking = await res.json();
-        if ((booking.customerEmail as string || '').toLowerCase() !== email.trim().toLowerCase()) { setError("Email doesn't match our records."); return; }
         onResult({ type: 'event', data: booking });
       } else {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL;
         const res = await fetch(`${apiUrl}/bookings/${encodeURIComponent(ref)}`);
         if (!res.ok) { setError('Booking not found. Check your reference.'); return; }
         const booking = await res.json();
-        if ((booking.customerEmail as string || '').toLowerCase() !== email.trim().toLowerCase()) { setError("Email doesn't match our records."); return; }
         onResult({ type: 'trip', data: booking });
       }
     } catch {
@@ -677,7 +672,7 @@ function BookingSearchSheet({ onClose, onResult }: {
           <div className="flex items-center justify-between mb-5">
             <div>
               <h2 className="text-lg font-black text-gray-900">Track Your Booking</h2>
-              <p className="text-xs text-gray-400 mt-0.5">Enter your reference & email to find your booking</p>
+              <p className="text-xs text-gray-400 mt-0.5">Enter your booking reference to find your booking</p>
             </div>
             <button onClick={onClose} className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center active:scale-90 transition-transform">
               <X size={16} className="text-gray-500" />
@@ -696,18 +691,6 @@ function BookingSearchSheet({ onClose, onResult }: {
                 required
               />
             </div>
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Email Address</label>
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="Email used when booking"
-                className="w-full px-4 py-4 rounded-2xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 text-sm transition-all"
-                required
-              />
-            </div>
-
             {error && (
               <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-2xl">
                 <AlertCircle size={17} className="text-red-400 shrink-0 mt-0.5" />
