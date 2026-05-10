@@ -761,7 +761,7 @@ export default function Hero({ content, stats }: HeroProps) {
                         {/* RIGHT: Ad card */}
                         {currentAd && !flightResults && (
                             <div className="hidden lg:block self-center">
-                                <Link href={visitor === 'indian' && currentAd.redirectUrl === '/tours' ? '/trips' : currentAd.redirectUrl}
+                                <Link href={visitor === 'indian' && (currentAd.redirectUrl === '/tours' || currentAd.redirectUrl?.startsWith('/tours')) ? '/trips' : currentAd.redirectUrl}
                                     className="block relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden shadow-2xl hover:scale-[1.02] transition-all duration-300">
                                     {currentAd.discountText && (
                                         <div className="absolute top-3 right-3 z-10">
