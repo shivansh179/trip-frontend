@@ -524,16 +524,19 @@ export default function Home() {
 
   return (
     <>
-      {/* Hero Section - CMS Driven */}
+      {/* 1 — Hero: full-screen immersive entry point */}
       <Hero
         content={content?.hero}
         stats={content?.stats}
       />
 
-      {/* ── Mobile App-style Category Grid ── */}
+      {/* 2 — Quick navigation categories */}
       <MobileCategories />
 
-      {/* ── Hot Package Strip ── */}
+      {/* 3 — Trending Packages: show what we sell immediately */}
+      <TrendingPackages />
+
+      {/* 4 — Hot Package Strip: quick price scan */}
       <section className="bg-white border-b border-gray-100 py-6 overflow-x-hidden">
         <div className="section-container">
           <div className="flex items-center justify-between mb-4">
@@ -576,11 +579,132 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Limited-Time Offers Banner */}
-      <LimitedOffersBanner />
+      {/* 5 — Trust Hub: credibility right after pricing */}
+      <TrustHub />
 
+      {/* 6 — Hidden Gems: premium brand differentiator */}
+      <HiddenSpots />
 
-      {/* ── Cashback & Wallet + Referral Banner ── */}
+      {/* Error Banner */}
+      {error && (
+        <div className="bg-terracotta/10 border-l-4 border-terracotta px-6 py-4">
+          <div className="section-container">
+            <p className="text-terracotta text-sm">{error}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Philosophy Section - CMS Driven */}
+      <section className="py-10 md:py-16 bg-cream">
+        <div className="section-container">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 lg:gap-24 items-center">
+            {/* Content */}
+            <div className="space-y-8">
+              <div>
+                <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-4">
+                  {philosophySection?.eyebrow || 'Our Philosophy'}
+                </p>
+                <h2 className="font-display text-display-lg text-primary">
+                  {philosophySection?.title?.split('.').map((part, i) => (
+                    <span key={i}>
+                      {i === 1 ? <><br /><span className="italic text-secondary">{part.trim()}</span></> : part}
+                    </span>
+                  )) || <>Travel is not just movement.<br /><span className="italic text-secondary">It&apos;s transformation.</span></>}
+                </h2>
+              </div>
+
+              <p className="text-body-lg text-primary/70 leading-relaxed">
+                {philosophySection?.description || 'We believe that the best journeys are those that leave you changed. Our curated experiences go beyond the ordinary, connecting you with local cultures, hidden treasures, and the stories that make each destination unique.'}
+              </p>
+
+              {/* Features - CMS Driven */}
+              <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 pt-4">
+                {(content?.features && content.features.length > 0
+                  ? content.features
+                  : [
+                    { icon: 'compass', title: 'Expert Local Guides', description: '' },
+                    { icon: 'heart', title: 'Authentic Experiences', description: '' },
+                    { icon: 'shield', title: 'Sustainable Travel', description: '' },
+                    { icon: 'star', title: 'Curated Excellence', description: '' },
+                  ]
+                ).map((feature, index) => {
+                  const IconComponent = iconMap[feature.icon] || Compass;
+                  return (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
+                        <IconComponent className="w-5 h-5 text-secondary" />
+                      </div>
+                      <span className="text-sm text-primary/80">{feature.title}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <Link href={philosophySection?.ctaLink || '/about'} className="btn-ghost group inline-flex items-center gap-2 pt-4">
+                <span>{philosophySection?.ctaText || 'Discover Our Story'}</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
+
+            {/* Image Grid */}
+            <div className="relative">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                <div className="space-y-2 sm:space-y-4">
+                  <div className="relative aspect-portrait overflow-hidden">
+                    <Image
+                      src="https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=600&q=80"
+                      alt="Taj Mahal at sunrise, Agra, India"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="relative aspect-square overflow-hidden">
+                    <Image
+                      src="https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=600&q=80"
+                      alt="Kerala backwaters houseboat cruise, South India"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+                <div className="pt-6 sm:pt-12 space-y-2 sm:space-y-4">
+                  <div className="relative aspect-square overflow-hidden">
+                    <Image
+                      src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600&q=80"
+                      alt="Colorful Rajasthani culture and traditions, Jaipur India"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="relative aspect-portrait overflow-hidden">
+                    <Image
+                      src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&q=80"
+                      alt="Himalayan mountain landscape, North India"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating badge with CMS stat */}
+              <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 md:-bottom-6 md:-left-6 bg-accent text-primary px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4">
+                <span className="font-display text-xl sm:text-2xl md:text-3xl">
+                  {content?.stats?.find(s => s.label?.includes('Year'))?.value || '3+'}
+                </span>
+                <span className="block text-[10px] sm:text-caption uppercase tracking-widest">
+                  {content?.stats?.find(s => s.label?.includes('Year'))?.label || 'Years of Excellence'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 8 — International Testimonials: social proof from real travelers */}
+      <InternationalTestimonials />
+
+      {/* 9 — Cashback & Referral: rewards after trust is established */}
       <section className="bg-gray-950 py-10 md:py-14">
         <div className="section-container">
 
@@ -702,137 +826,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trending Packages — 3D cards with direct Book Now */}
-      <TrendingPackages />
-
-      {/* Unified Trust Hub — badges, guarantees, hotels, media, payments */}
-      <TrustHub />
-
-      {/* Error Banner */}
-      {error && (
-        <div className="bg-terracotta/10 border-l-4 border-terracotta px-6 py-4">
-          <div className="section-container">
-            <p className="text-terracotta text-sm">{error}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Philosophy Section - CMS Driven */}
-      <section className="py-10 md:py-16 bg-cream">
-        <div className="section-container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 lg:gap-24 items-center">
-            {/* Content */}
-            <div className="space-y-8">
-              <div>
-                <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-4">
-                  {philosophySection?.eyebrow || 'Our Philosophy'}
-                </p>
-                <h2 className="font-display text-display-lg text-primary">
-                  {philosophySection?.title?.split('.').map((part, i) => (
-                    <span key={i}>
-                      {i === 1 ? <><br /><span className="italic text-secondary">{part.trim()}</span></> : part}
-                    </span>
-                  )) || <>Travel is not just movement.<br /><span className="italic text-secondary">It&apos;s transformation.</span></>}
-                </h2>
-              </div>
-
-              <p className="text-body-lg text-primary/70 leading-relaxed">
-                {philosophySection?.description || 'We believe that the best journeys are those that leave you changed. Our curated experiences go beyond the ordinary, connecting you with local cultures, hidden treasures, and the stories that make each destination unique.'}
-              </p>
-
-              {/* Features - CMS Driven */}
-              <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 pt-4">
-                {(content?.features && content.features.length > 0
-                  ? content.features
-                  : [
-                    { icon: 'compass', title: 'Expert Local Guides', description: '' },
-                    { icon: 'heart', title: 'Authentic Experiences', description: '' },
-                    { icon: 'shield', title: 'Sustainable Travel', description: '' },
-                    { icon: 'star', title: 'Curated Excellence', description: '' },
-                  ]
-                ).map((feature, index) => {
-                  const IconComponent = iconMap[feature.icon] || Compass;
-                  return (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
-                        <IconComponent className="w-5 h-5 text-secondary" />
-                      </div>
-                      <span className="text-sm text-primary/80">{feature.title}</span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <Link href={philosophySection?.ctaLink || '/about'} className="btn-ghost group inline-flex items-center gap-2 pt-4">
-                <span>{philosophySection?.ctaText || 'Discover Our Story'}</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
-
-            {/* Image Grid */}
-            <div className="relative">
-              <div className="grid grid-cols-2 gap-2 sm:gap-4">
-                <div className="space-y-2 sm:space-y-4">
-                  <div className="relative aspect-portrait overflow-hidden">
-                    <Image
-                      src="https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=600&q=80"
-                      alt="Taj Mahal at sunrise, Agra, India"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="relative aspect-square overflow-hidden">
-                    <Image
-                      src="https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=600&q=80"
-                      alt="Kerala backwaters houseboat cruise, South India"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-                <div className="pt-6 sm:pt-12 space-y-2 sm:space-y-4">
-                  <div className="relative aspect-square overflow-hidden">
-                    <Image
-                      src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600&q=80"
-                      alt="Colorful Rajasthani culture and traditions, Jaipur India"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="relative aspect-portrait overflow-hidden">
-                    <Image
-                      src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&q=80"
-                      alt="Himalayan mountain landscape, North India"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating badge with CMS stat */}
-              <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 md:-bottom-6 md:-left-6 bg-accent text-primary px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4">
-                <span className="font-display text-xl sm:text-2xl md:text-3xl">
-                  {content?.stats?.find(s => s.label?.includes('Year'))?.value || '3+'}
-                </span>
-                <span className="block text-[10px] sm:text-caption uppercase tracking-widest">
-                  {content?.stats?.find(s => s.label?.includes('Year'))?.label || 'Years of Excellence'}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Hidden Gems section */}
-      <HiddenSpots />
-
-      {/* Share & Earn — upload trip memories, get cashback */}
+      {/* 10 — Share & Earn: community engagement last */}
       <ShareAndEarn />
-
-
-      {/* International Testimonials — static, from real traveler countries */}
-      <InternationalTestimonials />
 
       {/* Legal notice strip */}
       <div className="bg-gray-50 border-t border-gray-200 py-4">

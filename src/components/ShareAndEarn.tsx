@@ -28,8 +28,8 @@ export default function ShareAndEarn() {
         {/* How it works — 3 step strip */}
         <div className="flex items-start gap-3 mb-7 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
           {[
-            { step: '1', icon: <Camera size={18} style={{ color: GOLD }} />, title: 'Post a Trip Pic', sub: 'Use camera or gallery', reward: '₹500' },
-            { step: '2', icon: <Video size={18} style={{ color: '#818cf8' }} />, title: 'Post a Trip Video', sub: 'Short clip = big reward', reward: '₹1,000' },
+            { step: '1', icon: <Camera size={18} style={{ color: GOLD }} />, title: 'Post a Trip Pic', sub: 'Use camera or gallery', reward: '₹75' },
+            { step: '2', icon: <Video size={18} style={{ color: '#818cf8' }} />, title: 'Post a Trip Video', sub: 'Short clip = big reward', reward: '₹150' },
             { step: '3', icon: <Zap size={18} style={{ color: '#34d399' }} />, title: 'Instant Wallet Credit', sub: 'Money lands in seconds', reward: '⚡ Now' },
           ].map(({ step, icon, title, sub, reward }) => (
             <div key={step} className="flex-1 min-w-[130px] rounded-2xl p-4 text-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -48,7 +48,7 @@ export default function ShareAndEarn() {
           {/* Top urgency bar */}
           <div className="flex items-center justify-center gap-2 px-4 py-2" style={{ background: 'rgba(201,169,110,0.1)', borderBottom: '1px solid rgba(201,169,110,0.15)' }}>
             <Flame size={13} style={{ color: GOLD }} />
-            <span className="text-[11px] font-black" style={{ color: GOLD }}>Upload daily → Earn up to ₹5,000/day · Max 5 posts</span>
+            <span className="text-[11px] font-black" style={{ color: GOLD }}>Upload daily → Earn up to ₹750/day · Max 5 posts</span>
             <Flame size={13} style={{ color: GOLD }} />
           </div>
 
@@ -71,10 +71,10 @@ export default function ShareAndEarn() {
             <div className="flex-1 text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
                 <Wallet size={14} style={{ color: GOLD }} />
-                <span className="text-white font-black text-base">₹15,00,000+ paid out</span>
+                <span className="text-white font-black text-base">WanderLoot Cashback Rewards</span>
               </div>
-              <p className="text-white/40 text-sm">2,000+ travellers earning cashback daily by sharing their trips</p>
-              <p className="text-white/25 text-xs mt-2">📸 photo = ₹500 · 🎬 video = ₹1,000 · credited instantly</p>
+              <p className="text-white/40 text-sm">Share real trip memories and earn wallet credits on every approved post</p>
+              <p className="text-white/25 text-xs mt-2">📸 photo = ₹75 · 🎬 video = ₹150 · credited as WanderLoot wallet</p>
             </div>
 
             <Link
@@ -91,7 +91,7 @@ export default function ShareAndEarn() {
 
         {/* Fine print */}
         <p className="text-center text-white/20 text-xs">
-          Cashback credited instantly · Max 5 uploads/day · Any trip destination counts
+          WanderLoot wallet credit · Max 5 uploads/day · Approved posts only · Use on next booking
         </p>
       </div>
     </section>

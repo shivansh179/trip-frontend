@@ -5,8 +5,8 @@ import { X, Camera, Video, CheckCircle, ArrowRight, Wallet, RefreshCw, AlertCirc
 import { useWallet } from '@/context/WalletContext';
 
 const GOLD = '#C9A96E';
-const CASHBACK_PHOTO = 500;
-const CASHBACK_VIDEO = 1000;
+const CASHBACK_PHOTO = 75;
+const CASHBACK_VIDEO = 150;
 
 interface TripMemorySheetProps {
   onClose: () => void;

@@ -5,8 +5,8 @@ import mongoose from 'mongoose';
 const REDIS_URL   = process.env.UPSTASH_REDIS_REST_URL;
 const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-const CASHBACK_PHOTO = 500;
-const CASHBACK_VIDEO = 1000;
+const CASHBACK_PHOTO = 75;
+const CASHBACK_VIDEO = 150;
 
 const TripMemory =
   (mongoose.models.TripMemory as mongoose.Model<Record<string, unknown>>) ||

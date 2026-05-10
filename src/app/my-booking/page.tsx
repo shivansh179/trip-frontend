@@ -532,6 +532,15 @@ function ClientLoginSheet({ onClose, onResults }: {
 
 /* ─── All Bookings List ─── */
 function AllBookingsList({ bookings, onBack }: { bookings: Record<string, unknown>[]; onBack: () => void }) {
+  const [selectedBooking, setSelectedBooking] = useState<Record<string, unknown> | null>(null);
+
+  // Only show confirmed / paid bookings
+  const confirmedStatuses = ['PAID', 'CONFIRMED', 'SUCCESS', 'TICKET_ISSUED'];
+  const confirmedBookings = bookings.filter(b => {
+    const status = String(b.status || b.paymentStatus || '').toUpperCase();
+    return confirmedStatuses.includes(status);
+  });
+
   const getTypeLabel = (b: Record<string, unknown>) => {
     const t = b._bookingType as string;
     if (t === 'flight') return { label: 'Flight', emoji: '✈️', color: 'rgba(14,165,233,0.2)', border: 'rgba(14,165,233,0.3)', text: '#38bdf8' };
@@ -539,6 +548,36 @@ function AllBookingsList({ bookings, onBack }: { bookings: Record<string, unknow
     if (t === 'market') return { label: 'Event', emoji: '🎉', color: 'rgba(236,72,153,0.2)', border: 'rgba(236,72,153,0.3)', text: '#f472b6' };
     return { label: 'Trip', emoji: '🗺️', color: 'rgba(201,169,110,0.2)', border: 'rgba(201,169,110,0.3)', text: '#C9A96E' };
   };
+
+  // Show full detail view for selected booking
+  if (selectedBooking) {
+    const type = selectedBooking._bookingType as string;
+    return (
+      <div className="min-h-screen pb-24" style={{ background: '#0a0a0f', backgroundImage: 'radial-gradient(ellipse 80% 60% at 50% -20%, rgba(245,158,11,0.15), transparent)' }}>
+        <div className="max-w-lg mx-auto px-4 py-8">
+          <button
+            onClick={() => setSelectedBooking(null)}
+            className="flex items-center gap-2 text-sm text-white/40 hover:text-white/70 font-medium transition-colors mb-6"
+          >
+            <ArrowLeft size={16} />Back to All Bookings
+          </button>
+
+          {type === 'trip' && <TripBookingCard data={selectedBooking} />}
+          {type === 'market' && <EventBookingCard data={selectedBooking} />}
+          {type === 'flight' && <FlightBookingCard data={selectedBooking} />}
+          {type === 'hotel' && <TripBookingCard data={selectedBooking} />}
+
+          <a
+            href="https://wa.me/918427831127?text=Hi!%20I%20need%20help%20with%20my%20booking."
+            target="_blank" rel="noopener noreferrer"
+            className="mt-5 flex items-center justify-center gap-3 w-full py-4 bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold rounded-2xl transition-all"
+          >
+            <MessageCircle size={18} />Need help? Chat on WhatsApp
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-24" style={{ background: '#0a0a0f' }}>
@@ -549,51 +588,67 @@ function AllBookingsList({ bookings, onBack }: { bookings: Record<string, unknow
 
         <div className="mb-6">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: '#C9A96E' }}>Your History</p>
-          <h1 className="text-2xl font-black text-white mt-1">All Bookings</h1>
-          <p className="text-white/40 text-sm mt-0.5">{bookings.length} booking{bookings.length !== 1 ? 's' : ''} found</p>
+          <h1 className="text-2xl font-black text-white mt-1">Confirmed Bookings</h1>
+          <p className="text-white/40 text-sm mt-0.5">{confirmedBookings.length} confirmed booking{confirmedBookings.length !== 1 ? 's' : ''}</p>
         </div>
 
-        <div className="space-y-3">
-          {bookings.map((b, i) => {
-            const { label, emoji, color, border, text } = getTypeLabel(b);
-            const ref = String(b.bookingReference || b.txnid || b.evtRef || b.id || '—');
-            const destination = String(b.packageName || b.tripTitle || b.destination || b.hotelName || b.eventName || b.productName || '');
-            const date = String(b.travelDate || b.checkIn || b.journeyDate || b.createdAt || b.savedAt || '');
-            const amount = Number(b.totalAmount || b.totalFare || b.amount || b.grandTotal || 0);
-            const status = String(b.status || b.paymentStatus || 'CONFIRMED');
-            return (
-              <div key={ref + i} className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-lg" style={{ background: color, border: `1px solid ${border}` }}>
-                    {emoji}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <p className="font-bold text-white text-sm leading-tight truncate">{destination || label + ' Booking'}</p>
-                        <p className="text-[11px] font-mono mt-0.5" style={{ color: text }}>{ref}</p>
+        {confirmedBookings.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-5xl mb-4">📭</p>
+            <p className="text-white font-bold text-lg">No confirmed bookings</p>
+            <p className="text-white/40 text-sm mt-1">Your confirmed trips will appear here</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {confirmedBookings.map((b, i) => {
+              const { label, emoji, color, border, text } = getTypeLabel(b);
+              const ref = String(b.bookingReference || b.txnid || b.evtRef || b.id || '—');
+              const destination = String(b.packageName || b.tripTitle || b.destination || b.hotelName || b.eventName || b.productName || '');
+              const date = String(b.travelDate || b.checkIn || b.journeyDate || b.createdAt || b.savedAt || '');
+              const amount = Number(b.totalAmount || b.totalFare || b.amount || b.grandTotal || 0);
+              const status = String(b.status || b.paymentStatus || 'CONFIRMED');
+              return (
+                <button
+                  key={ref + i}
+                  onClick={() => setSelectedBooking(b)}
+                  className="w-full text-left rounded-2xl p-4 transition-all active:scale-[0.98] hover:border-white/20"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-lg" style={{ background: color, border: `1px solid ${border}` }}>
+                      {emoji}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="font-bold text-white text-sm leading-tight truncate">{destination || label + ' Booking'}</p>
+                          <p className="text-[11px] font-mono mt-0.5" style={{ color: text }}>{ref}</p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <StatusBadge status={status} />
+                          <ChevronRight size={14} className="text-white/30" />
+                        </div>
                       </div>
-                      <StatusBadge status={status} />
-                    </div>
-                    <div className="flex items-center gap-3 mt-2 flex-wrap">
-                      {date && (
-                        <span className="text-[11px] text-white/40 flex items-center gap-1">
-                          <Calendar size={11} />
-                          {new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                        </span>
-                      )}
-                      {amount > 0 && (
-                        <span className="text-[11px] font-bold" style={{ color: '#C9A96E' }}>
-                          ₹{new Intl.NumberFormat('en-IN').format(Math.round(amount))}
-                        </span>
-                      )}
+                      <div className="flex items-center gap-3 mt-2 flex-wrap">
+                        {date && (
+                          <span className="text-[11px] text-white/40 flex items-center gap-1">
+                            <Calendar size={11} />
+                            {new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </span>
+                        )}
+                        {amount > 0 && (
+                          <span className="text-[11px] font-bold" style={{ color: '#C9A96E' }}>
+                            ₹{new Intl.NumberFormat('en-IN').format(Math.round(amount))}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         <a
           href="https://wa.me/918427831127?text=Hi!%20I%20need%20help%20with%20my%20booking."
