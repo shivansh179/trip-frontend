@@ -129,20 +129,13 @@ function CuratedTourCard({ tour }: { tour: typeof CURATED_TOURS[0] }) {
           <span className="text-[10px] text-primary/40 uppercase tracking-widest">per person · no hidden fees</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 pt-3">
+        <div className="pt-3">
           <Link
             href={`/checkout/tour?tour=${tour.slug}`}
-            className="flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white px-3 py-2.5 text-xs uppercase tracking-widest font-semibold transition-colors"
+            className="flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white px-3 py-2.5 text-xs uppercase tracking-widest font-semibold transition-colors w-full"
           >
             <Shield className="w-3 h-3" />
             Book Now
-          </Link>
-          <Link
-            href={tour.href}
-            className="flex items-center justify-center gap-1.5 border border-primary/20 text-primary px-3 py-2.5 text-xs uppercase tracking-widest hover:bg-primary hover:text-cream transition-all"
-          >
-            Details
-            <ArrowUpRight className="w-3 h-3" />
           </Link>
         </div>
       </div>
