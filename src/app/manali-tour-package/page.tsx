@@ -40,9 +40,9 @@ const pkg: PackageData = {
   difficulty: 'Easy to Moderate',
   startLocation: 'Delhi → Manali (Volvo / Flight)',
 
-  priceINR: 6999,
-  priceUSD: 84,
-  originalPriceINR: 8999,
+  priceINR: 12999,
+  priceUSD: 156,
+  originalPriceINR: 16999,
   depositPercent: 25,
 
   overview: [

@@ -7,5 +7,5 @@ export const PACKAGE_DEFAULTS: Record<string, { label: string; priceINR: number;
   'goa-tour-package':              { label: 'Goa Tour Package (3N)',              priceINR: 9999,  originalPriceINR: 13999 },
   'kashmir-tour-package':          { label: 'Kashmir Tour Package (5N)',          priceINR: 18999, originalPriceINR: 24999 },
   'kerala-tour-package':           { label: 'Kerala Tour Package (5N)',           priceINR: 15999, originalPriceINR: 21999 },
-  'manali-tour-package':           { label: 'Manali Tour Package (4N)',           priceINR: 6999,  originalPriceINR: 9999 },
+  'manali-tour-package':           { label: 'Manali Tour Package (4N)',           priceINR: 12999, originalPriceINR: 16999 },
 };
