@@ -16,6 +16,7 @@ import { useVisitor } from '@/context/VisitorContext';
 import { useWallet } from '@/context/WalletContext';
 import { formatPriceWithCurrency } from '@/lib/utils';
 import { api } from '@/lib/api';
+import { initiateEasebuzzPayment } from '@/lib/easebuzz-checkout';
 
 // Tour data — all amounts in INR (fp() converts display currency)
 const TOURS: Record<string, {
@@ -198,52 +199,58 @@ function TourCheckoutContent() {
       emiInterestRate: selectedEmi?.interestRate || null,
     };
 
-    // Attempt 1: with tripId (if resolved from DB)
-    // Attempt 2: with tourSlug + totalAmount (might work if backend accepts it)
-    const payloads = [
-      ...(tripId ? [{ ...baseBookingFields, trip: { id: tripId } }] : []),
-      { ...baseBookingFields, tourSlug: slug, tourTitle: tour.title, totalAmount: totalINR },
-    ];
-
-    for (const payload of payloads) {
-      try {
-        const bookingResponse = await api.createBooking(payload);
-        const booking = bookingResponse.data;
-        if (!booking?.bookingReference) continue;
-
-        const paymentResponse = await api.initiatePayment(booking.bookingReference);
-        const paymentData = paymentResponse.data;
-
-        if (paymentData?.paymentUrl) {
-          // Store pending wallet/cashback info — credited only after payment confirmed
-          sessionStorage.setItem(`ylootrips-pending-${booking.bookingReference}`, JSON.stringify({
-              walletDeduction,
-              totalPrice,
-              tripName: tour.title,
-          }));
-          window.location.href = paymentData.paymentUrl;
-          return;
-        }
-      } catch (err) {
-        console.error('[TourCheckout] Attempt failed:', err);
-      }
+    // Try backend booking creation to get reference; fall back to local ref
+    let bookingRef: string;
+    try {
+      const payload = tripId
+        ? { ...baseBookingFields, trip: { id: tripId } }
+        : { ...baseBookingFields, tourSlug: slug, tourTitle: tour.title, totalAmount: totalINR };
+      const bookingResponse = await api.createBooking(payload);
+      bookingRef = bookingResponse.data?.bookingReference || `TOUR-${slug}-${Date.now()}`;
+    } catch {
+      bookingRef = `TOUR-${slug}-${Date.now()}`;
     }
 
-    // Final fallback: submit contact inquiry — team sends payment link manually
+    // Always use direct Easebuzz — shows all payment options (CC, DC, UPI, NB, EMI)
     try {
-      await api.submitContactInquiry({
-        name: formData.customerName,
-        email: formData.customerEmail,
-        phone: formData.customerPhone,
-        destination: tour.title,
-        travelers: String(formData.numberOfGuests),
-        preferredDates: formData.travelDate,
-        message: `TOUR BOOKING REQUEST\nTour: ${tour.title}\nGuests: ${formData.numberOfGuests}\nDate: ${formData.travelDate || 'TBD'}\nPayment: ${resolvedPaymentMethod} (${paymentType})\nTotal: ${fp(totalPrice)}\n${walletDeduction > 0 ? `Wallet Applied: ${fp(walletDeduction)}\n` : ''}${formData.specialRequests ? 'Requests: ' + formData.specialRequests : ''}`,
+      const payRes = await fetch('/api/payment/initiate-partial', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingReference: bookingRef,
+          chargeNow: totalINR,
+          totalAmount: totalINR,
+          customerName: formData.customerName,
+          customerEmail: formData.customerEmail,
+          customerPhone: formData.customerPhone,
+          tripTitle: tour.title,
+          paymentMethod: resolvedPaymentMethod !== 'half_payment' ? resolvedPaymentMethod : '',
+          emiTenure: selectedEmi?.tenure || null,
+        }),
       });
-      // No cashback for manual inquiry — credited only after confirmed online payment
-      setDoneViaContact(true);
-    } catch {
-      setPaymentError('Could not process. Please WhatsApp us directly.');
+      const paymentData = await payRes.json();
+
+      if (paymentData.accessKey || paymentData.paymentUrl) {
+        sessionStorage.setItem(`ylootrips-pending-${bookingRef}`, JSON.stringify({
+          walletDeduction,
+          totalPrice,
+          tripName: tour.title,
+        }));
+        if (paymentData.accessKey) {
+          initiateEasebuzzPayment({
+            accessKey: paymentData.accessKey,
+            onSuccess: () => { window.location.href = `/payment/success?ref=${bookingRef}`; },
+            onFailure: () => { window.location.href = `/payment/failure?ref=${bookingRef}`; },
+          }).catch(() => { if (paymentData.paymentUrl) window.location.href = paymentData.paymentUrl; });
+        } else {
+          window.location.href = paymentData.paymentUrl;
+        }
+        return;
+      }
+      throw new Error(paymentData.error || 'Payment initiation failed');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Payment could not be initiated';
+      setPaymentError(msg + ' — Please try again or contact us on WhatsApp.');
       setSubmitting(false);
     }
   };
