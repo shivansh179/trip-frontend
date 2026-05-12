@@ -40,8 +40,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/tours/kerala-south-india-14-day`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE_URL}/tours/rajasthan-heritage-7-day`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
 
-    // Careers
+    // Careers & legal
     { url: `${BASE_URL}/careers`, lastModified: now, changeFrequency: 'monthly', priority: 0.75 },
+    { url: `${BASE_URL}/terms`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${BASE_URL}/partnerships`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+
+    // Feature pages
+    { url: `${BASE_URL}/tours`, lastModified: now, changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/offbeat`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${BASE_URL}/daycations`, lastModified: now, changeFrequency: 'weekly', priority: 0.78 },
+    { url: `${BASE_URL}/hidden-spots`, lastModified: now, changeFrequency: 'weekly', priority: 0.78 },
+    { url: `${BASE_URL}/share-and-earn`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/stories`, lastModified: now, changeFrequency: 'weekly', priority: 0.72 },
 
     // Author pages
     { url: `${BASE_URL}/blogs/authors/priya-verma`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
@@ -54,10 +64,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/blogs/india-vs-thailand`, lastModified: now, changeFrequency: 'monthly', priority: 0.82 },
     { url: `${BASE_URL}/blogs/solo-female-travel-india`, lastModified: now, changeFrequency: 'monthly', priority: 0.88 },
     { url: `${BASE_URL}/blogs/2-week-india-trip-budget`, lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
-    // New high-traffic SEO blog pages
+    // High-traffic SEO blog pages
     { url: `${BASE_URL}/blogs/best-time-to-visit-bali`, lastModified: now, changeFrequency: 'monthly', priority: 0.92 },
     { url: `${BASE_URL}/blogs/dubai-trip-cost-from-india`, lastModified: now, changeFrequency: 'monthly', priority: 0.92 },
     { url: `${BASE_URL}/blogs/thailand-itinerary-5-days`, lastModified: now, changeFrequency: 'monthly', priority: 0.92 },
+    { url: `${BASE_URL}/blogs/best-honeymoon-destinations-india`, lastModified: now, changeFrequency: 'monthly', priority: 0.92 },
+    { url: `${BASE_URL}/blogs/manali-trip-guide`, lastModified: now, changeFrequency: 'monthly', priority: 0.92 },
+    { url: `${BASE_URL}/blogs/kashmir-travel-guide`, lastModified: now, changeFrequency: 'monthly', priority: 0.92 },
+    { url: `${BASE_URL}/blogs/kedarnath-yatra-guide`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${BASE_URL}/blogs/goa-budget-trip-guide`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${BASE_URL}/blogs/long-weekend-getaways-delhi`, lastModified: now, changeFrequency: 'monthly', priority: 0.88 },
 
     // International package landing pages (high-conversion SEO)
     { url: `${BASE_URL}/dubai-tour-package-from-delhi`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
