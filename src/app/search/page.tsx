@@ -9,7 +9,16 @@ import {
   Search, MapPin, Calendar, Users, ArrowUpRight, Check, ChevronDown, ChevronUp,
   Tag, CreditCard, Phone, Loader2, AlertCircle, Sparkles,
 } from 'lucide-react';
-import type { MarketPackage } from '@/app/api/search/market-packages/route';
+interface MarketPackage {
+  title: string;
+  url: string;
+  snippet: string;
+  source: string;
+  marketPrice: number | null;
+  ourPrice: number | null;
+  priceDiff: number | null;
+  destination: string;
+}
 
 // ── All our listed trips (domestic + international packages) ─────────────────
 const OUR_TRIPS = [

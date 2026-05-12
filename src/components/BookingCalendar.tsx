@@ -2,7 +2,14 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Flame, TrendingDown, AlertCircle } from 'lucide-react';
-import type { DateAvailability } from '@/app/api/availability/[tripId]/route';
+interface DateAvailability {
+  date: string;
+  price: number;
+  originalPrice: number;
+  seatsLeft: number;
+  tier: 'cheap' | 'normal' | 'peak' | 'sold_out';
+  priceLabel: string;
+}
 
 interface BookingCalendarProps {
   tripId: number;

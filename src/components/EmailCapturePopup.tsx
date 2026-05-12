@@ -51,7 +51,7 @@ export default function EmailCapturePopup() {
   return (
     <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
       onClick={(e) => { if (e.target === e.currentTarget) handleDismiss(); }}>
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" style={{ animation: 'slideUp 0.3s ease-out' }}>
 
         {/* Top gradient bar */}
         <div className="h-1.5 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400" />

@@ -155,6 +155,33 @@ const staticGuides = [
     read: '8 min read',
     author: PRIYA,
   },
+  {
+    title: 'Manali Trip Cost for 2 Persons 2026 — Exact Budget Breakdown',
+    description: 'Bus, hotel, Rohtang, Solang, food — exact cost of a Manali trip for a couple. Budget from ₹14,000 for 2 people for 5 nights.',
+    href: '/blogs/manali-trip-cost-for-2',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
+    tag: 'Budget Travel',
+    read: '8 min read',
+    author: PRIYA,
+  },
+  {
+    title: 'Kashmir Trip Cost from Delhi 2026 — Complete Budget Guide',
+    description: 'Flights, houseboat, Gulmarg gondola, Pahalgam, food — exact cost of a 6-night Kashmir trip from Delhi. Is Kashmir safe in 2026?',
+    href: '/blogs/kashmir-trip-cost-from-delhi',
+    image: 'https://images.unsplash.com/photo-1566837945700-30057527ade0?w=600&q=80',
+    tag: 'Budget Travel',
+    read: '9 min read',
+    author: ARJUN,
+  },
+  {
+    title: 'Bali Trip Cost from India 2026 — Complete Budget Guide',
+    description: 'Flights, visa, resort, Nusa Penida, Ubud — exact cost of a 6-night Bali trip from India. Budget to luxury breakdown.',
+    href: '/blogs/bali-trip-cost-from-india',
+    image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80',
+    tag: 'Budget Travel',
+    read: '9 min read',
+    author: SNEHA,
+  },
 ];
 
 export default function BlogsPage() {

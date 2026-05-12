@@ -9,7 +9,24 @@ import {
   Info, Loader2, AlertCircle, X, CreditCard,
 } from 'lucide-react';
 import Image from 'next/image';
-import type { HotelResult } from '@/app/api/hotels/search/route';
+interface HotelResult {
+  id: string;
+  isDemo: boolean;
+  name: string;
+  type: string;
+  starClass: number;
+  overallRating: number;
+  reviewCount: number;
+  description: string;
+  thumbnail: string;
+  amenities: string[];
+  checkIn: string;
+  checkOut: string;
+  pricePerNight: number;
+  totalPrice: number;
+  currency: 'INR';
+  link: string;
+}
 
 // ── Amenity icon map ───────────────────────────────────────────────────────────
 const AMENITY_ICONS: Record<string, React.ReactNode> = {
