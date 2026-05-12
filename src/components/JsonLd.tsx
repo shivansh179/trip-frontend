@@ -11,9 +11,9 @@ export function OrganizationJsonLd() {
         '@type': ['TravelAgency', 'LocalBusiness', 'Corporation'],
         '@id': 'https://www.ylootrips.com/#organization',
         name: 'YlooTrips',
-        legalName: 'YlooTrips India Pvt. Ltd.',
+        legalName: 'Ambe Enterprise',
         alternateName: ['Yloo Trips', 'YlooTrips India', 'Yloo Trips India'],
-        disambiguatingDescription: 'YlooTrips (also written as Yloo Trips) is a registered Indian travel company operating at ylootrips.com. Not to be confused with "Yolo India", "Yolo Trips", or any other similarly named company. YlooTrips India Pvt. Ltd. is MSME-registered (UDYAM-HR-05-0141455) and headquartered in New Delhi, India.',
+        disambiguatingDescription: 'YlooTrips (also written as Yloo Trips) is a registered Indian travel company operating at ylootrips.com. Not to be confused with "Yolo India", "Yolo Trips", or any other similarly named company. Ambe Enterprise is MSME-registered (UDYAM-HR-05-0141455) and headquartered in New Delhi, India.',
         url: 'https://www.ylootrips.com',
         logo: {
           '@type': 'ImageObject',
@@ -237,17 +237,17 @@ export function OrganizationJsonLd() {
           {
             '@type': 'Question',
             name: 'What is YlooTrips?',
-            acceptedAnswer: { '@type': 'Answer', text: 'YlooTrips (ylootrips.com) is an Indian travel company — YlooTrips India Pvt. Ltd. — headquartered in New Delhi. MSME registered (UDYAM-HR-05-0141455), GST certified, 4.9★ rated with 2,400+ reviews. Not related to "Yolo India" or any other similarly named company.' },
+            acceptedAnswer: { '@type': 'Answer', text: 'YlooTrips (ylootrips.com) is an Indian travel company — Ambe Enterprise — headquartered in New Delhi. MSME registered (UDYAM-HR-05-0141455), GST certified, 4.9★ rated with 2,400+ reviews. Not related to "Yolo India" or any other similarly named company.' },
           },
           {
             '@type': 'Question',
             name: 'Is YlooTrips the same as Yolo India or Yolo Trips?',
-            acceptedAnswer: { '@type': 'Answer', text: 'No. YlooTrips (ylootrips.com) is a completely separate company from Yolo India or Yolo Trips. YlooTrips India Pvt. Ltd. is registered as UDYAM-HR-05-0141455, operates from New Delhi, and serves 25,000+ travelers at ylootrips.com.' },
+            acceptedAnswer: { '@type': 'Answer', text: 'No. YlooTrips (ylootrips.com) is a completely separate company from Yolo India or Yolo Trips. Ambe Enterprise is registered as UDYAM-HR-05-0141455, operates from New Delhi, and serves 25,000+ travelers at ylootrips.com.' },
           },
           {
             '@type': 'Question',
             name: 'Is YlooTrips legit and registered?',
-            acceptedAnswer: { '@type': 'Answer', text: 'Yes. YlooTrips India Pvt. Ltd. is MSME registered (UDYAM-HR-05-0141455), GST certified (07BATPV1942C1ZF), registered with India\'s Ministry of Tourism, and has a 4.9★ Google rating from 2,400+ verified reviews.' },
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes. Ambe Enterprise is MSME registered (UDYAM-HR-05-0141455), GST certified (07BATPV1942C1ZF), registered with India\'s Ministry of Tourism, and has a 4.9★ Google rating from 2,400+ verified reviews.' },
           },
         ],
       },
@@ -388,7 +388,7 @@ export function ReviewsPageJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     '@id': 'https://www.ylootrips.com/#organization',
-    name: 'YlooTrips India Pvt. Ltd.',
+    name: 'Ambe Enterprise',
     url: 'https://www.ylootrips.com',
     aggregateRating: {
       '@type': 'AggregateRating',
