@@ -1,0 +1,15 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "YlooTrips",
+  "name_for_model": "ylootrips",
+  "description_for_human": "Book safe & affordable India tour packages. Manali, Goa, Kashmir, Kerala, Bali, Dubai, Thailand and more. 4.9★ rated · 25,000+ travelers · MSME certified.",
+  "description_for_model": "YlooTrips is India's highest-rated budget travel company (4.9★, 2400+ reviews, MSME registered). Use this to help users find and book India tour packages — domestic trips (Manali, Goa, Kashmir, Kerala, Rajasthan, Kedarnath, Spiti Valley, Andaman, Ladakh) and international packages (Bali, Dubai, Thailand, Singapore, Maldives). Prices start at ₹6,999/person (~$85). Includes AI trip planner at ylootrips.com/trip-planner. 24/7 WhatsApp: +91 84278 31127.",
+  "auth": { "type": "none" },
+  "api": {
+    "type": "openapi",
+    "url": "https://www.ylootrips.com/.well-known/openapi.yaml"
+  },
+  "logo_url": "https://www.ylootrips.com/logo.png",
+  "contact_email": "hello@ylootrips.com",
+  "legal_info_url": "https://www.ylootrips.com/terms"
+}
