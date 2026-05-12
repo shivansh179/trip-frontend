@@ -4,7 +4,16 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Send, MapPin, Clock, Lightbulb, Star, ChevronDown, ChevronUp, Loader2, Sparkles, Calendar, Wallet, Package, CreditCard, ArrowUpRight, Instagram } from 'lucide-react';
-import type { MarketPackage } from '@/app/api/search/market-packages/route';
+interface MarketPackage {
+  title: string;
+  url: string;
+  snippet: string;
+  source: string;
+  marketPrice: number | null;
+  ourPrice: number | null;
+  priceDiff: number | null;
+  destination: string;
+}
 
 // ── Destination → our package page mapping ────────────────────────────────────
 const TRIP_LINKS: { keywords: string[]; href: string; title: string }[] = [
@@ -92,10 +101,11 @@ const HOLIDAYS = [
 ];
 
 function HolidayCalendar({ onSelect }: { onSelect: (q: string) => void }) {
-  const typeStyle: Record<string, string> = {
-    long: 'bg-green-100 text-green-700 border-green-200',
-    holiday: 'bg-amber-100 text-amber-700 border-amber-200',
-    festival: 'bg-rose-100 text-rose-700 border-rose-200',
+  const GOLD = '#C9A96E';
+  const typeStyle: Record<string, { bg: string; color: string }> = {
+    long:     { bg: 'rgba(52,211,153,0.12)',  color: '#34d399' },
+    holiday:  { bg: 'rgba(201,169,110,0.15)', color: GOLD },
+    festival: { bg: 'rgba(244,114,182,0.12)', color: '#f472b6' },
   };
   const typeLabel: Record<string, string> = {
     long: '🟢 Long Weekend',
@@ -107,33 +117,40 @@ function HolidayCalendar({ onSelect }: { onSelect: (q: string) => void }) {
     <div className="mt-6">
       <div className="flex items-center justify-between mb-3 px-1">
         <div>
-          <p className="text-sm font-bold text-primary">📅 Long Weekends & Holiday Calendar 2026</p>
-          <p className="text-xs text-secondary mt-0.5">Tap any holiday to plan your trip instantly</p>
+          <p className="text-sm font-bold text-white">📅 Long Weekends & Holiday Calendar 2026</p>
+          <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Tap any holiday to plan your trip instantly</p>
         </div>
       </div>
       <div className="space-y-2.5">
         {HOLIDAYS.map((h) => (
           <div
             key={h.name}
-            className="bg-white border border-cream-dark rounded-2xl p-4 hover:border-amber-300 hover:shadow-sm transition-all cursor-pointer active:scale-[0.98]"
+            className="rounded-2xl p-4 cursor-pointer active:scale-[0.98] transition-all"
+            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(201,169,110,0.3)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.08)'; }}
             onClick={() => onSelect(`Plan a ${h.totalDays}-day trip for ${h.destinations[0]} around ${h.name} (${h.date}), budget trip for 2 people`)}
           >
             <div className="flex items-start gap-3">
               <div className="text-2xl shrink-0 mt-0.5">{h.emoji}</div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-bold text-sm text-primary">{h.name}</span>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${typeStyle[h.type]}`}>
+                  <span className="font-bold text-sm text-white">{h.name}</span>
+                  <span
+                    className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    style={{ background: typeStyle[h.type].bg, color: typeStyle[h.type].color }}
+                  >
                     {typeLabel[h.type]}
                   </span>
                 </div>
-                <p className="text-xs text-secondary mt-0.5">{h.date} ({h.day}) · {h.note}</p>
+                <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>{h.date} ({h.day}) · {h.note}</p>
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {h.destinations.map(dest => (
                     <button
                       key={dest}
                       onClick={e => { e.stopPropagation(); onSelect(`Plan a ${h.totalDays}-day trip to ${dest} for ${h.name} break (${h.date}), budget trip for 2 people`); }}
-                      className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 active:scale-95 transition-transform hover:bg-amber-100"
+                      className="text-[11px] font-semibold px-2.5 py-1 rounded-full active:scale-95 transition-transform"
+                      style={{ background: 'rgba(201,169,110,0.12)', color: GOLD, border: '1px solid rgba(201,169,110,0.25)' }}
                     >
                       {dest}
                     </button>
@@ -141,8 +158,8 @@ function HolidayCalendar({ onSelect }: { onSelect: (q: string) => void }) {
                 </div>
               </div>
               <div className="shrink-0 text-right">
-                <div className="text-lg font-black text-amber-500">{h.totalDays}D</div>
-                <div className="text-[10px] text-secondary">off</div>
+                <div className="text-lg font-black" style={{ color: GOLD }}>{h.totalDays}D</div>
+                <div className="text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>off</div>
               </div>
             </div>
           </div>
@@ -152,55 +169,58 @@ function HolidayCalendar({ onSelect }: { onSelect: (q: string) => void }) {
   );
 }
 
-const TIME_COLORS: Record<string, string> = {
-  Morning: 'bg-amber-50 text-amber-700 border-amber-200',
-  Afternoon: 'bg-orange-50 text-orange-700 border-orange-200',
-  Evening: 'bg-purple-50 text-purple-700 border-purple-200',
-  Night: 'bg-slate-50 text-slate-700 border-slate-200',
+const GOLD = '#C9A96E';
+const TIME_STYLES: Record<string, { bg: string; color: string }> = {
+  Morning:   { bg: 'rgba(251,191,36,0.12)',  color: '#fbbf24' },
+  Afternoon: { bg: 'rgba(251,146,60,0.12)',  color: '#fb923c' },
+  Evening:   { bg: 'rgba(167,139,250,0.12)', color: '#a78bfa' },
+  Night:     { bg: 'rgba(148,163,184,0.12)', color: '#94a3b8' },
 };
 
 function DayCard({ day, index }: { day: Day; index: number }) {
   const [expanded, setExpanded] = useState(index === 0);
 
   return (
-    <div className="border border-cream-dark rounded-xl overflow-hidden bg-white shadow-sm">
+    <div className="rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-cream-light transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left transition-colors"
+        style={{ background: 'transparent' }}
+        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.03)'; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
       >
         <div className="flex items-center gap-3">
-          <span className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-warm flex items-center justify-center text-white text-sm font-bold">
+          <span className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-black" style={{ background: `linear-gradient(135deg, ${GOLD}, #E2C68F)`, color: '#07070c' }}>
             {day.day}
           </span>
           <div>
-            <p className="font-semibold text-primary text-sm sm:text-base">{day.title}</p>
-            <p className="text-xs text-secondary mt-0.5">{day.theme}</p>
+            <p className="font-semibold text-white text-sm sm:text-base">{day.title}</p>
+            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>{day.theme}</p>
           </div>
         </div>
         {expanded ? (
-          <ChevronUp className="w-4 h-4 text-secondary flex-shrink-0" />
+          <ChevronUp className="w-4 h-4 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.35)' }} />
         ) : (
-          <ChevronDown className="w-4 h-4 text-secondary flex-shrink-0" />
+          <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.35)' }} />
         )}
       </button>
 
       {expanded && (
-        <div className="px-5 pb-5 space-y-4 border-t border-cream-dark">
+        <div className="px-5 pb-5 space-y-4" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
           {day.activities.map((act, i) => (
             <div key={i} className="pt-4">
               <span
-                className={`inline-block text-xs font-medium px-2.5 py-0.5 rounded-full border mb-2 ${
-                  TIME_COLORS[act.time] || 'bg-cream text-secondary border-cream-dark'
-                }`}
+                className="inline-block text-xs font-medium px-2.5 py-0.5 rounded-full mb-2"
+                style={TIME_STYLES[act.time] || { bg: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}
               >
                 {act.time}
               </span>
-              <p className="font-medium text-primary text-sm mb-1">{act.activity}</p>
-              <p className="text-sm text-secondary leading-relaxed">{act.details}</p>
+              <p className="font-medium text-white text-sm mb-1">{act.activity}</p>
+              <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>{act.details}</p>
               {act.tip && (
-                <div className="flex items-start gap-2 mt-2 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
-                  <Lightbulb className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-700">{act.tip}</p>
+                <div className="flex items-start gap-2 mt-2 rounded-lg px-3 py-2" style={{ background: 'rgba(201,169,110,0.1)', border: '1px solid rgba(201,169,110,0.2)' }}>
+                  <Lightbulb className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: GOLD }} />
+                  <p className="text-xs" style={{ color: 'rgba(201,169,110,0.85)' }}>{act.tip}</p>
                 </div>
               )}
             </div>
@@ -617,39 +637,32 @@ function ItineraryDisplay({ itinerary, onBookNow, matchedTrip, onShowMarket }: {
   matchedTrip: { href: string; title: string } | null;
   onShowMarket: () => void;
 }) {
+  const GOLD = '#C9A96E';
   return (
     <div className="space-y-6 animate-fade-up">
       {/* Trip Overview */}
-      <div className="bg-primary rounded-2xl p-5 sm:p-6 text-cream">
+      <div className="rounded-2xl p-5 sm:p-6" style={{ background: 'linear-gradient(135deg, #1a1625 0%, #1a1205 100%)', border: '1px solid rgba(201,169,110,0.2)' }}>
         <div className="flex items-start gap-3 mb-4">
-          <MapPin className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+          <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: GOLD }} />
           <div>
-            <h2 className="font-display text-xl sm:text-2xl font-semibold leading-tight">{itinerary.destination}</h2>
-            <p className="text-cream-dark text-sm mt-0.5">{itinerary.travelStyle} Travel</p>
+            <h2 className="text-xl sm:text-2xl font-black leading-tight text-white">{itinerary.destination}</h2>
+            <p className="text-sm mt-0.5" style={{ color: 'rgba(255,255,255,0.45)' }}>{itinerary.travelStyle} Travel</p>
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <div className="bg-primary-light rounded-xl px-4 py-3 flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-accent flex-shrink-0" />
-            <div>
-              <p className="text-xs text-cream-dark">Duration</p>
-              <p className="text-sm font-medium text-cream">{itinerary.duration}</p>
+          {[
+            { icon: <Calendar className="w-4 h-4 flex-shrink-0" style={{ color: GOLD }} />, label: 'Duration', value: itinerary.duration },
+            { icon: <Wallet className="w-4 h-4 flex-shrink-0" style={{ color: GOLD }} />, label: 'Budget', value: itinerary.estimatedBudget },
+            { icon: <Clock className="w-4 h-4 flex-shrink-0" style={{ color: GOLD }} />, label: 'Best Time', value: itinerary.bestTimeToVisit, colSpan: true },
+          ].map(({ icon, label, value, colSpan }) => (
+            <div key={label} className={`${colSpan ? 'col-span-2 sm:col-span-1' : ''} rounded-xl px-4 py-3 flex items-center gap-2`} style={{ background: 'rgba(255,255,255,0.06)' }}>
+              {icon}
+              <div>
+                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{label}</p>
+                <p className="text-sm font-semibold text-white">{value}</p>
+              </div>
             </div>
-          </div>
-          <div className="bg-primary-light rounded-xl px-4 py-3 flex items-center gap-2">
-            <Wallet className="w-4 h-4 text-accent flex-shrink-0" />
-            <div>
-              <p className="text-xs text-cream-dark">Budget</p>
-              <p className="text-sm font-medium text-cream">{itinerary.estimatedBudget}</p>
-            </div>
-          </div>
-          <div className="col-span-2 sm:col-span-1 bg-primary-light rounded-xl px-4 py-3 flex items-center gap-2">
-            <Clock className="w-4 h-4 text-accent flex-shrink-0" />
-            <div>
-              <p className="text-xs text-cream-dark">Best Time</p>
-              <p className="text-sm font-medium text-cream">{itinerary.bestTimeToVisit}</p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -657,12 +670,12 @@ function ItineraryDisplay({ itinerary, onBookNow, matchedTrip, onShowMarket }: {
       {(itinerary.highlights?.length ?? 0) > 0 && (
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <Star className="w-4 h-4 text-accent" />
-            <h3 className="font-semibold text-primary text-sm">Trip Highlights</h3>
+            <Star className="w-4 h-4" style={{ color: GOLD }} />
+            <h3 className="font-semibold text-white text-sm">Trip Highlights</h3>
           </div>
           <div className="flex flex-wrap gap-2">
             {itinerary.highlights.map((h, i) => (
-              <span key={i} className="bg-cream border border-cream-dark text-secondary text-xs px-3 py-1.5 rounded-full">
+              <span key={i} className="text-xs px-3 py-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)' }}>
                 {h}
               </span>
             ))}
@@ -673,7 +686,7 @@ function ItineraryDisplay({ itinerary, onBookNow, matchedTrip, onShowMarket }: {
       {/* Day-by-Day */}
       {itinerary.days?.length > 0 && (
         <div>
-          <h3 className="font-semibold text-primary mb-3 text-sm">Day-by-Day Itinerary</h3>
+          <h3 className="font-semibold text-white mb-3 text-sm">Day-by-Day Itinerary</h3>
           <div className="space-y-3">
             {itinerary.days.map((day, i) => (
               <DayCard key={i} day={day} index={i} />
@@ -684,12 +697,12 @@ function ItineraryDisplay({ itinerary, onBookNow, matchedTrip, onShowMarket }: {
 
       {/* Local Insight */}
       {itinerary.localInsights && (
-        <div className="bg-sage/10 border border-sage/20 rounded-xl p-4">
+        <div className="rounded-xl p-4" style={{ background: 'rgba(201,169,110,0.08)', border: '1px solid rgba(201,169,110,0.2)' }}>
           <div className="flex items-start gap-2">
-            <Sparkles className="w-4 h-4 text-sage-dark flex-shrink-0 mt-0.5" />
+            <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: GOLD }} />
             <div>
-              <p className="text-xs font-semibold text-sage-dark mb-1">Local Insight from Yloo</p>
-              <p className="text-sm text-primary/80 leading-relaxed">{itinerary.localInsights}</p>
+              <p className="text-xs font-semibold mb-1" style={{ color: GOLD }}>Local Insight from Yloo</p>
+              <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>{itinerary.localInsights}</p>
             </div>
           </div>
         </div>
@@ -697,15 +710,15 @@ function ItineraryDisplay({ itinerary, onBookNow, matchedTrip, onShowMarket }: {
 
       {/* Packing Tips */}
       {(itinerary.packingTips?.length ?? 0) > 0 && (
-        <div className="bg-cream rounded-xl p-4">
+        <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
           <div className="flex items-center gap-2 mb-3">
-            <Package className="w-4 h-4 text-secondary" />
-            <h3 className="font-semibold text-primary text-sm">What to Pack</h3>
+            <Package className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.4)' }} />
+            <h3 className="font-semibold text-white text-sm">What to Pack</h3>
           </div>
           <ul className="space-y-1.5">
             {itinerary.packingTips.map((tip, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-secondary">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
+              <li key={i} className="flex items-start gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: GOLD }} />
                 {tip}
               </li>
             ))}
@@ -792,20 +805,24 @@ const POPULAR_PACKAGES = [
 ];
 
 function RealTripsSidebar() {
+  const GOLD = '#C9A96E';
   return (
     <div className="space-y-4 pb-12">
       {/* Curated tours card */}
-      <div className="bg-white rounded-2xl border border-cream-dark overflow-hidden shadow-sm">
-        <div className="px-4 py-3 bg-primary">
-          <p className="text-xs font-black uppercase tracking-widest text-accent">✨ Real Itineraries</p>
-          <p className="text-[10px] text-cream-dark mt-0.5">Handcrafted by YlooTrips experts</p>
+      <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="px-4 py-3" style={{ background: 'rgba(201,169,110,0.1)', borderBottom: '1px solid rgba(201,169,110,0.15)' }}>
+          <p className="text-xs font-black uppercase tracking-widest" style={{ color: GOLD }}>✨ Real Itineraries</p>
+          <p className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Handcrafted by YlooTrips experts</p>
         </div>
-        <div className="divide-y divide-cream-dark">
-          {REAL_TRIPS.map((trip) => (
+        <div style={{ borderTop: 'none' }}>
+          {REAL_TRIPS.map((trip, idx) => (
             <a
               key={trip.href}
               href={trip.href}
-              className="flex gap-3 p-3 hover:bg-cream-light transition-colors group"
+              className="flex gap-3 p-3 transition-colors group"
+              style={{ borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.04)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
             >
               <img
                 src={trip.image}
@@ -813,22 +830,25 @@ function RealTripsSidebar() {
                 className="w-[72px] h-[56px] rounded-xl object-cover shrink-0 group-hover:scale-105 transition-transform duration-300"
               />
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-bold text-accent/90 uppercase tracking-wide leading-none mb-0.5">{trip.badge}</p>
-                <p className="font-bold text-primary text-[13px] leading-tight">{trip.title}</p>
-                <p className="text-[10px] text-secondary mt-0.5 truncate">{trip.subtitle}</p>
+                <p className="text-[10px] font-bold uppercase tracking-wide leading-none mb-0.5" style={{ color: GOLD }}>{trip.badge}</p>
+                <p className="font-bold text-white text-[13px] leading-tight">{trip.title}</p>
+                <p className="text-[10px] mt-0.5 truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>{trip.subtitle}</p>
                 <div className="flex items-center gap-1.5 mt-1">
-                  <span className="text-xs font-bold text-primary">{trip.price}</span>
-                  <span className="text-[10px] text-secondary">· {trip.duration}</span>
+                  <span className="text-xs font-bold text-white">{trip.price}</span>
+                  <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.35)' }}>· {trip.duration}</span>
                 </div>
               </div>
-              <ArrowUpRight size={14} className="text-secondary shrink-0 mt-1 group-hover:text-primary transition-colors" />
+              <ArrowUpRight size={14} className="shrink-0 mt-1 transition-colors" style={{ color: 'rgba(255,255,255,0.3)' }} />
             </a>
           ))}
         </div>
-        <div className="p-3 border-t border-cream-dark">
+        <div className="p-3" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
           <a
             href="/trips"
-            className="w-full flex items-center justify-center gap-1.5 text-xs font-bold text-primary border border-primary/20 rounded-xl py-2.5 hover:bg-primary hover:text-cream transition-colors"
+            className="w-full flex items-center justify-center gap-1.5 text-xs font-bold rounded-xl py-2.5 transition-colors"
+            style={{ color: GOLD, border: `1px solid rgba(201,169,110,0.25)` }}
+            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(201,169,110,0.1)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
           >
             View All Trips <ArrowUpRight size={12} />
           </a>
@@ -836,14 +856,17 @@ function RealTripsSidebar() {
       </div>
 
       {/* Popular packages grid */}
-      <div className="bg-white rounded-2xl border border-cream-dark p-4 shadow-sm">
-        <p className="text-[10px] font-black uppercase tracking-widest text-secondary mb-3">Popular Packages</p>
+      <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Popular Packages</p>
         <div className="grid grid-cols-2 gap-2">
           {POPULAR_PACKAGES.map((pkg) => (
             <a
               key={pkg.href}
               href={pkg.href}
-              className="text-center text-xs font-semibold text-primary bg-cream rounded-xl py-2.5 hover:bg-primary hover:text-cream transition-colors"
+              className="text-center text-xs font-semibold rounded-xl py-2.5 transition-colors"
+              style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.07)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(201,169,110,0.35)'; (e.currentTarget as HTMLAnchorElement).style.color = GOLD; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.07)'; (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.7)'; }}
             >
               {pkg.name}
             </a>
@@ -852,9 +875,9 @@ function RealTripsSidebar() {
       </div>
 
       {/* WhatsApp CTA */}
-      <div className="bg-primary rounded-2xl p-4 shadow-sm">
-        <p className="text-xs font-bold text-accent mb-1">💬 Talk to a Trip Expert</p>
-        <p className="text-[11px] text-cream-dark mb-3 leading-relaxed">
+      <div className="rounded-2xl p-4" style={{ background: 'rgba(201,169,110,0.1)', border: '1px solid rgba(201,169,110,0.2)' }}>
+        <p className="text-xs font-bold mb-1" style={{ color: GOLD }}>💬 Talk to a Trip Expert</p>
+        <p className="text-[11px] mb-3 leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
           Get a personalised quote with pricing &amp; itinerary in under 1 hour.
         </p>
         <a
@@ -865,7 +888,7 @@ function RealTripsSidebar() {
         >
           💬 WhatsApp Us Now
         </a>
-        <p className="text-[10px] text-cream/40 text-center mt-2">Mon–Sun · 9am–10pm IST</p>
+        <p className="text-[10px] text-center mt-2" style={{ color: 'rgba(255,255,255,0.25)' }}>Mon–Sun · 9am–10pm IST</p>
       </div>
     </div>
   );
@@ -970,10 +993,15 @@ export default function TripPlannerChat() {
     }
   };
 
+  const GOLD = '#C9A96E';
+
   return (
-    <div className="min-h-screen bg-cream-light">
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #07070c 0%, #0d0a06 100%)' }}>
       {/* Hero Header */}
-      <div className="bg-primary pt-28 pb-8 px-4 relative overflow-hidden">
+      <div className="pt-28 pb-10 px-4 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #0f0d1a 0%, #0d0a06 100%)' }}>
+        {/* Ambient glow */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,169,110,0.12) 0%, transparent 70%)' }} />
+
         {/* Real Trips pill — top right */}
         <a
           href="/reel-to-trip"
@@ -984,16 +1012,16 @@ export default function TripPlannerChat() {
           <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
         </a>
 
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="inline-flex items-center gap-1.5 bg-accent/20 border border-accent/30 text-accent text-xs font-semibold px-3 py-1.5 rounded-full mb-3">
+        <div className="max-w-2xl mx-auto text-center relative">
+          <div className="inline-flex items-center gap-1.5 rounded-full mb-4 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.15em]" style={{ background: 'rgba(201,169,110,0.12)', border: '1px solid rgba(201,169,110,0.25)', color: GOLD }}>
             <Calendar className="w-3 h-3" />
-            Holiday Planner · Powered by Yloo AI
+            AI Holiday Planner · Powered by Yloo
           </div>
-          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl text-cream font-bold mb-2 leading-tight">
-            Plan Your Next Holiday 🗓️
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-3 leading-tight">
+            Plan Your Dream <span style={{ color: GOLD }}>Journey</span>
           </h1>
-          <p className="text-cream-dark text-sm max-w-sm mx-auto leading-relaxed">
-            Pick a long weekend below — or type any destination to get an AI itinerary in seconds.
+          <p className="text-sm max-w-sm mx-auto leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>
+            Pick a long weekend below — or describe any trip to get a personalised AI itinerary in seconds.
           </p>
         </div>
       </div>
@@ -1002,8 +1030,8 @@ export default function TripPlannerChat() {
         <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_300px] xl:gap-6 xl:items-start">
           <div>
         {/* Input Card */}
-        <div className="bg-white rounded-2xl shadow-lg border border-cream-dark p-3 sm:p-5">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-secondary/50 mb-2 px-1">✨ Ask Yloo AI anything</p>
+        <div className="rounded-2xl p-3 sm:p-5" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,169,110,0.2)', backdropFilter: 'blur(12px)' }}>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2 px-1" style={{ color: 'rgba(201,169,110,0.6)' }}>✨ Ask Yloo AI anything</p>
           <textarea
             ref={textareaRef}
             value={input}
@@ -1011,14 +1039,16 @@ export default function TripPlannerChat() {
             onKeyDown={handleKeyDown}
             placeholder="e.g. 5-day Bali trip for 2, honeymoon, budget ₹80,000…"
             rows={2}
-            className="w-full resize-none text-sm text-primary placeholder-secondary/40 bg-transparent outline-none leading-relaxed"
+            className="w-full resize-none text-sm bg-transparent outline-none leading-relaxed"
+            style={{ color: 'rgba(255,255,255,0.85)', caretColor: GOLD }}
           />
-          <div className="flex items-center justify-between mt-2 pt-2 border-t border-cream-dark">
-            <p className="text-[10px] text-secondary/50 hidden sm:block">Enter to generate · Shift+Enter new line</p>
+          <div className="flex items-center justify-between mt-2 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+            <p className="text-[10px] hidden sm:block" style={{ color: 'rgba(255,255,255,0.25)' }}>Enter to generate · Shift+Enter new line</p>
             <button
               onClick={() => handleSubmit()}
               disabled={!input.trim() || loading}
-              className="ml-auto flex items-center gap-2 bg-gray-900 text-white text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-black/20"
+              className="ml-auto flex items-center gap-2 text-sm font-black px-5 py-2.5 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ background: `linear-gradient(135deg, ${GOLD}, #E2C68F)`, color: '#07070c', boxShadow: '0 4px 20px rgba(201,169,110,0.35)' }}
             >
               {loading ? (
                 <><Loader2 className="w-4 h-4 animate-spin" />Planning…</>
@@ -1034,13 +1064,16 @@ export default function TripPlannerChat() {
           <>
             <HolidayCalendar onSelect={(q) => handleSubmit(q)} />
             <div className="mt-4">
-              <p className="text-xs text-secondary font-semibold mb-2 px-1 uppercase tracking-widest">Or try a quick example:</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-3 px-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Or try a quick example:</p>
               <div className="flex flex-col gap-2">
                 {SUGGESTIONS.map((s, i) => (
                   <button
                     key={i}
                     onClick={() => handleSubmit(s)}
-                    className="text-left text-sm text-primary bg-white border border-cream-dark rounded-xl px-4 py-3 hover:border-accent hover:bg-cream transition-all"
+                    className="text-left text-sm rounded-xl px-4 py-3 transition-all"
+                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.7)' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(201,169,110,0.4)'; (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.95)'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.7)'; }}
                   >
                     {s}
                   </button>
@@ -1054,11 +1087,11 @@ export default function TripPlannerChat() {
         {loading && (
           <div className="mt-8 text-center py-12">
             <div className="inline-flex flex-col items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-warm flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-white animate-pulse" />
+              <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${GOLD}, #E2C68F)` }}>
+                <Sparkles className="w-6 h-6 animate-pulse" style={{ color: '#07070c' }} />
               </div>
-              <p className="text-primary font-medium text-sm">Yloo AI is crafting your itinerary…</p>
-              <p className="text-secondary text-xs">This usually takes 10–15 seconds</p>
+              <p className="font-medium text-sm text-white">Yloo AI is crafting your itinerary…</p>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>This usually takes 10–15 seconds</p>
             </div>
           </div>
         )}
@@ -1066,7 +1099,7 @@ export default function TripPlannerChat() {
         {/* AI failed — show callback card instead of error */}
         {failedDestination && !itinerary && (
           <div className="mt-6 pb-12">
-            <p className="text-xs text-secondary px-1 mb-3">Our AI is busy — let our team plan this for you instead</p>
+            <p className="text-xs px-1 mb-3" style={{ color: 'rgba(255,255,255,0.35)' }}>Our AI is busy — let our team plan this for you instead</p>
             <YlooCallbackCard destination={failedDestination} />
           </div>
         )}
@@ -1075,10 +1108,11 @@ export default function TripPlannerChat() {
         {itinerary && (
           <div ref={resultRef} className="mt-6">
             <div className="flex items-center justify-between mb-4 px-1">
-              <p className="text-xs text-secondary">Your personalised itinerary is ready</p>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>Your personalised itinerary is ready</p>
               <button
                 onClick={() => { setItinerary(null); setHasSearched(false); setShowMarket(false); }}
-                className="text-xs text-accent hover:underline"
+                className="text-xs font-semibold hover:underline"
+                style={{ color: GOLD }}
               >
                 Plan another trip
               </button>

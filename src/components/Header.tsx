@@ -3,13 +3,18 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, Sparkles, Ticket, ChevronRight } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { Menu, X, Sparkles, Ticket, ChevronRight, Sun, Moon } from 'lucide-react';
 import FlashSaleBanner from '@/components/FlashSaleBanner';
 
 export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const pathname = usePathname();
+    const { theme, setTheme } = useTheme();
+
+    useEffect(() => { setMounted(true); }, []);
 
     const hasHero = pathname === '/';
 
@@ -81,19 +86,33 @@ export default function Header() {
 
                         {/* CTA + Mobile toggle */}
                         <div className="flex items-center gap-2">
+                            {/* Theme toggle */}
+                            {mounted && (
+                                <button
+                                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                                    aria-label="Toggle dark mode"
+                                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                        hasHero && !isScrolled
+                                            ? 'text-white/80 bg-white/10 hover:bg-white/20 border border-white/20'
+                                            : 'text-gray-700 bg-gray-100 hover:bg-gray-200 dark:text-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700'
+                                    }`}
+                                >
+                                    {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+                                </button>
+                            )}
                             {/* Track Booking */}
                             <Link href="/my-booking"
                                 className={`hidden md:flex items-center gap-1.5 px-3 py-2 rounded-full text-[11px] font-bold uppercase tracking-wider border transition-all duration-300 ${
                                     hasHero && !isScrolled
                                         ? 'border-white/50 text-white hover:bg-white/10'
-                                        : 'border-gray-900 text-gray-900 hover:bg-gray-100'
+                                        : 'border-gray-900 text-gray-900 hover:bg-gray-100 dark:border-gray-300 dark:text-gray-100 dark:hover:bg-gray-800'
                                 }`}>
                                 <Ticket size={12} />
                                 My Booking
                             </Link>
                             {/* Plan Journey */}
                             <Link href="/trip-planner"
-                                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-wider bg-gray-900 text-white hover:bg-gray-700 transition-all duration-300 hover:scale-105 shadow-md shadow-black/20">
+                                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-wider bg-gray-900 text-white hover:bg-gray-700 dark:bg-amber-700 dark:hover:bg-amber-600 transition-all duration-300 hover:scale-105 shadow-md shadow-black/20">
                                 <Sparkles size={13} />
                                 Plan Journey
                             </Link>

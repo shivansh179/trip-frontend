@@ -141,9 +141,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
       <head>
-        {/* Force light mode — prevent system dark mode from inverting the site */}
-        <meta name="color-scheme" content="light" />
-        <meta name="theme-color" content="#F5F1EB" />
+        <meta name="color-scheme" content="light dark" />
+        <meta name="theme-color" content="#F5F1EB" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#0F0E0C" media="(prefers-color-scheme: dark)" />
         {/* Viewport — critical for mobile rendering */}
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
         {/* GEO: AI search engine discovery link */}

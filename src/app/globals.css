@@ -164,18 +164,40 @@
   }
 }
 
+/* Dark mode variable overrides */
+.dark {
+  --color-primary: #F0EDE8;
+  --color-primary-light: #E8E4DE;
+  --color-primary-dark: #FAF8F5;
+
+  --color-secondary: #A89078;
+  --color-secondary-light: #C4A88A;
+  --color-secondary-dark: #8B7355;
+
+  --color-cream: #1A1814;
+  --color-cream-dark: #252220;
+  --color-cream-light: #0F0E0C;
+
+  --color-sage: #6B7460;
+  --color-sage-light: #87907C;
+  --color-sage-dark: #505848;
+}
+
 /* Base styles */
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Force light mode — prevent OS dark mode from darkening inputs/backgrounds */
-  color-scheme: light;
+  color-scheme: light dark;
 }
 
-/* Ensure all native form controls stay light regardless of OS theme */
-input, textarea, select, button {
-  color-scheme: light;
+.dark html, html.dark {
+  color-scheme: dark;
+}
+
+/* Ensure form controls adapt to theme */
+input, textarea, select {
+  color-scheme: inherit;
 }
 
 body {
@@ -183,6 +205,7 @@ body {
   color: var(--color-primary);
   font-family: var(--font-body);
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
   /* Respect safe area (notch, home indicator) on iOS */
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
