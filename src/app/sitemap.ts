@@ -75,6 +75,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/blogs/kedarnath-yatra-guide`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE_URL}/blogs/goa-budget-trip-guide`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE_URL}/blogs/long-weekend-getaways-delhi`, lastModified: now, changeFrequency: 'monthly', priority: 0.88 },
+    { url: `${BASE_URL}/blogs/manali-trip-cost-for-2`, lastModified: now, changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${BASE_URL}/blogs/kashmir-trip-cost-from-delhi`, lastModified: now, changeFrequency: 'monthly', priority: 0.93 },
+    { url: `${BASE_URL}/blogs/bali-trip-cost-from-india`, lastModified: now, changeFrequency: 'monthly', priority: 0.93 },
 
     // International package landing pages (high-conversion SEO)
     { url: `${BASE_URL}/dubai-tour-package-from-delhi`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },

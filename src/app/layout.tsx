@@ -11,6 +11,7 @@ import Providers from "@/components/Providers";
 import { OrganizationJsonLd } from "@/components/JsonLd";
 import SecurityShield from "@/components/SecurityShield";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
+import EmailCapturePopup from "@/components/EmailCapturePopup";
 import ActiveUserPing from "@/components/ActiveUserPing";
 
 const inter = Inter({
@@ -181,6 +182,7 @@ export default function RootLayout({
           <ActiveUserPing />
           <SecurityShield />
           <ExitIntentPopup />
+          <EmailCapturePopup />
           <Suspense fallback={<div className="h-24 bg-cream" />}>
             <Header />
           </Suspense>
