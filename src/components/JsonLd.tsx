@@ -92,6 +92,7 @@ export function OrganizationJsonLd() {
           'https://www.threads.net/@ylootrips',
           'https://www.tripadvisor.in/Profile/ylootrips',
           'https://g.co/kgs/ylootrips',
+          'https://www.wikidata.org/wiki/Q139764225',
         ],
         aggregateRating: {
           '@type': 'AggregateRating',
