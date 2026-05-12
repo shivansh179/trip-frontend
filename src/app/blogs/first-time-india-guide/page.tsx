@@ -44,7 +44,7 @@ export default function FirstTimeIndiaGuide() {
         url="https://www.ylootrips.com/blogs/first-time-india-guide"
         image="https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1200&q=80"
         datePublished="2024-10-01"
-        dateModified="2025-04-01"
+        dateModified="2026-05-12"
         keywords={['first time India', 'India travel guide', 'India visa', 'India safety', 'India travel tips']}
         authorName="Priya Verma"
         authorUrl="https://www.ylootrips.com/blogs/authors/priya-verma"

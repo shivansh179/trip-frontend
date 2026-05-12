@@ -69,7 +69,7 @@ export default function IndiaBudgetGuide() {
         url="https://www.ylootrips.com/blogs/2-week-india-trip-budget"
         image="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=1200&q=80"
         datePublished="2024-12-01"
-        dateModified="2025-04-01"
+        dateModified="2026-05-12"
         keywords={['India trip budget', '2 week India cost', 'India travel cost', 'budget India trip', 'India $2000']}
         authorName="Priya Verma"
         authorUrl="https://www.ylootrips.com/blogs/authors/priya-verma"

@@ -96,7 +96,7 @@ export default function IndiaVsThailand() {
         url="https://www.ylootrips.com/blogs/india-vs-thailand"
         image="https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1200&q=80"
         datePublished="2024-11-01"
-        dateModified="2025-04-01"
+        dateModified="2026-05-12"
         keywords={['India vs Thailand', 'India or Thailand first', 'best Asia destination', 'India travel', 'Thailand travel']}
         authorName="Arjun Khanna"
         authorUrl="https://www.ylootrips.com/blogs/authors/arjun-khanna"

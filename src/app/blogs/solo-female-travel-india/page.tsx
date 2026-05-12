@@ -4,8 +4,8 @@ import Image from 'next/image';
 import { ArticleJsonLd, BreadcrumbJsonLd, FaqJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
-  title: "Solo Female Travel in India: Honest Safety Guide 2026",
-  description: "Is India safe for solo female travelers? An honest, practical guide covering safe cities, transport tips, dress code, accommodation, and how to handle unwanted attention.",
+  title: "Solo Female Travel in India: Complete Safety Guide 2026",
+  description: "Is India safe for solo female travelers in 2026? Complete guide: safest cities, transport tips, what to wear, best accommodation, and expert tips from 25,000+ trips. Updated May 2026.",
   keywords: "solo female travel India, is India safe for solo female travelers, India solo female safety guide, women traveling alone India tips",
   openGraph: {
     title: "Solo Female Travel in India: Honest Safety Guide 2026 | YlooTrips",
@@ -51,7 +51,7 @@ export default function SoloFemaleTravelIndia() {
         url="https://www.ylootrips.com/blogs/solo-female-travel-india"
         image="https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?w=1200&q=80"
         datePublished="2024-10-20"
-        dateModified="2025-04-01"
+        dateModified="2026-05-12"
         keywords={['solo female travel India', 'India safety women', 'solo woman India', 'India solo travel tips']}
         authorName="Sneha Joshi"
         authorUrl="https://www.ylootrips.com/blogs/authors/sneha-joshi"
@@ -67,7 +67,7 @@ export default function SoloFemaleTravelIndia() {
 
       <div className="section-container py-12 md:py-16 max-w-3xl">
         <div className="flex items-center gap-3 text-caption text-primary/40 uppercase tracking-wider mb-6">
-          <span>Travel Guides</span><span>·</span><span>April 2025</span><span>·</span><span>10 min read</span>
+          <span>Travel Guides</span><span>·</span><span>Updated May 2026</span><span>·</span><span>10 min read</span>
         </div>
 
         <h1 className="font-display text-display-lg text-primary mb-6">
@@ -165,6 +165,8 @@ export default function SoloFemaleTravelIndia() {
             {[
               { title: 'First Time in India? Complete 2026 Guide', href: '/blogs/first-time-india-guide' },
               { title: 'How to Plan a 2-Week India Trip on a $2,000 Budget', href: '/blogs/2-week-india-trip-budget' },
+              { title: 'Kerala Tour Package — Best for Solo Female Travelers', href: '/kerala-tour-package' },
+              { title: 'Best Honeymoon Destinations in India 2026', href: '/blogs/best-honeymoon-destinations-india' },
             ].map(({ title, href }) => (
               <Link key={href} href={href} className="border border-primary/10 bg-cream-light p-5 hover:border-secondary transition-colors">
                 <p className="text-sm font-medium text-primary">{title}</p>

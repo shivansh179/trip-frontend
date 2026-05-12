@@ -66,7 +66,7 @@ export default function BestTimeToVisitIndia() {
         url="https://www.ylootrips.com/blogs/best-time-to-visit-india"
         image="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1200&q=80"
         datePublished="2024-09-15"
-        dateModified="2025-04-01"
+        dateModified="2026-05-12"
         keywords={['best time visit India', 'India seasons', 'India weather', 'India monsoon', 'India festivals']}
         authorName="Priya Verma"
         authorUrl="https://www.ylootrips.com/blogs/authors/priya-verma"
