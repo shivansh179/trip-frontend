@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     default: "YlooTrips — Safe & Budget India Tour Packages | Domestic & International Trips",
     template: "%s | YlooTrips — India Travel Experts"
   },
-  description: "Book safe & affordable India tour packages with YlooTrips. Budget domestic trips — Manali, Kedarnath, Goa, Kerala, Rajasthan. International tours — Bali, Dubai, Thailand. 4.9★ rated · 25,000+ happy travelers · Custom itinerary in 1 hour. MSME certified.",
+  description: "YlooTrips India Pvt. Ltd. — Book safe & affordable India tour packages. Domestic trips: Manali, Goa, Kashmir, Kerala, Rajasthan. International: Bali, Dubai, Thailand. 4.9★ rated · 25,000+ travelers · MSME certified (UDYAM-HR-05-0141455).",
   keywords: [
     "budget trips India",
     "safe trips India",
