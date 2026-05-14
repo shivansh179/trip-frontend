@@ -348,7 +348,9 @@ export function TourJsonLd({
           })),
         ],
       },
-      // Product schema — enables price + star ratings in Google Shopping & SERPs
+      // Product schema — enables price in Google Shopping & SERPs
+      // Note: aggregateRating intentionally omitted here to avoid "multiple aggregate ratings"
+      // GSC error — it lives on TouristTrip above.
       {
         '@type': 'Product',
         '@id': `${url}#product`,
@@ -363,12 +365,6 @@ export function TourJsonLd({
           availability: 'https://schema.org/InStock',
           url,
           seller: { '@type': 'Organization', name: 'YlooTrips', url: 'https://www.ylootrips.com' },
-        },
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: rating.toString(),
-          reviewCount: reviewCount.toString(),
-          bestRating: '5',
         },
       },
     ],
