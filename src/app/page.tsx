@@ -829,24 +829,6 @@ export default function Home() {
       {/* 10 — Share & Earn: community engagement last */}
       <ShareAndEarn />
 
-      {/* Legal notice strip */}
-      <div className="bg-gray-50 border-t border-gray-200 py-4">
-        <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-center gap-4">
-          <span className="text-xs text-gray-500">By booking with YlooTrips, you agree to our</span>
-          <Link
-            href="/terms"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 hover:text-blue-900 border border-blue-200 bg-blue-50 hover:bg-blue-100 rounded-full px-4 py-1.5 transition-colors"
-          >
-            Terms &amp; Conditions
-          </Link>
-          <Link
-            href="/privacy-policy"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 rounded-full px-4 py-1.5 transition-colors"
-          >
-            Privacy Policy
-          </Link>
-        </div>
-      </div>
 
       {/* Home package booking drawer */}
     </>

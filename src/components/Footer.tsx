@@ -45,30 +45,6 @@ export default function Footer() {
     <>
       <footer className="bg-primary text-cream">
 
-        {/* Trust strip above main footer */}
-        <div className="border-b border-white/8 py-4">
-          <div className="section-container">
-            <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
-              <div className="flex items-center gap-2 text-cream/50">
-                <ShieldCheck className="w-4 h-4 text-green-400 shrink-0" />
-                <span className="text-[10px] uppercase tracking-widest">Govt. Registered Company</span>
-              </div>
-              <div className="flex items-center gap-2 text-cream/50">
-                <Lock className="w-4 h-4 text-accent shrink-0" />
-                <span className="text-[10px] uppercase tracking-widest">256-bit SSL · PCI-DSS Compliant</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-cream/50">
-                <div className="flex gap-0.5">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 fill-[#FBBC05] text-[#FBBC05]" />)}
-                </div>
-                <span className="text-[10px] uppercase tracking-widest">4.9 Google · 2,400+ Reviews</span>
-              </div>
-              <div className="flex items-center gap-2 text-cream/50">
-                <span className="text-[10px] uppercase tracking-widest">Free Cancellation · 14 Days</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Main content */}
         <div className="section-container py-12 md:py-20">
