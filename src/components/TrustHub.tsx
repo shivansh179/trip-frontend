@@ -13,7 +13,7 @@ import {
 const STATS = [
   { value: '3+',  label: 'Years',       sub: 'Est. 2022',    icon: Award,         grad: 'from-amber-400 to-orange-500'  },
   { value: '25K+', label: 'Travelers',   sub: '40+ countries',   icon: Users,         grad: 'from-blue-400 to-violet-500'   },
-  { value: '4.9★', label: 'Rating',      sub: '2,400+ Google reviews',  icon: Star,          grad: 'from-yellow-400 to-amber-500'  },
+  { value: '4.9★', label: 'Rating',      sub: '',  icon: Star,          grad: 'from-yellow-400 to-amber-500'  },
   { value: '98%',  label: 'Satisfaction',sub: 'Would recommend', icon: HeartHandshake,grad: 'from-pink-400 to-rose-500'     },
 ];
 
@@ -22,7 +22,7 @@ const TRUST_BADGES = [
   { icon: Lock,        color: 'text-blue-600',   bg: 'bg-blue-50   border-blue-200',   label: '256-bit SSL',      sub: 'PCI-DSS Compliant' },
   { icon: Clock,       color: 'text-amber-600',  bg: 'bg-amber-50  border-amber-200',  label: 'Reply < 1 Hr',     sub: '7 days a week'     },
   { icon: Phone,       color: 'text-purple-600', bg: 'bg-purple-50 border-purple-200', label: '24/7 Support',     sub: 'Emergency line'    },
-  { icon: Star,        color: 'text-yellow-600', bg: 'bg-yellow-50 border-yellow-200', label: '4.9★ Google',      sub: '2,400+ Google reviews'    },
+  { icon: Star,        color: 'text-yellow-600', bg: 'bg-yellow-50 border-yellow-200', label: '4.9★ Google',      sub: ''    },
 ];
 
 const GUARANTEES = [
@@ -79,7 +79,7 @@ const CERTS = [
   { icon: '🔐', label: 'SSL Secured',      sub: '256-bit encrypted'},
   { icon: '💳', label: 'PCI-DSS',          sub: 'Payment security' },
   { icon: '⏳', label: '3+ Years',        sub: 'Since 2022'       },
-  { icon: '⭐', label: '4.9★ Google',      sub: '2,400+ reviews'   },
+  { icon: '⭐', label: '4.9★ Google',      sub: ''   },
 ];
 
 const FLAGS = ['🇺🇸','🇬🇧','🇦🇺','🇨🇦','🇩🇪','🇫🇷','🇳🇱','🇯🇵','🇸🇬','🇨🇭','🇸🇪','🇳🇿','🇦🇹','🇮🇹','🇪🇸','🇮🇱','🇰🇷','🇿🇦','🇧🇷','🇵🇹'];

@@ -476,7 +476,7 @@ export default function TrendingPackages() {
             { icon: '🔒', title: 'Secure Checkout', sub: '256-bit SSL · PCI-DSS' },
             { icon: '🆓', title: 'Free Cancellation', sub: 'Up to 14 days before' },
             { icon: '💬', title: '24/7 Support', sub: 'WhatsApp · Call · Email' },
-            { icon: '⭐', title: '4.9/5 Rating', sub: '2,400+ Google reviews' },
+            { icon: '⭐', title: '4.9/5 Rating', sub: '' },
           ].map(({ icon, title, sub }) => (
             <div key={title} className="flex items-start gap-3 bg-white rounded-xl p-4 shadow-sm border border-primary/6">
               <span className="text-2xl shrink-0">{icon}</span>

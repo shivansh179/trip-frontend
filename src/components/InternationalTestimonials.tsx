@@ -183,7 +183,7 @@ const reviews = [
 const stats = [
   { value: '25,000+', label: 'Happy Travelers' },
   { value: '4.9 ★', label: 'Average Rating' },
-  { value: '2,400+', label: 'Google Reviews' },
+  { value: '4.9★', label: 'Google Rating' },
   { value: '40+', label: 'Countries Served' },
 ];
 
@@ -599,7 +599,7 @@ export default function InternationalTestimonials() {
               <div className="flex gap-0.5">
                 {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-[#FBBC05] text-[#FBBC05]" />)}
               </div>
-              <span className="text-cream/50 text-xs">4.9 · 2,400+ verified reviews</span>
+              <span className="text-cream/50 text-xs">4.9★ Google Rating</span>
             </div>
           </div>
           <button
