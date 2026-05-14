@@ -153,23 +153,6 @@ export default function TrustHub() {
           ))}
         </div>
 
-        {/* ── Trust badges ────────────────────────────────────────────────── */}
-        <div>
-          <p className="text-center text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-5">Verified credentials</p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {TRUST_BADGES.map(({ icon: Icon, label, sub }) => (
-              <div key={label} className="flex items-center gap-2.5 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3">
-                <div className="w-8 h-8 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center shrink-0">
-                  <Icon size={16} className="text-gray-600" />
-                </div>
-                <div>
-                  <div className="text-[11px] font-bold text-gray-800 uppercase tracking-wide leading-none">{label}</div>
-                  <div className="text-[9px] text-gray-500 leading-none mt-0.5">{sub}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* ── Why us — feature cards ──────────────────────────────────────── */}
         <div>
