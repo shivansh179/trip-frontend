@@ -45,7 +45,7 @@ const certifications = [
   { label: 'SSL Secured', sub: '256-bit encryption', icon: '🔐' },
   { label: 'PCI-DSS', sub: 'Payment security', icon: '💳' },
   { label: '3+ Years', sub: 'In business since 2022', icon: '⏳' },
-  { label: '4.9★ Google', sub: '2,400+ verified reviews', icon: '⭐' },
+  { label: '4.9★ Google', sub: '2,400+ Google reviews', icon: '⭐' },
 ];
 
 export default function GuaranteeSection() {

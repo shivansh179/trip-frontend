@@ -183,7 +183,7 @@ const reviews = [
 const stats = [
   { value: '25,000+', label: 'Happy Travelers' },
   { value: '4.9 ★', label: 'Average Rating' },
-  { value: '2,400+', label: 'Verified Reviews' },
+  { value: '2,400+', label: 'Google Reviews' },
   { value: '40+', label: 'Countries Served' },
 ];
 

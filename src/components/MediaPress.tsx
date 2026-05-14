@@ -2,7 +2,7 @@
 export default function MediaPress() {
   const stats = [
     { value: '25,000+', label: 'Happy Travelers' },
-    { value: '4.9★',    label: '2,400+ Reviews' },
+    { value: '4.9★',    label: '2,400+ Google Reviews' },
     { value: '150+',    label: 'Destinations' },
     { value: '40+',     label: 'Countries Served' },
     { value: '2022',    label: 'Founded' },
