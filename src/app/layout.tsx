@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter, Playfair_Display } from 'next/font/google';
 import "./globals.css";
 import Header from "@/components/Header";
@@ -193,6 +195,8 @@ export default function RootLayout({
           <WhatsAppButton phoneNumber="918427831127" />
           <MobileStickyCTA />
         </Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
