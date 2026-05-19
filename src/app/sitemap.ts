@@ -51,6 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/offbeat`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${BASE_URL}/daycations`, lastModified: now, changeFrequency: 'weekly', priority: 0.78 },
     { url: `${BASE_URL}/hidden-spots`, lastModified: now, changeFrequency: 'weekly', priority: 0.78 },
+    { url: `${BASE_URL}/cashback`, lastModified: now, changeFrequency: 'weekly', priority: 0.82 },
     { url: `${BASE_URL}/share-and-earn`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${BASE_URL}/stories`, lastModified: now, changeFrequency: 'weekly', priority: 0.72 },
 
