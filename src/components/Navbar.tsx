@@ -21,6 +21,12 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
   // Nav links depend on visitor type:
   // Indian   → shows Domestic + International
   // Foreigner → hides International outbound (they only care about India trips)

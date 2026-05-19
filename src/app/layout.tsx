@@ -186,7 +186,7 @@ export default function RootLayout({
           <Suspense fallback={<div className="h-24 bg-cream" />}>
             <Header />
           </Suspense>
-          <main className="min-h-screen pb-16 md:pb-0">
+          <main className="min-h-screen pb-40 md:pb-0">
             {children}
           </main>
           <Footer />

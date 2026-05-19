@@ -565,6 +565,7 @@ function CheckoutContent() {
                                                 </label>
                                                 <input
                                                     type="tel"
+                                                    inputMode="tel"
                                                     required
                                                     value={formData.customerPhone}
                                                     onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
@@ -771,7 +772,7 @@ function CheckoutContent() {
                             </button>
                         </div>
 
-                        <div className="lg:sticky lg:top-24 h-fit order-last lg:order-none">
+                        <div className="lg:sticky lg:top-24 h-fit order-first lg:order-none">
                             <div className="bg-cream-light p-6 md:p-8 border border-primary/10">
                                 <h2 className="text-xl md:text-2xl font-light mb-4 md:mb-6">Order Summary</h2>
 

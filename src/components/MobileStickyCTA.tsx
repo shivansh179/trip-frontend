@@ -151,8 +151,8 @@ export default function MobileStickyCTA() {
               >
                 {/* Pulsing ring */}
                 <span
-                  className="absolute inset-0 rounded-2xl animate-ping opacity-30 pointer-events-none"
-                  style={{ background: 'linear-gradient(135deg, #C9A96E, #E2C68F)', animationDuration: '2s' }}
+                  className="absolute inset-0 rounded-2xl opacity-30 pointer-events-none"
+                  style={{ background: 'linear-gradient(135deg, #C9A96E, #E2C68F)', animation: 'ping 2s cubic-bezier(0,0,0.2,1) 3' }}
                 />
                 <div
                   className="relative flex flex-col items-center gap-0.5 px-3 pt-2.5 pb-2 rounded-2xl"
