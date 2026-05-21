@@ -16,24 +16,26 @@ export const metadata: Metadata = {
 };
 
 const DESTINATIONS = [
-  { slug: 'bali', name: 'Bali (Indonesia)', flag: '🇮🇩', type: 'Visa on Arrival', fee: 'Free', time: 'Instant', easy: true },
-  { slug: 'dubai', name: 'Dubai (UAE)', flag: '🇦🇪', type: 'E-Visa', fee: '₹3,500', time: '3–5 days', easy: true },
-  { slug: 'thailand', name: 'Thailand', flag: '🇹🇭', type: 'Visa on Arrival', fee: '₹3,200', time: 'Instant', easy: true },
-  { slug: 'singapore', name: 'Singapore', flag: '🇸🇬', type: 'E-Visa', fee: 'Free', time: '3–5 days', easy: true },
-  { slug: 'maldives', name: 'Maldives', flag: '🇲🇻', type: 'Visa on Arrival', fee: 'Free', time: 'Instant', easy: true },
-  { slug: 'malaysia', name: 'Malaysia', flag: '🇲🇾', type: 'Visa Free', fee: 'Free', time: 'Instant', easy: true },
-  { slug: 'vietnam', name: 'Vietnam', flag: '🇻🇳', type: 'E-Visa', fee: '₹2,100', time: '3 days', easy: true },
-  { slug: 'sri-lanka', name: 'Sri Lanka', flag: '🇱🇰', type: 'E-Visa (ETA)', fee: '₹1,100', time: 'Same day', easy: true },
-  { slug: 'nepal', name: 'Nepal', flag: '🇳🇵', type: 'Visa on Arrival', fee: '₹950', time: 'Instant', easy: true },
-  { slug: 'europe', name: 'Europe (Schengen)', flag: '🇪🇺', type: 'Embassy Visa', fee: '₹7,700', time: '15 days', easy: false },
-  { slug: 'uk', name: 'United Kingdom', flag: '🇬🇧', type: 'Online Visa', fee: '₹12,500', time: '15 days', easy: false },
-  { slug: 'usa', name: 'USA', flag: '🇺🇸', type: 'Embassy Visa', fee: '₹14,000', time: '30–90 days', easy: false },
-  { slug: 'canada', name: 'Canada', flag: '🇨🇦', type: 'Online Visa', fee: '₹7,200', time: '8–12 weeks', easy: false },
-  { slug: 'australia', name: 'Australia', flag: '🇦🇺', type: 'eVisitor/ETA', fee: '₹3,000', time: '24h–7 days', easy: false },
-  { slug: 'japan', name: 'Japan', flag: '🇯🇵', type: 'Embassy Visa', fee: 'Free', time: '5 days', easy: false },
-  { slug: 'turkey', name: 'Turkey', flag: '🇹🇷', type: 'E-Visa', fee: '₹3,100', time: 'Same day', easy: true },
-  { slug: 'kenya', name: 'Kenya', flag: '🇰🇪', type: 'E-Visa', fee: '₹4,200', time: '3 days', easy: true },
-  { slug: 'egypt', name: 'Egypt', flag: '🇪🇬', type: 'Visa on Arrival', fee: '₹2,100', time: 'Instant', easy: true },
+  // Easy access — visa on arrival / e-visa / visa-free
+  { slug: 'bali',       name: 'Bali (Indonesia)',   flag: '🇮🇩', type: 'Visa Free',       fee: 'Free',     feeNote: 'No fee',         time: 'Instant',    easy: true  },
+  { slug: 'thailand',   name: 'Thailand',            flag: '🇹🇭', type: 'Visa Exemption',  fee: 'Free',     feeNote: 'No fee',         time: 'Instant',    easy: true  },
+  { slug: 'maldives',   name: 'Maldives',            flag: '🇲🇻', type: 'Visa on Arrival', fee: 'Free',     feeNote: 'No fee',         time: 'Instant',    easy: true  },
+  { slug: 'malaysia',   name: 'Malaysia',            flag: '🇲🇾', type: 'Visa Free',       fee: 'Free',     feeNote: 'No fee',         time: 'Instant',    easy: true  },
+  { slug: 'nepal',      name: 'Nepal',               flag: '🇳🇵', type: 'Visa Free',       fee: 'Free',     feeNote: 'No visa needed', time: 'Instant',    easy: true  },
+  { slug: 'sri-lanka',  name: 'Sri Lanka',           flag: '🇱🇰', type: 'E-Visa (ETA)',    fee: 'Free',     feeNote: 'Free for Indians', time: 'Same day', easy: true  },
+  { slug: 'singapore',  name: 'Singapore',           flag: '🇸🇬', type: 'E-Visa (IVP)',    fee: 'Free',     feeNote: 'No fee',         time: '3–5 days',   easy: true  },
+  { slug: 'vietnam',    name: 'Vietnam',             flag: '🇻🇳', type: 'E-Visa',          fee: '₹2,100',   feeNote: '~$25',           time: '3 days',     easy: true  },
+  { slug: 'dubai',      name: 'Dubai (UAE)',         flag: '🇦🇪', type: 'E-Visa',          fee: '₹8,000',   feeNote: 'AED 350',        time: '3–5 days',   easy: true  },
+  { slug: 'turkey',     name: 'Turkey',              flag: '🇹🇷', type: 'E-Visa',          fee: '₹4,500',   feeNote: '~$54',           time: 'Same day',   easy: true  },
+  { slug: 'kenya',      name: 'Kenya',               flag: '🇰🇪', type: 'E-Visa (eTA)',    fee: '₹4,300',   feeNote: '~$51.80',        time: '3 days',     easy: true  },
+  { slug: 'egypt',      name: 'Egypt',               flag: '🇪🇬', type: 'Visa on Arrival', fee: '₹2,100',   feeNote: '~$25',           time: 'Instant',    easy: true  },
+  // Embassy / online application
+  { slug: 'europe',     name: 'Europe (Schengen)',   flag: '🇪🇺', type: 'Embassy Visa',    fee: '₹8,200',   feeNote: '€90',            time: '15 days',    easy: false },
+  { slug: 'uk',         name: 'United Kingdom',      flag: '🇬🇧', type: 'Online Visa',     fee: '₹12,500',  feeNote: '£115',           time: '15 days',    easy: false },
+  { slug: 'usa',        name: 'USA',                 flag: '🇺🇸', type: 'Embassy Visa',    fee: '₹15,400',  feeNote: '$185',           time: '30–90 days', easy: false },
+  { slug: 'canada',     name: 'Canada',              flag: '🇨🇦', type: 'Online Visa',     fee: '₹6,200',   feeNote: 'CAD $100',       time: '8–12 weeks', easy: false },
+  { slug: 'australia',  name: 'Australia',           flag: '🇦🇺', type: 'Tourist Visa',    fee: '₹11,000',  feeNote: 'AUD $195',       time: '1–7 days',   easy: false },
+  { slug: 'japan',      name: 'Japan',               flag: '🇯🇵', type: 'Embassy Visa',    fee: '₹1,700',   feeNote: 'JPY 3,000',      time: '5 days',     easy: false },
 ];
 
 const easyDests = DESTINATIONS.filter((d) => d.easy);
@@ -75,7 +77,12 @@ export default function VisaHubPage() {
                   <p className="font-semibold text-gray-900 text-sm">{d.name}</p>
                   <p className="text-xs text-green-600 font-medium">{d.type}</p>
                   <div className="flex items-center gap-3 mt-1">
-                    <span className="text-[10px] text-gray-400">Fee: {d.fee}</span>
+                    <span className={`text-[11px] font-semibold ${d.fee === 'Free' ? 'text-green-600' : 'text-gray-700'}`}>
+                      {d.fee}
+                    </span>
+                    {d.fee !== 'Free' && (
+                      <span className="text-[10px] text-gray-400">{d.feeNote}</span>
+                    )}
                     <span className="text-[10px] text-gray-400">· {d.time}</span>
                   </div>
                 </div>
@@ -103,7 +110,8 @@ export default function VisaHubPage() {
                   <p className="font-semibold text-gray-900 text-sm">{d.name}</p>
                   <p className="text-xs text-orange-600 font-medium">{d.type}</p>
                   <div className="flex items-center gap-3 mt-1">
-                    <span className="text-[10px] text-gray-400">Fee: {d.fee}</span>
+                    <span className="text-[11px] font-semibold text-gray-700">{d.fee}</span>
+                    <span className="text-[10px] text-gray-400">{d.feeNote}</span>
                     <span className="text-[10px] text-gray-400">· {d.time}</span>
                   </div>
                 </div>
