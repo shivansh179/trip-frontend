@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = 'nodejs';
-
 // ── Bot / Scraper User-Agent patterns ─────────────────────────────────────────
 // Block aggressive AI scrapers & malicious bots. Legitimate search engines
 // (Googlebot, Bingbot) are intentionally allowed.
