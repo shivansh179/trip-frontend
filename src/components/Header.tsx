@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { Menu, X, Sparkles, Ticket, ChevronRight, Sun, Moon } from 'lucide-react';
+import { Menu, X, Sparkles, Ticket, ChevronRight, Sun, Moon, Heart } from 'lucide-react';
 import FlashSaleBanner from '@/components/FlashSaleBanner';
 
 export default function Header() {
@@ -100,6 +100,16 @@ export default function Header() {
                                     {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
                                 </button>
                             )}
+                            {/* Wishlist */}
+                            <Link href="/wishlist"
+                                aria-label="Wishlist"
+                                className={`hidden md:flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300 ${
+                                    hasHero && !isScrolled
+                                        ? 'text-white/80 bg-white/10 hover:bg-white/20 border border-white/20'
+                                        : 'text-gray-700 bg-gray-100 hover:bg-gray-200 dark:text-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700'
+                                }`}>
+                                <Heart size={15} />
+                            </Link>
                             {/* Track Booking */}
                             <Link href="/my-booking"
                                 className={`hidden md:flex items-center gap-1.5 px-3 py-2 rounded-full text-[11px] font-bold uppercase tracking-wider border transition-all duration-300 ${

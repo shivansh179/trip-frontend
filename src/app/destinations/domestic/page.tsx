@@ -23,7 +23,7 @@ interface DomesticTrip {
   slug: string;
   title: string;
   location: string;
-  region: 'North India' | 'South India' | 'Himalayan Region' | 'Northeast India' | 'East India' | 'West India';
+  region: 'North India' | 'South India' | 'Himalayan Region' | 'Northeast India' | 'East India' | 'West India' | 'International';
   category: string;
   duration: string;
   nights: number;
@@ -35,6 +35,7 @@ interface DomesticTrip {
   highlights: string[];
   includes: string[];
   itinerary: { day: string; desc: string }[];
+  packageHref?: string; // for international packages
 }
 
 const DOMESTIC_TRIPS: DomesticTrip[] = [
@@ -933,6 +934,21 @@ const DOMESTIC_TRIPS: DomesticTrip[] = [
   },
 ];
 
+// ── International Trips (package pages) ──────────────────────────────────────
+const INTL_TRIPS: DomesticTrip[] = [
+  { slug: 'bali-honeymoon-package', title: 'Bali Honeymoon Package', location: 'Bali, Indonesia', region: 'International', category: 'Honeymoon', duration: '6 Nights / 7 Days', nights: 6, priceINR: 52499, originalPriceINR: 69999, image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80', badge: 'Most Popular', highlights: ['Ubud rice terraces & Monkey Forest', 'Tanah Lot sunset temple', 'Seminyak beach clubs', 'Balinese spa & cooking class'], includes: ['Return flights', '6 nights resort stay', 'Daily breakfast', 'Private transfers'], itinerary: [], packageHref: '/bali-honeymoon-package' },
+  { slug: 'dubai-tour-package-from-delhi', title: 'Dubai Tour Package', location: 'Dubai, UAE', region: 'International', category: 'Holiday Package', duration: '5 Nights / 6 Days', nights: 5, priceINR: 34999, originalPriceINR: 44999, image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80', badge: 'Best Value', highlights: ['Burj Khalifa observation deck', 'Desert safari with BBQ dinner', 'Dubai Mall & fountain show', 'Palm Jumeirah & Atlantis'], includes: ['Return flights', '5 nights hotel', 'Daily breakfast', 'Visa on arrival'], itinerary: [], packageHref: '/dubai-tour-package-from-delhi' },
+  { slug: 'thailand-budget-trip', title: 'Thailand Budget Trip', location: 'Bangkok & Phuket, Thailand', region: 'International', category: 'Adventure Tour', duration: '5 Nights / 6 Days', nights: 5, priceINR: 24999, originalPriceINR: 32999, image: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=800&q=80', badge: 'Budget Pick', highlights: ['Grand Palace & Wat Pho', 'Phi Phi Islands by speedboat', 'Elephant sanctuary visit', 'Patong Beach & nightlife'], includes: ['Return flights', '5 nights hotel', 'Daily breakfast', 'All transfers'], itinerary: [], packageHref: '/thailand-budget-trip' },
+  { slug: 'singapore-tour-package', title: 'Singapore Tour Package', location: 'Singapore', region: 'International', category: 'Family Holiday', duration: '4 Nights / 5 Days', nights: 4, priceINR: 42999, originalPriceINR: 54999, image: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&q=80', badge: 'Family Fave', highlights: ['Gardens by the Bay light show', 'Universal Studios Singapore', 'Sentosa Island cable car', 'Marina Bay Sands rooftop'], includes: ['Return flights', '4 nights hotel', 'Daily breakfast', 'MRT card'], itinerary: [], packageHref: '/singapore-tour-package' },
+  { slug: 'maldives-luxury-package', title: 'Maldives Luxury Package', location: 'Maldives', region: 'International', category: 'Luxury', duration: '4 Nights / 5 Days', nights: 4, priceINR: 69999, originalPriceINR: 89999, image: 'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=800&q=80', badge: 'Luxury', highlights: ['Overwater villa', 'Coral reef snorkelling', 'Sunset dolphin cruise', 'Private beach dining'], includes: ['Return flights', '4 nights overwater villa', 'All meals', 'Speedboat transfers'], itinerary: [], packageHref: '/maldives-luxury-package' },
+  { slug: 'vietnam-tour-package', title: 'Vietnam Tour Package', location: 'Hanoi · Ha Long Bay · Hoi An', region: 'International', category: 'Adventure Tour', duration: '6 Nights / 7 Days', nights: 6, priceINR: 38999, originalPriceINR: 49999, image: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80', badge: 'Trending', highlights: ['Ha Long Bay overnight cruise', 'Hoi An Ancient Town lanterns', 'Cu Chi Tunnels', 'Vietnamese cooking class'], includes: ['Return flights', '6 nights hotels', 'Ha Long cruise', 'Internal flights'], itinerary: [], packageHref: '/vietnam-tour-package' },
+  { slug: 'sri-lanka-tour-package', title: 'Sri Lanka Tour Package', location: 'Colombo · Kandy · Ella · Sigiriya', region: 'International', category: 'Nature Tour', duration: '5 Nights / 6 Days', nights: 5, priceINR: 28999, originalPriceINR: 37999, image: 'https://images.unsplash.com/photo-1588614959060-4d144f28b207?w=800&q=80', badge: 'Hidden Gem', highlights: ['Sigiriya Lion Rock UNESCO', 'Kandy–Ella scenic train', 'Temple of the Tooth', 'Galle Fort UNESCO'], includes: ['Return flights', '5 nights hotels', 'Train tickets', 'All transfers'], itinerary: [], packageHref: '/sri-lanka-tour-package' },
+  { slug: 'nepal-tour-package', title: 'Nepal Tour Package', location: 'Kathmandu · Pokhara · Chitwan', region: 'International', category: 'Adventure Tour', duration: '5 Nights / 6 Days', nights: 5, priceINR: 18999, originalPriceINR: 24999, image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80', badge: 'No Visa Needed', highlights: ['Nagarkot Himalayan sunrise', 'Pokhara Phewa Lake', 'Chitwan rhino safari', 'Boudhanath Stupa UNESCO'], includes: ['Return flights', '5 nights hotels', 'All transfers', 'Nepal coordinator'], itinerary: [], packageHref: '/nepal-tour-package' },
+  { slug: 'europe-tour-package-from-india', title: 'Europe Tour Package', location: 'Paris · Rome · Barcelona · Amsterdam · Prague', region: 'International', category: 'Sightseeing Tour', duration: '10 Nights / 11 Days', nights: 10, priceINR: 124999, originalPriceINR: 159999, image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=800&q=80', badge: 'Dream Trip', highlights: ['Eiffel Tower & Louvre, Paris', 'Colosseum & Vatican, Rome', 'Sagrada Família, Barcelona', 'Charles Bridge, Prague'], includes: ['Return flights', '10 nights hotels', 'Inter-city trains/flights', 'Schengen visa support'], itinerary: [], packageHref: '/europe-tour-package-from-india' },
+];
+
+const ALL_TRIPS = [...DOMESTIC_TRIPS, ...INTL_TRIPS];
+
 // ── Domestic Booking Drawer ───────────────────────────────────────────────────
 function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: DomesticTrip; onClose: () => void; initialTab?: 'pay' | 'callback' }) {
   const [tab, setTab] = useState<'pay' | 'callback'>(initialTab);
@@ -1376,12 +1392,21 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
 
         {/* CTA */}
         <div className="pt-3 border-t border-primary/8">
-          <Link
-            href={`/destinations/domestic/${trip.slug}`}
-            className="flex items-center justify-center gap-1.5 bg-gray-900 text-white text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl hover:bg-gray-800 transition-colors w-full"
-          >
-            <CreditCard size={12} /> Book Now
-          </Link>
+          {trip.packageHref ? (
+            <Link
+              href={trip.packageHref}
+              className="flex items-center justify-center gap-1.5 bg-gray-900 text-white text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl hover:bg-gray-800 transition-colors w-full"
+            >
+              <ArrowUpRight size={12} /> View Package
+            </Link>
+          ) : (
+            <Link
+              href={`/destinations/domestic/${trip.slug}`}
+              className="flex items-center justify-center gap-1.5 bg-gray-900 text-white text-xs font-bold uppercase tracking-wide py-2.5 rounded-xl hover:bg-gray-800 transition-colors w-full"
+            >
+              <CreditCard size={12} /> Book Now
+            </Link>
+          )}
         </div>
       </div>
     </div>
@@ -1446,13 +1471,59 @@ function DomesticDestinationsContent() {
   const isInternational = visitor === 'foreigner';
   const [activeRegion, setActiveRegion] = useState('All India');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [tripTypeFilter, setTripTypeFilter] = useState<'all' | 'domestic' | 'international'>('domestic');
+  const [budgetFilter, setBudgetFilter] = useState<string>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const TRIPS_PER_PAGE = 12;
   const searchParams = useSearchParams();
   const tagQuery = searchParams.get('q')?.toLowerCase().trim() ?? '';
 
   const filtered = useMemo(() => {
-    let trips = activeRegion === 'All India'
-      ? DOMESTIC_TRIPS
-      : DOMESTIC_TRIPS.filter((t) => t.region === activeRegion);
+    // Pick base pool based on type toggle
+    let trips: DomesticTrip[] =
+      tripTypeFilter === 'all' ? ALL_TRIPS :
+      tripTypeFilter === 'international' ? INTL_TRIPS :
+      DOMESTIC_TRIPS;
+
+    // Region filter (only meaningful for domestic)
+    if (tripTypeFilter === 'domestic' && activeRegion !== 'All India') {
+      trips = trips.filter((t) => t.region === activeRegion);
+    }
+
+    // Budget filter
+    if (budgetFilter !== 'all') {
+      trips = trips.filter((t) => {
+        if (budgetFilter === 'under10') return t.priceINR < 10000;
+        if (budgetFilter === '10to25') return t.priceINR >= 10000 && t.priceINR < 25000;
+        if (budgetFilter === '25to50') return t.priceINR >= 25000 && t.priceINR < 50000;
+        if (budgetFilter === 'above50') return t.priceINR >= 50000;
+        return true;
+      });
+    }
+
+    // Category / tag filter
+    const CAT_MAP: Record<string, string[]> = {
+      adventure: ['Adventure Tour', 'Adventure', 'Trek', 'Bike Trip', 'Snow Tour'],
+      family: ['Family Holiday', 'Holiday Package', 'Sightseeing Tour'],
+      honeymoon: ['Honeymoon'],
+      beach: ['Beach & Water Sports', 'Island Escapes'],
+      trek: ['Trek'],
+      pilgrimage: ['Pilgrimage'],
+      luxury: ['Luxury'],
+      budget: [],
+      nature: ['Nature Tour'],
+    };
+    if (categoryFilter !== 'all') {
+      if (categoryFilter === 'budget') {
+        trips = trips.filter((t) => t.priceINR < 12000);
+      } else {
+        const cats = CAT_MAP[categoryFilter] ?? [];
+        trips = trips.filter((t) => cats.includes(t.category));
+      }
+    }
+
+    // Search query
     if (tagQuery) {
       trips = trips.filter((t) =>
         t.title.toLowerCase().includes(tagQuery) ||
@@ -1460,8 +1531,15 @@ function DomesticDestinationsContent() {
         t.category.toLowerCase().includes(tagQuery)
       );
     }
+
     return trips;
-  }, [activeRegion, tagQuery]);
+  }, [activeRegion, tagQuery, tripTypeFilter, budgetFilter, categoryFilter]);
+
+  const totalPages = Math.ceil(filtered.length / TRIPS_PER_PAGE);
+  const paginatedTrips = filtered.slice((currentPage - 1) * TRIPS_PER_PAGE, currentPage * TRIPS_PER_PAGE);
+
+  // Reset page when filters change
+  const resetPage = () => setCurrentPage(1);
 
   return (
     <>
@@ -1702,17 +1780,81 @@ function DomesticDestinationsContent() {
         </div>
       )}
 
-      {/* Region filter */}
-      <section className="py-4 md:py-5 bg-cream-dark border-b border-primary/8 sticky top-16 z-30">
-        <div className="section-container">
-          <div className="flex gap-2 overflow-x-auto scrollbar-none pb-0.5">
-            {indiaRegions.map((r) => (
-              <button key={r.value} onClick={() => setActiveRegion(r.value)}
-                className={`shrink-0 px-4 py-2 text-xs uppercase tracking-widest font-medium transition-all duration-200 rounded-sm ${activeRegion === r.value ? 'bg-terracotta text-cream shadow-sm' : 'bg-cream text-primary/70 hover:bg-terracotta/10 hover:text-terracotta'}`}>
-                {r.label}
+      {/* Filter bar */}
+      <section className="bg-white border-b border-gray-200 sticky top-16 z-30 shadow-sm">
+        <div className="section-container py-3 space-y-3">
+
+          {/* Row 1: Trip type + budget */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Trip type */}
+            <div className="flex bg-gray-100 rounded-full p-0.5 shrink-0">
+              {([['all','🌐 All Trips'],['domestic','🇮🇳 Domestic'],['international','✈️ International']] as const).map(([val, label]) => (
+                <button key={val} onClick={() => { setTripTypeFilter(val); resetPage(); }}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${tripTypeFilter === val ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            <div className="w-px h-5 bg-gray-200 hidden sm:block" />
+
+            {/* Budget chips */}
+            <div className="flex gap-1.5 flex-wrap">
+              <span className="text-[10px] text-gray-400 uppercase tracking-widest self-center hidden sm:block">Budget</span>
+              {[
+                { value: 'all', label: 'Any' },
+                { value: 'under10', label: 'Under ₹10k' },
+                { value: '10to25', label: '₹10k–₹25k' },
+                { value: '25to50', label: '₹25k–₹50k' },
+                { value: 'above50', label: '₹50k+' },
+              ].map((b) => (
+                <button key={b.value} onClick={() => { setBudgetFilter(b.value); resetPage(); }}
+                  className={`px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${budgetFilter === b.value ? 'bg-terracotta text-white border-terracotta' : 'border-gray-200 text-gray-600 hover:border-terracotta hover:text-terracotta bg-white'}`}>
+                  {b.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Row 2: Category tags + Region */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[10px] text-gray-400 uppercase tracking-widest self-center hidden sm:block">Type</span>
+            {[
+              { value: 'all', label: '🏷️ All' },
+              { value: 'adventure', label: '🧗 Adventure' },
+              { value: 'family', label: '👨‍👩‍👧 Family' },
+              { value: 'honeymoon', label: '💑 Honeymoon' },
+              { value: 'beach', label: '🏖️ Beach' },
+              { value: 'trek', label: '⛰️ Trek' },
+              { value: 'pilgrimage', label: '🛕 Pilgrimage' },
+              { value: 'nature', label: '🌿 Nature' },
+              { value: 'luxury', label: '✨ Luxury' },
+              { value: 'budget', label: '💰 Budget-Friendly' },
+            ].map((c) => (
+              <button key={c.value} onClick={() => { setCategoryFilter(c.value); resetPage(); }}
+                className={`px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${categoryFilter === c.value ? 'bg-primary text-white border-primary' : 'border-gray-200 text-gray-600 hover:border-primary hover:text-primary bg-white'}`}>
+                {c.label}
               </button>
             ))}
+
+            {/* Region filter — only show for domestic */}
+            {tripTypeFilter === 'domestic' && (
+              <>
+                <div className="w-px h-4 bg-gray-200 mx-1" />
+                {indiaRegions.slice(1).map((r) => (
+                  <button key={r.value} onClick={() => { setActiveRegion(r.value); resetPage(); }}
+                    className={`shrink-0 px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${activeRegion === r.value ? 'bg-secondary text-white border-secondary' : 'border-gray-200 text-gray-600 hover:border-secondary hover:text-secondary bg-white'}`}>
+                    {r.label}
+                  </button>
+                ))}
+                {activeRegion !== 'All India' && (
+                  <button onClick={() => { setActiveRegion('All India'); resetPage(); }}
+                    className="px-2 py-1 text-xs text-gray-400 hover:text-gray-700 font-medium">✕ Clear region</button>
+                )}
+              </>
+            )}
           </div>
+
         </div>
       </section>
 
@@ -1722,25 +1864,59 @@ function DomesticDestinationsContent() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-10 md:mb-14">
             <div>
               <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-2">
-                {activeRegion === 'All India' ? (isInternational ? 'Choose Your India Experience' : 'Across India') : activeRegion}
+                {tripTypeFilter === 'international' ? 'International Packages' : tripTypeFilter === 'all' ? 'All Trips' : activeRegion === 'All India' ? (isInternational ? 'Choose Your India Experience' : 'Across India') : activeRegion}
               </p>
               <h2 className="font-display text-display-lg text-primary">
-                {activeRegion === 'All India' ? (isInternational ? 'Where will your India story begin?' : 'Where in India?') : `Explore ${activeRegion}`}
+                {tripTypeFilter === 'international' ? 'International Destinations' : tripTypeFilter === 'all' ? 'Explore Every Trip' : activeRegion === 'All India' ? (isInternational ? 'Where will your India story begin?' : 'Where in India?') : `Explore ${activeRegion}`}
               </h2>
             </div>
-            <p className="text-sm text-primary/50">{filtered.length} trip{filtered.length !== 1 ? 's' : ''}</p>
+            <p className="text-sm text-primary/50">{filtered.length} trip{filtered.length !== 1 ? 's' : ''}{totalPages > 1 ? ` · Page ${currentPage} of ${totalPages}` : ''}</p>
           </div>
 
-          {filtered.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-              {filtered.map((trip) => <TripCard key={trip.slug} trip={trip} />)}
-            </div>
+          {paginatedTrips.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                {paginatedTrips.map((trip) => (
+                  trip.packageHref ? (
+                    <a key={trip.slug} href={trip.packageHref} className="block group">
+                      <TripCard trip={trip} />
+                    </a>
+                  ) : (
+                    <TripCard key={trip.slug} trip={trip} />
+                  )
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-12">
+                  <button onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 text-sm font-semibold rounded-full border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                    ← Prev
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button key={page} onClick={() => { setCurrentPage(page); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      className={`w-9 h-9 rounded-full text-sm font-bold transition-all ${page === currentPage ? 'bg-terracotta text-white shadow-sm' : 'border border-gray-200 text-gray-600 hover:bg-gray-100'}`}>
+                      {page}
+                    </button>
+                  ))}
+
+                  <button onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 text-sm font-semibold rounded-full border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                    Next →
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-20">
-              <p className="text-4xl mb-4">🏔️</p>
-              <p className="font-display text-2xl text-primary mb-2">No trips in this region yet</p>
-              <p className="text-secondary text-sm mb-6">We're adding more destinations soon. In the meantime, explore all trips.</p>
-              <button onClick={() => setActiveRegion('All India')} className="btn-primary">View All Trips</button>
+              <p className="text-4xl mb-4">🔍</p>
+              <p className="font-display text-2xl text-primary mb-2">No trips match your filters</p>
+              <p className="text-secondary text-sm mb-6">Try adjusting the filters above to see more results.</p>
+              <button onClick={() => { setTripTypeFilter('domestic'); setBudgetFilter('all'); setCategoryFilter('all'); setActiveRegion('All India'); resetPage(); }} className="btn-primary">Clear All Filters</button>
             </div>
           )}
         </div>

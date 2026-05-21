@@ -90,6 +90,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/manali-tour-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
     { url: `${BASE_URL}/goa-tour-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
     { url: `${BASE_URL}/kerala-tour-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+
+    // New domestic package landing pages
+    { url: `${BASE_URL}/himachal-tour-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${BASE_URL}/uttarakhand-tour-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${BASE_URL}/rajasthan-tour-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${BASE_URL}/andaman-tour-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${BASE_URL}/ladakh-tour-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${BASE_URL}/spiti-valley-tour-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.92 },
+
+    // New international package landing pages
+    { url: `${BASE_URL}/europe-tour-package-from-india`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${BASE_URL}/vietnam-tour-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${BASE_URL}/sri-lanka-tour-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${BASE_URL}/nepal-tour-package`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+
+    // Feature pages
+    { url: `${BASE_URL}/group-travel`, lastModified: now, changeFrequency: 'monthly', priority: 0.88 },
+    { url: `${BASE_URL}/travel-insurance`, lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${BASE_URL}/packing-checklist`, lastModified: now, changeFrequency: 'monthly', priority: 0.82 },
+    { url: `${BASE_URL}/best-time-to-travel`, lastModified: now, changeFrequency: 'monthly', priority: 0.88 },
+    { url: `${BASE_URL}/visa`, lastModified: now, changeFrequency: 'monthly', priority: 0.88 },
+
+    // Visa destination pages
+    ...['bali','dubai','thailand','singapore','maldives','malaysia','vietnam','sri-lanka','nepal','europe','uk','usa','canada','australia','japan','turkey','kenya','egypt'].map(d => ({
+      url: `${BASE_URL}/visa/${d}`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.82,
+    })),
+
+    // Month travel pages
+    ...['january','february','march','april','may','june','july','august','september','october','november','december'].map(m => ({
+      url: `${BASE_URL}/best-time-to-travel/${m}`, lastModified: now, changeFrequency: 'yearly' as const, priority: 0.80,
+    })),
+
+    // Packing checklist pages
+    ...['manali','goa','kashmir','kerala','rajasthan','ladakh','bali','dubai','thailand','europe','andaman','uttarakhand'].map(d => ({
+      url: `${BASE_URL}/packing-checklist/${d}`, lastModified: now, changeFrequency: 'yearly' as const, priority: 0.75,
+    })),
   ];
 
   // ── Dynamic: trip detail pages ────────────────────────────────

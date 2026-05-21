@@ -16,12 +16,32 @@ export default function Footer() {
       { name: 'All Destinations', href: '/destinations' },
       { name: 'Hidden Gems', href: '/hidden-spots' },
       { name: 'The Journal', href: '/blogs' },
+      { name: 'Group Travel', href: '/group-travel' },
+      { name: 'Travel Insurance', href: '/travel-insurance' },
+      { name: 'Visa Guide', href: '/visa' },
+      { name: 'Packing Checklist', href: '/packing-checklist' },
+      { name: 'Best Time to Travel', href: '/best-time-to-travel' },
     ],
     tours: [
       { name: 'All India Tours', href: '/tours' },
-      { name: '10-Day Golden Triangle', href: '/tours/golden-triangle-10-day' },
-      { name: '14-Day Kerala & South India', href: '/tours/kerala-south-india-14-day' },
-      { name: '7-Day Rajasthan Heritage', href: '/tours/rajasthan-heritage-7-day' },
+      { name: 'Kashmir Package', href: '/kashmir-tour-package' },
+      { name: 'Manali Package', href: '/manali-tour-package' },
+      { name: 'Goa Package', href: '/goa-tour-package' },
+      { name: 'Kerala Package', href: '/kerala-tour-package' },
+      { name: 'Rajasthan Package', href: '/rajasthan-tour-package' },
+      { name: 'Himachal Package', href: '/himachal-tour-package' },
+      { name: 'Uttarakhand Package', href: '/uttarakhand-tour-package' },
+      { name: 'Ladakh Package', href: '/ladakh-tour-package' },
+      { name: 'Andaman Package', href: '/andaman-tour-package' },
+      { name: 'Spiti Valley Package', href: '/spiti-valley-tour-package' },
+      { name: 'Dubai Package', href: '/dubai-tour-package-from-delhi' },
+      { name: 'Bali Package', href: '/bali-honeymoon-package' },
+      { name: 'Thailand Package', href: '/thailand-budget-trip' },
+      { name: 'Singapore Package', href: '/singapore-tour-package' },
+      { name: 'Vietnam Package', href: '/vietnam-tour-package' },
+      { name: 'Sri Lanka Package', href: '/sri-lanka-tour-package' },
+      { name: 'Nepal Package', href: '/nepal-tour-package' },
+      { name: 'Europe Package', href: '/europe-tour-package-from-india' },
     ],
     company: [
       { name: 'Our Story', href: '/about' },
@@ -47,11 +67,11 @@ export default function Footer() {
 
 
         {/* Main content */}
-        <div className="section-container py-12 md:py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
+        <div className="section-container py-8 md:py-14">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
 
             {/* Brand column */}
-            <div className="lg:col-span-4 space-y-6">
+            <div className="lg:col-span-4 space-y-5">
               <Link href="/" className="inline-block">
                 <img src="/logo.png" alt="YlooTrips — India Travel Experts" className="h-12 w-auto object-contain brightness-0 invert" />
               </Link>
@@ -101,26 +121,62 @@ export default function Footer() {
 
             {/* Links */}
             <div className="lg:col-span-8">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                {[
-                  { title: 'Explore', links: footerLinks.explore },
-                  { title: 'Tours', links: footerLinks.tours },
-                  { title: 'Company', links: footerLinks.company },
-                  { title: 'Legal', links: footerLinks.legal },
-                ].map(({ title, links }) => (
-                  <div key={title}>
-                    <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-5">{title}</h4>
-                    <ul className="space-y-3">
-                      {links.map(l => (
-                        <li key={l.name}>
-                          <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">
-                            {l.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+              <div className="grid grid-cols-2 md:grid-cols-12 gap-6 md:gap-8">
+                {/* Explore */}
+                <div className="md:col-span-3">
+                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">Explore</h4>
+                  <ul className="space-y-2">
+                    {footerLinks.explore.map(l => (
+                      <li key={l.name}>
+                        <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">
+                          {l.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Tours — 2-column list to halve height */}
+                <div className="md:col-span-5">
+                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">Tours</h4>
+                  <ul className="columns-2 gap-x-4 space-y-0">
+                    {footerLinks.tours.map(l => (
+                      <li key={l.name} className="mb-2 break-inside-avoid">
+                        <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">
+                          {l.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Company */}
+                <div className="md:col-span-2">
+                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">Company</h4>
+                  <ul className="space-y-2">
+                    {footerLinks.company.map(l => (
+                      <li key={l.name}>
+                        <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">
+                          {l.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Legal */}
+                <div className="md:col-span-2">
+                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">Legal</h4>
+                  <ul className="space-y-2">
+                    {footerLinks.legal.map(l => (
+                      <li key={l.name}>
+                        <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">
+                          {l.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
 
