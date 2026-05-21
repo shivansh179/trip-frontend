@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const runtime = 'nodejs';
+
 // ── Bot / Scraper User-Agent patterns ─────────────────────────────────────────
 // Block aggressive AI scrapers & malicious bots. Legitimate search engines
 // (Googlebot, Bingbot) are intentionally allowed.
@@ -73,7 +75,7 @@ function isPrivateApiRoute(pathname: string): boolean {
   return PRIVATE_API_PREFIXES.some((r) => pathname.startsWith(r));
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const ua = req.headers.get('user-agent') || '';
   const ip =
