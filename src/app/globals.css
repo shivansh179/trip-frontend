@@ -205,7 +205,7 @@ body {
   color: var(--color-primary);
   font-family: var(--font-body);
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Removed body background-color transition — causes full repaint on every frame */
   /* Respect safe area (notch, home indicator) on iOS */
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
@@ -255,7 +255,8 @@ a, button, [role="button"] {
 }
 
 @media (max-width: 767px) {
-  main > * {
+  /* Only animate the first section — not every child (was causing simultaneous layout thrash) */
+  main > *:first-child {
     animation: page-enter 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
@@ -270,6 +271,52 @@ a, button, [role="button"] {
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
   }
+
+  /* ── Mobile: replace expensive backdrop-blur with solid colors ─────────────
+     backdrop-filter: blur() forces GPU compositing of the entire viewport on
+     every scroll frame — on mid-range Android this is the #1 cause of jank.
+     Replace with slightly more opaque solid backgrounds on mobile.          */
+  .backdrop-blur-sm,
+  .backdrop-blur,
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl,
+  [class*="backdrop-blur"] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Compensate: make semi-transparent bg elements more opaque so they still look fine */
+  [class*="bg-white/10"] { background-color: rgba(255,255,255,0.15) !important; }
+  [class*="bg-white/20"] { background-color: rgba(255,255,255,0.25) !important; }
+  [class*="bg-white/80"] { background-color: rgba(255,255,255,0.95) !important; }
+  [class*="bg-white/90"] { background-color: rgba(255,255,255,0.97) !important; }
+  [class*="bg-black/40"] { background-color: rgba(0,0,0,0.55) !important; }
+  [class*="bg-black/50"] { background-color: rgba(0,0,0,0.65) !important; }
+  [class*="bg-black/60"] { background-color: rgba(0,0,0,0.75) !important; }
+
+  /* Let browser know main content only scrolls vertically */
+  main {
+    touch-action: pan-y;
+  }
+}
+
+/* ── Promote fixed/sticky headers to GPU layer ──────────────────────────────
+   This prevents them from triggering repaints of the content below on scroll */
+header[class*="fixed"],
+nav[class*="fixed"] {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+}
+
+/* ── Contain infinite animations to their own layer ────────────────────────
+   Prevents float/marquee animations from invalidating parent layout        */
+[class*="animate-float"],
+[class*="animate-marquee"],
+[class*="animate-pulse"] {
+  will-change: transform;
+  contain: layout style;
 }
 
 /* Fluid typography helpers */
