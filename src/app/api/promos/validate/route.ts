@@ -12,7 +12,6 @@ const PROMO_CODES = [
 
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
-  console.log(`[promos/validate] request from ${ip}`);
 
   // 10 promo attempts per minute per IP
   if (isRateLimited(`promo:${ip}`, 10, 60_000)) {
@@ -59,6 +58,5 @@ export async function POST(req: NextRequest) {
       ? Math.min(Math.round((orderTotal * promo.value) / 100), (promo as any).maxDiscount ?? Infinity)
       : promo.value;
 
-  console.log(`[promos/validate] code=${promo.code} orderTotal=${orderTotal} discount=${discount}`);
   return NextResponse.json({ valid: true, code: promo.code, title: promo.title, discount });
 }

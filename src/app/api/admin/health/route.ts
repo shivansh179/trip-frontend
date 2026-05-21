@@ -337,7 +337,22 @@ declare global {
   var _healthCache: { data: unknown; expiresAt: number } | undefined;
 }
 
+function isAuthorised(req: Request): boolean {
+  const adminSecret = process.env.ADMIN_SECRET;
+  if (!adminSecret) return false;
+  const headers = req instanceof Request ? req.headers : (req as { headers: Headers }).headers;
+  const token =
+    headers.get('x-admin-secret') ||
+    headers.get('x-admin-token') ||
+    headers.get('authorization')?.replace('Bearer ', '');
+  return token === adminSecret;
+}
+
 export async function GET(req: Request) {
+  if (!isAuthorised(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const url = new URL(req.url);
   const force = url.searchParams.get('force') === '1';
 

@@ -82,8 +82,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, id });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error('[review/submit]', msg);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    console.error('[review/submit]', err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: 'Failed to submit review. Please try again.' }, { status: 500 });
   }
 }

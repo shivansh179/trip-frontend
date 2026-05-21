@@ -12,7 +12,7 @@ const securityHeaders = [
     value: [
       "default-src 'self'",
       // Scripts: self + inline (Next.js needs it) + GA + Easebuzz
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://ebz-static.s3.ap-south-1.amazonaws.com",
+      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://ebz-static.s3.ap-south-1.amazonaws.com",
       // Styles: self + inline (Tailwind/CSS-in-JS)
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       // Fonts

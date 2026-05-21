@@ -15,6 +15,9 @@ export default function robots(): MetadataRoute.Robots {
                     '/events/checkout',
                     '/events/*/tickets',
                     '/my-booking',
+                    '/payment-demo',
+                    '/stories/write',
+                    '/*?*',             // block all query-string variants (prevents param abuse)
                 ],
             },
             // ── AI Answer Engines — ALLOW (GEO: helps ChatGPT/Gemini recommend us) ──

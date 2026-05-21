@@ -11,7 +11,8 @@ export const runtime = 'nodejs';
 function verifyEasebuzzHash(params: Record<string, string>): boolean {
   const key  = process.env.EASEBUZZ_KEY;
   const salt = process.env.EASEBUZZ_SALT;
-  if (!key || !salt || !params.hash) return true; // skip if not configured
+  if (!key || !salt) return false; // keys not configured — deny all unverifiable callbacks
+  if (!params.hash) return false; // no hash in callback — reject
 
   // Easebuzz response hash: sha512(key|status|txnid|amount|productinfo|firstname|email|udf1..udf5|salt)
   const str = [
