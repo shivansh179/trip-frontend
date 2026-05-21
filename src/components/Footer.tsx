@@ -14,34 +14,34 @@ export default function Footer() {
   const footerLinks = {
     explore: [
       { name: 'All Destinations', href: '/destinations' },
-      { name: 'Hidden Gems', href: '/hidden-spots' },
       { name: 'The Journal', href: '/blogs' },
       { name: 'Group Travel', href: '/group-travel' },
-      { name: 'Travel Insurance', href: '/travel-insurance' },
       { name: 'Visa Guide', href: '/visa' },
       { name: 'Packing Checklist', href: '/packing-checklist' },
       { name: 'Best Time to Travel', href: '/best-time-to-travel' },
     ],
-    tours: [
-      { name: 'All India Tours', href: '/tours' },
-      { name: 'Kashmir Package', href: '/kashmir-tour-package' },
-      { name: 'Manali Package', href: '/manali-tour-package' },
-      { name: 'Goa Package', href: '/goa-tour-package' },
-      { name: 'Kerala Package', href: '/kerala-tour-package' },
-      { name: 'Rajasthan Package', href: '/rajasthan-tour-package' },
-      { name: 'Himachal Package', href: '/himachal-tour-package' },
-      { name: 'Uttarakhand Package', href: '/uttarakhand-tour-package' },
-      { name: 'Ladakh Package', href: '/ladakh-tour-package' },
-      { name: 'Andaman Package', href: '/andaman-tour-package' },
-      { name: 'Spiti Valley Package', href: '/spiti-valley-tour-package' },
-      { name: 'Dubai Package', href: '/dubai-tour-package-from-delhi' },
-      { name: 'Bali Package', href: '/bali-honeymoon-package' },
-      { name: 'Thailand Package', href: '/thailand-budget-trip' },
-      { name: 'Singapore Package', href: '/singapore-tour-package' },
-      { name: 'Vietnam Package', href: '/vietnam-tour-package' },
-      { name: 'Sri Lanka Package', href: '/sri-lanka-tour-package' },
-      { name: 'Nepal Package', href: '/nepal-tour-package' },
-      { name: 'Europe Package', href: '/europe-tour-package-from-india' },
+    toursCol1: [
+      { name: 'Kashmir', href: '/kashmir-tour-package' },
+      { name: 'Manali', href: '/manali-tour-package' },
+      { name: 'Goa', href: '/goa-tour-package' },
+      { name: 'Kerala', href: '/kerala-tour-package' },
+      { name: 'Rajasthan', href: '/rajasthan-tour-package' },
+      { name: 'Ladakh', href: '/ladakh-tour-package' },
+      { name: 'Andaman', href: '/andaman-tour-package' },
+      { name: 'Himachal', href: '/himachal-tour-package' },
+      { name: 'Uttarakhand', href: '/uttarakhand-tour-package' },
+      { name: 'Spiti Valley', href: '/spiti-valley-tour-package' },
+    ],
+    toursCol2: [
+      { name: 'Dubai', href: '/dubai-tour-package-from-delhi' },
+      { name: 'Bali', href: '/bali-honeymoon-package' },
+      { name: 'Thailand', href: '/thailand-budget-trip' },
+      { name: 'Singapore', href: '/singapore-tour-package' },
+      { name: 'Vietnam', href: '/vietnam-tour-package' },
+      { name: 'Sri Lanka', href: '/sri-lanka-tour-package' },
+      { name: 'Nepal', href: '/nepal-tour-package' },
+      { name: 'Europe', href: '/europe-tour-package-from-india' },
+      { name: 'Maldives', href: '/maldives-luxury-package' },
     ],
     company: [
       { name: 'Our Story', href: '/about' },
@@ -122,32 +122,41 @@ export default function Footer() {
             {/* Links */}
             <div className="lg:col-span-8">
               <div className="grid grid-cols-2 md:grid-cols-12 gap-6 md:gap-8">
+
                 {/* Explore */}
-                <div className="md:col-span-3">
+                <div className="md:col-span-2">
                   <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">Explore</h4>
                   <ul className="space-y-2">
                     {footerLinks.explore.map(l => (
                       <li key={l.name}>
-                        <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">
-                          {l.name}
-                        </Link>
+                        <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">{l.name}</Link>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                {/* Tours — 2-column list to halve height */}
-                <div className="md:col-span-5">
+                {/* Tours — split into 2 explicit columns */}
+                <div className="md:col-span-6">
                   <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">Tours</h4>
-                  <ul className="columns-2 gap-x-4 space-y-0">
-                    {footerLinks.tours.map(l => (
-                      <li key={l.name} className="mb-2 break-inside-avoid">
-                        <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">
-                          {l.name}
-                        </Link>
+                  <div className="grid grid-cols-2 gap-x-4">
+                    <ul className="space-y-2">
+                      {footerLinks.toursCol1.map(l => (
+                        <li key={l.name}>
+                          <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">{l.name}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                    <ul className="space-y-2">
+                      {footerLinks.toursCol2.map(l => (
+                        <li key={l.name}>
+                          <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">{l.name}</Link>
+                        </li>
+                      ))}
+                      <li>
+                        <Link href="/destinations" className="text-cream/30 hover:text-cream/60 transition-colors text-xs italic">View all →</Link>
                       </li>
-                    ))}
-                  </ul>
+                    </ul>
+                  </div>
                 </div>
 
                 {/* Company */}
@@ -156,9 +165,7 @@ export default function Footer() {
                   <ul className="space-y-2">
                     {footerLinks.company.map(l => (
                       <li key={l.name}>
-                        <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">
-                          {l.name}
-                        </Link>
+                        <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">{l.name}</Link>
                       </li>
                     ))}
                   </ul>
@@ -170,13 +177,12 @@ export default function Footer() {
                   <ul className="space-y-2">
                     {footerLinks.legal.map(l => (
                       <li key={l.name}>
-                        <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">
-                          {l.name}
-                        </Link>
+                        <Link href={l.href} className="text-cream/50 hover:text-cream transition-colors text-sm">{l.name}</Link>
                       </li>
                     ))}
                   </ul>
                 </div>
+
               </div>
             </div>
 
