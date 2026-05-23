@@ -791,3 +791,24 @@ h6 {
   from { transform: translateY(24px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
+
+/* ── Dark mode: page-level bg overrides for hardcoded white/gray pages ───── */
+.dark main { background-color: #111110; }
+.dark .bg-white { background-color: #18181a !important; }
+.dark .bg-gray-50 { background-color: #1e1e20 !important; }
+.dark .bg-gray-100 { background-color: #242426 !important; }
+
+/* Dark mode: text flip for hardcoded gray text */
+.dark .text-gray-900 { color: #f0ede8 !important; }
+.dark .text-gray-800 { color: #e0ddd8 !important; }
+.dark .text-gray-700 { color: #c8c4bf !important; }
+.dark .text-gray-600 { color: #a8a49f !important; }
+.dark .text-gray-500 { color: #888480 !important; }
+.dark .text-gray-400 { color: #666260 !important; }
+
+/* Dark mode: border flip */
+.dark .border-gray-100 { border-color: rgba(255,255,255,0.07) !important; }
+.dark .border-gray-200 { border-color: rgba(255,255,255,0.10) !important; }
+
+/* Dark mode: header glass bg when scrolled */
+.dark header { background-color: rgba(17,17,16,0.92) !important; border-color: rgba(255,255,255,0.07) !important; }

@@ -63,7 +63,7 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="bg-primary text-cream">
+      <footer className="bg-[#1C1C1C] dark:bg-[#0d0d0d] text-[#F5F1EB]">
 
 
         {/* Main content */}
