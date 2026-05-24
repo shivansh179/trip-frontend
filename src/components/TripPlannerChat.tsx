@@ -631,6 +631,76 @@ function MarketSection({ destination }: { destination: string }) {
   );
 }
 
+function EmailItineraryForm({ itinerary }: { itinerary: Itinerary }) {
+  const GOLD = '#C9A96E';
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setStatus('sending');
+    try {
+      const res = await fetch('/api/email-itinerary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: email.trim(), itinerary }),
+      });
+      if (res.ok) {
+        setStatus('sent');
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  if (status === 'sent') {
+    return (
+      <div className="rounded-2xl p-5 text-center" style={{ background: 'rgba(52,211,153,0.08)', border: '1px solid rgba(52,211,153,0.2)' }}>
+        <p className="text-2xl mb-2">📬</p>
+        <p className="font-semibold text-white text-sm mb-1">Plan sent to your inbox!</p>
+        <p className="text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>Check <strong style={{ color: 'rgba(255,255,255,0.65)' }}>{email}</strong> — also check spam if not found.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-lg">📩</span>
+        <div>
+          <p className="font-semibold text-white text-sm">Get this plan in your inbox</p>
+          <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Full day-by-day itinerary sent to your email — free</p>
+        </div>
+      </div>
+      <form onSubmit={handleSend} className="flex gap-2">
+        <input
+          type="email"
+          required
+          placeholder="your@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="flex-1 min-w-0 px-4 py-2.5 rounded-xl text-sm text-white placeholder:text-white/30 outline-none"
+          style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}
+        />
+        <button
+          type="submit"
+          disabled={status === 'sending'}
+          className="px-4 py-2.5 rounded-xl text-sm font-bold transition-opacity shrink-0 disabled:opacity-60"
+          style={{ background: GOLD, color: '#07070c' }}
+        >
+          {status === 'sending' ? '…' : 'Send'}
+        </button>
+      </form>
+      {status === 'error' && (
+        <p className="text-xs mt-2" style={{ color: '#f87171' }}>Failed to send. Please try again.</p>
+      )}
+    </div>
+  );
+}
+
 function ItineraryDisplay({ itinerary, onBookNow, matchedTrip, onShowMarket }: {
   itinerary: Itinerary;
   onBookNow: () => void;
@@ -760,6 +830,9 @@ function ItineraryDisplay({ itinerary, onBookNow, matchedTrip, onShowMarket }: {
         )}
         <p className="text-white/60 text-xs mt-3">Free consultation · No hidden charges</p>
       </div>
+
+      {/* Email itinerary */}
+      <EmailItineraryForm itinerary={itinerary} />
 
     </div>
   );
