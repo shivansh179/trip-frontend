@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       if (process.env.RESEND_API_KEY) {
         const resend = new Resend(process.env.RESEND_API_KEY);
         await resend.emails.send({
-          from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+          from: process.env.EMAIL_FROM || 'hello@ylootrips.com',
           to: process.env.ADMIN_EMAIL || 'hello@ylootrips.com',
           subject: `📞 Event Callback Request — ${name} · ${eventType} [${ticket}]`,
           html: `

@@ -6,6 +6,7 @@ import { isRateLimited, getClientIp } from '@/lib/ratelimit';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ylootrips.com';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@ylootrips.com';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'YlooTrips <hello@ylootrips.com>';
 const EASEBUZZ_KEY = (process.env.EASEBUZZ_KEY || '').trim();
 const EASEBUZZ_SALT = (process.env.EASEBUZZ_SALT || '').trim();
 const EASEBUZZ_ENV = (process.env.EASEBUZZ_ENV || 'production').trim();
@@ -101,7 +102,7 @@ ACTION: Book from source above after payment confirms.
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${RESEND_API_KEY}` },
         body: JSON.stringify({
-          from: 'YlooTrips <onboarding@resend.dev>',
+          from: EMAIL_FROM,
           to: [ADMIN_EMAIL],
           subject: `[${ticket}] 💳 Market Booking Payment: ${packageTitle} — ${name}`,
           text: adminBody,

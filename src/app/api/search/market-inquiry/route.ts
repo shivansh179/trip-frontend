@@ -3,6 +3,7 @@ import { generateTicket, logLeadToSheet } from '@/lib/leads';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@ylootrips.com';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'YlooTrips <hello@ylootrips.com>';
 
 export async function POST(req: NextRequest) {
   try {
@@ -89,7 +90,7 @@ YlooTrips Team
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${RESEND_API_KEY}` },
           body: JSON.stringify({
-            from: 'YlooTrips <onboarding@resend.dev>',
+            from: EMAIL_FROM,
             to: [ADMIN_EMAIL],
             subject,
             text: adminBody,
@@ -99,7 +100,7 @@ YlooTrips Team
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${RESEND_API_KEY}` },
           body: JSON.stringify({
-            from: 'YlooTrips <onboarding@resend.dev>',
+            from: EMAIL_FROM,
             to: [email],
             subject: `[${ticket}] Your trip inquiry for ${destination} — YlooTrips`,
             text: customerBody,

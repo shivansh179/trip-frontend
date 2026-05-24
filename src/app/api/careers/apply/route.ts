@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     if (resendKey) {
       const resend = new Resend(resendKey);
       await resend.emails.send({
-        from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+        from: process.env.EMAIL_FROM || 'hello@ylootrips.com',
         to: process.env.ADMIN_EMAIL || 'hello@ylootrips.com',
         replyTo: email,
         subject: `📋 New Job Application — ${role} · ${name}`,

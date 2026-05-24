@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
                ⚠️ <strong>Google Sheets not configured</strong> — this review was NOT saved to the sheet. Configure GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET / GOOGLE_REFRESH_TOKEN on Vercel to fix this.
              </p>`;
         await resend.emails.send({
-          from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+          from: process.env.EMAIL_FROM || 'hello@ylootrips.com',
           to:   process.env.ADMIN_EMAIL || 'hello@ylootrips.com',
           subject: `⭐ New Review Pending Approval — ${name} (${rating}/5)`,
           html: `

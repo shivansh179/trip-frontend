@@ -225,7 +225,7 @@ export async function POST(req: NextRequest) {
 </html>`;
 
     const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+      from: process.env.EMAIL_FROM || 'hello@ylootrips.com',
       to: [to],
       subject: `✓ Booking Confirmed — ${title || 'Your Trip'} | YlooTrips`,
       html,
@@ -240,7 +240,7 @@ export async function POST(req: NextRequest) {
     if (adminEmail && adminEmail !== to) {
       try {
         await resend.emails.send({
-          from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+          from: process.env.EMAIL_FROM || 'hello@ylootrips.com',
           to: [adminEmail],
           subject: `🔔 New Booking: ${title || 'Trip'} — ${booking.bookingReference || ''} | YlooTrips`,
           html,

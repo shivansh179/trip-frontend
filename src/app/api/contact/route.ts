@@ -4,6 +4,7 @@ import { isRateLimited, getClientIp } from '@/lib/ratelimit';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@ylootrips.com';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'YlooTrips <hello@ylootrips.com>';
 
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
@@ -76,7 +77,7 @@ YlooTrips Team
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${RESEND_API_KEY}` },
           body: JSON.stringify({
-            from: 'YlooTrips <onboarding@resend.dev>',
+            from: EMAIL_FROM,
             to: [ADMIN_EMAIL],
             subject: `[${ticket}] New Inquiry: ${destination || 'General'} — ${name}`,
             text: adminBody,
@@ -86,7 +87,7 @@ YlooTrips Team
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${RESEND_API_KEY}` },
           body: JSON.stringify({
-            from: 'YlooTrips <onboarding@resend.dev>',
+            from: EMAIL_FROM,
             to: [email],
             subject: `[${ticket}] We received your inquiry — YlooTrips`,
             text: customerBody,

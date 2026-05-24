@@ -20,7 +20,7 @@ export const maxDuration = 60;
 const SITE      = 'https://www.ylootrips.com';
 const BACKEND   = 'https://trip-backend-65232427280.asia-south1.run.app/api';
 const ADMIN     = process.env.ADMIN_EMAIL   || 'hello@ylootrips.com';
-const FROM      = process.env.EMAIL_FROM    || 'onboarding@resend.dev';
+const FROM      = process.env.EMAIL_FROM    || 'hello@ylootrips.com';
 const SECRET    = process.env.CRON_SECRET   || '';
 
 // ── Check definitions ────────────────────────────────────────────────────────
