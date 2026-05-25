@@ -123,10 +123,7 @@ export default function AdminBookingsPage() {
         try {
             const [flightRes, tripRes, eventRes] = await Promise.allSettled([
                 fetch('/api/admin/flight-bookings', { headers: { 'x-admin-token': token } }).then(r => r.json()),
-                // Use server-side proxy — fetches ALL statuses (pending, confirmed, failed, cancelled)
-                fetch('/api/admin/trip-bookings', {
-                    headers: { 'x-admin-token': token },
-                }).then(r => r.json()),
+                api.admin.getBookings(),
                 api.admin.getEventBookings(),
             ]);
             if (flightRes.status === 'fulfilled') setFlightBookings(flightRes.value.data || []);
