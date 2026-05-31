@@ -160,6 +160,7 @@ export default function AdminBookingsPage() {
     };
 
     const [markingPaid, setMarkingPaid] = useState<string | null>(null);
+    const [paymentFilter, setPaymentFilter] = useState<'ALL' | 'PAID' | 'UNPAID'>('ALL');
     const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
     const [notesDraft, setNotesDraft] = useState('');
     const [savingNotes, setSavingNotes] = useState<string | null>(null);
@@ -242,11 +243,18 @@ export default function AdminBookingsPage() {
 
     const filteredTrips = sortBookings(tripBookings.filter((b: Record<string, unknown>) => {
         const q = search.toLowerCase();
-        return !q ||
+        const matchSearch = !q ||
             String(b.bookingReference || '').toLowerCase().includes(q) ||
             String(b.customerEmail || '').toLowerCase().includes(q) ||
             String(b.customerName || '').toLowerCase().includes(q) ||
             String(b.customerPhone || '').includes(q);
+        const paymentStatus = String(b.paymentStatus || b.payment_status || b.status || '').toUpperCase();
+        const isPaid = ['CONFIRMED', 'COMPLETED', 'PAID', 'SUCCESS', 'CAPTURED'].includes(paymentStatus);
+        const matchPayment =
+            paymentFilter === 'ALL' ||
+            (paymentFilter === 'PAID' && isPaid) ||
+            (paymentFilter === 'UNPAID' && !isPaid);
+        return matchSearch && matchPayment;
     }));
 
     const filteredEvents = sortBookings(eventBookings.filter((b: Record<string, unknown>) => {
@@ -423,9 +431,31 @@ export default function AdminBookingsPage() {
                             ))}
                         </select>
                     )}
-                    {/* Sort — shown for trips & events */}
+                    {/* Sort + Payment Filter — shown for trips & events */}
                     {(activeTab === 'trips' || activeTab === 'events') && (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap">
+                            {/* Payment filter — trips only */}
+                            {activeTab === 'trips' && (
+                                <div className="flex rounded-xl border border-gray-300 overflow-hidden text-sm font-semibold">
+                                    {(['ALL', 'PAID', 'UNPAID'] as const).map(f => (
+                                        <button
+                                            key={f}
+                                            onClick={() => setPaymentFilter(f)}
+                                            className={`px-3 py-2.5 transition-colors ${
+                                                paymentFilter === f
+                                                    ? f === 'PAID'
+                                                        ? 'bg-green-600 text-white'
+                                                        : f === 'UNPAID'
+                                                            ? 'bg-red-500 text-white'
+                                                            : 'bg-gray-800 text-white'
+                                                    : 'bg-white text-gray-500 hover:bg-gray-50'
+                                            }`}
+                                        >
+                                            {f === 'ALL' ? 'All' : f === 'PAID' ? '✓ Paid' : '⏳ Unpaid'}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                             <select
                                 value={sortField}
                                 onChange={e => setSortField(e.target.value as SortField)}
