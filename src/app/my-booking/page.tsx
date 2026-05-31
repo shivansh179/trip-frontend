@@ -7,7 +7,7 @@ import {
   MapPin, Ticket, Copy, MessageCircle, ArrowLeft, AlertCircle,
   RefreshCw, Receipt, Shield, Download, Star, Zap,
   Wallet, ChevronRight, Bell, Compass, Globe,
-  Mountain, Sparkles, BookOpen, Heart, X
+  Mountain, Sparkles, BookOpen, Heart, X, Hotel
 } from 'lucide-react';
 import Link from 'next/link';
 import { useWallet } from '@/context/WalletContext';
@@ -177,18 +177,22 @@ function Timeline({ steps }: { steps: { label: string; done: boolean }[] }) {
   );
 }
 
+interface FlightDetail { airline: string; flightNumber: string; from: string; to: string; date: string; depTime: string; arrTime: string; pnr: string; seat?: string; }
+interface HotelDetail { name: string; city: string; checkIn: string; checkOut: string; roomType: string; confirmationId: string; }
+interface ItineraryEntry { day: number; date?: string; title: string; description: string; }
+interface BookingDetails { notes: string; flights: FlightDetail[]; hotels: HotelDetail[]; itinerary: ItineraryEntry[]; }
+
 /* ─── Trip Booking Card ─── */
 function TripBookingCard({ data }: { data: Record<string, unknown> }) {
   const ref = (data.bookingReference as string) || '';
   const total = Number(data.finalAmount || data.totalAmount || 0);
-  const [adminNotes, setAdminNotes] = useState<string | null>(null);
+  const [adminDetails, setAdminDetails] = useState<BookingDetails | null>(null);
 
-  // Fetch admin notes for this booking reference
   useEffect(() => {
     if (!ref) return;
     fetch(`/api/booking-notes?ref=${encodeURIComponent(ref)}`)
       .then(r => r.json())
-      .then(j => { if (j.notes) setAdminNotes(j.notes); })
+      .then(j => { if (j.details) setAdminDetails(j.details); })
       .catch(() => {});
   }, [ref]);
 
@@ -258,16 +262,98 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
         </div>
       </GlassCard>
       <Timeline steps={steps} />
-      {!!adminNotes && (
-        <GlassCard className="!border-amber-500/20 !bg-amber-500/5">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-7 h-7 bg-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
-              <Bell size={13} className="text-amber-400" />
-            </div>
-            <p className="text-amber-400 font-bold text-sm">Updates from YlooTrips</p>
-          </div>
-          <p className="text-white/80 text-sm leading-relaxed whitespace-pre-line">{adminNotes}</p>
-        </GlassCard>
+      {!!adminDetails && (adminDetails.notes || adminDetails.flights?.length > 0 || adminDetails.hotels?.length > 0 || adminDetails.itinerary?.length > 0) && (
+        <div className="space-y-4">
+          {/* Notes */}
+          {!!adminDetails.notes && (
+            <GlassCard className="!border-amber-500/20 !bg-amber-500/5">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 bg-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
+                  <Bell size={13} className="text-amber-400" />
+                </div>
+                <p className="text-amber-400 font-bold text-sm">Updates from YlooTrips</p>
+              </div>
+              <p className="text-white/80 text-sm leading-relaxed whitespace-pre-line">{adminDetails.notes}</p>
+            </GlassCard>
+          )}
+          {/* Flights */}
+          {adminDetails.flights?.length > 0 && (
+            <GlassCard>
+              <div className="flex items-center gap-2 mb-4">
+                <Plane size={15} className="text-blue-400" />
+                <p className="text-white font-bold text-sm">Your Flights</p>
+              </div>
+              <div className="space-y-3">
+                {adminDetails.flights.map((f, i) => (
+                  <div key={i} className="bg-white/5 rounded-xl p-3 border border-white/10">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-white font-semibold text-sm">{f.airline}</span>
+                      <span className="text-white/50 text-xs font-mono">{f.flightNumber}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm mb-3">
+                      <span className="text-white font-bold">{f.from}</span>
+                      <span className="text-white/40 text-xs">→</span>
+                      <span className="text-white font-bold">{f.to}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-xs text-white/60">
+                      {f.date && <div><p className="text-white/40 mb-0.5">Date</p><p>{f.date}</p></div>}
+                      {f.depTime && <div><p className="text-white/40 mb-0.5">Departs</p><p>{f.depTime}</p></div>}
+                      {f.arrTime && <div><p className="text-white/40 mb-0.5">Arrives</p><p>{f.arrTime}</p></div>}
+                      {f.pnr && <div><p className="text-white/40 mb-0.5">PNR</p><p className="font-mono font-bold text-white/80">{f.pnr}</p></div>}
+                      {f.seat && <div><p className="text-white/40 mb-0.5">Seat</p><p>{f.seat}</p></div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+          )}
+          {/* Hotels */}
+          {adminDetails.hotels?.length > 0 && (
+            <GlassCard>
+              <div className="flex items-center gap-2 mb-4">
+                <Hotel size={15} className="text-purple-400" />
+                <p className="text-white font-bold text-sm">Your Hotels</p>
+              </div>
+              <div className="space-y-3">
+                {adminDetails.hotels.map((h, i) => (
+                  <div key={i} className="bg-white/5 rounded-xl p-3 border border-white/10">
+                    <p className="text-white font-semibold text-sm mb-1">{h.name}</p>
+                    {h.city && <p className="text-white/50 text-xs mb-2">{h.city}</p>}
+                    <div className="grid grid-cols-2 gap-2 text-xs text-white/60">
+                      {h.checkIn && <div><p className="text-white/40 mb-0.5">Check-in</p><p>{h.checkIn}</p></div>}
+                      {h.checkOut && <div><p className="text-white/40 mb-0.5">Check-out</p><p>{h.checkOut}</p></div>}
+                      {h.roomType && <div><p className="text-white/40 mb-0.5">Room</p><p>{h.roomType}</p></div>}
+                      {h.confirmationId && <div><p className="text-white/40 mb-0.5">Conf. ID</p><p className="font-mono font-bold text-white/80">{h.confirmationId}</p></div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+          )}
+          {/* Itinerary */}
+          {adminDetails.itinerary?.length > 0 && (
+            <GlassCard>
+              <div className="flex items-center gap-2 mb-4">
+                <BookOpen size={15} className="text-orange-400" />
+                <p className="text-white font-bold text-sm">Your Itinerary</p>
+              </div>
+              <div className="space-y-4">
+                {[...adminDetails.itinerary].sort((a, b) => a.day - b.day).map((d, i) => (
+                  <div key={i} className="flex gap-3">
+                    <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center shrink-0 text-orange-400 font-bold text-xs">
+                      {d.day}
+                    </div>
+                    <div className="flex-1 pt-1">
+                      <p className="text-white font-semibold text-sm">{d.title}</p>
+                      {d.date && <p className="text-white/40 text-xs mt-0.5">{d.date}</p>}
+                      {d.description && <p className="text-white/60 text-xs mt-1 leading-relaxed">{d.description}</p>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+          )}
+        </div>
       )}
       <PaymentReceipt
         receiptId={ref}

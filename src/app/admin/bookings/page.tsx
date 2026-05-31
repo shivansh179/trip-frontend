@@ -44,6 +44,13 @@ const STATUS_COLORS: Record<string, string> = {
     FAILED: 'bg-red-100 text-red-700',
 };
 
+interface FlightDetail { airline: string; flightNumber: string; from: string; to: string; date: string; depTime: string; arrTime: string; pnr: string; seat?: string; }
+interface HotelDetail { name: string; city: string; checkIn: string; checkOut: string; roomType: string; confirmationId: string; }
+interface ItineraryEntry { day: number; date?: string; title: string; description: string; }
+interface BookingDetails { notes: string; flights: FlightDetail[]; hotels: HotelDetail[]; itinerary: ItineraryEntry[]; }
+const EMPTY_DETAILS: BookingDetails = { notes: '', flights: [], hotels: [], itinerary: [] };
+type DetailsTab = 'notes' | 'flights' | 'hotels' | 'itinerary';
+
 type BookingTab = 'flights' | 'trips' | 'events' | 'pg-dashboard';
 
 interface FlightBooking {
@@ -130,15 +137,15 @@ export default function AdminBookingsPage() {
             ]);
             if (flightRes.status === 'fulfilled') setFlightBookings(flightRes.value.data || []);
 
-            // Merge saved notes into trip bookings
-            const notesMap: Record<string, string> = notesRes.status === 'fulfilled'
-                ? (notesRes.value.notes || {})
+            // Merge saved booking details into trip bookings
+            const detailsMap: Record<string, BookingDetails> = notesRes.status === 'fulfilled'
+                ? (notesRes.value.details || {})
                 : {};
             if (tripRes.status === 'fulfilled') {
                 const trips = extractList(tripRes.value);
                 setTripBookings(trips.map(t => ({
                     ...t,
-                    adminNotes: notesMap[String(t.bookingReference || '')] ?? t.adminNotes ?? '',
+                    adminDetails: detailsMap[String(t.bookingReference || '')] ?? null,
                 })));
             }
             if (eventRes.status === 'fulfilled') setEventBookings(extractList(eventRes.value));
@@ -173,9 +180,10 @@ export default function AdminBookingsPage() {
 
     const [markingPaid, setMarkingPaid] = useState<string | null>(null);
     const [paymentFilter, setPaymentFilter] = useState<'ALL' | 'PAID' | 'UNPAID'>('ALL');
-    const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
-    const [notesDraft, setNotesDraft] = useState('');
-    const [savingNotes, setSavingNotes] = useState<string | null>(null);
+    const [editingDetailsId, setEditingDetailsId] = useState<string | null>(null);
+    const [detailsDraft, setDetailsDraft] = useState<BookingDetails>(EMPTY_DETAILS);
+    const [detailsTab, setDetailsTab] = useState<DetailsTab>('notes');
+    const [savingDetails, setSavingDetails] = useState<string | null>(null);
 
     const markTripAsPaid = async (b: Record<string, unknown>) => {
         const id = b.id as number;
@@ -222,27 +230,27 @@ export default function AdminBookingsPage() {
         }
     };
 
-    const saveAdminNotes = async (key: string, bookingRef: string) => {
-        setSavingNotes(key);
+    const saveBookingDetails = async (key: string, bookingRef: string) => {
+        setSavingDetails(key);
         const token = localStorage.getItem('adminToken') || '';
         try {
             const res = await fetch('/api/admin/booking-notes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
-                body: JSON.stringify({ ref: bookingRef, notes: notesDraft }),
+                body: JSON.stringify({ ref: bookingRef, details: detailsDraft }),
             });
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
                 throw new Error(errData.error || `HTTP ${res.status}`);
             }
             setTripBookings(prev => prev.map(t =>
-                String(t.bookingReference) === bookingRef ? { ...t, adminNotes: notesDraft } : t
+                String(t.bookingReference) === bookingRef ? { ...t, adminDetails: detailsDraft } : t
             ));
-            setEditingNotesId(null);
+            setEditingDetailsId(null);
         } catch (e) {
-            alert('Failed to save notes: ' + (e instanceof Error ? e.message : String(e)));
+            alert('Failed to save details: ' + (e instanceof Error ? e.message : String(e)));
         } finally {
-            setSavingNotes(null);
+            setSavingDetails(null);
         }
     };
 
@@ -738,52 +746,170 @@ export default function AdminBookingsPage() {
                                                 </p>
                                             ) : null}
 
-                                            {/* ── Admin Notes for Client ── */}
-                                            {editingNotesId === String(b.id) ? (
-                                                <div className="mt-2 space-y-2">
-                                                    <textarea
-                                                        value={notesDraft}
-                                                        onChange={e => setNotesDraft(e.target.value)}
-                                                        rows={3}
-                                                        placeholder="Add details for client: hotel name, confirmation numbers, meeting point, guide contact, itinerary updates, etc."
-                                                        className="w-full text-xs border border-blue-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
-                                                        autoFocus
-                                                    />
-                                                    <div className="flex gap-2">
+                                            {/* ── Booking Details for Client ── */}
+                                            {editingDetailsId === String(b.id) ? (
+                                                <div className="mt-3 border border-blue-200 rounded-xl bg-blue-50 p-3 space-y-3">
+                                                    {/* Tab bar */}
+                                                    <div className="flex gap-1 bg-white rounded-lg p-1 border border-blue-100">
+                                                        {(['notes', 'flights', 'hotels', 'itinerary'] as const).map(tab => (
+                                                            <button key={tab} onClick={() => setDetailsTab(tab)}
+                                                                className={`flex-1 py-1.5 text-[11px] font-bold rounded transition-colors
+                                                                    ${detailsTab === tab ? 'bg-blue-600 text-white' : 'text-blue-600 hover:bg-blue-100'}`}>
+                                                                {tab === 'notes' ? '📝 Notes' : tab === 'flights' ? '✈️ Flights' : tab === 'hotels' ? '🏨 Hotels' : '🗺️ Itinerary'}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+
+                                                    {/* Notes tab */}
+                                                    {detailsTab === 'notes' && (
+                                                        <textarea
+                                                            value={detailsDraft.notes}
+                                                            onChange={e => setDetailsDraft(prev => ({ ...prev, notes: e.target.value }))}
+                                                            rows={4} autoFocus
+                                                            placeholder="Notes visible to client: guide contact, meeting point, special instructions..."
+                                                            className="w-full text-xs border border-blue-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none bg-white"
+                                                        />
+                                                    )}
+
+                                                    {/* Flights tab */}
+                                                    {detailsTab === 'flights' && (
+                                                        <div className="space-y-2">
+                                                            {detailsDraft.flights.map((f, i) => (
+                                                                <div key={i} className="bg-white border border-gray-200 rounded-lg p-3 space-y-2">
+                                                                    <div className="flex items-center justify-between">
+                                                                        <span className="text-[11px] font-bold text-gray-700">Flight {i + 1}</span>
+                                                                        <button onClick={() => setDetailsDraft(prev => ({ ...prev, flights: prev.flights.filter((_, j) => j !== i) }))}
+                                                                            className="text-[11px] text-red-500 hover:text-red-700">✕ Remove</button>
+                                                                    </div>
+                                                                    <div className="grid grid-cols-2 gap-1.5">
+                                                                        {([
+                                                                            { key: 'airline', ph: 'Airline (IndiGo)' },
+                                                                            { key: 'flightNumber', ph: 'Flight No. (6E 234)' },
+                                                                            { key: 'from', ph: 'From (DEL)' },
+                                                                            { key: 'to', ph: 'To (BOM)' },
+                                                                            { key: 'date', ph: 'Date (2025-12-01)' },
+                                                                            { key: 'depTime', ph: 'Dep. Time (06:30)' },
+                                                                            { key: 'arrTime', ph: 'Arr. Time (08:45)' },
+                                                                            { key: 'pnr', ph: 'PNR Code' },
+                                                                            { key: 'seat', ph: 'Seat (optional)' },
+                                                                        ] as { key: keyof FlightDetail; ph: string }[]).map(({ key, ph }) => (
+                                                                            <input key={key} placeholder={ph}
+                                                                                value={f[key] || ''}
+                                                                                onChange={e => setDetailsDraft(prev => ({ ...prev, flights: prev.flights.map((x, j) => j === i ? { ...x, [key]: e.target.value } : x) }))}
+                                                                                className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-blue-400 bg-white w-full" />
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                            <button onClick={() => setDetailsDraft(prev => ({ ...prev, flights: [...prev.flights, { airline: '', flightNumber: '', from: '', to: '', date: '', depTime: '', arrTime: '', pnr: '', seat: '' }] }))}
+                                                                className="w-full py-2 text-xs font-bold text-blue-600 border border-dashed border-blue-300 rounded-lg hover:bg-blue-50 transition-colors">
+                                                                + Add Flight
+                                                            </button>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Hotels tab */}
+                                                    {detailsTab === 'hotels' && (
+                                                        <div className="space-y-2">
+                                                            {detailsDraft.hotels.map((h, i) => (
+                                                                <div key={i} className="bg-white border border-gray-200 rounded-lg p-3 space-y-2">
+                                                                    <div className="flex items-center justify-between">
+                                                                        <span className="text-[11px] font-bold text-gray-700">Hotel {i + 1}</span>
+                                                                        <button onClick={() => setDetailsDraft(prev => ({ ...prev, hotels: prev.hotels.filter((_, j) => j !== i) }))}
+                                                                            className="text-[11px] text-red-500 hover:text-red-700">✕ Remove</button>
+                                                                    </div>
+                                                                    <div className="grid grid-cols-2 gap-1.5">
+                                                                        {([
+                                                                            { key: 'name', ph: 'Hotel Name' },
+                                                                            { key: 'city', ph: 'City / Location' },
+                                                                            { key: 'checkIn', ph: 'Check-in (2025-12-01)' },
+                                                                            { key: 'checkOut', ph: 'Check-out (2025-12-05)' },
+                                                                            { key: 'roomType', ph: 'Room Type (Deluxe)' },
+                                                                            { key: 'confirmationId', ph: 'Confirmation ID' },
+                                                                        ] as { key: keyof HotelDetail; ph: string }[]).map(({ key, ph }) => (
+                                                                            <input key={key} placeholder={ph}
+                                                                                value={h[key] || ''}
+                                                                                onChange={e => setDetailsDraft(prev => ({ ...prev, hotels: prev.hotels.map((x, j) => j === i ? { ...x, [key]: e.target.value } : x) }))}
+                                                                                className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-blue-400 bg-white w-full" />
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                            <button onClick={() => setDetailsDraft(prev => ({ ...prev, hotels: [...prev.hotels, { name: '', city: '', checkIn: '', checkOut: '', roomType: '', confirmationId: '' }] }))}
+                                                                className="w-full py-2 text-xs font-bold text-blue-600 border border-dashed border-blue-300 rounded-lg hover:bg-blue-50 transition-colors">
+                                                                + Add Hotel
+                                                            </button>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Itinerary tab */}
+                                                    {detailsTab === 'itinerary' && (
+                                                        <div className="space-y-2">
+                                                            {detailsDraft.itinerary.map((d, i) => (
+                                                                <div key={i} className="bg-white border border-gray-200 rounded-lg p-3 space-y-2">
+                                                                    <div className="flex items-center justify-between">
+                                                                        <span className="text-[11px] font-bold text-gray-700">Day {d.day}</span>
+                                                                        <button onClick={() => setDetailsDraft(prev => ({ ...prev, itinerary: prev.itinerary.filter((_, j) => j !== i) }))}
+                                                                            className="text-[11px] text-red-500 hover:text-red-700">✕ Remove</button>
+                                                                    </div>
+                                                                    <div className="grid grid-cols-2 gap-1.5">
+                                                                        <input type="number" placeholder="Day #" min={1} value={d.day}
+                                                                            onChange={e => setDetailsDraft(prev => ({ ...prev, itinerary: prev.itinerary.map((x, j) => j === i ? { ...x, day: Number(e.target.value) } : x) }))}
+                                                                            className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-blue-400 bg-white w-full" />
+                                                                        <input placeholder="Date (optional)" value={d.date || ''}
+                                                                            onChange={e => setDetailsDraft(prev => ({ ...prev, itinerary: prev.itinerary.map((x, j) => j === i ? { ...x, date: e.target.value } : x) }))}
+                                                                            className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-blue-400 bg-white w-full" />
+                                                                    </div>
+                                                                    <input placeholder="Title (e.g. Arrival & City Tour)" value={d.title}
+                                                                        onChange={e => setDetailsDraft(prev => ({ ...prev, itinerary: prev.itinerary.map((x, j) => j === i ? { ...x, title: e.target.value } : x) }))}
+                                                                        className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-blue-400 bg-white w-full" />
+                                                                    <textarea placeholder="Description..." value={d.description} rows={2}
+                                                                        onChange={e => setDetailsDraft(prev => ({ ...prev, itinerary: prev.itinerary.map((x, j) => j === i ? { ...x, description: e.target.value } : x) }))}
+                                                                        className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-blue-400 bg-white w-full resize-none" />
+                                                                </div>
+                                                            ))}
+                                                            <button onClick={() => setDetailsDraft(prev => ({ ...prev, itinerary: [...prev.itinerary, { day: prev.itinerary.length + 1, date: '', title: '', description: '' }] }))}
+                                                                className="w-full py-2 text-xs font-bold text-blue-600 border border-dashed border-blue-300 rounded-lg hover:bg-blue-50 transition-colors">
+                                                                + Add Day
+                                                            </button>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="flex gap-2 pt-1">
                                                         <button
-                                                            onClick={() => saveAdminNotes(String(b.id), String(b.bookingReference || b.id))}
-                                                            disabled={savingNotes === String(b.id)}
+                                                            onClick={() => saveBookingDetails(String(b.id), String(b.bookingReference || b.id))}
+                                                            disabled={savingDetails === String(b.id)}
                                                             className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition-colors"
                                                         >
-                                                            {savingNotes === String(b.id)
-                                                                ? <RefreshCw size={12} className="animate-spin" />
-                                                                : <Save size={12} />}
-                                                            Save Notes
+                                                            {savingDetails === String(b.id) ? <RefreshCw size={12} className="animate-spin" /> : <Save size={12} />}
+                                                            Save All
                                                         </button>
-                                                        <button
-                                                            onClick={() => setEditingNotesId(null)}
-                                                            className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg"
-                                                        >
+                                                        <button onClick={() => setEditingDetailsId(null)}
+                                                            className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg">
                                                             Cancel
                                                         </button>
                                                     </div>
                                                 </div>
                                             ) : (
                                                 <div className="mt-2 flex items-start gap-2">
-                                                    {b.adminNotes ? (
-                                                        <div className="flex-1 text-xs bg-blue-50 text-blue-800 rounded-lg px-3 py-2 border border-blue-100">
-                                                            <span className="font-semibold">Client Notes:</span> {String(b.adminNotes)}
+                                                    {b.adminDetails ? (
+                                                        <div className="flex-1 text-xs bg-blue-50 text-blue-800 rounded-lg px-3 py-2 border border-blue-100 space-y-0.5">
+                                                            {(b.adminDetails as BookingDetails).notes && <p>📝 {String((b.adminDetails as BookingDetails).notes)}</p>}
+                                                            {((b.adminDetails as BookingDetails).flights?.length || 0) > 0 && <p className="text-green-700">✈️ {(b.adminDetails as BookingDetails).flights.length} flight(s)</p>}
+                                                            {((b.adminDetails as BookingDetails).hotels?.length || 0) > 0 && <p className="text-purple-700">🏨 {(b.adminDetails as BookingDetails).hotels.length} hotel(s)</p>}
+                                                            {((b.adminDetails as BookingDetails).itinerary?.length || 0) > 0 && <p className="text-orange-700">🗺️ {(b.adminDetails as BookingDetails).itinerary.length} day(s) itinerary</p>}
                                                         </div>
                                                     ) : null}
                                                     <button
                                                         onClick={() => {
-                                                            setEditingNotesId(String(b.id));
-                                                            setNotesDraft(String(b.adminNotes || ''));
+                                                            setEditingDetailsId(String(b.id));
+                                                            setDetailsDraft((b.adminDetails as BookingDetails) || { ...EMPTY_DETAILS });
+                                                            setDetailsTab('notes');
                                                         }}
                                                         className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-blue-600 hover:bg-blue-50 border border-blue-200 rounded-lg font-semibold transition-colors"
                                                     >
                                                         <Edit2 size={11} />
-                                                        {b.adminNotes ? 'Edit Notes' : '+ Client Notes'}
+                                                        {b.adminDetails ? 'Edit Details' : '+ Add Details'}
                                                     </button>
                                                 </div>
                                             )}

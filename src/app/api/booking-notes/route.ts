@@ -11,7 +11,7 @@ async function getAccessToken(): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const privateKey = await importPKCS8(creds.private_key, 'RS256');
   const jwt = await new SignJWT({
-    scope: 'https://www.googleapis.com/auth/devstorage.read_only',
+    scope: 'https://www.googleapis.com/auth/devstorage.read_write',
   })
     .setProtectedHeader({ alg: 'RS256' })
     .setIssuedAt(now)
@@ -36,19 +36,24 @@ async function getAccessToken(): Promise<string> {
 // GET /api/booking-notes?ref=BK-123 — public, used by clients on /my-booking
 export async function GET(req: NextRequest) {
   const ref = req.nextUrl.searchParams.get('ref');
-  if (!ref) return NextResponse.json({ notes: null });
+  if (!ref) return NextResponse.json({ details: null });
   try {
     const bucket = process.env.GCS_BUCKET || '';
-    if (!bucket) return NextResponse.json({ notes: null });
+    if (!bucket) return NextResponse.json({ details: null });
     const accessToken = await getAccessToken();
     const res = await fetch(
       `${GCS_API}/storage/v1/b/${bucket}/o/${encodeURIComponent(FILE_NAME)}?alt=media`,
       { headers: { Authorization: `Bearer ${accessToken}` }, cache: 'no-store' }
     );
-    if (!res.ok) return NextResponse.json({ notes: null });
-    const all: Record<string, string> = await res.json();
-    return NextResponse.json({ notes: all[ref] ?? null });
+    if (!res.ok) return NextResponse.json({ details: null });
+    const all: Record<string, unknown> = await res.json();
+    const val = all[ref] ?? null;
+    // Migrate old string format
+    if (typeof val === 'string') {
+      return NextResponse.json({ details: { notes: val, flights: [], hotels: [], itinerary: [] } });
+    }
+    return NextResponse.json({ details: val });
   } catch {
-    return NextResponse.json({ notes: null });
+    return NextResponse.json({ details: null });
   }
 }

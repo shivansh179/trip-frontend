@@ -36,7 +36,9 @@ async function getAccessToken(): Promise<string> {
   return tokenData.access_token;
 }
 
-async function readNotes(token: string): Promise<Record<string, string>> {
+type BookingDetails = { notes: string; flights: unknown[]; hotels: unknown[]; itinerary: unknown[] };
+
+async function readNotes(token: string): Promise<Record<string, BookingDetails>> {
   const bucket = process.env.GCS_BUCKET || '';
   const res = await fetch(
     `${GCS_API}/storage/v1/b/${bucket}/o/${encodeURIComponent(FILE_NAME)}?alt=media`,
@@ -44,10 +46,20 @@ async function readNotes(token: string): Promise<Record<string, string>> {
   );
   if (res.status === 404) return {};
   if (!res.ok) return {};
-  return await res.json();
+  const raw = await res.json();
+  // Migrate old string values to structured format
+  const result: Record<string, BookingDetails> = {};
+  for (const [key, val] of Object.entries(raw)) {
+    if (typeof val === 'string') {
+      result[key] = { notes: val, flights: [], hotels: [], itinerary: [] };
+    } else {
+      result[key] = val as BookingDetails;
+    }
+  }
+  return result;
 }
 
-async function writeNotes(token: string, notes: Record<string, string>) {
+async function writeNotes(token: string, notes: Record<string, BookingDetails>) {
   const bucket = process.env.GCS_BUCKET || '';
   const body = JSON.stringify(notes);
   const res = await fetch(
@@ -75,24 +87,24 @@ export async function GET(req: NextRequest) {
   try {
     const accessToken = await getAccessToken();
     const ref = req.nextUrl.searchParams.get('ref');
-    const notes = await readNotes(accessToken);
-    return NextResponse.json({ notes: ref ? (notes[ref] ?? null) : notes });
+    const all = await readNotes(accessToken);
+    return NextResponse.json({ details: ref ? (all[ref] ?? null) : all });
   } catch (e) {
     return NextResponse.json({ error: e instanceof Error ? e.message : 'Error' }, { status: 500 });
   }
 }
 
-// POST /api/admin/booking-notes  body: { ref, notes }
+// POST /api/admin/booking-notes  body: { ref, details }
 export async function POST(req: NextRequest) {
   const token = req.headers.get('x-admin-token') || '';
   if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
-    const { ref, notes: text } = await req.json();
+    const { ref, details } = await req.json();
     if (!ref) return NextResponse.json({ error: 'Missing ref' }, { status: 400 });
     const accessToken = await getAccessToken();
     const existing = await readNotes(accessToken);
-    if (!text) delete existing[ref];
-    else existing[ref] = text;
+    if (!details) delete existing[ref];
+    else existing[ref] = details;
     await writeNotes(accessToken, existing);
     return NextResponse.json({ ok: true });
   } catch (e) {
