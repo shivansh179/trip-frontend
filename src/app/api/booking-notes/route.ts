@@ -1,20 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { head, BlobNotFoundError } from '@vercel/blob';
+import { Storage } from '@google-cloud/storage';
 
-const BLOB_KEY = 'booking-notes.json';
+const FILE_NAME = 'booking-notes.json';
+
+function getBucket() {
+  const raw = process.env.GCS_CREDENTIALS || '';
+  const bucket = process.env.GCS_BUCKET || '';
+  if (!raw || !bucket) return null;
+  const credentials = JSON.parse(Buffer.from(raw, 'base64').toString('utf-8'));
+  return new Storage({ credentials }).bucket(bucket);
+}
 
 // GET /api/booking-notes?ref=BK-123 — public, used by clients on /my-booking
 export async function GET(req: NextRequest) {
   const ref = req.nextUrl.searchParams.get('ref');
   if (!ref) return NextResponse.json({ notes: null });
   try {
-    const info = await head(BLOB_KEY);
-    const res = await fetch(info.url, { cache: 'no-store' });
-    if (!res.ok) return NextResponse.json({ notes: null });
-    const all: Record<string, string> = await res.json();
+    const bucket = getBucket();
+    if (!bucket) return NextResponse.json({ notes: null });
+    const file = bucket.file(FILE_NAME);
+    const [exists] = await file.exists();
+    if (!exists) return NextResponse.json({ notes: null });
+    const [contents] = await file.download();
+    const all: Record<string, string> = JSON.parse(contents.toString('utf-8'));
     return NextResponse.json({ notes: all[ref] ?? null });
-  } catch (e) {
-    if (e instanceof BlobNotFoundError) return NextResponse.json({ notes: null });
+  } catch {
     return NextResponse.json({ notes: null });
   }
 }
