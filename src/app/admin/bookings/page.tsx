@@ -231,13 +231,16 @@ export default function AdminBookingsPage() {
                 headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
                 body: JSON.stringify({ ref: bookingRef, notes: notesDraft }),
             });
-            if (!res.ok) throw new Error('Save failed');
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.error || `HTTP ${res.status}`);
+            }
             setTripBookings(prev => prev.map(t =>
                 String(t.bookingReference) === bookingRef ? { ...t, adminNotes: notesDraft } : t
             ));
             setEditingNotesId(null);
-        } catch {
-            alert('Failed to save notes. Please ensure BLOB_READ_WRITE_TOKEN is set in Vercel environment variables.');
+        } catch (e) {
+            alert('Failed to save notes: ' + (e instanceof Error ? e.message : String(e)));
         } finally {
             setSavingNotes(null);
         }
