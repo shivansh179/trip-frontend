@@ -233,6 +233,7 @@ export const api = {
     getEventBookings: () => apiClient.get('/admin/event-bookings'),
     markBookingAsReviewed: (reference: string) => apiClient.put(`/admin/bookings/${reference}/review`),
     updateBookingStatus: (id: number, status: string) => apiClient.put(`/admin/bookings/${id}/status`, { status }),
+    updateBooking: (id: number, data: Record<string, unknown>) => apiClient.patch(`/admin/bookings/${id}`, data),
 
     // Contact Inquiries
     getInquiries: () => apiClient.get('/admin/inquiries'),

@@ -7,7 +7,8 @@ import {
     Plane, Hotel, Calendar, Users, Mail, Phone, Clock, CheckCircle,
     XCircle, AlertCircle, RefreshCw, Search, Download, Eye, Filter,
     ArrowLeft, TrendingUp, DollarSign, BookOpen, Luggage, CreditCard,
-    BarChart3, ChevronDown, ChevronUp, ArrowUpDown, ArrowUp, ArrowDown
+    BarChart3, ChevronDown, ChevronUp, ArrowUpDown, ArrowUp, ArrowDown,
+    Edit2, Save
 } from 'lucide-react';
 import { api } from '@/lib/api';
 
@@ -159,6 +160,9 @@ export default function AdminBookingsPage() {
     };
 
     const [markingPaid, setMarkingPaid] = useState<string | null>(null);
+    const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
+    const [notesDraft, setNotesDraft] = useState('');
+    const [savingNotes, setSavingNotes] = useState<string | null>(null);
 
     const markTripAsPaid = async (b: Record<string, unknown>) => {
         const id = b.id as number;
@@ -202,6 +206,19 @@ export default function AdminBookingsPage() {
             alert('Failed to update status. Please try again.');
         } finally {
             setMarkingPaid(null);
+        }
+    };
+
+    const saveAdminNotes = async (key: string, id: number) => {
+        setSavingNotes(key);
+        try {
+            await api.admin.updateBooking(id, { adminNotes: notesDraft });
+            setTripBookings(prev => prev.map(t => t.id === id ? { ...t, adminNotes: notesDraft } : t));
+            setEditingNotesId(null);
+        } catch {
+            alert('Failed to save notes. Please check the backend supports PATCH /admin/bookings/{id}.');
+        } finally {
+            setSavingNotes(null);
         }
     };
 
@@ -665,6 +682,56 @@ export default function AdminBookingsPage() {
                                                     📝 {String(b.specialRequests)}
                                                 </p>
                                             ) : null}
+
+                                            {/* ── Admin Notes for Client ── */}
+                                            {editingNotesId === String(b.id) ? (
+                                                <div className="mt-2 space-y-2">
+                                                    <textarea
+                                                        value={notesDraft}
+                                                        onChange={e => setNotesDraft(e.target.value)}
+                                                        rows={3}
+                                                        placeholder="Add details for client: hotel name, confirmation numbers, meeting point, guide contact, itinerary updates, etc."
+                                                        className="w-full text-xs border border-blue-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                                                        autoFocus
+                                                    />
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => saveAdminNotes(String(b.id), Number(b.id))}
+                                                            disabled={savingNotes === String(b.id)}
+                                                            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition-colors"
+                                                        >
+                                                            {savingNotes === String(b.id)
+                                                                ? <RefreshCw size={12} className="animate-spin" />
+                                                                : <Save size={12} />}
+                                                            Save Notes
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setEditingNotesId(null)}
+                                                            className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="mt-2 flex items-start gap-2">
+                                                    {b.adminNotes ? (
+                                                        <div className="flex-1 text-xs bg-blue-50 text-blue-800 rounded-lg px-3 py-2 border border-blue-100">
+                                                            <span className="font-semibold">Client Notes:</span> {String(b.adminNotes)}
+                                                        </div>
+                                                    ) : null}
+                                                    <button
+                                                        onClick={() => {
+                                                            setEditingNotesId(String(b.id));
+                                                            setNotesDraft(String(b.adminNotes || ''));
+                                                        }}
+                                                        className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-blue-600 hover:bg-blue-50 border border-blue-200 rounded-lg font-semibold transition-colors"
+                                                    >
+                                                        <Edit2 size={11} />
+                                                        {b.adminNotes ? 'Edit Notes' : '+ Client Notes'}
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     );
                                 })}

@@ -247,6 +247,17 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
         </div>
       </GlassCard>
       <Timeline steps={steps} />
+      {!!data.adminNotes && (
+        <GlassCard className="!border-amber-500/20 !bg-amber-500/5">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-7 h-7 bg-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
+              <Bell size={13} className="text-amber-400" />
+            </div>
+            <p className="text-amber-400 font-bold text-sm">Updates from YlooTrips</p>
+          </div>
+          <p className="text-white/80 text-sm leading-relaxed whitespace-pre-line">{String(data.adminNotes)}</p>
+        </GlassCard>
+      )}
       <PaymentReceipt
         receiptId={ref}
         lines={[{ label: 'Trip Package', amount: total }]}
