@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Search, CheckCircle, Clock, Plane, Calendar, Users,
@@ -181,6 +181,17 @@ function Timeline({ steps }: { steps: { label: string; done: boolean }[] }) {
 function TripBookingCard({ data }: { data: Record<string, unknown> }) {
   const ref = (data.bookingReference as string) || '';
   const total = Number(data.finalAmount || data.totalAmount || 0);
+  const [adminNotes, setAdminNotes] = useState<string | null>(null);
+
+  // Fetch admin notes for this booking reference
+  useEffect(() => {
+    if (!ref) return;
+    fetch(`/api/booking-notes?ref=${encodeURIComponent(ref)}`)
+      .then(r => r.json())
+      .then(j => { if (j.notes) setAdminNotes(j.notes); })
+      .catch(() => {});
+  }, [ref]);
+
   const steps = [
     { label: 'Booking Confirmed ✅', done: true },
     { label: 'Payment Received', done: (data.paymentStatus as string)?.toUpperCase() === 'PAID' },
@@ -247,7 +258,7 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
         </div>
       </GlassCard>
       <Timeline steps={steps} />
-      {!!data.adminNotes && (
+      {!!adminNotes && (
         <GlassCard className="!border-amber-500/20 !bg-amber-500/5">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-7 h-7 bg-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
@@ -255,7 +266,7 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
             </div>
             <p className="text-amber-400 font-bold text-sm">Updates from YlooTrips</p>
           </div>
-          <p className="text-white/80 text-sm leading-relaxed whitespace-pre-line">{String(data.adminNotes)}</p>
+          <p className="text-white/80 text-sm leading-relaxed whitespace-pre-line">{adminNotes}</p>
         </GlassCard>
       )}
       <PaymentReceipt

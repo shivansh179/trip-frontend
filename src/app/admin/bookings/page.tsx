@@ -122,13 +122,25 @@ export default function AdminBookingsPage() {
         setLoading(true);
         const token = localStorage.getItem('adminToken') || '';
         try {
-            const [flightRes, tripRes, eventRes] = await Promise.allSettled([
+            const [flightRes, tripRes, eventRes, notesRes] = await Promise.allSettled([
                 fetch('/api/admin/flight-bookings', { headers: { 'x-admin-token': token } }).then(r => r.json()),
                 api.admin.getBookings(),
                 api.admin.getEventBookings(),
+                fetch('/api/admin/booking-notes', { headers: { 'x-admin-token': token } }).then(r => r.json()),
             ]);
             if (flightRes.status === 'fulfilled') setFlightBookings(flightRes.value.data || []);
-            if (tripRes.status === 'fulfilled') setTripBookings(extractList(tripRes.value));
+
+            // Merge saved notes into trip bookings
+            const notesMap: Record<string, string> = notesRes.status === 'fulfilled'
+                ? (notesRes.value.notes || {})
+                : {};
+            if (tripRes.status === 'fulfilled') {
+                const trips = extractList(tripRes.value);
+                setTripBookings(trips.map(t => ({
+                    ...t,
+                    adminNotes: notesMap[String(t.bookingReference || '')] ?? t.adminNotes ?? '',
+                })));
+            }
             if (eventRes.status === 'fulfilled') setEventBookings(extractList(eventRes.value));
         } finally {
             setLoading(false);
@@ -210,14 +222,22 @@ export default function AdminBookingsPage() {
         }
     };
 
-    const saveAdminNotes = async (key: string, id: number) => {
+    const saveAdminNotes = async (key: string, bookingRef: string) => {
         setSavingNotes(key);
+        const token = localStorage.getItem('adminToken') || '';
         try {
-            await api.admin.updateBooking(id, { adminNotes: notesDraft });
-            setTripBookings(prev => prev.map(t => t.id === id ? { ...t, adminNotes: notesDraft } : t));
+            const res = await fetch('/api/admin/booking-notes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
+                body: JSON.stringify({ ref: bookingRef, notes: notesDraft }),
+            });
+            if (!res.ok) throw new Error('Save failed');
+            setTripBookings(prev => prev.map(t =>
+                String(t.bookingReference) === bookingRef ? { ...t, adminNotes: notesDraft } : t
+            ));
             setEditingNotesId(null);
         } catch {
-            alert('Failed to save notes. Please check the backend supports PATCH /admin/bookings/{id}.');
+            alert('Failed to save notes. Please ensure BLOB_READ_WRITE_TOKEN is set in Vercel environment variables.');
         } finally {
             setSavingNotes(null);
         }
@@ -726,7 +746,7 @@ export default function AdminBookingsPage() {
                                                     />
                                                     <div className="flex gap-2">
                                                         <button
-                                                            onClick={() => saveAdminNotes(String(b.id), Number(b.id))}
+                                                            onClick={() => saveAdminNotes(String(b.id), String(b.bookingReference || b.id))}
                                                             disabled={savingNotes === String(b.id)}
                                                             className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition-colors"
                                                         >
