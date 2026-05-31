@@ -44,11 +44,9 @@ const STATUS_COLORS: Record<string, string> = {
     FAILED: 'bg-red-100 text-red-700',
 };
 
-interface FlightDetail { airline: string; flightNumber: string; from: string; to: string; date: string; depTime: string; arrTime: string; pnr: string; seat?: string; }
-interface HotelDetail { name: string; city: string; checkIn: string; checkOut: string; roomType: string; confirmationId: string; }
-interface ItineraryEntry { day: number; date?: string; title: string; description: string; }
-interface BookingDetails { notes: string; flights: FlightDetail[]; hotels: HotelDetail[]; itinerary: ItineraryEntry[]; }
-const EMPTY_DETAILS: BookingDetails = { notes: '', flights: [], hotels: [], itinerary: [] };
+interface BookingDetails { notes: string; flightsPdf?: string; hotelsPdf?: string; itineraryPdf?: string; }
+const EMPTY_DETAILS: BookingDetails = { notes: '' };
+type PdfDocType = 'flights' | 'hotels' | 'itinerary';
 type DetailsTab = 'notes' | 'flights' | 'hotels' | 'itinerary';
 
 type BookingTab = 'flights' | 'trips' | 'events' | 'pg-dashboard';
@@ -184,6 +182,7 @@ export default function AdminBookingsPage() {
     const [detailsDraft, setDetailsDraft] = useState<BookingDetails>(EMPTY_DETAILS);
     const [detailsTab, setDetailsTab] = useState<DetailsTab>('notes');
     const [savingDetails, setSavingDetails] = useState<string | null>(null);
+    const [uploadingPdf, setUploadingPdf] = useState<string | null>(null);
 
     const markTripAsPaid = async (b: Record<string, unknown>) => {
         const id = b.id as number;
@@ -251,6 +250,58 @@ export default function AdminBookingsPage() {
             alert('Failed to save details: ' + (e instanceof Error ? e.message : String(e)));
         } finally {
             setSavingDetails(null);
+        }
+    };
+
+    const uploadPdf = async (bookingRef: string, docType: PdfDocType, file: File) => {
+        const key = `${editingDetailsId}-${docType}`;
+        setUploadingPdf(key);
+        const token = localStorage.getItem('adminToken') || '';
+        try {
+            const form = new FormData();
+            form.append('ref', bookingRef);
+            form.append('type', docType);
+            form.append('file', file);
+            const res = await fetch('/api/admin/booking-docs', {
+                method: 'POST',
+                headers: { 'x-admin-token': token },
+                body: form,
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+            const field = `${docType}Pdf` as keyof BookingDetails;
+            setDetailsDraft(prev => ({ ...prev, [field]: data.path }));
+            setTripBookings(prev => prev.map(t =>
+                String(t.bookingReference) === bookingRef
+                    ? { ...t, adminDetails: { ...(t.adminDetails as BookingDetails || EMPTY_DETAILS), [field]: data.path } }
+                    : t
+            ));
+        } catch (e) {
+            alert('Upload failed: ' + (e instanceof Error ? e.message : String(e)));
+        } finally {
+            setUploadingPdf(null);
+        }
+    };
+
+    const deletePdf = async (bookingRef: string, docType: PdfDocType) => {
+        if (!confirm(`Delete ${docType} PDF for this booking?`)) return;
+        const token = localStorage.getItem('adminToken') || '';
+        try {
+            const res = await fetch(`/api/admin/booking-docs?ref=${encodeURIComponent(bookingRef)}&type=${docType}`, {
+                method: 'DELETE',
+                headers: { 'x-admin-token': token },
+            });
+            if (!res.ok) throw new Error('Delete failed');
+            const field = `${docType}Pdf` as keyof BookingDetails;
+            setDetailsDraft(prev => { const n = { ...prev }; delete n[field]; return n; });
+            setTripBookings(prev => prev.map(t => {
+                if (String(t.bookingReference) !== bookingRef) return t;
+                const d = { ...(t.adminDetails as BookingDetails || EMPTY_DETAILS) };
+                delete d[field];
+                return { ...t, adminDetails: d };
+            }));
+        } catch (e) {
+            alert('Delete failed: ' + (e instanceof Error ? e.message : String(e)));
         }
     };
 
@@ -771,109 +822,55 @@ export default function AdminBookingsPage() {
                                                         />
                                                     )}
 
-                                                    {/* Flights tab */}
-                                                    {detailsTab === 'flights' && (
-                                                        <div className="space-y-2">
-                                                            {detailsDraft.flights.map((f, i) => (
-                                                                <div key={i} className="bg-white border border-gray-200 rounded-lg p-3 space-y-2">
-                                                                    <div className="flex items-center justify-between">
-                                                                        <span className="text-[11px] font-bold text-gray-700">Flight {i + 1}</span>
-                                                                        <button onClick={() => setDetailsDraft(prev => ({ ...prev, flights: prev.flights.filter((_, j) => j !== i) }))}
-                                                                            className="text-[11px] text-red-500 hover:text-red-700">✕ Remove</button>
+                                                    {/* PDF upload tabs — Flights / Hotels / Itinerary */}
+                                                    {(['flights', 'hotels', 'itinerary'] as const).map(docType => {
+                                                        if (detailsTab !== docType) return null;
+                                                        const pdfField = `${docType}Pdf` as keyof BookingDetails;
+                                                        const existingPath = detailsDraft[pdfField] as string | undefined;
+                                                        const uploadKey = `${editingDetailsId}-${docType}`;
+                                                        const isUploading = uploadingPdf === uploadKey;
+                                                        const bookingRef = String(b.bookingReference || b.id);
+                                                        const labels: Record<string, string> = { flights: 'Flight Tickets', hotels: 'Hotel Voucher', itinerary: 'Itinerary' };
+                                                        return (
+                                                            <div key={docType} className="space-y-3">
+                                                                <p className="text-[11px] text-gray-500">Upload a PDF for <strong>{labels[docType]}</strong>. Client can download it from their booking page.</p>
+                                                                {existingPath ? (
+                                                                    <div className="flex items-center justify-between bg-white border border-green-200 rounded-lg px-3 py-3">
+                                                                        <div className="flex items-center gap-2">
+                                                                            <span className="text-lg">📄</span>
+                                                                            <div>
+                                                                                <p className="text-xs font-semibold text-gray-800">{docType}.pdf</p>
+                                                                                <p className="text-[10px] text-green-600 font-bold">✓ Uploaded</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="flex gap-2">
+                                                                            <a href={`/api/booking-docs?ref=${encodeURIComponent(bookingRef)}&type=${docType}`}
+                                                                                target="_blank" rel="noopener noreferrer"
+                                                                                className="text-[11px] text-blue-600 hover:underline font-semibold px-2 py-1 border border-blue-200 rounded">
+                                                                                Preview
+                                                                            </a>
+                                                                            <button onClick={() => deletePdf(bookingRef, docType)}
+                                                                                className="text-[11px] text-red-500 hover:text-red-700 px-2 py-1 border border-red-200 rounded">
+                                                                                Delete
+                                                                            </button>
+                                                                        </div>
                                                                     </div>
-                                                                    <div className="grid grid-cols-2 gap-1.5">
-                                                                        {([
-                                                                            { key: 'airline', ph: 'Airline (IndiGo)' },
-                                                                            { key: 'flightNumber', ph: 'Flight No. (6E 234)' },
-                                                                            { key: 'from', ph: 'From (DEL)' },
-                                                                            { key: 'to', ph: 'To (BOM)' },
-                                                                            { key: 'date', ph: 'Date (2025-12-01)' },
-                                                                            { key: 'depTime', ph: 'Dep. Time (06:30)' },
-                                                                            { key: 'arrTime', ph: 'Arr. Time (08:45)' },
-                                                                            { key: 'pnr', ph: 'PNR Code' },
-                                                                            { key: 'seat', ph: 'Seat (optional)' },
-                                                                        ] as { key: keyof FlightDetail; ph: string }[]).map(({ key, ph }) => (
-                                                                            <input key={key} placeholder={ph}
-                                                                                value={f[key] || ''}
-                                                                                onChange={e => setDetailsDraft(prev => ({ ...prev, flights: prev.flights.map((x, j) => j === i ? { ...x, [key]: e.target.value } : x) }))}
-                                                                                className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-blue-400 bg-white w-full" />
-                                                                        ))}
-                                                                    </div>
-                                                                </div>
-                                                            ))}
-                                                            <button onClick={() => setDetailsDraft(prev => ({ ...prev, flights: [...prev.flights, { airline: '', flightNumber: '', from: '', to: '', date: '', depTime: '', arrTime: '', pnr: '', seat: '' }] }))}
-                                                                className="w-full py-2 text-xs font-bold text-blue-600 border border-dashed border-blue-300 rounded-lg hover:bg-blue-50 transition-colors">
-                                                                + Add Flight
-                                                            </button>
-                                                        </div>
-                                                    )}
-
-                                                    {/* Hotels tab */}
-                                                    {detailsTab === 'hotels' && (
-                                                        <div className="space-y-2">
-                                                            {detailsDraft.hotels.map((h, i) => (
-                                                                <div key={i} className="bg-white border border-gray-200 rounded-lg p-3 space-y-2">
-                                                                    <div className="flex items-center justify-between">
-                                                                        <span className="text-[11px] font-bold text-gray-700">Hotel {i + 1}</span>
-                                                                        <button onClick={() => setDetailsDraft(prev => ({ ...prev, hotels: prev.hotels.filter((_, j) => j !== i) }))}
-                                                                            className="text-[11px] text-red-500 hover:text-red-700">✕ Remove</button>
-                                                                    </div>
-                                                                    <div className="grid grid-cols-2 gap-1.5">
-                                                                        {([
-                                                                            { key: 'name', ph: 'Hotel Name' },
-                                                                            { key: 'city', ph: 'City / Location' },
-                                                                            { key: 'checkIn', ph: 'Check-in (2025-12-01)' },
-                                                                            { key: 'checkOut', ph: 'Check-out (2025-12-05)' },
-                                                                            { key: 'roomType', ph: 'Room Type (Deluxe)' },
-                                                                            { key: 'confirmationId', ph: 'Confirmation ID' },
-                                                                        ] as { key: keyof HotelDetail; ph: string }[]).map(({ key, ph }) => (
-                                                                            <input key={key} placeholder={ph}
-                                                                                value={h[key] || ''}
-                                                                                onChange={e => setDetailsDraft(prev => ({ ...prev, hotels: prev.hotels.map((x, j) => j === i ? { ...x, [key]: e.target.value } : x) }))}
-                                                                                className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-blue-400 bg-white w-full" />
-                                                                        ))}
-                                                                    </div>
-                                                                </div>
-                                                            ))}
-                                                            <button onClick={() => setDetailsDraft(prev => ({ ...prev, hotels: [...prev.hotels, { name: '', city: '', checkIn: '', checkOut: '', roomType: '', confirmationId: '' }] }))}
-                                                                className="w-full py-2 text-xs font-bold text-blue-600 border border-dashed border-blue-300 rounded-lg hover:bg-blue-50 transition-colors">
-                                                                + Add Hotel
-                                                            </button>
-                                                        </div>
-                                                    )}
-
-                                                    {/* Itinerary tab */}
-                                                    {detailsTab === 'itinerary' && (
-                                                        <div className="space-y-2">
-                                                            {detailsDraft.itinerary.map((d, i) => (
-                                                                <div key={i} className="bg-white border border-gray-200 rounded-lg p-3 space-y-2">
-                                                                    <div className="flex items-center justify-between">
-                                                                        <span className="text-[11px] font-bold text-gray-700">Day {d.day}</span>
-                                                                        <button onClick={() => setDetailsDraft(prev => ({ ...prev, itinerary: prev.itinerary.filter((_, j) => j !== i) }))}
-                                                                            className="text-[11px] text-red-500 hover:text-red-700">✕ Remove</button>
-                                                                    </div>
-                                                                    <div className="grid grid-cols-2 gap-1.5">
-                                                                        <input type="number" placeholder="Day #" min={1} value={d.day}
-                                                                            onChange={e => setDetailsDraft(prev => ({ ...prev, itinerary: prev.itinerary.map((x, j) => j === i ? { ...x, day: Number(e.target.value) } : x) }))}
-                                                                            className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-blue-400 bg-white w-full" />
-                                                                        <input placeholder="Date (optional)" value={d.date || ''}
-                                                                            onChange={e => setDetailsDraft(prev => ({ ...prev, itinerary: prev.itinerary.map((x, j) => j === i ? { ...x, date: e.target.value } : x) }))}
-                                                                            className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-blue-400 bg-white w-full" />
-                                                                    </div>
-                                                                    <input placeholder="Title (e.g. Arrival & City Tour)" value={d.title}
-                                                                        onChange={e => setDetailsDraft(prev => ({ ...prev, itinerary: prev.itinerary.map((x, j) => j === i ? { ...x, title: e.target.value } : x) }))}
-                                                                        className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-blue-400 bg-white w-full" />
-                                                                    <textarea placeholder="Description..." value={d.description} rows={2}
-                                                                        onChange={e => setDetailsDraft(prev => ({ ...prev, itinerary: prev.itinerary.map((x, j) => j === i ? { ...x, description: e.target.value } : x) }))}
-                                                                        className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-blue-400 bg-white w-full resize-none" />
-                                                                </div>
-                                                            ))}
-                                                            <button onClick={() => setDetailsDraft(prev => ({ ...prev, itinerary: [...prev.itinerary, { day: prev.itinerary.length + 1, date: '', title: '', description: '' }] }))}
-                                                                className="w-full py-2 text-xs font-bold text-blue-600 border border-dashed border-blue-300 rounded-lg hover:bg-blue-50 transition-colors">
-                                                                + Add Day
-                                                            </button>
-                                                        </div>
-                                                    )}
+                                                                ) : (
+                                                                    <label className="block cursor-pointer">
+                                                                        <input type="file" accept="application/pdf" className="hidden"
+                                                                            onChange={e => { const f = e.target.files?.[0]; if (f) uploadPdf(bookingRef, docType, f); e.target.value = ''; }} />
+                                                                        <div className={`w-full py-8 border-2 border-dashed rounded-xl text-center transition-colors
+                                                                            ${isUploading ? 'border-blue-300 bg-blue-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'}`}>
+                                                                            {isUploading
+                                                                                ? <><RefreshCw size={18} className="animate-spin text-blue-500 mx-auto mb-1" /><p className="text-xs text-blue-600 font-semibold">Uploading...</p></>
+                                                                                : <><p className="text-2xl mb-1">📎</p><p className="text-xs font-bold text-gray-600">Click to upload {labels[docType]} PDF</p><p className="text-[10px] text-gray-400 mt-1">PDF files only</p></>
+                                                                            }
+                                                                        </div>
+                                                                    </label>
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    })}
 
                                                     <div className="flex gap-2 pt-1">
                                                         <button
@@ -894,10 +891,10 @@ export default function AdminBookingsPage() {
                                                 <div className="mt-2 flex items-start gap-2">
                                                     {b.adminDetails ? (
                                                         <div className="flex-1 text-xs bg-blue-50 text-blue-800 rounded-lg px-3 py-2 border border-blue-100 space-y-0.5">
-                                                            {(b.adminDetails as BookingDetails).notes && <p>📝 {String((b.adminDetails as BookingDetails).notes)}</p>}
-                                                            {((b.adminDetails as BookingDetails).flights?.length || 0) > 0 && <p className="text-green-700">✈️ {(b.adminDetails as BookingDetails).flights.length} flight(s)</p>}
-                                                            {((b.adminDetails as BookingDetails).hotels?.length || 0) > 0 && <p className="text-purple-700">🏨 {(b.adminDetails as BookingDetails).hotels.length} hotel(s)</p>}
-                                                            {((b.adminDetails as BookingDetails).itinerary?.length || 0) > 0 && <p className="text-orange-700">🗺️ {(b.adminDetails as BookingDetails).itinerary.length} day(s) itinerary</p>}
+                                                            {(b.adminDetails as BookingDetails).notes && <p>📝 {String((b.adminDetails as BookingDetails).notes).slice(0, 80)}{String((b.adminDetails as BookingDetails).notes).length > 80 ? '…' : ''}</p>}
+                                                            {(b.adminDetails as BookingDetails).flightsPdf && <p className="text-green-700">✈️ Flight Tickets PDF</p>}
+                                                            {(b.adminDetails as BookingDetails).hotelsPdf && <p className="text-purple-700">🏨 Hotel Voucher PDF</p>}
+                                                            {(b.adminDetails as BookingDetails).itineraryPdf && <p className="text-orange-700">🗺️ Itinerary PDF</p>}
                                                         </div>
                                                     ) : null}
                                                     <button

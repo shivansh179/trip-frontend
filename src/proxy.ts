@@ -107,7 +107,9 @@ export function proxy(req: NextRequest) {
   // ── 4. Block suspicious requests to sensitive API routes ──────────────────
   // If someone hits /api/admin/* from a browser (non-server call), block it
   // Exception: booking-notes uses GCS service-account auth — no ADMIN_SECRET needed
-  if (pathname.startsWith('/api/admin/') && !pathname.startsWith('/api/admin/booking-notes')) {
+  if (pathname.startsWith('/api/admin/') &&
+      !pathname.startsWith('/api/admin/booking-notes') &&
+      !pathname.startsWith('/api/admin/booking-docs')) {
     const adminSecret = process.env.ADMIN_SECRET;
     if (!adminSecret) {
       // ADMIN_SECRET not configured — deny all admin API access

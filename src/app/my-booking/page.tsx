@@ -177,10 +177,7 @@ function Timeline({ steps }: { steps: { label: string; done: boolean }[] }) {
   );
 }
 
-interface FlightDetail { airline: string; flightNumber: string; from: string; to: string; date: string; depTime: string; arrTime: string; pnr: string; seat?: string; }
-interface HotelDetail { name: string; city: string; checkIn: string; checkOut: string; roomType: string; confirmationId: string; }
-interface ItineraryEntry { day: number; date?: string; title: string; description: string; }
-interface BookingDetails { notes: string; flights: FlightDetail[]; hotels: HotelDetail[]; itinerary: ItineraryEntry[]; }
+interface BookingDetails { notes: string; flightsPdf?: string; hotelsPdf?: string; itineraryPdf?: string; }
 
 /* ─── Trip Booking Card ─── */
 function TripBookingCard({ data }: { data: Record<string, unknown> }) {
@@ -262,9 +259,9 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
         </div>
       </GlassCard>
       <Timeline steps={steps} />
-      {!!adminDetails && (adminDetails.notes || adminDetails.flights?.length > 0 || adminDetails.hotels?.length > 0 || adminDetails.itinerary?.length > 0) && (
+      {!!adminDetails && (adminDetails.notes || adminDetails.flightsPdf || adminDetails.hotelsPdf || adminDetails.itineraryPdf) && (
         <div className="space-y-4">
-          {/* Notes */}
+          {/* Notes from admin */}
           {!!adminDetails.notes && (
             <GlassCard className="!border-amber-500/20 !bg-amber-500/5">
               <div className="flex items-center gap-2 mb-3">
@@ -276,80 +273,59 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
               <p className="text-white/80 text-sm leading-relaxed whitespace-pre-line">{adminDetails.notes}</p>
             </GlassCard>
           )}
-          {/* Flights */}
-          {adminDetails.flights?.length > 0 && (
+          {/* Travel document downloads */}
+          {(adminDetails.flightsPdf || adminDetails.hotelsPdf || adminDetails.itineraryPdf) && (
             <GlassCard>
-              <div className="flex items-center gap-2 mb-4">
-                <Plane size={15} className="text-blue-400" />
-                <p className="text-white font-bold text-sm">Your Flights</p>
-              </div>
-              <div className="space-y-3">
-                {adminDetails.flights.map((f, i) => (
-                  <div key={i} className="bg-white/5 rounded-xl p-3 border border-white/10">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-white font-semibold text-sm">{f.airline}</span>
-                      <span className="text-white/50 text-xs font-mono">{f.flightNumber}</span>
+              <p className="text-white/50 text-xs font-bold uppercase tracking-widest mb-4">Your Travel Documents</p>
+              <div className="space-y-2">
+                {adminDetails.flightsPdf && (
+                  <a href={`/api/booking-docs?ref=${encodeURIComponent(ref)}&type=flights`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-between bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-3.5 hover:bg-blue-500/20 transition-colors group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 bg-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
+                        <Plane size={15} className="text-blue-400" />
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm">Flight Tickets</p>
+                        <p className="text-white/40 text-xs">PDF · Tap to download</p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 text-sm mb-3">
-                      <span className="text-white font-bold">{f.from}</span>
-                      <span className="text-white/40 text-xs">→</span>
-                      <span className="text-white font-bold">{f.to}</span>
+                    <Download size={15} className="text-blue-400 group-hover:scale-110 transition-transform" />
+                  </a>
+                )}
+                {adminDetails.hotelsPdf && (
+                  <a href={`/api/booking-docs?ref=${encodeURIComponent(ref)}&type=hotels`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-between bg-purple-500/10 border border-purple-500/20 rounded-xl px-4 py-3.5 hover:bg-purple-500/20 transition-colors group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 bg-purple-500/20 rounded-xl flex items-center justify-center shrink-0">
+                        <Hotel size={15} className="text-purple-400" />
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm">Hotel Voucher</p>
+                        <p className="text-white/40 text-xs">PDF · Tap to download</p>
+                      </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 text-xs text-white/60">
-                      {f.date && <div><p className="text-white/40 mb-0.5">Date</p><p>{f.date}</p></div>}
-                      {f.depTime && <div><p className="text-white/40 mb-0.5">Departs</p><p>{f.depTime}</p></div>}
-                      {f.arrTime && <div><p className="text-white/40 mb-0.5">Arrives</p><p>{f.arrTime}</p></div>}
-                      {f.pnr && <div><p className="text-white/40 mb-0.5">PNR</p><p className="font-mono font-bold text-white/80">{f.pnr}</p></div>}
-                      {f.seat && <div><p className="text-white/40 mb-0.5">Seat</p><p>{f.seat}</p></div>}
+                    <Download size={15} className="text-purple-400 group-hover:scale-110 transition-transform" />
+                  </a>
+                )}
+                {adminDetails.itineraryPdf && (
+                  <a href={`/api/booking-docs?ref=${encodeURIComponent(ref)}&type=itinerary`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-between bg-orange-500/10 border border-orange-500/20 rounded-xl px-4 py-3.5 hover:bg-orange-500/20 transition-colors group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 bg-orange-500/20 rounded-xl flex items-center justify-center shrink-0">
+                        <BookOpen size={15} className="text-orange-400" />
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm">Your Itinerary</p>
+                        <p className="text-white/40 text-xs">PDF · Tap to download</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </GlassCard>
-          )}
-          {/* Hotels */}
-          {adminDetails.hotels?.length > 0 && (
-            <GlassCard>
-              <div className="flex items-center gap-2 mb-4">
-                <Hotel size={15} className="text-purple-400" />
-                <p className="text-white font-bold text-sm">Your Hotels</p>
-              </div>
-              <div className="space-y-3">
-                {adminDetails.hotels.map((h, i) => (
-                  <div key={i} className="bg-white/5 rounded-xl p-3 border border-white/10">
-                    <p className="text-white font-semibold text-sm mb-1">{h.name}</p>
-                    {h.city && <p className="text-white/50 text-xs mb-2">{h.city}</p>}
-                    <div className="grid grid-cols-2 gap-2 text-xs text-white/60">
-                      {h.checkIn && <div><p className="text-white/40 mb-0.5">Check-in</p><p>{h.checkIn}</p></div>}
-                      {h.checkOut && <div><p className="text-white/40 mb-0.5">Check-out</p><p>{h.checkOut}</p></div>}
-                      {h.roomType && <div><p className="text-white/40 mb-0.5">Room</p><p>{h.roomType}</p></div>}
-                      {h.confirmationId && <div><p className="text-white/40 mb-0.5">Conf. ID</p><p className="font-mono font-bold text-white/80">{h.confirmationId}</p></div>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </GlassCard>
-          )}
-          {/* Itinerary */}
-          {adminDetails.itinerary?.length > 0 && (
-            <GlassCard>
-              <div className="flex items-center gap-2 mb-4">
-                <BookOpen size={15} className="text-orange-400" />
-                <p className="text-white font-bold text-sm">Your Itinerary</p>
-              </div>
-              <div className="space-y-4">
-                {[...adminDetails.itinerary].sort((a, b) => a.day - b.day).map((d, i) => (
-                  <div key={i} className="flex gap-3">
-                    <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center shrink-0 text-orange-400 font-bold text-xs">
-                      {d.day}
-                    </div>
-                    <div className="flex-1 pt-1">
-                      <p className="text-white font-semibold text-sm">{d.title}</p>
-                      {d.date && <p className="text-white/40 text-xs mt-0.5">{d.date}</p>}
-                      {d.description && <p className="text-white/60 text-xs mt-1 leading-relaxed">{d.description}</p>}
-                    </div>
-                  </div>
-                ))}
+                    <Download size={15} className="text-orange-400 group-hover:scale-110 transition-transform" />
+                  </a>
+                )}
               </div>
             </GlassCard>
           )}

@@ -36,7 +36,7 @@ async function getAccessToken(): Promise<string> {
   return tokenData.access_token;
 }
 
-type BookingDetails = { notes: string; flights: unknown[]; hotels: unknown[]; itinerary: unknown[] };
+type BookingDetails = { notes: string; flightsPdf?: string; hotelsPdf?: string; itineraryPdf?: string; [k: string]: unknown };
 
 async function readNotes(token: string): Promise<Record<string, BookingDetails>> {
   const bucket = process.env.GCS_BUCKET || '';
@@ -47,14 +47,9 @@ async function readNotes(token: string): Promise<Record<string, BookingDetails>>
   if (res.status === 404) return {};
   if (!res.ok) return {};
   const raw = await res.json();
-  // Migrate old string values to structured format
   const result: Record<string, BookingDetails> = {};
   for (const [key, val] of Object.entries(raw)) {
-    if (typeof val === 'string') {
-      result[key] = { notes: val, flights: [], hotels: [], itinerary: [] };
-    } else {
-      result[key] = val as BookingDetails;
-    }
+    result[key] = typeof val === 'string' ? { notes: val } : (val as BookingDetails);
   }
   return result;
 }
