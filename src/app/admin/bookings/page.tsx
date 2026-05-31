@@ -268,8 +268,10 @@ export default function AdminBookingsPage() {
             String(b.customerEmail || '').toLowerCase().includes(q) ||
             String(b.customerName || '').toLowerCase().includes(q) ||
             String(b.customerPhone || '').includes(q);
-        const paymentStatus = String(b.paymentStatus || b.payment_status || b.status || '').toUpperCase();
-        const isPaid = ['CONFIRMED', 'COMPLETED', 'PAID', 'SUCCESS', 'CAPTURED'].includes(paymentStatus);
+        const PAID_STATUSES = ['CONFIRMED', 'COMPLETED', 'PAID', 'SUCCESS', 'CAPTURED'];
+        const pmtStatus = String(b.paymentStatus || b.payment_status || '').toUpperCase();
+        const bkgStatus = String(b.status || '').toUpperCase();
+        const isPaid = PAID_STATUSES.includes(pmtStatus) || PAID_STATUSES.includes(bkgStatus);
         const matchPayment =
             paymentFilter === 'ALL' ||
             (paymentFilter === 'PAID' && isPaid) ||
