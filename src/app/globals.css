@@ -826,8 +826,8 @@ h6 {
   border-color: rgba(255,255,255,0.12) !important;
 }
 
-/* Dark mode: header glass bg when scrolled */
-.dark header { background-color: rgba(17,17,16,0.92) !important; border-color: rgba(255,255,255,0.07) !important; }
+
+
 
 /* Dark mode: mobile sticky bars */
 .dark .shadow-sm { --tw-shadow-color: rgba(0,0,0,0.4); }
@@ -879,3 +879,15 @@ h6 {
 .dark .border-blue-200   { border-color: rgba(59,130,246,0.20) !important; }
 .dark .border-purple-200 { border-color: rgba(168,85,247,0.20) !important; }
 .dark .border-red-100    { border-color: rgba(239,68,68,0.15)  !important; }
+
+/* Dark mode: text-cream on dark/image backgrounds (blog heroes, dark sections) */
+.dark .text-cream { color: #f5f1eb !important; }
+.dark .text-cream\/80 { color: rgba(245,241,235,0.8) !important; }
+.dark .text-cream\/70 { color: rgba(245,241,235,0.7) !important; }
+.dark .text-cream\/60 { color: rgba(245,241,235,0.6) !important; }
+.dark .text-cream\/50 { color: rgba(245,241,235,0.5) !important; }
+.dark .text-cream\/40 { color: rgba(245,241,235,0.4) !important; }
+.dark .text-cream\/35 { color: rgba(245,241,235,0.35) !important; }
+.dark .text-cream\/30 { color: rgba(245,241,235,0.3) !important; }
+.dark .text-cream\/25 { color: rgba(245,241,235,0.25) !important; }
+.dark .text-cream\/20 { color: rgba(245,241,235,0.2) !important; }
