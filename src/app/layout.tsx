@@ -144,6 +144,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
       <head>
+        {/* Blocking theme script — prevents dark mode flash on initial load */}
+        <script dangerouslySetInnerHTML={{__html:`!function(){try{var t=localStorage.getItem('theme');var d=t==='dark'||((!t||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList[d?'add':'remove']('dark')}catch(e){}}()`}} />
         <meta name="color-scheme" content="light dark" />
         <meta name="theme-color" content="#F5F1EB" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#0F0E0C" media="(prefers-color-scheme: dark)" />
