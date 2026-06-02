@@ -32,6 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/tripadvisor`, lastModified: now, changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/trip-planner`, lastModified: now, changeFrequency: 'weekly', priority: 0.92 },
     { url: `${BASE_URL}/privacy-policy`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${BASE_URL}/faq`, lastModified: now, changeFrequency: 'monthly', priority: 0.88 },
 
     // International SEO pages
     { url: `${BASE_URL}/india-travel-guide`, lastModified: now, changeFrequency: 'monthly', priority: 0.92 },

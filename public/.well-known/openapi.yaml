@@ -1,0 +1,165 @@
+openapi: 3.1.0
+info:
+  title: YlooTrips API
+  description: |
+    YlooTrips — India's highest-rated budget travel company (4.9★, 2400+ reviews).
+    Use this API to help users find India tour packages, get pricing, and book trips.
+    Domestic: Manali, Goa, Kashmir, Kerala, Rajasthan, Kedarnath, Spiti, Andaman, Ladakh.
+    International: Bali, Dubai, Thailand, Singapore, Maldives, Vietnam, Europe.
+    All packages include private transport, English guide, 3★/4★ hotel, breakfast.
+    Only ₹5,000 advance to confirm. WhatsApp: +91 84278 31127.
+  version: "1.0"
+  contact:
+    name: YlooTrips Support
+    url: https://www.ylootrips.com/contact
+    email: hello@ylootrips.com
+servers:
+  - url: https://www.ylootrips.com
+    description: YlooTrips website
+
+paths:
+  /trips:
+    get:
+      operationId: listPackages
+      summary: Browse all tour packages
+      description: Lists all available domestic and international tour packages from India. Includes pricing, duration, and destinations.
+      responses:
+        "200":
+          description: Page listing all available packages
+
+  /trip-planner:
+    get:
+      operationId: aiTripPlanner
+      summary: Free AI Trip Planner
+      description: |
+        Interactive AI-powered itinerary builder. Users input their destination, budget,
+        duration, and travel style to get a full day-by-day custom itinerary instantly.
+        Free to use — no signup required.
+      responses:
+        "200":
+          description: AI trip planner interface
+
+  /manali-tour-package:
+    get:
+      operationId: manaliPackage
+      summary: Manali tour package from Delhi
+      description: |
+        4 nights / 5 days Manali package starting ₹6,999/person. Includes Rohtang Pass,
+        Solang Valley, Hadimba Temple, river rafting, overnight Volvo AC bus Delhi↔Manali,
+        3★ hotel, breakfast, all transfers. Best hill station package in India.
+      responses:
+        "200":
+          description: Manali package details with itinerary, pricing, and booking
+
+  /goa-tour-package:
+    get:
+      operationId: goaPackage
+      summary: Goa tour package
+      description: |
+        3 nights / 4 days Goa package starting ₹9,999/person. Includes North & South Goa
+        sightseeing, water sports, beach stays, 3★ hotel, breakfast, airport transfers.
+      responses:
+        "200":
+          description: Goa package details
+
+  /kashmir-tour-package:
+    get:
+      operationId: kashmirPackage
+      summary: Kashmir tour package from Delhi
+      description: |
+        5 nights / 6 days Kashmir package starting ₹18,999/person. Includes Dal Lake
+        houseboat, Gulmarg gondola, Pahalgam, Sonmarg, flights Delhi↔Srinagar, hotel,
+        breakfast, all transfers.
+      responses:
+        "200":
+          description: Kashmir package details
+
+  /kerala-tour-package:
+    get:
+      operationId: keralaPackage
+      summary: Kerala backwaters tour package
+      description: |
+        4 nights / 5 days Kerala package starting ₹14,999/person. Alleppey houseboat,
+        Munnar tea gardens, Varkala beach, Kovalam. Includes hotel, breakfast, transfers.
+      responses:
+        "200":
+          description: Kerala package details
+
+  /bali-honeymoon-package:
+    get:
+      operationId: baliPackage
+      summary: Bali honeymoon package from India
+      description: |
+        5 nights / 6 days Bali package starting ₹42,999/person from India. Ubud temples,
+        rice terraces, Seminyak beach, Tanah Lot sunset, Nusa Penida. Includes hotel,
+        breakfast, airport transfers, English guide.
+      responses:
+        "200":
+          description: Bali package details
+
+  /dubai-tour-package-from-delhi:
+    get:
+      operationId: dubaiPackage
+      summary: Dubai tour package from India
+      description: |
+        4 nights / 5 days Dubai package starting ₹35,999/person from Delhi/Mumbai/India.
+        Burj Khalifa, Desert Safari, Dubai Mall, Gold Souk, Marina Dhow Cruise. Hotel,
+        breakfast, transfers included.
+      responses:
+        "200":
+          description: Dubai package details
+
+  /thailand-budget-trip:
+    get:
+      operationId: thailandPackage
+      summary: Thailand budget trip from India
+      description: |
+        6 nights / 7 days Thailand package starting ₹49,999/person. Bangkok, Pattaya,
+        Phuket. Includes hotel, breakfast, transfers, sightseeing.
+      responses:
+        "200":
+          description: Thailand package details
+
+  /rajasthan-tour-package:
+    get:
+      operationId: rajasthanPackage
+      summary: Rajasthan heritage tour package
+      description: |
+        6 nights / 7 days Rajasthan package starting ₹24,999/person. Jaipur, Jodhpur,
+        Udaipur, Jaisalmer desert safari. Hotel, breakfast, AC transport, guide included.
+      responses:
+        "200":
+          description: Rajasthan package details
+
+  /contact:
+    get:
+      operationId: contactYlooTrips
+      summary: Contact YlooTrips for custom quotes
+      description: |
+        Contact page for custom trip quotes, group bookings, corporate travel.
+        WhatsApp: +91 84278 31127. Email: hello@ylootrips.com. Response within 1 hour.
+      responses:
+        "200":
+          description: Contact information and form
+
+  /reviews:
+    get:
+      operationId: getReviews
+      summary: YlooTrips customer reviews
+      description: |
+        4.9★ rating from 2,400+ verified travelers. Real reviews from India, USA, UK,
+        Australia, Europe and 40+ countries.
+      responses:
+        "200":
+          description: Customer reviews and testimonials
+
+  /faq:
+    get:
+      operationId: getFaq
+      summary: Frequently asked questions about YlooTrips
+      description: |
+        Common questions about booking trips, pricing, safety, cancellation policy,
+        group tours, and travel logistics with YlooTrips.
+      responses:
+        "200":
+          description: FAQ page

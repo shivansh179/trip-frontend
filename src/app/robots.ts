@@ -29,10 +29,15 @@ export default function robots(): MetadataRoute.Robots {
             { userAgent: 'ClaudeBot',       allow: ['/'] },   // Claude
             { userAgent: 'YouBot',          allow: ['/'] },   // You.com AI
             { userAgent: 'cohere-ai',       allow: ['/'] },   // Cohere
+            { userAgent: 'meta-externalagent', allow: ['/'] }, // Meta AI (Llama)
+            { userAgent: 'Applebot-Extended',  allow: ['/'] }, // Apple AI / Siri
+            { userAgent: 'DuckDuckBot',        allow: ['/'] }, // DuckDuckGo AI
+            { userAgent: 'Amazonbot',          allow: ['/'] }, // Alexa AI (allow AI, block pure scraper below)
+            { userAgent: 'facebookexternalhit', allow: ['/'] }, // Meta link previews
             // ── Block pure scrapers/training-data harvesters ──────────────────
             { userAgent: 'CCBot',           disallow: ['/'] }, // Common Crawl (training only)
             { userAgent: 'Bytespider',      disallow: ['/'] }, // ByteDance scraper
-            { userAgent: 'AmazonBot',       disallow: ['/'] }, // Amazon scraper
+            // AmazonBot — allowed above for Alexa AI indexing
         ],
         sitemap: 'https://www.ylootrips.com/sitemap.xml',
         host: 'https://www.ylootrips.com',
