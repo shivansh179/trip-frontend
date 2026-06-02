@@ -192,7 +192,7 @@ export default function FaqPage() {
             </h2>
             <div className="space-y-5">
               {category.items.map((item) => (
-                <div key={item.question} className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
+                <div key={item.question} className="bg-white/60 dark:bg-white/[0.04] border border-black/5 dark:border-white/10 rounded-xl p-5">
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                     {item.question}
                   </h3>
@@ -205,7 +205,7 @@ export default function FaqPage() {
           </section>
         ))}
 
-        <div className="mt-12 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-6 text-center">
+        <div className="mt-12 bg-[#C4A77D]/10 dark:bg-[#C4A77D]/10 border border-[#C4A77D]/30 rounded-2xl p-6 text-center">
           <p className="text-gray-800 dark:text-gray-200 font-semibold text-lg mb-2">Still have questions?</p>
           <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">Our travel experts reply within 1 hour on WhatsApp</p>
           <div className="flex flex-wrap gap-3 justify-center">
