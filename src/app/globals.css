@@ -805,8 +805,8 @@ h6 {
 .dark .text-gray-700 { color: #c8c4bf !important; }
 .dark .text-gray-600 { color: #a8a49f !important; }
 .dark .text-gray-500 { color: #888480 !important; }
-.dark .text-gray-400 { color: #666260 !important; }
-.dark .text-gray-300 { color: #555250 !important; }
+.dark .text-gray-400 { color: #9ca3af !important; }
+/* text-gray-300 intentionally not overridden — used for subtle/muted elements on dark bg (stars, icons) */
 
 /* Dark mode: placeholder text in forms */
 .dark input::placeholder,
