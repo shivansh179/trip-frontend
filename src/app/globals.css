@@ -797,6 +797,7 @@ h6 {
 .dark .bg-white { background-color: #18181a !important; }
 .dark .bg-gray-50 { background-color: #1e1e20 !important; }
 .dark .bg-gray-100 { background-color: #242426 !important; }
+.dark .bg-gray-200 { background-color: #2c2c2e !important; }
 
 /* Dark mode: text flip for hardcoded gray text */
 .dark .text-gray-900 { color: #f0ede8 !important; }
@@ -805,10 +806,28 @@ h6 {
 .dark .text-gray-600 { color: #a8a49f !important; }
 .dark .text-gray-500 { color: #888480 !important; }
 .dark .text-gray-400 { color: #666260 !important; }
+.dark .text-gray-300 { color: #555250 !important; }
+
+/* Dark mode: placeholder text in forms */
+.dark input::placeholder,
+.dark textarea::placeholder { color: rgba(240,237,232,0.35) !important; }
 
 /* Dark mode: border flip */
 .dark .border-gray-100 { border-color: rgba(255,255,255,0.07) !important; }
 .dark .border-gray-200 { border-color: rgba(255,255,255,0.10) !important; }
+.dark .border-gray-300 { border-color: rgba(255,255,255,0.14) !important; }
+
+/* Dark mode: input backgrounds */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.dark textarea,
+.dark select {
+  background-color: #1e1e20 !important;
+  color: #f0ede8 !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
 
 /* Dark mode: header glass bg when scrolled */
 .dark header { background-color: rgba(17,17,16,0.92) !important; border-color: rgba(255,255,255,0.07) !important; }
+
+/* Dark mode: mobile sticky bars */
+.dark .shadow-sm { --tw-shadow-color: rgba(0,0,0,0.4); }
