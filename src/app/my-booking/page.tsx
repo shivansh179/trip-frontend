@@ -193,11 +193,15 @@ function TripBookingCard({ data }: { data: Record<string, unknown> }) {
       .catch(() => {});
   }, [ref]);
 
+  const isPaid = (data.paymentStatus as string)?.toUpperCase() === 'PAID';
+  const hasDetails = !!(adminDetails && (adminDetails.notes || adminDetails.flightsPdf || adminDetails.hotelsPdf || adminDetails.itineraryPdf));
+  const travelDateStr = (data.travelDate || (data.trip as Record<string, unknown>)?.date) as string | undefined;
+  const journeyStarted = travelDateStr ? new Date(travelDateStr) <= new Date() : false;
   const steps = [
     { label: 'Booking Confirmed ✅', done: true },
-    { label: 'Payment Received', done: (data.paymentStatus as string)?.toUpperCase() === 'PAID' },
-    { label: 'Trip Preparation 🗺️', done: false },
-    { label: 'Your Journey ✈️', done: false },
+    { label: 'Payment Received', done: isPaid },
+    { label: 'Trip Preparation 🗺️', done: isPaid && hasDetails },
+    { label: 'Your Journey ✈️', done: journeyStarted },
   ];
   return (
     <div className="space-y-5">
@@ -426,7 +430,7 @@ function FlightBookingCard({ data }: { data: Record<string, unknown> }) {
     { label: 'Booking Received 📥', done: true },
     { label: 'Payment Confirmed 💳', done: (data.status as string)?.toUpperCase() !== 'PENDING' },
     { label: 'Ticket Issued 🎟️', done: ['TICKET_ISSUED', 'CONFIRMED'].includes((data.status as string)?.toUpperCase()) },
-    { label: 'Bon Voyage! ✈️', done: false },
+    { label: 'Bon Voyage! ✈️', done: flight?.dep ? new Date(flight.dep as string) <= new Date() : false },
   ];
   return (
     <div className="space-y-5">

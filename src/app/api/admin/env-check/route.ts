@@ -15,9 +15,12 @@ export async function GET(req: NextRequest) {
     'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN',
     'NEXT_PUBLIC_API_URL', 'NEXT_PUBLIC_SITE_URL',
     'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REFRESH_TOKEN',
-    'EMAIL_FROM', 'ADMIN_EMAIL',
+    'EMAIL_FROM', 'ADMIN_EMAIL', 'GCS_CREDENTIALS', 'GCS_BUCKET',
   ];
-  const result: Record<string, boolean> = {};
+  const result: Record<string, unknown> = {};
   for (const k of keys) result[k] = !!process.env[k];
+  const gcsCreds = process.env.GCS_CREDENTIALS || '';
+  result['GCS_CREDENTIALS_len'] = gcsCreds.length;
+  result['GCS_CREDENTIALS_first10'] = gcsCreds.slice(0, 10);
   return NextResponse.json({ env: result, nodeEnv: process.env.NODE_ENV });
 }
