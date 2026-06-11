@@ -1049,13 +1049,13 @@ export default function AdminDashboard() {
     return (
         <div className="min-h-screen bg-cream-dark flex">
             {/* Sidebar */}
-            <aside className="w-64 bg-primary text-cream fixed h-full">
-                <div className="p-6 border-b border-white/10">
+            <aside className="w-64 bg-primary text-cream fixed h-full flex flex-col">
+                <div className="p-6 border-b border-white/10 shrink-0">
                     <Link href="/" className="font-display text-2xl">YlooTrips</Link>
                     <p className="text-caption text-cream/50 mt-1">Admin Panel</p>
                 </div>
 
-                <nav className="p-4">
+                <nav className="p-4 flex-1 overflow-y-auto">
                     {sidebarItems.map((item) => (
                         (item as { href?: string }).href ? (
                             <Link
@@ -1085,7 +1085,7 @@ export default function AdminDashboard() {
                     ))}
                 </nav>
 
-                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+                <div className="shrink-0 p-4 border-t border-white/10">
                     <button
                         onClick={handleLogout}
                         className="w-full flex items-center gap-3 px-4 py-3 text-cream/60 hover:bg-white/5 hover:text-cream transition-colors"
