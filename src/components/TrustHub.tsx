@@ -52,13 +52,11 @@ const HOTELS = [
   { name: 'The Lalit',      logo: '/hotels/lalit.svg',    sub: 'Luxury Hotels'    },
 ];
 
-const MEDIA = [
-  { name: 'Times of India', short: 'TOI',  style: 'font-serif font-black text-red-700'     },
-  { name: 'Economic Times', short: 'ET',   style: 'font-serif font-black text-blue-800'    },
-  { name: 'NDTV',           short: 'NDTV', style: 'font-black text-red-600'                },
-  { name: 'Condé Nast',     short: 'CNT',  style: 'font-serif italic font-semibold text-gray-700' },
-  { name: 'Lonely Planet',  short: 'LP',   style: 'font-black text-green-700'              },
-  { name: 'TripAdvisor',    short: 'TA',   style: 'font-black text-[#00af87]'              },
+const REVIEW_PLATFORMS = [
+  { name: 'Google Reviews', short: '⭐ Google', style: 'font-bold text-gray-700 dark:text-gray-200', href: 'https://www.google.com/search?q=ylootrips+reviews' },
+  { name: 'TripAdvisor',    short: '🦉 TripAdvisor', style: 'font-bold text-[#00af87]',  href: '/tripadvisor' },
+  { name: 'WhatsApp',       short: '💬 WhatsApp', style: 'font-bold text-green-600',     href: 'https://wa.me/918427831127' },
+  { name: 'Trustpilot',     short: '✅ Trustpilot', style: 'font-bold text-emerald-600', href: '/reviews' },
 ];
 
 const AIRLINES = [
@@ -216,10 +214,10 @@ export default function TrustHub() {
         {/* ── Media + Airlines ────────────────────────────────────────────── */}
         <div className="grid md:grid-cols-2 gap-4">
           <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-5">
-            <p className="text-[9px] uppercase tracking-[0.3em] text-gray-400 mb-4 text-center">As featured in</p>
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
-              {MEDIA.map(m => (
-                <span key={m.name} title={m.name} className={`text-lg leading-none ${m.style} opacity-60 hover:opacity-100 transition-opacity cursor-default select-none`}>{m.short}</span>
+            <p className="text-[9px] uppercase tracking-[0.3em] text-gray-400 mb-4 text-center">Verified reviews on</p>
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
+              {REVIEW_PLATFORMS.map(m => (
+                <a key={m.name} href={m.href} target={m.href.startsWith('http') ? '_blank' : undefined} rel={m.href.startsWith('http') ? 'noopener noreferrer' : undefined} title={m.name} className={`text-sm leading-none ${m.style} opacity-70 hover:opacity-100 transition-opacity`}>{m.short}</a>
               ))}
             </div>
           </div>

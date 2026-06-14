@@ -536,7 +536,7 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
                     <input required type="email" placeholder="Email address"
                       value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
                       className="w-full px-4 py-3.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
-                    <input required type="tel" placeholder="Phone number"
+                    <input required type="tel" inputMode="tel" placeholder="Phone number"
                       value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
                       className="w-full px-4 py-3.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
                     {payError && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{payError}</p>}
@@ -603,7 +603,7 @@ function BookingDrawer({ d, onClose }: { d: IntlDestination; onClose: () => void
                   <input required type="text" placeholder="Your name"
                     value={cbName} onChange={e => setCbName(e.target.value)}
                     className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-white/40" />
-                  <input required type="tel" placeholder="Phone number (we'll call you)"
+                  <input required type="tel" inputMode="tel" placeholder="Phone number (we'll call you)"
                     value={cbPhone} onChange={e => setCbPhone(e.target.value)}
                     className="w-full px-3 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 outline-none focus:border-white/40" />
 
@@ -713,7 +713,7 @@ function IntlCard({ d }: { d: IntlDestination }) {
             <div className="flex gap-2">
               <Link
                 href={d.href}
-                className="flex items-center gap-1.5 bg-primary text-cream text-xs font-bold px-4 py-2.5 rounded-full hover:bg-primary/90 transition-colors"
+                className="flex items-center gap-1.5 bg-primary text-cream dark:bg-amber-500 dark:text-white text-xs font-bold px-4 py-2.5 rounded-full hover:bg-secondary dark:hover:bg-amber-400 transition-colors"
               >
                 <CreditCard className="w-3.5 h-3.5" /> Book Now
               </Link>

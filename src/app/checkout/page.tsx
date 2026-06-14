@@ -913,7 +913,7 @@ function CheckoutContent() {
                                     <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-2">Why YlooTrips?</p>
                                     <div className="space-y-1.5 text-xs text-primary/60">
                                         {[
-                                            '10,000+ happy travellers',
+                                            '25,000+ happy travellers',
                                             'Personally curated itineraries',
                                             'Dedicated coordinator from day 1',
                                             'Live tracking & 24/7 emergency support',

@@ -251,7 +251,7 @@ function TrendingBookingDrawer({ trip, onClose }: { trip: Trip; onClose: () => v
                     className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
                   <input required type="email" placeholder="Email address" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
                     className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
-                  <input required type="tel" placeholder="Phone number" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
+                  <input required type="tel" inputMode="tel" placeholder="Phone number" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
                     className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-gray-900" />
                   {payError && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{payError}</p>}
                   <div className="flex gap-2 pt-1">
@@ -404,6 +404,7 @@ const STATIC_TRENDING: Trip[] = [
   { id: 9012, title: 'Manali Tour Package', destination: 'Manali, Himachal Pradesh', duration: '5N/6D', price: 6999, originalPrice: 8999, rating: 4.8, reviewCount: 487, imageUrl: 'https://images.unsplash.com/photo-1542401886-65d6c61db217?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'Domestic', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 15, slug: 'manali-tour-package' } as any,
   { id: 9002, title: 'Kashmir Paradise Tour', destination: 'Srinagar, Kashmir', duration: '6N/7D', price: 18999, originalPrice: 24999, rating: 4.9, reviewCount: 428, imageUrl: 'https://images.unsplash.com/photo-1566552881560-0be862a7c445?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'Domestic', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 10, slug: 'kashmir-tour-package' } as any,
   { id: 9006, title: 'Goa Beach Holiday', destination: 'Goa, India', duration: '4N/5D', price: 9999, originalPrice: 12999, rating: 4.7, reviewCount: 512, imageUrl: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'Domestic', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 10, slug: 'goa-tour-package' } as any,
+  { id: 9013, title: 'Vietnam Explorer', destination: 'Hanoi + Ha Long Bay + Hoi An', duration: '7N/8D', price: 51499, originalPrice: 64000, rating: 4.8, reviewCount: 289, imageUrl: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'International', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 10, slug: 'destinations/international' } as any,
 ];
 
 /* ── Main Component ───────────────────────────────────────────────── */

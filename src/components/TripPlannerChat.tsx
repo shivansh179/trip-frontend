@@ -310,7 +310,7 @@ function YlooCallbackCard({ destination }: { destination: string }) {
             className="w-full px-4 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-cream placeholder:text-cream/40 outline-none focus:border-accent"
           />
           <input
-            required type="tel" placeholder="Phone number (we'll call you)"
+            required type="tel" inputMode="tel" placeholder="Phone number (we'll call you)"
             value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
             className="w-full px-4 py-3 bg-white/10 border border-white/15 rounded-xl text-sm text-cream placeholder:text-cream/40 outline-none focus:border-accent"
           />
