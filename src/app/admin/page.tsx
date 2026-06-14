@@ -3972,7 +3972,7 @@ export default function AdminDashboard() {
                                         return (
                                             <div key={id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                                                 <div className="p-4 flex items-start gap-4">
-                                                    {r.avatarUrl ? (
+                                                    {(r.avatarUrl as string | undefined) ? (
                                                         <img src={r.avatarUrl as string} alt={r.name as string} className="w-10 h-10 rounded-full object-cover border border-gray-200 shrink-0" />
                                                     ) : (
                                                         <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-cream font-bold shrink-0">
@@ -3997,22 +3997,22 @@ export default function AdminDashboard() {
                                                 {reviewExpanded === id && (
                                                     <div className="border-t border-gray-100 px-4 py-4 bg-gray-50 space-y-3">
                                                         {/* Client photos */}
-                                                        {(r.avatarUrl || r.tripPhotoUrl) && (
+                                                        {(() => { const av = r.avatarUrl as string | undefined; const tp = r.tripPhotoUrl as string | undefined; return (av || tp) ? (
                                                             <div className="flex gap-3 mb-1">
-                                                                {r.avatarUrl && (
+                                                                {av && (
                                                                     <div>
                                                                         <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Profile Photo</p>
-                                                                        <img src={r.avatarUrl as string} alt="profile" className="w-16 h-16 rounded-xl object-cover border border-gray-200" />
+                                                                        <img src={av} alt="profile" className="w-16 h-16 rounded-xl object-cover border border-gray-200" />
                                                                     </div>
                                                                 )}
-                                                                {r.tripPhotoUrl && (
+                                                                {tp && (
                                                                     <div className="flex-1">
                                                                         <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Trip Photo</p>
-                                                                        <img src={r.tripPhotoUrl as string} alt="trip" className="h-24 w-full max-w-xs rounded-xl object-cover border border-gray-200" />
+                                                                        <img src={tp} alt="trip" className="h-24 w-full max-w-xs rounded-xl object-cover border border-gray-200" />
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                        )}
+                                                        ) : null; })()}
                                                         <textarea placeholder="Optional admin note..." rows={2}
                                                             value={reviewNotes[id] || ''}
                                                             onChange={(e) => setReviewNotes({ ...reviewNotes, [id]: e.target.value })}
