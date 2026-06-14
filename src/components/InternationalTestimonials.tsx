@@ -508,6 +508,13 @@ export default function InternationalTestimonials() {
       .catch(() => {});
   }, []);
 
+  // Hardcoded photo overrides for reviews where the stored base64 was corrupted
+  const PHOTO_OVERRIDES: Record<string, string> = {
+    'Aditya & Prerna': '/reviews/aditya-prerna-darjeeling.jpg',
+    'Aditiya & Prerna': '/reviews/aditya-prerna-darjeeling.jpg',
+    'Aditya and Prerna': '/reviews/aditya-prerna-darjeeling.jpg',
+  };
+
   // Map DB reviews to same shape as static reviews for display
   const dynamicCards = dbReviews.map(r => ({
     name: r.name,
@@ -518,7 +525,7 @@ export default function InternationalTestimonials() {
     date: new Date(r.createdAt).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }),
     platform: 'YlooTrips' as const,
     avatar: r.avatarUrl || '',
-    tripPhoto: r.tripPhotoUrl || getFallbackTripPhoto(r.trip),
+    tripPhoto: PHOTO_OVERRIDES[r.name] || r.tripPhotoUrl || getFallbackTripPhoto(r.trip),
     text: r.text,
     isUserSubmitted: true,
   }));
