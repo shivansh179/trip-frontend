@@ -297,7 +297,7 @@ function TrendingCard({ trip, rank, onBook }: { trip: Trip; rank: number; onBook
     : _url;
 
   return (
-    <TiltCard className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl flex flex-col h-full cursor-default">
+    <TiltCard className="group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl flex flex-col h-full cursor-default">
       {/* shine overlay */}
       <div data-shine className="absolute inset-0 z-20 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-200" />
 
@@ -333,7 +333,7 @@ function TrendingCard({ trip, rank, onBook }: { trip: Trip; rank: number; onBook
 
       {/* Content */}
       <div className="p-5 flex flex-col flex-1" style={{ transform: 'translateZ(5px)' }}>
-        <div className="flex items-center justify-between text-xs text-primary/50 mb-2">
+        <div className="flex items-center justify-between text-xs text-primary/50 dark:text-gray-400 mb-2">
           <div className="flex items-center gap-1">
             <MapPin className="w-3 h-3" />
             <span className="uppercase tracking-wider">{trip.destination}</span>
@@ -345,7 +345,7 @@ function TrendingCard({ trip, rank, onBook }: { trip: Trip; rank: number; onBook
         </div>
 
         <Link href={detailHref}>
-          <h3 className="font-display text-lg text-primary hover:text-secondary transition-colors leading-snug line-clamp-2 mb-2">
+          <h3 className="font-display text-lg text-primary dark:text-gray-100 hover:text-secondary dark:hover:text-amber-400 transition-colors leading-snug line-clamp-2 mb-2">
             {trip.title}
           </h3>
         </Link>
@@ -355,22 +355,22 @@ function TrendingCard({ trip, rank, onBook }: { trip: Trip; rank: number; onBook
           {[1,2,3,4,5].map(i => (
             <Star key={i} className={`w-3.5 h-3.5 ${i <= Math.round(Number(trip.rating) || 4.5) ? 'fill-amber-400 text-amber-400' : 'text-gray-200 fill-gray-200'}`} />
           ))}
-          <span className="text-xs text-primary/50 ml-1">({trip.reviewCount || 94})</span>
+          <span className="text-xs text-primary/50 dark:text-gray-500 ml-1">({trip.reviewCount || 94})</span>
         </div>
 
         <div className="flex-1" />
 
         {/* Price */}
-        <div className="pt-3 border-t border-primary/8">
+        <div className="pt-3 border-t border-primary/8 dark:border-white/10">
           <div className="flex items-end justify-between mb-3">
             <div>
               <div className="flex items-baseline gap-2">
-                <span className="font-display text-2xl text-primary">{fp(offerPrice)}</span>
+                <span className="font-display text-2xl text-primary dark:text-white">{fp(offerPrice)}</span>
                 {mrpPrice && Number(mrpPrice) !== Number(offerPrice) && (
-                  <span className="text-sm text-primary/35 line-through">{fp(mrpPrice)}</span>
+                  <span className="text-sm text-primary/35 dark:text-gray-500 line-through">{fp(mrpPrice)}</span>
                 )}
               </div>
-              <span className="text-[10px] text-primary/40 uppercase tracking-widest">per person · no hidden fees</span>
+              <span className="text-[10px] text-primary/40 dark:text-gray-500 uppercase tracking-widest">per person · no hidden fees</span>
             </div>
             <div className="flex items-center gap-1 text-green-700 text-[10px] font-semibold">
               <Shield className="w-3 h-3" />
@@ -382,7 +382,7 @@ function TrendingCard({ trip, rank, onBook }: { trip: Trip; rank: number; onBook
           <div className="flex">
             <Link
               href={detailHref}
-              className="w-full flex items-center justify-center gap-1.5 bg-primary text-cream py-2.5 text-xs uppercase tracking-widest font-bold hover:bg-secondary transition-colors rounded-lg shadow-md hover:shadow-lg"
+              className="w-full flex items-center justify-center gap-1.5 bg-primary text-cream dark:bg-amber-500 dark:text-white py-2.5 text-xs uppercase tracking-widest font-bold hover:bg-secondary dark:hover:bg-amber-400 transition-colors rounded-lg shadow-md hover:shadow-lg"
             >
               Book Now
             </Link>
@@ -420,19 +420,19 @@ export default function TrendingPackages() {
   }, []);
 
   return (
-    <section className="py-10 md:py-16 bg-gradient-to-b from-cream to-cream-dark overflow-hidden">
+    <section className="py-10 md:py-16 bg-gradient-to-b from-cream to-cream-dark dark:from-gray-900 dark:to-gray-950 overflow-hidden">
       <div className="section-container">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
           <div>
-            <div className="inline-flex items-center gap-2 bg-primary/5 border border-primary/15 text-primary text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
+            <div className="inline-flex items-center gap-2 bg-primary/5 border border-primary/15 text-primary dark:bg-white/10 dark:border-white/20 dark:text-white text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
               <TrendingUp className="w-3 h-3" />
               Most Popular
             </div>
-            <h2 className="font-display text-display-lg text-primary">
+            <h2 className="font-display text-display-lg text-primary dark:text-white">
               Trending <span className="italic text-secondary">Right Now</span>
             </h2>
-            <p className="text-primary/55 text-sm mt-2 max-w-lg">
+            <p className="text-primary/55 dark:text-gray-400 text-sm mt-2 max-w-lg">
               Real-time popular packages — booked by {Math.floor(Date.now() / 3600000) % 40 + 120}+ travelers this week
             </p>
           </div>
@@ -443,7 +443,7 @@ export default function TrendingPackages() {
             </div>
             <Link
               href="/destinations/domestic"
-              className="flex items-center gap-1.5 text-xs font-bold text-primary border border-primary/20 hover:bg-primary hover:text-cream px-4 py-2 rounded-full transition-all uppercase tracking-wider"
+              className="flex items-center gap-1.5 text-xs font-bold text-primary dark:text-white border border-primary/20 dark:border-white/20 hover:bg-primary hover:text-cream dark:hover:bg-white dark:hover:text-gray-900 px-4 py-2 rounded-full transition-all uppercase tracking-wider"
             >
               All Packages <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
@@ -478,11 +478,11 @@ export default function TrendingPackages() {
             { icon: '💬', title: '24/7 Support', sub: 'WhatsApp · Call · Email' },
             { icon: '⭐', title: '4.9/5 Rating', sub: '' },
           ].map(({ icon, title, sub }) => (
-            <div key={title} className="flex items-start gap-3 bg-white rounded-xl p-4 shadow-sm border border-primary/6">
+            <div key={title} className="flex items-start gap-3 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-primary/6 dark:border-white/10">
               <span className="text-2xl shrink-0">{icon}</span>
               <div>
-                <div className="text-sm font-semibold text-primary">{title}</div>
-                <div className="text-xs text-primary/45 mt-0.5">{sub}</div>
+                <div className="text-sm font-semibold text-primary dark:text-white">{title}</div>
+                <div className="text-xs text-primary/45 dark:text-gray-400 mt-0.5">{sub}</div>
               </div>
             </div>
           ))}

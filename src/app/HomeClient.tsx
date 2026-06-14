@@ -500,11 +500,11 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
       <TrendingPackages />
 
       {/* 4 — Hot Package Strip: quick price scan */}
-      <section className="bg-white border-b border-gray-100 py-6 overflow-x-hidden">
+      <section className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-white/10 py-6 overflow-x-hidden">
         <div className="section-container">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="text-gray-900 text-[11px] font-bold uppercase tracking-widest">Top Packages</span>
+              <span className="text-gray-900 dark:text-white text-[11px] font-bold uppercase tracking-widest">Top Packages</span>
             </div>
             <span className="text-gray-400 text-[10px] font-medium">Starting from ₹9,999</span>
           </div>
@@ -520,19 +520,19 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
               { label: 'Maldives', price: '₹89,999', priceNum: 89999, nights: '4N/5D', tag: 'Luxury', href: '/maldives-luxury-package' },
             ] as HomePkg[]).map((pkg) => (
               <Link key={pkg.href} href={pkg.href}
-                className="group flex-shrink-0 relative bg-white border border-gray-200 hover:border-gray-400 rounded-2xl overflow-hidden transition-all duration-300 active:scale-95 text-left shadow-sm hover:shadow-md"
+                className="group flex-shrink-0 relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-white/10 hover:border-gray-400 dark:hover:border-white/30 rounded-2xl overflow-hidden transition-all duration-300 active:scale-95 text-left shadow-sm hover:shadow-md"
                 style={{ minWidth: '148px' }}>
                 {/* Header bar */}
-                <div className="h-2 bg-gray-900" />
+                <div className="h-2 bg-gray-900 dark:bg-amber-500" />
                 {/* Content */}
                 <div className="px-3.5 pt-3 pb-3.5">
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400">{pkg.tag}</span>
                     <span className="text-[9px] text-gray-400">{pkg.nights}</span>
                   </div>
-                  <p className="text-gray-900 font-bold text-base leading-tight">{pkg.label}</p>
-                  <p className="text-gray-700 font-bold text-sm leading-tight mt-0.5">{pkg.price} <span className="text-gray-400 font-normal text-[10px]">/ person</span></p>
-                  <div className="mt-3 bg-gray-900 group-hover:bg-gray-800 text-white text-[10px] font-bold uppercase tracking-widest text-center rounded-xl py-2 transition-colors">
+                  <p className="text-gray-900 dark:text-white font-bold text-base leading-tight">{pkg.label}</p>
+                  <p className="text-gray-700 dark:text-gray-300 font-bold text-sm leading-tight mt-0.5">{pkg.price} <span className="text-gray-400 font-normal text-[10px]">/ person</span></p>
+                  <div className="mt-3 bg-gray-900 dark:bg-amber-500 group-hover:bg-gray-800 dark:group-hover:bg-amber-400 text-white text-[10px] font-bold uppercase tracking-widest text-center rounded-xl py-2 transition-colors">
                     Book Now →
                   </div>
                 </div>
@@ -549,7 +549,7 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
       <HiddenSpots />
 
       {/* Philosophy Section - CMS Driven */}
-      <section className="py-10 md:py-16 bg-cream">
+      <section className="py-10 md:py-16 bg-cream dark:bg-gray-900">
         <div className="section-container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 lg:gap-24 items-center">
             {/* Content */}
@@ -558,7 +558,7 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
                 <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-4">
                   {philosophySection?.eyebrow || 'Our Philosophy'}
                 </p>
-                <h2 className="font-display text-display-lg text-primary">
+                <h2 className="font-display text-display-lg text-primary dark:text-white">
                   {philosophySection?.title?.split('.').map((part, i) => (
                     <span key={i}>
                       {i === 1 ? <><br /><span className="italic text-secondary">{part.trim()}</span></> : part}
@@ -567,7 +567,7 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
                 </h2>
               </div>
 
-              <p className="text-body-lg text-primary/70 leading-relaxed">
+              <p className="text-body-lg text-primary/70 dark:text-gray-300 leading-relaxed">
                 {philosophySection?.description || 'We believe that the best journeys are those that leave you changed. Our curated experiences go beyond the ordinary, connecting you with local cultures, hidden treasures, and the stories that make each destination unique.'}
               </p>
 
@@ -588,7 +588,7 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
                       <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
                         <IconComponent className="w-5 h-5 text-secondary" />
                       </div>
-                      <span className="text-sm text-primary/80">{feature.title}</span>
+                      <span className="text-sm text-primary/80 dark:text-gray-300">{feature.title}</span>
                     </div>
                   );
                 })}
