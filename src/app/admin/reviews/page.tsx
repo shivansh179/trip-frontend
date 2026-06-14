@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { CheckCircle, XCircle, Trash2, Clock, Star, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface Review {
@@ -36,6 +37,7 @@ const STATUS_ICONS = {
 };
 
 export default function AdminReviews() {
+  const router = useRouter();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
   const [loading, setLoading] = useState(true);
@@ -48,15 +50,19 @@ export default function AdminReviews() {
     return { 'Content-Type': 'application/json', ...(token ? { 'x-admin-token': token } : {}) };
   };
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     const res = await fetch(`/api/admin/reviews?status=${filter}`, { headers: adminHeaders() });
+    if (res.status === 401) {
+      router.replace('/admin');
+      return;
+    }
     const data = await res.json();
     setReviews(data.reviews || []);
     setLoading(false);
-  };
+  }, [filter, router]); // eslint-disable-line
 
-  useEffect(() => { load(); }, [filter]); // eslint-disable-line
+  useEffect(() => { load(); }, [load]);
 
   const act = async (id: string, status: 'approved' | 'rejected') => {
     setActing(id);
