@@ -24,9 +24,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid rating.' }, { status: 400 });
     }
 
-    // Validate image sizes (base64 stored in sheet — keep small to fit cell limits)
-    const MAX_AVATAR_BYTES   = 30_000;  // ~22KB
-    const MAX_PHOTO_BYTES    = 60_000;  // ~45KB
+    // Validate image sizes — Google Sheets cell limit is 50,000 chars, stay well under
+    const MAX_AVATAR_BYTES   = 25_000;  // ~18KB
+    const MAX_PHOTO_BYTES    = 40_000;  // ~30KB
     const cleanAvatar   = typeof avatarUrl    === 'string' && avatarUrl.length    <= MAX_AVATAR_BYTES ? avatarUrl    : '';
     const cleanTripPhoto = typeof tripPhotoUrl === 'string' && tripPhotoUrl.length <= MAX_PHOTO_BYTES  ? tripPhotoUrl : '';
 

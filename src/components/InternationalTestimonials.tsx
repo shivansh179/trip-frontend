@@ -305,7 +305,7 @@ function PhotoUpload({
     if (!file) return;
     // Avatar: very small (80px, 0.65q) — fits in sheet cell
     // Trip photo: medium (400px, 0.60q) — also fits in sheet cell
-    const compressed = await compressImage(file, isAvatar ? 80 : 400, isAvatar ? 0.65 : 0.60);
+    const compressed = await compressImage(file, isAvatar ? 80 : 250, isAvatar ? 0.65 : 0.55);
     onChange(compressed);
   };
   return (
@@ -597,6 +597,10 @@ export default function InternationalTestimonials() {
                     src={r.tripPhoto}
                     alt={`${r.name} — ${r.trip}`}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getFallbackTripPhoto(r.trip);
+                    }}
                   />
                 ) : (
                   <Image
