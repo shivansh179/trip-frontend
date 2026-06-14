@@ -1648,7 +1648,7 @@ function DomesticDestinationsContent() {
 
       {/* International trust section */}
       {isInternational && (
-        <section className="py-16 md:py-24 bg-white">
+        <section className="py-16 md:py-24 bg-white dark:bg-gray-900">
           <div className="section-container">
             <div className="text-center mb-12">
               <p className="text-caption uppercase tracking-[0.3em] text-gray-400 mb-3">Why International Travelers Choose Us</p>
@@ -1737,7 +1737,7 @@ function DomesticDestinationsContent() {
 
       {/* Visa FAQ */}
       {isInternational && (
-        <section className="py-16 md:py-20 bg-white">
+        <section className="py-16 md:py-20 bg-white dark:bg-gray-900">
           <div className="section-container max-w-3xl">
             <div className="text-center mb-10">
               <p className="text-caption uppercase tracking-[0.3em] text-gray-400 mb-3">Before You Go</p>
@@ -1781,7 +1781,7 @@ function DomesticDestinationsContent() {
       )}
 
       {/* Filter bar */}
-      <section className="bg-white border-b border-gray-200 sticky top-16 z-30 shadow-sm">
+      <section className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-16 z-30 shadow-sm">
         <div className="section-container py-3 space-y-3">
 
           {/* Row 1: Trip type + budget */}

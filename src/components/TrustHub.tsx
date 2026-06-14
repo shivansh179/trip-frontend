@@ -114,7 +114,7 @@ function HotelCard({ name, logo, sub }: { name: string; logo: string; sub: strin
 export default function TrustHub() {
 
   return (
-    <section className="bg-white relative overflow-hidden">
+    <section className="bg-white dark:bg-gray-900 relative overflow-hidden">
 
       {/* ── Top accent bar ──────────────────────────────────────────────── */}
       <div className="bg-gray-950 py-2">
@@ -127,14 +127,14 @@ export default function TrustHub() {
 
         {/* ── Headline ────────────────────────────────────────────────────── */}
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100 text-gray-500 text-xs font-bold uppercase tracking-widest mb-4 border border-gray-200">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs font-bold uppercase tracking-widest mb-4 border border-gray-200 dark:border-gray-700">
             <Zap size={12} /> Why YlooTrips
           </span>
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-gray-900 mb-3">
+          <h2 className="font-serif text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-3">
             India experts you can{' '}
             <span className="italic text-amber-600">actually trust</span>
           </h2>
-          <p className="text-gray-500 text-base max-w-xl mx-auto">
+          <p className="text-gray-500 dark:text-gray-400 text-base max-w-xl mx-auto">
             Trusted by travelers from USA, UK, Australia, Germany, Canada & 35+ more countries.
           </p>
         </div>
@@ -142,13 +142,13 @@ export default function TrustHub() {
         {/* ── Stats ───────────────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {STATS.map(({ value, label, sub, icon: Icon, grad }) => (
-            <div key={label} className="group text-center bg-gray-50 border border-gray-100 rounded-2xl p-5 md:p-7 hover:border-amber-200 hover:shadow-lg transition-all duration-300">
-              <div className="w-10 h-10 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
-                <Icon size={18} className="text-gray-600" />
+            <div key={label} className="group text-center bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-5 md:p-7 hover:border-amber-200 hover:shadow-lg transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                <Icon size={18} className="text-gray-600 dark:text-gray-300" />
               </div>
-              <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-1">{value}</div>
-              <div className="text-xs uppercase tracking-widest text-gray-500 mb-0.5">{label}</div>
-              <div className="text-[10px] text-gray-400">{sub}</div>
+              <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-1">{value}</div>
+              <div className="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-0.5">{label}</div>
+              <div className="text-[10px] text-gray-400 dark:text-gray-500">{sub}</div>
             </div>
           ))}
         </div>
@@ -156,16 +156,16 @@ export default function TrustHub() {
 
         {/* ── Why us — feature cards ──────────────────────────────────────── */}
         <div>
-          <p className="text-center text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-6">Why choose us</p>
+          <p className="text-center text-[10px] uppercase tracking-[0.3em] text-gray-400 dark:text-gray-500 mb-6">Why choose us</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {REASONS.map(({ emoji, title, body }) => (
-              <div key={title} className="group flex gap-4 p-5 rounded-2xl border border-gray-100 bg-gray-50 hover:border-gray-200 hover:shadow-sm transition-all duration-300 hover:-translate-y-0.5">
-                <div className="shrink-0 w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center text-xl border border-gray-100">
+              <div key={title} className="group flex gap-4 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-600 hover:shadow-sm transition-all duration-300 hover:-translate-y-0.5">
+                <div className="shrink-0 w-11 h-11 rounded-xl bg-white dark:bg-gray-700 shadow-sm flex items-center justify-center text-xl border border-gray-100 dark:border-gray-600">
                   {emoji}
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm mb-1.5 text-gray-800">{title}</h3>
-                  <p className="text-gray-500 text-xs leading-relaxed">{body}</p>
+                  <h3 className="font-bold text-sm mb-1.5 text-gray-800 dark:text-gray-100">{title}</h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">{body}</p>
                 </div>
               </div>
             ))}
@@ -176,20 +176,20 @@ export default function TrustHub() {
         <div>
           <div className="text-center mb-6">
             <p className="text-[10px] uppercase tracking-[0.3em] text-amber-600 mb-2">Our Promise</p>
-            <h3 className="font-serif text-2xl md:text-3xl font-bold text-gray-900">
+            <h3 className="font-serif text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
               Book with <span className="italic text-amber-500">complete confidence</span>
             </h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {GUARANTEES.map(g => (
-              <div key={g.title} className="bg-white border border-gray-100 rounded-2xl p-5 flex gap-4 hover:shadow-md hover:border-gray-200 transition-all duration-300">
+              <div key={g.title} className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-5 flex gap-4 hover:shadow-md hover:border-gray-200 dark:hover:border-gray-600 transition-all duration-300">
                 <div className="text-2xl shrink-0 mt-0.5">{g.emoji}</div>
                 <div>
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <h4 className="font-bold text-gray-900 text-sm">{g.title}</h4>
-                    <span className="bg-gray-100 text-gray-500 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">{g.badge}</span>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">{g.title}</h4>
+                    <span className="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">{g.badge}</span>
                   </div>
-                  <p className="text-gray-500 text-xs leading-relaxed">{g.body}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">{g.body}</p>
                 </div>
               </div>
             ))}
@@ -200,7 +200,7 @@ export default function TrustHub() {
         <div>
           <div className="text-center mb-6">
             <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-2">Our Partner Hotels</p>
-            <h3 className="font-serif text-2xl md:text-3xl font-bold text-gray-900">
+            <h3 className="font-serif text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
               Staying in <span className="italic text-amber-500">India&apos;s finest</span>
             </h3>
             <p className="text-xs text-gray-400 mt-1.5">Hand-selected · Pre-inspected · Boutique to 5-star</p>
@@ -215,7 +215,7 @@ export default function TrustHub() {
 
         {/* ── Media + Airlines ────────────────────────────────────────────── */}
         <div className="grid md:grid-cols-2 gap-4">
-          <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
+          <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-5">
             <p className="text-[9px] uppercase tracking-[0.3em] text-gray-400 mb-4 text-center">As featured in</p>
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
               {MEDIA.map(m => (
@@ -223,7 +223,7 @@ export default function TrustHub() {
               ))}
             </div>
           </div>
-          <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
+          <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-5">
             <p className="text-[9px] uppercase tracking-[0.3em] text-gray-400 mb-4 text-center">Trusted partners</p>
             <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
               {AIRLINES.map(a => (
@@ -247,7 +247,7 @@ export default function TrustHub() {
               <span className="text-[9px] text-gray-400 uppercase tracking-wider flex items-center gap-1">🇮🇳 India</span>
               <div className="flex flex-wrap gap-1.5 justify-center">
                 {PAYMENTS_IN.map(p => (
-                  <span key={p} className="text-[9px] font-bold px-2.5 py-1 rounded border bg-white text-gray-700 border-gray-200 shadow-sm">{p}</span>
+                  <span key={p} className="text-[9px] font-bold px-2.5 py-1 rounded border bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 shadow-sm">{p}</span>
                 ))}
               </div>
             </div>
@@ -256,7 +256,7 @@ export default function TrustHub() {
               <span className="text-[9px] text-gray-400 uppercase tracking-wider flex items-center gap-1">🌍 International</span>
               <div className="flex flex-wrap gap-1.5 justify-center">
                 {PAYMENTS_INTL.map(p => (
-                  <span key={p} className="text-[9px] font-bold px-2.5 py-1 rounded border bg-white text-gray-700 border-gray-200 shadow-sm">{p}</span>
+                  <span key={p} className="text-[9px] font-bold px-2.5 py-1 rounded border bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 shadow-sm">{p}</span>
                 ))}
               </div>
             </div>
@@ -265,7 +265,7 @@ export default function TrustHub() {
         </div>
 
         {/* ── Certifications ──────────────────────────────────────────────── */}
-        <div className="bg-gray-50 border border-gray-100 rounded-2xl px-6 py-5">
+        <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl px-6 py-5">
           <p className="text-[9px] text-gray-400 uppercase tracking-[0.3em] text-center mb-4">Verified Credentials</p>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
             {CERTS.map(c => (

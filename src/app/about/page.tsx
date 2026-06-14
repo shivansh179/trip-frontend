@@ -75,18 +75,18 @@ export default function AboutPage() {
       </section>
 
       {/* ── MARKET OPPORTUNITY ── */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-white dark:bg-gray-900">
         <div className="section-container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div>
               <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">The Opportunity</p>
-              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-gray-900 leading-tight mb-6">
+              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-gray-900 dark:text-white leading-tight mb-6">
                 India&apos;s travel market is
                 <br />
                 <span className="italic">growing.</span>
               </h2>
-              <p className="text-gray-500 text-lg leading-relaxed mb-8">
-                India&apos;s travel & tourism market is projected to reach <strong className="text-gray-800">$250 billion by 2030</strong>. Domestic travel alone crossed <strong className="text-gray-800">2.3 billion trips in 2023</strong>. Yet most Indians still overpay, get cheated, or settle for cookie-cutter packages. We&apos;re here to change that.
+              <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed mb-8">
+                India&apos;s travel & tourism market is projected to reach <strong className="text-gray-800 dark:text-gray-200">$250 billion by 2030</strong>. Domestic travel alone crossed <strong className="text-gray-800 dark:text-gray-200">2.3 billion trips in 2023</strong>. Yet most Indians still overpay, get cheated, or settle for cookie-cutter packages. We&apos;re here to change that.
               </p>
 
               <div className="space-y-4">
@@ -96,13 +96,13 @@ export default function AboutPage() {
                   { stat: '$27B', desc: 'Online travel bookings by 2028 in India', icon: Globe },
                   { stat: '70%', desc: 'Travelers prefer transparent pricing over brand', icon: Shield },
                 ].map(({ stat, desc, icon: Icon }) => (
-                  <div key={stat} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                    <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0">
-                      <Icon size={18} className="text-gray-600" />
+                  <div key={stat} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+                    <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center shrink-0">
+                      <Icon size={18} className="text-gray-600 dark:text-gray-300" />
                     </div>
                     <div>
-                      <span className="font-black text-gray-900 text-lg">{stat}</span>
-                      <span className="text-gray-500 text-sm ml-2">{desc}</span>
+                      <span className="font-black text-gray-900 dark:text-white text-lg">{stat}</span>
+                      <span className="text-gray-500 dark:text-gray-400 text-sm ml-2">{desc}</span>
                     </div>
                   </div>
                 ))}
@@ -110,7 +110,7 @@ export default function AboutPage() {
             </div>
 
             <div className="relative">
-              <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100">
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-3xl p-8 border border-gray-100 dark:border-gray-700">
                 <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Why YlooTrips Wins</p>
                 <div className="space-y-5">
                   {[
@@ -124,8 +124,8 @@ export default function AboutPage() {
                     <div key={title} className="flex items-start gap-3">
                       <span className="text-2xl shrink-0">{icon}</span>
                       <div>
-                        <p className="font-bold text-gray-900 text-sm">{title}</p>
-                        <p className="text-gray-500 text-xs mt-0.5">{desc}</p>
+                        <p className="font-bold text-gray-900 dark:text-white text-sm">{title}</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-xs mt-0.5">{desc}</p>
                       </div>
                     </div>
                   ))}
@@ -312,11 +312,11 @@ export default function AboutPage() {
       </section>
 
       {/* ── VALUES ── */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-white dark:bg-gray-900">
         <div className="section-container">
           <div className="text-center mb-12">
             <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-3">Our DNA</p>
-            <h2 className="font-display text-3xl md:text-4xl text-gray-900">What we stand for</h2>
+            <h2 className="font-display text-3xl md:text-4xl text-gray-900 dark:text-white">What we stand for</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
@@ -325,12 +325,12 @@ export default function AboutPage() {
               { icon: Zap, title: 'Move Fast', desc: 'We ship new features weekly. Our travelers\' needs evolve — so do we.', color: 'text-gray-600 bg-gray-100' },
               { icon: Globe, title: 'Real Impact', desc: 'We support local guides, eco stays, and responsible travel practices.', color: 'text-green-500 bg-green-50' },
             ].map(({ icon: Icon, title, desc, color }) => (
-              <div key={title} className="p-6 rounded-3xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 group">
+              <div key={title} className="p-6 rounded-3xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300 group">
                 <div className={`w-12 h-12 rounded-2xl ${color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
                   <Icon size={20} />
                 </div>
-                <h3 className="font-bold text-gray-900 text-lg mb-2">{title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
+                <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-2">{title}</h3>
+                <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -472,7 +472,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── CERTIFICATIONS ── */}
-      <section className="py-10 bg-gray-50 border-y border-gray-100">
+      <section className="py-10 bg-gray-50 dark:bg-gray-900 border-y border-gray-100 dark:border-gray-800">
         <div className="section-container">
           <p className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">Verified &amp; Trusted</p>
           <div className="flex flex-wrap justify-center gap-3 md:gap-4">
@@ -483,8 +483,8 @@ export default function AboutPage() {
               { label: '🔒 PCI-DSS Compliant', sub: 'Secure Payment Processing' },
               { label: '⭐ 4.9 Google Rating', sub: '2,400+ Verified Reviews' },
             ].map(({ label, sub }) => (
-              <div key={label} className="flex flex-col items-center px-5 py-3 bg-white border border-gray-200 rounded-2xl shadow-sm">
-                <div className="font-bold text-sm text-gray-800">{label}</div>
+              <div key={label} className="flex flex-col items-center px-5 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm">
+                <div className="font-bold text-sm text-gray-800 dark:text-gray-100">{label}</div>
                 <div className="text-[10px] text-gray-400 uppercase tracking-wider mt-0.5">{sub}</div>
               </div>
             ))}

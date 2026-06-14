@@ -94,15 +94,15 @@ function StarRating({ rating = 5, size = 'sm' }: { rating?: number; size?: 'sm' 
 function RatingBar({ stars, percent }: { stars: number; percent: number }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="text-sm text-gray-600 w-4 shrink-0">{stars}</span>
+      <span className="text-sm text-gray-600 dark:text-gray-400 w-4 shrink-0">{stars}</span>
       <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400 shrink-0" />
-      <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+      <div className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
         <div
           className="h-full bg-amber-400 rounded-full"
           style={{ width: `${percent}%` }}
         />
       </div>
-      <span className="text-sm text-gray-500 w-8 text-right shrink-0">{percent}%</span>
+      <span className="text-sm text-gray-500 dark:text-gray-400 w-8 text-right shrink-0">{percent}%</span>
     </div>
   );
 }
@@ -121,7 +121,7 @@ export default async function ReviewsPage() {
       ]} />
 
       {/* ── PROFILE HEADER ── */}
-      <div className="bg-white border-b border-gray-100 pt-24 pb-0">
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 pt-24 pb-0">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-end gap-6 pb-0">
             {/* Avatar */}
@@ -142,8 +142,8 @@ export default async function ReviewsPage() {
             <div className="flex-1 pb-4">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">YLOO Trips</h1>
-                  <p className="text-gray-500 text-sm mt-0.5">@ylootrips</p>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">YLOO Trips</h1>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm mt-0.5">@ylootrips</p>
 
                   <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500">
                     <span className="flex items-center gap-1.5">
@@ -186,14 +186,14 @@ export default async function ReviewsPage() {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-0 border-t border-gray-100 mt-2 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto">
+          <div className="flex gap-0 border-t border-gray-100 dark:border-gray-800 mt-2 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto">
             {['Reviews', 'About', 'Trips', 'Photos'].map((tab, i) => (
               <button
                 key={tab}
                 className={`px-4 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                   i === 0
                     ? 'border-amber-500 text-amber-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                 }`}
               >
                 {tab}
@@ -204,7 +204,7 @@ export default async function ReviewsPage() {
       </div>
 
       {/* ── MAIN CONTENT ── */}
-      <div className="bg-gray-50 min-h-screen">
+      <div className="bg-gray-50 dark:bg-gray-950 min-h-screen">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -212,13 +212,13 @@ export default async function ReviewsPage() {
             <div className="lg:col-span-1 space-y-4">
 
               {/* Rating Summary */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-                <h2 className="font-bold text-gray-900 mb-4">Overall Rating</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
+                <h2 className="font-bold text-gray-900 dark:text-white mb-4">Overall Rating</h2>
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="text-5xl font-black text-gray-900">4.9</div>
+                  <div className="text-5xl font-black text-gray-900 dark:text-white">4.9</div>
                   <div>
                     <StarRating rating={5} size="md" />
-                    <p className="text-sm text-gray-500 mt-1">2,400+ reviews</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">2,400+ reviews</p>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -229,8 +229,8 @@ export default async function ReviewsPage() {
               </div>
 
               {/* Achievements */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-                <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
+                <h2 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                   <Award className="w-4 h-4 text-amber-500" />
                   Achievements
                 </h2>
@@ -241,8 +241,8 @@ export default async function ReviewsPage() {
                         <a.icon className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="text-sm font-semibold text-gray-900">{a.label}</div>
-                        <div className="text-xs text-gray-500">{a.desc}</div>
+                        <div className="text-sm font-semibold text-gray-900 dark:text-white">{a.label}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{a.desc}</div>
                       </div>
                     </div>
                   ))}
@@ -250,8 +250,8 @@ export default async function ReviewsPage() {
               </div>
 
               {/* Review on platforms */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-                <h2 className="font-bold text-gray-900 mb-4">Find us on</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
+                <h2 className="font-bold text-gray-900 dark:text-white mb-4">Find us on</h2>
                 <div className="space-y-3">
                   {REVIEW_PLATFORMS.map((p) => (
                     <Link
@@ -259,11 +259,11 @@ export default async function ReviewsPage() {
                       href={p.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex items-center gap-3 p-3 rounded-xl border ${p.color} hover:shadow-sm transition-shadow`}
+                      className={`flex items-center gap-3 p-3 rounded-xl border ${p.color} dark:border-gray-600 hover:shadow-sm transition-shadow`}
                     >
                       <div className="flex-1">
-                        <div className="font-semibold text-sm text-gray-900">{p.name}</div>
-                        <div className="text-xs text-gray-500">{p.rating}★ · {p.reviews} reviews</div>
+                        <div className="font-semibold text-sm text-gray-900 dark:text-white">{p.name}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{p.rating}★ · {p.reviews} reviews</div>
                       </div>
                       <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
                     </Link>
@@ -274,20 +274,20 @@ export default async function ReviewsPage() {
                   href="https://g.page/r/ylootrips/review"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 block w-full text-center py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-700 text-sm font-semibold rounded-xl transition-colors"
+                  className="mt-4 block w-full text-center py-2.5 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:hover:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-sm font-semibold rounded-xl transition-colors"
                 >
                   Write a Review
                 </Link>
               </div>
 
               {/* Intro */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-                <h2 className="font-bold text-gray-900 mb-3">Intro</h2>
-                <p className="text-sm text-gray-600 leading-relaxed">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
+                <h2 className="font-bold text-gray-900 dark:text-white mb-3">Intro</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                   Personalized travel by YlooTrips — curated domestic & international packages,
                   hotel bookings, and flight deals. MSME certified. Trusted by 25,000+ Indian travelers.
                 </p>
-                <div className="mt-4 space-y-2 text-sm text-gray-500">
+                <div className="mt-4 space-y-2 text-sm text-gray-500 dark:text-gray-400">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-3.5 h-3.5 shrink-0" />
                     India (PAN India service)
@@ -315,9 +315,9 @@ export default async function ReviewsPage() {
 
               {/* Header */}
               <div className="flex items-center justify-between">
-                <h2 className="font-bold text-gray-900 text-lg">
+                <h2 className="font-bold text-gray-900 dark:text-white text-lg">
                   Customer Reviews
-                  <span className="ml-2 text-sm font-normal text-gray-400">({all.length > 0 ? `${all.length}+ shown` : '25,000+ travelers'})</span>
+                  <span className="ml-2 text-sm font-normal text-gray-400 dark:text-gray-500">({all.length > 0 ? `${all.length}+ shown` : '25,000+ travelers'})</span>
                 </h2>
                 <div className="flex gap-2">
                   <span className="px-3 py-1 bg-amber-50 text-amber-700 text-xs font-semibold rounded-full border border-amber-100">
@@ -330,7 +330,7 @@ export default async function ReviewsPage() {
               {all.length > 0 ? (
                 <div className="space-y-4">
                   {all.map((t) => (
-                    <div key={t.id} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div key={t.id} className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-start gap-4">
                         {/* Avatar */}
                         {(t.userImage || t.userAvatar) ? (
@@ -348,25 +348,25 @@ export default async function ReviewsPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <div className="font-semibold text-gray-900">{t.userName}</div>
+                              <div className="font-semibold text-gray-900 dark:text-white">{t.userName}</div>
                               {t.userTitle && (
-                                <div className="text-xs text-gray-500 mt-0.5">{t.userTitle}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{t.userTitle}</div>
                               )}
                             </div>
                             <StarRating rating={t.rating ?? 5} size="sm" />
                           </div>
 
-                          <p className="text-gray-700 text-sm leading-relaxed mt-3">
+                          <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mt-3">
                             {t.comment}
                           </p>
 
-                          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-50">
-                            <span className="text-xs text-gray-400 flex items-center gap-1">
+                          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-50 dark:border-gray-700">
+                            <span className="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
                               <CheckCircle className="w-3 h-3 text-green-500" />
                               Verified Traveler
                             </span>
                             {t.destination && (
-                              <span className="text-xs text-gray-400 flex items-center gap-1">
+                              <span className="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
                                 <MapPin className="w-3 h-3" />
                                 {t.destination}
                               </span>
@@ -388,7 +388,7 @@ export default async function ReviewsPage() {
                     { name: 'Kavya Nair', title: 'Kochi', comment: 'Our family trip to Goa was perfectly planned. Kids had a blast! YlooTrips took care of everything — transport, stays, activities. Superb service!', rating: 5 },
                     { name: 'Vikram Singh', title: 'Jaipur', comment: 'Just returned from Maldives. Could not have asked for better service. YlooTrips got us a great deal and the trip was beyond our expectations!', rating: 5 },
                   ].map((r, i) => (
-                    <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-start gap-4">
                         <div className="w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-lg shrink-0">
                           {r.name.charAt(0)}
@@ -396,14 +396,14 @@ export default async function ReviewsPage() {
                         <div className="flex-1">
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <div className="font-semibold text-gray-900">{r.name}</div>
-                              <div className="text-xs text-gray-500 mt-0.5">{r.title}</div>
+                              <div className="font-semibold text-gray-900 dark:text-white">{r.name}</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{r.title}</div>
                             </div>
                             <StarRating rating={r.rating} size="sm" />
                           </div>
-                          <p className="text-gray-700 text-sm leading-relaxed mt-3">{r.comment}</p>
-                          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-50">
-                            <span className="text-xs text-gray-400 flex items-center gap-1">
+                          <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mt-3">{r.comment}</p>
+                          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-50 dark:border-gray-700">
+                            <span className="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
                               <CheckCircle className="w-3 h-3 text-green-500" />
                               Verified Traveler
                             </span>
@@ -416,10 +416,10 @@ export default async function ReviewsPage() {
               )}
 
               {/* Write a review CTA */}
-              <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-100 p-6 text-center">
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-2xl border border-amber-100 dark:border-amber-800/40 p-6 text-center">
                 <Camera className="w-8 h-8 text-amber-500 mx-auto mb-3" />
-                <h3 className="font-bold text-gray-900 mb-1">Traveled with us?</h3>
-                <p className="text-sm text-gray-600 mb-4">Share your experience and help other travelers discover YlooTrips</p>
+                <h3 className="font-bold text-gray-900 dark:text-white mb-1">Traveled with us?</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Share your experience and help other travelers discover YlooTrips</p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Link
                     href="https://g.page/r/ylootrips/review"
@@ -433,7 +433,7 @@ export default async function ReviewsPage() {
                     href="https://www.tripadvisor.in/Profile/ylootrips"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-5 py-2.5 bg-white hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-full border border-gray-200 transition-colors"
+                    className="px-5 py-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-semibold rounded-full border border-gray-200 dark:border-gray-600 transition-colors"
                   >
                     Review on TripAdvisor
                   </Link>
