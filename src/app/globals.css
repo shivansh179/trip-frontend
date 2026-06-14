@@ -269,7 +269,6 @@ a, button, [role="button"] {
   /* Smooth momentum scroll in scrollable areas */
   .overflow-x-auto, .overflow-y-auto, .overflow-scroll {
     -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
   }
 
   /* ── Mobile: replace expensive backdrop-blur with solid colors ─────────────
@@ -294,6 +293,11 @@ a, button, [role="button"] {
   [class*="bg-black/40"] { background-color: rgba(0,0,0,0.55) !important; }
   [class*="bg-black/50"] { background-color: rgba(0,0,0,0.65) !important; }
   [class*="bg-black/60"] { background-color: rgba(0,0,0,0.75) !important; }
+
+  /* Dark mode: override the above white bg compensations so header/nav stay dark */
+  .dark [class*="bg-white/80"] { background-color: rgba(17,17,16,0.97) !important; }
+  .dark [class*="bg-white/90"] { background-color: rgba(17,17,16,0.99) !important; }
+  .dark [class*="bg-white/95"] { background-color: rgba(17,17,16,0.99) !important; }
 
   /* Let browser know main content only scrolls vertically */
   main {

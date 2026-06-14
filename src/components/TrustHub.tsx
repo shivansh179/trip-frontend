@@ -237,10 +237,10 @@ export default function TrustHub() {
         </div>
 
         {/* ── Payment methods ─────────────────────────────────────────────── */}
-        <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
+        <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-5">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <CreditCard size={13} className="text-gray-400" />
-            <span className="text-[9px] uppercase tracking-[0.3em] text-gray-400">Secure payments via</span>
+            <CreditCard size={13} className="text-gray-400 dark:text-gray-500" />
+            <span className="text-[9px] uppercase tracking-[0.3em] text-gray-400 dark:text-gray-500">Secure payments via</span>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
             <div className="flex flex-col items-center gap-2">
@@ -271,8 +271,8 @@ export default function TrustHub() {
             {CERTS.map(c => (
               <div key={c.label} className="text-center group">
                 <div className="text-2xl mb-1 group-hover:scale-110 transition-transform duration-200">{c.icon}</div>
-                <div className="text-[10px] font-bold text-gray-800">{c.label}</div>
-                <div className="text-[8px] text-gray-500 mt-0.5">{c.sub}</div>
+                <div className="text-[10px] font-bold text-gray-800 dark:text-gray-200">{c.label}</div>
+                <div className="text-[8px] text-gray-500 dark:text-gray-400 mt-0.5">{c.sub}</div>
               </div>
             ))}
           </div>

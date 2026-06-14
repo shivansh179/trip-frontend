@@ -637,8 +637,8 @@ export default function InternationalTestimonials() {
 
                 {/* Quote icon + text */}
                 <div className="mt-3 flex-1">
-                  <Quote className="w-5 h-5 text-accent/40 mb-2" />
-                  <p className="text-cream/75 text-sm leading-relaxed">
+                  <Quote className="w-5 h-5 text-accent/60 mb-2" />
+                  <p className="text-cream/90 text-sm leading-relaxed">
                     {r.text}
                   </p>
                 </div>
@@ -661,8 +661,8 @@ export default function InternationalTestimonials() {
                     <div className="text-sm font-semibold text-cream flex items-center gap-1.5 truncate">
                       {r.name} <span className="shrink-0">{r.flag}</span>
                     </div>
-                    <div className="text-[10px] text-cream/40 mt-0.5">{r.country}</div>
-                    <div className="text-[10px] text-accent/70 uppercase tracking-wider mt-0.5">{r.date}</div>
+                    <div className="text-[10px] text-cream/60 mt-0.5">{r.country}</div>
+                    <div className="text-[10px] text-accent/90 uppercase tracking-wider mt-0.5">{r.date}</div>
                   </div>
                 </div>
               </div>

@@ -147,24 +147,20 @@ export default function MobileStickyCTA() {
               <Link
                 href="/share-and-earn"
                 className="fixed right-3 z-[45] flex flex-col items-center active:scale-95 transition-all select-none"
-                style={{ bottom: 90 }}
+                style={{ bottom: 82 }}
               >
-                {/* Pulsing ring */}
-                <span
-                  className="absolute inset-0 rounded-2xl opacity-30 pointer-events-none"
-                  style={{ background: 'linear-gradient(135deg, #C9A96E, #E2C68F)', animation: 'ping 2s cubic-bezier(0,0,0.2,1) 3' }}
-                />
                 <div
-                  className="relative flex flex-col items-center gap-0.5 px-3 pt-2.5 pb-2 rounded-2xl"
+                  className="relative flex flex-row items-center gap-1.5 px-3 py-2 rounded-2xl"
                   style={{
                     background: 'linear-gradient(135deg, #C9A96E, #E2C68F)',
-                    boxShadow: '0 6px 24px rgba(201,169,110,0.55), 0 0 0 1.5px rgba(255,255,255,0.2)',
-                    minWidth: 66,
+                    boxShadow: '0 4px 16px rgba(201,169,110,0.45), 0 0 0 1px rgba(255,255,255,0.15)',
                   }}
                 >
-                  <Camera size={18} className="text-black" />
-                  <span className="text-black font-black text-[10px] leading-tight tracking-tight">YLOO Reels</span>
-                  <span className="text-black/60 font-bold text-[8px] leading-none text-center">📸 Earn ₹500/day</span>
+                  <Camera size={14} className="text-black shrink-0" />
+                  <div>
+                    <div className="text-black font-black text-[9px] leading-tight tracking-tight whitespace-nowrap">YLOO Reels</div>
+                    <div className="text-black/60 font-bold text-[8px] leading-none">Earn ₹500/day</div>
+                  </div>
                 </div>
               </Link>
             )}
