@@ -533,7 +533,7 @@ export default function InternationalTestimonials() {
   const allReviews = [...dynamicCards, ...reviews];
 
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-primary overflow-hidden">
+    <section className="py-16 md:py-24 lg:py-32 bg-[#1c1c1c]" style={{ backgroundColor: '#1c1c1c' }}>
       <div className="section-container">
 
         {/* ── Header ─────────────────────────────────────────────────── */}
@@ -556,7 +556,7 @@ export default function InternationalTestimonials() {
           {/* Platform badges */}
           <div className="mt-6 flex items-center justify-center gap-4 flex-wrap">
             {['Google', 'TripAdvisor'].map(platform => (
-              <div key={platform} className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
+              <div key={platform} className="flex items-center gap-1.5 bg-[#2a2a2a] border border-[#3a3a3a] px-4 py-2 rounded-full">
                 <div className="flex gap-0.5">
                   {[1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 fill-[#FBBC05] text-[#FBBC05]" />)}
                 </div>
@@ -594,7 +594,7 @@ export default function InternationalTestimonials() {
           {allReviews.map((r, i) => (
             <article
               key={i}
-              className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.08] transition-all duration-300 flex flex-col shrink-0"
+              className="bg-[#252525] border border-[#333] rounded-2xl overflow-hidden hover:bg-[#2d2d2d] transition-all duration-300 flex flex-col shrink-0"
               style={{ width: 'clamp(280px, 85vw, 340px)', scrollSnapAlign: 'start' }}
             >
               {/* Trip destination photo */}
@@ -672,7 +672,7 @@ export default function InternationalTestimonials() {
         </div>
 
         {/* ── Write a Review CTA ──────────────────────────────────────── */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-center gap-6">
+        <div className="bg-[#252525] border border-[#333] rounded-2xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-center gap-6">
           <div className="flex-1 text-center sm:text-left">
             <p className="text-accent text-xs font-bold uppercase tracking-widest mb-2">Traveled with us?</p>
             <h3 className="font-display text-xl text-cream mb-2">Share your story with the world</h3>
