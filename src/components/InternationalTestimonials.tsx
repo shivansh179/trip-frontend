@@ -226,7 +226,29 @@ interface DBReview {
   tripPhotoUrl?: string;
 }
 
-function compressImage(file: File, maxPx = 800, quality = 0.75): Promise<string> {
+// Fallback trip photos by keyword for approved reviews without a photo
+const FALLBACK_TRIP_PHOTOS: { keywords: string[]; url: string }[] = [
+  { keywords: ['bali','indonesia'],      url: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80' },
+  { keywords: ['dubai','uae'],           url: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80' },
+  { keywords: ['kerala','backwater'],    url: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=600&q=80' },
+  { keywords: ['rajasthan','jaipur'],    url: 'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?w=600&q=80' },
+  { keywords: ['manali','himalaya','kashmir','ladakh'], url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80' },
+  { keywords: ['thailand','bangkok'],    url: 'https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=600&q=80' },
+  { keywords: ['maldives'],              url: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&q=80' },
+  { keywords: ['singapore'],             url: 'https://images.unsplash.com/photo-1565967511849-76a60a516170?w=600&q=80' },
+  { keywords: ['goa'],                   url: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80' },
+  { keywords: ['darjeeling','west bengal'], url: 'https://images.unsplash.com/photo-1544015759-237f7f56a2d8?w=600&q=80' },
+];
+
+function getFallbackTripPhoto(trip: string): string {
+  const t = trip.toLowerCase();
+  for (const { keywords, url } of FALLBACK_TRIP_PHOTOS) {
+    if (keywords.some(k => t.includes(k))) return url;
+  }
+  return 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&q=80';
+}
+
+function compressImage(file: File, maxPx = 400, quality = 0.60): Promise<string> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (ev) => {
@@ -246,13 +268,44 @@ function compressImage(file: File, maxPx = 800, quality = 0.75): Promise<string>
   });
 }
 
+function getCountryFlag(countryText: string): string {
+  const t = countryText.toLowerCase();
+  // India — check first (most common)
+  if (/india|delhi|mumbai|bangalore|bengaluru|chennai|hyderabad|pune|kolkata|calcutta|ahmedabad|jaipur|lucknow|chandigarh|gurugram|gurgaon|noida|haryana|maharashtra|rajasthan|gujarat|kerala|karnataka|punjab|uttar pradesh|bihar|west bengal|tamil nadu|andhra|telangana|madhya pradesh|rohtak|patna|indore|bhopal|nagpur|surat|vadodara|kochi|trivandrum|coimbatore|visakhapatnam|agra|varanasi|jodhpur|udaipur|manali|shimla|dehradun|rishikesh|haridwar|\bgoa\b/.test(t)) return '🇮🇳';
+  if (/\busa\b|united states|america|new york|los angeles|chicago|san francisco|houston|phoenix/.test(t)) return '🇺🇸';
+  if (/\buk\b|united kingdom|england|britain|london|manchester|birmingham/.test(t)) return '🇬🇧';
+  if (/australia|sydney|melbourne|brisbane|perth/.test(t)) return '🇦🇺';
+  if (/canada|toronto|vancouver|montreal|calgary/.test(t)) return '🇨🇦';
+  if (/germany|münchen|munich|berlin|frankfurt|hamburg/.test(t)) return '🇩🇪';
+  if (/france|paris|lyon|marseille/.test(t)) return '🇫🇷';
+  if (/singapore/.test(t)) return '🇸🇬';
+  if (/uae|dubai|abu dhabi|sharjah/.test(t)) return '🇦🇪';
+  if (/japan|tokyo|osaka/.test(t)) return '🇯🇵';
+  if (/italy|rome|milan|florence/.test(t)) return '🇮🇹';
+  if (/netherlands|amsterdam/.test(t)) return '🇳🇱';
+  if (/new zealand|auckland|wellington/.test(t)) return '🇳🇿';
+  if (/south korea|seoul/.test(t)) return '🇰🇷';
+  if (/thailand|bangkok/.test(t)) return '🇹🇭';
+  if (/malaysia|kuala lumpur/.test(t)) return '🇲🇾';
+  if (/indonesia|bali|jakarta/.test(t)) return '🇮🇩';
+  if (/sri lanka|colombo/.test(t)) return '🇱🇰';
+  if (/nepal|kathmandu/.test(t)) return '🇳🇵';
+  if (/switzerland|zurich|geneva/.test(t)) return '🇨🇭';
+  if (/spain|madrid|barcelona/.test(t)) return '🇪🇸';
+  if (/brazil|são paulo|rio/.test(t)) return '🇧🇷';
+  if (/russia|moscow/.test(t)) return '🇷🇺';
+  return '🌍';
+}
+
 function PhotoUpload({
-  label, preview, onChange,
-}: { label: string; preview: string; onChange: (b64: string) => void }) {
+  label, preview, onChange, isAvatar,
+}: { label: string; preview: string; onChange: (b64: string) => void; isAvatar?: boolean }) {
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const compressed = await compressImage(file);
+    // Avatar: very small (80px, 0.65q) — fits in sheet cell
+    // Trip photo: medium (400px, 0.60q) — also fits in sheet cell
+    const compressed = await compressImage(file, isAvatar ? 80 : 400, isAvatar ? 0.65 : 0.60);
     onChange(compressed);
   };
   return (
@@ -416,7 +469,7 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
 
               {/* Photo uploads */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <PhotoUpload label="Your Profile Photo (optional)" preview={avatarB64} onChange={setAvatarB64} />
+                <PhotoUpload label="Your Profile Photo (optional)" preview={avatarB64} onChange={setAvatarB64} isAvatar />
                 <PhotoUpload label="Trip Photo (optional)" preview={tripPhotoB64} onChange={setTripPhotoB64} />
               </div>
 
@@ -458,14 +511,14 @@ export default function InternationalTestimonials() {
   // Map DB reviews to same shape as static reviews for display
   const dynamicCards = dbReviews.map(r => ({
     name: r.name,
-    flag: '⭐',
+    flag: getCountryFlag(r.country),
     country: r.country,
     rating: r.rating,
     trip: r.trip,
     date: new Date(r.createdAt).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }),
     platform: 'YlooTrips' as const,
     avatar: r.avatarUrl || '',
-    tripPhoto: r.tripPhotoUrl || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=80',
+    tripPhoto: r.tripPhotoUrl || getFallbackTripPhoto(r.trip),
     text: r.text,
     isUserSubmitted: true,
   }));
@@ -573,6 +626,18 @@ export default function InternationalTestimonials() {
 
                 {/* Author row */}
                 <div className="mt-5 flex items-center gap-3 border-t border-white/10 pt-4">
+                  {/* Avatar */}
+                  {r.avatar ? (
+                    <img
+                      src={r.avatar}
+                      alt={r.name}
+                      className="w-9 h-9 rounded-full object-cover border border-white/20 shrink-0"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-sm shrink-0">
+                      {r.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                   <div className="min-w-0">
                     <div className="text-sm font-semibold text-cream flex items-center gap-1.5 truncate">
                       {r.name} <span className="shrink-0">{r.flag}</span>

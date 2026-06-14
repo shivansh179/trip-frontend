@@ -11,19 +11,21 @@ const SHEET_NAME = 'Reviews';
 
 // Column indices (0-based)
 const COL = {
-  id:        0,
-  createdAt: 1,
-  name:      2,
-  email:     3,
-  phone:     4,
-  country:   5,
-  trip:      6,
-  rating:    7,
-  text:      8,
-  status:    9,
-  adminNote: 10,
+  id:           0,
+  createdAt:    1,
+  name:         2,
+  email:        3,
+  phone:        4,
+  country:      5,
+  trip:         6,
+  rating:       7,
+  text:         8,
+  status:       9,
+  adminNote:    10,
+  avatarUrl:    11,
+  tripPhotoUrl: 12,
 };
-const TOTAL_COLS = 11;
+const TOTAL_COLS = 13;
 
 export interface SheetReview {
   _id: string; // same as id — keeps admin page interface compatible
@@ -38,6 +40,8 @@ export interface SheetReview {
   text: string;
   status: 'pending' | 'approved' | 'rejected';
   adminNote: string;
+  avatarUrl?: string;
+  tripPhotoUrl?: string;
 }
 
 let _client: ReturnType<typeof google.sheets> | null = null;
@@ -59,18 +63,20 @@ function getClient() {
 function rowToReview(row: string[]): SheetReview {
   const id = row[COL.id] ?? '';
   return {
-    _id:       id,
+    _id:          id,
     id,
-    createdAt: row[COL.createdAt] ?? '',
-    name:      row[COL.name]      ?? '',
-    email:     row[COL.email]     ?? '',
-    phone:     row[COL.phone]     ?? '',
-    country:   row[COL.country]   ?? '',
-    trip:      row[COL.trip]      ?? '',
-    rating:    Number(row[COL.rating] ?? 5),
-    text:      row[COL.text]      ?? '',
-    status:    (row[COL.status]   ?? 'pending') as SheetReview['status'],
-    adminNote: row[COL.adminNote] ?? '',
+    createdAt:    row[COL.createdAt]    ?? '',
+    name:         row[COL.name]         ?? '',
+    email:        row[COL.email]        ?? '',
+    phone:        row[COL.phone]        ?? '',
+    country:      row[COL.country]      ?? '',
+    trip:         row[COL.trip]         ?? '',
+    rating:       Number(row[COL.rating] ?? 5),
+    text:         row[COL.text]         ?? '',
+    status:       (row[COL.status]      ?? 'pending') as SheetReview['status'],
+    adminNote:    row[COL.adminNote]    ?? '',
+    avatarUrl:    row[COL.avatarUrl]    || undefined,
+    tripPhotoUrl: row[COL.tripPhotoUrl] || undefined,
   };
 }
 
@@ -79,7 +85,7 @@ export async function getReviews(status?: string): Promise<SheetReview[]> {
   const sheets = getClient();
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SHEET_ID,
-    range: `${SHEET_NAME}!A2:K`,
+    range: `${SHEET_NAME}!A2:M`,
   });
   const rows = (res.data.values ?? []) as string[][];
   const reviews = rows.map(rowToReview);
@@ -92,7 +98,7 @@ export async function appendReview(review: Omit<SheetReview, '_id'>): Promise<vo
   const sheets = getClient();
   await sheets.spreadsheets.values.append({
     spreadsheetId: SHEET_ID,
-    range: `${SHEET_NAME}!A:K`,
+    range: `${SHEET_NAME}!A:M`,
     valueInputOption: 'USER_ENTERED',
     requestBody: {
       values: [[
@@ -107,6 +113,8 @@ export async function appendReview(review: Omit<SheetReview, '_id'>): Promise<vo
         review.text,
         review.status,
         review.adminNote ?? '',
+        review.avatarUrl    ?? '',
+        review.tripPhotoUrl ?? '',
       ]],
     },
   });

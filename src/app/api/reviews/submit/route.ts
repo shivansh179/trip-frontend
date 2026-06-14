@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { name, email, phone, country, trip, rating, text } = body;
+    const { name, email, phone, country, trip, rating, text, avatarUrl, tripPhotoUrl } = body;
 
     if (!name || !email || !country || !trip || !rating || !text) {
       return NextResponse.json({ error: 'All fields are required.' }, { status: 400 });
@@ -24,6 +24,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid rating.' }, { status: 400 });
     }
 
+    // Validate image sizes (base64 stored in sheet — keep small to fit cell limits)
+    const MAX_AVATAR_BYTES   = 30_000;  // ~22KB
+    const MAX_PHOTO_BYTES    = 60_000;  // ~45KB
+    const cleanAvatar   = typeof avatarUrl    === 'string' && avatarUrl.length    <= MAX_AVATAR_BYTES ? avatarUrl    : '';
+    const cleanTripPhoto = typeof tripPhotoUrl === 'string' && tripPhotoUrl.length <= MAX_PHOTO_BYTES  ? tripPhotoUrl : '';
+
     const id = `rev_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
     const createdAt = new Date().toISOString();
 
@@ -32,12 +38,14 @@ export async function POST(req: NextRequest) {
       await appendReview({
         id, createdAt,
         name, email,
-        phone:     phone || '',
-        country,   trip,
-        rating:    Number(rating),
+        phone:        phone || '',
+        country,      trip,
+        rating:       Number(rating),
         text,
-        status:    'pending',
-        adminNote: '',
+        status:       'pending',
+        adminNote:    '',
+        avatarUrl:    cleanAvatar    || undefined,
+        tripPhotoUrl: cleanTripPhoto || undefined,
       });
       sheetSaved = true;
     } catch (sheetErr) {
