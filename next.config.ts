@@ -48,10 +48,10 @@ const nextConfig: NextConfig = {
         source: '/_next/static/(.*)',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
-      // Cache images
+      // Cache public assets (images, logos, review photos)
       {
-        source: '/images/(.*)',
-        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }],
+        source: '/(images|reviews|logo|favicon)(.*)',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=2592000' }],
       },
     ];
   },
@@ -76,8 +76,17 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
-    optimizePackageImports: ['lucide-react', '@tiptap/react', '@tiptap/starter-kit'],
+    optimizePackageImports: [
+      'lucide-react',
+      '@tiptap/react',
+      '@tiptap/starter-kit',
+      'next-auth',
+      'next-themes',
+    ],
   },
+
+  // Remove source maps in production to reduce bundle size
+  productionBrowserSourceMaps: false,
 };
 
 export default nextConfig;

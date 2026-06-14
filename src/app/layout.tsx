@@ -1,20 +1,23 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Script from "next/script";
+import dynamic from "next/dynamic";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter, Playfair_Display } from 'next/font/google';
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import WhatsAppButton from "@/components/WhatsAppButton";
-import MobileStickyCTA from "@/components/MobileStickyCTA";
 import Providers from "@/components/Providers";
 import { OrganizationJsonLd } from "@/components/JsonLd";
-import SecurityShield from "@/components/SecurityShield";
-import ExitIntentPopup from "@/components/ExitIntentPopup";
-import EmailCapturePopup from "@/components/EmailCapturePopup";
-import ActiveUserPing from "@/components/ActiveUserPing";
+
+// ── Non-critical layout widgets — deferred so they never block first paint ──
+const WhatsAppButton    = dynamic(() => import("@/components/WhatsAppButton"),    { ssr: false });
+const MobileStickyCTA   = dynamic(() => import("@/components/MobileStickyCTA"),   { ssr: false });
+const SecurityShield    = dynamic(() => import("@/components/SecurityShield"),    { ssr: false });
+const ExitIntentPopup   = dynamic(() => import("@/components/ExitIntentPopup"),   { ssr: false });
+const EmailCapturePopup = dynamic(() => import("@/components/EmailCapturePopup"), { ssr: false });
+const ActiveUserPing    = dynamic(() => import("@/components/ActiveUserPing"),    { ssr: false });
 
 const inter = Inter({
   subsets: ['latin'],
