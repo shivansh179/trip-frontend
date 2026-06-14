@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Script from "next/script";
-import dynamic from "next/dynamic";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter, Playfair_Display } from 'next/font/google';
@@ -10,14 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 import { OrganizationJsonLd } from "@/components/JsonLd";
-
-// ── Non-critical layout widgets — deferred so they never block first paint ──
-const WhatsAppButton    = dynamic(() => import("@/components/WhatsAppButton"),    { ssr: false });
-const MobileStickyCTA   = dynamic(() => import("@/components/MobileStickyCTA"),   { ssr: false });
-const SecurityShield    = dynamic(() => import("@/components/SecurityShield"),    { ssr: false });
-const ExitIntentPopup   = dynamic(() => import("@/components/ExitIntentPopup"),   { ssr: false });
-const EmailCapturePopup = dynamic(() => import("@/components/EmailCapturePopup"), { ssr: false });
-const ActiveUserPing    = dynamic(() => import("@/components/ActiveUserPing"),    { ssr: false });
+import LayoutWidgets from "@/components/LayoutWidgets";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -186,10 +178,6 @@ export default function RootLayout({
         </Script>
 
         <Providers>
-          <ActiveUserPing />
-          <SecurityShield />
-          <ExitIntentPopup />
-          <EmailCapturePopup />
           <Suspense fallback={<div className="h-24 bg-cream" />}>
             <Header />
           </Suspense>
@@ -197,8 +185,8 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
-          <WhatsAppButton phoneNumber="918427831127" />
-          <MobileStickyCTA />
+          {/* Non-critical widgets lazy-loaded after main content */}
+          <LayoutWidgets />
         </Providers>
         <Analytics />
         <SpeedInsights />
