@@ -33,7 +33,7 @@ export default function VisitorSelector() {
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center gap-4 px-8 text-center">
           <span className="text-6xl md:text-7xl" role="img" aria-label="Indian flag">🇮🇳</span>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl leading-tight">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight">
             I&apos;m from <span className="italic">India</span>
           </h2>
           <p className="text-cream/75 text-base md:text-lg max-w-xs leading-relaxed">
@@ -71,7 +71,7 @@ export default function VisitorSelector() {
 
         <div className="relative z-10 flex flex-col items-center gap-4 px-8 text-center">
           <span className="text-6xl md:text-7xl" role="img" aria-label="Globe">🌍</span>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl leading-tight">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight">
             Visiting <span className="italic">India</span>
           </h2>
           <p className="text-cream/75 text-base md:text-lg max-w-xs leading-relaxed">

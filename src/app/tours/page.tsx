@@ -41,7 +41,7 @@ export default function ToursPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative h-[60vh] min-h-[480px] flex items-center overflow-hidden">
+      <section className="relative h-[60vh] min-h-[300px] sm:min-h-[380px] md:min-h-[480px] flex items-center overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1920&q=85"
           alt="Taj Mahal at sunrise — India tours for international travelers"
@@ -56,7 +56,7 @@ export default function ToursPage() {
             <p className="text-[10px] uppercase tracking-[0.35em] text-accent mb-4">
               Private · All-Inclusive · International
             </p>
-            <h1 className="font-display text-5xl md:text-7xl text-cream mb-5 leading-tight">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-7xl text-cream mb-5 leading-tight">
               Curated<br /><span className="italic">India Tours</span>
             </h1>
             <p className="text-cream/70 text-lg md:text-xl leading-relaxed mb-8 max-w-xl">

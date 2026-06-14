@@ -55,7 +55,7 @@ export default async function TourPage({ params }: Props) {
   return (
     <>
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <section className="relative h-[75vh] min-h-[560px] flex items-end overflow-hidden">
+      <section className="relative h-[60vh] sm:h-[70vh] md:h-[75vh] min-h-[320px] sm:min-h-[420px] md:min-h-[560px] flex items-end overflow-hidden">
         <Image src={tour.heroImage} alt={tour.name} fill className="object-cover" priority />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/5" />
 
