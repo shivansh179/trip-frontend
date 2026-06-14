@@ -1633,13 +1633,13 @@ function DomesticDestinationsContent() {
       )}
 
       {/* Highlights strip */}
-      <section className="py-8 md:py-10 bg-cream border-b border-primary/8">
+      <section className="py-8 md:py-10 bg-cream dark:bg-gray-900 border-b border-primary/8 dark:border-gray-700">
         <div className="section-container">
           <div className="flex flex-wrap justify-center gap-3 md:gap-4">
             {highlights.map(({ icon: Icon, label, color, bg }) => (
-              <div key={label} className={`flex items-center gap-2 ${bg} px-4 py-2.5 rounded-full`}>
+              <div key={label} className={`flex items-center gap-2 ${bg} dark:bg-gray-800 px-4 py-2.5 rounded-full`}>
                 <Icon className={`w-4 h-4 ${color} shrink-0`} />
-                <span className="text-xs font-medium text-primary/80 whitespace-nowrap">{label}</span>
+                <span className="text-xs font-medium text-primary/80 dark:text-gray-300 whitespace-nowrap">{label}</span>
               </div>
             ))}
           </div>
@@ -1787,10 +1787,10 @@ function DomesticDestinationsContent() {
           {/* Row 1: Trip type + budget */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Trip type */}
-            <div className="flex bg-gray-100 rounded-full p-0.5 shrink-0">
+            <div className="flex bg-gray-100 dark:bg-gray-800 rounded-full p-0.5 shrink-0">
               {([['all','🌐 All Trips'],['domestic','🇮🇳 Domestic'],['international','✈️ International']] as const).map(([val, label]) => (
                 <button key={val} onClick={() => { setTripTypeFilter(val); resetPage(); }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${tripTypeFilter === val ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${tripTypeFilter === val ? 'bg-white dark:bg-gray-600 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}>
                   {label}
                 </button>
               ))}
@@ -1809,7 +1809,7 @@ function DomesticDestinationsContent() {
                 { value: 'above50', label: '₹50k+' },
               ].map((b) => (
                 <button key={b.value} onClick={() => { setBudgetFilter(b.value); resetPage(); }}
-                  className={`px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${budgetFilter === b.value ? 'bg-terracotta text-white border-terracotta' : 'border-gray-200 text-gray-600 hover:border-terracotta hover:text-terracotta bg-white'}`}>
+                  className={`px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${budgetFilter === b.value ? 'bg-terracotta text-white border-terracotta' : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-terracotta hover:text-terracotta bg-white dark:bg-gray-800'}`}>
                   {b.label}
                 </button>
               ))}
@@ -1832,7 +1832,7 @@ function DomesticDestinationsContent() {
               { value: 'budget', label: '💰 Budget-Friendly' },
             ].map((c) => (
               <button key={c.value} onClick={() => { setCategoryFilter(c.value); resetPage(); }}
-                className={`px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${categoryFilter === c.value ? 'bg-primary text-white border-primary' : 'border-gray-200 text-gray-600 hover:border-primary hover:text-primary bg-white'}`}>
+                className={`px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${categoryFilter === c.value ? 'bg-primary text-white border-primary' : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-primary hover:text-primary bg-white dark:bg-gray-800'}`}>
                 {c.label}
               </button>
             ))}
@@ -1843,7 +1843,7 @@ function DomesticDestinationsContent() {
                 <div className="w-px h-4 bg-gray-200 mx-1" />
                 {indiaRegions.slice(1).map((r) => (
                   <button key={r.value} onClick={() => { setActiveRegion(r.value); resetPage(); }}
-                    className={`shrink-0 px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${activeRegion === r.value ? 'bg-secondary text-white border-secondary' : 'border-gray-200 text-gray-600 hover:border-secondary hover:text-secondary bg-white'}`}>
+                    className={`shrink-0 px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${activeRegion === r.value ? 'bg-secondary text-white border-secondary' : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-secondary hover:text-secondary bg-white dark:bg-gray-800'}`}>
                     {r.label}
                   </button>
                 ))}

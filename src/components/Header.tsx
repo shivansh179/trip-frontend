@@ -39,10 +39,10 @@ export default function Header() {
         <>
             <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
                 isScrolled
-                    ? 'bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm'
+                    ? 'bg-white/80 dark:bg-gray-900/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm'
                     : hasHero
                         ? 'bg-transparent'
-                        : 'bg-white/95 backdrop-blur-lg border-b border-gray-100'
+                        : 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-b border-gray-100 dark:border-gray-800'
             }`}>
                 <div className="hidden sm:block"><FlashSaleBanner /></div>
                 <div className={`section-container transition-all duration-500 ${
@@ -55,7 +55,7 @@ export default function Header() {
                                 src="/logo.png"
                                 alt="YlooTrips"
                                 className={`h-9 md:h-11 w-auto object-contain transition-all duration-500 group-hover:scale-105 ${
-                                    hasHero && !isScrolled && !isMobileMenuOpen ? 'brightness-0 invert' : ''
+                                    hasHero && !isScrolled && !isMobileMenuOpen ? 'brightness-0 invert dark:brightness-100 dark:invert-0' : ''
                                 }`}
                             />
                         </Link>
@@ -111,7 +111,7 @@ export default function Header() {
                                 className={`lg:hidden relative z-10 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 ${
                                     hasHero && !isScrolled && !isMobileMenuOpen
                                         ? 'text-white bg-black/30 hover:bg-black/40 border border-white/20'
-                                        : 'text-gray-800 bg-gray-100 hover:bg-gray-200'
+                                        : 'text-gray-800 dark:text-gray-100 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
                                 }`}>
                                 {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
                             </button>
@@ -185,18 +185,18 @@ export default function Header() {
                         <div className="flex flex-col gap-3"
                             style={{ transitionDelay: isMobileMenuOpen ? '380ms' : '0ms' }}>
                             <Link href="/my-booking" onClick={() => setIsMobileMenuOpen(false)}
-                                className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold border border-white/15 text-white/70 bg-white/5 transition-all duration-500 ${
+                                className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold border border-white/20 text-white transition-all duration-500 ${
                                     isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                                 }`}
-                                style={{ transitionDelay: isMobileMenuOpen ? '360ms' : '0ms' }}>
+                                style={{ transitionDelay: isMobileMenuOpen ? '360ms' : '0ms', backgroundColor: 'rgba(255,255,255,0.08)' }}>
                                 <Ticket size={15} />
                                 Track My Booking
                             </Link>
                             <Link href="/trip-planner" onClick={() => setIsMobileMenuOpen(false)}
-                                className={`flex items-center justify-center gap-2.5 py-4 rounded-2xl text-sm font-bold bg-white text-gray-900 shadow-lg shadow-black/20 transition-all duration-500 ${
+                                className={`flex items-center justify-center gap-2.5 py-4 rounded-2xl text-sm font-bold text-gray-900 shadow-lg shadow-black/20 transition-all duration-500 ${
                                     isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                                 }`}
-                                style={{ transitionDelay: isMobileMenuOpen ? '430ms' : '0ms' }}>
+                                style={{ transitionDelay: isMobileMenuOpen ? '430ms' : '0ms', backgroundColor: '#F0EDE8' }}>
                                 <Sparkles size={16} />
                                 Plan Your Journey
                             </Link>
