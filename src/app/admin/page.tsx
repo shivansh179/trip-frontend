@@ -65,6 +65,11 @@ export default function AdminDashboard() {
     const [expandedHotels, setExpandedHotels] = useState<Record<number, boolean>>({});
     const [expandedBlogs, setExpandedBlogs] = useState<Record<number, boolean>>({});
     const [inquiries, setInquiries] = useState<Record<string, unknown>[]>([]);
+    const [reviews, setReviews] = useState<Record<string, unknown>[]>([]);
+    const [reviewFilter, setReviewFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
+    const [reviewActing, setReviewActing] = useState<string | null>(null);
+    const [reviewNotes, setReviewNotes] = useState<Record<string, string>>({});
+    const [reviewExpanded, setReviewExpanded] = useState<string | null>(null);
     const [ads, setAds] = useState<Record<string, unknown>[]>([]);
     const [packagePrices, setPackagePrices] = useState<Record<string, unknown>[]>([]);
     const [savingPrice, setSavingPrice] = useState<string | null>(null);
@@ -234,6 +239,13 @@ export default function AdminDashboard() {
                     const inquiriesRes = await api.admin.getInquiries();
                     setInquiries(Array.isArray(inquiriesRes.data) ? inquiriesRes.data : []);
                     break;
+                case 'reviews': {
+                    const tok = localStorage.getItem('adminToken') || '';
+                    const rRes = await fetch(`/api/admin/reviews?status=all`, { headers: { Authorization: `Bearer ${tok}` } });
+                    const rJson = await rRes.json();
+                    setReviews(Array.isArray(rJson.reviews) ? rJson.reviews : []);
+                    break;
+                }
                 case 'ads':
                     const adsRes = await api.admin.getAds();
                     setAds(Array.isArray(adsRes.data) ? adsRes.data : []);
@@ -1029,7 +1041,7 @@ export default function AdminDashboard() {
         { id: 'stats', icon: LayoutDashboard, label: 'Statistics' },
         { id: 'testimonials', icon: MessageSquare, label: 'Testimonials' },
         { id: 'bookings', icon: ShoppingBag, label: 'Bookings', href: '/admin/bookings' },
-        { id: 'reviews', icon: Star, label: 'Client Reviews', href: '/admin/reviews' },
+        { id: 'reviews', icon: Star, label: 'Client Reviews' },
         { id: 'health', icon: Activity, label: 'Website Health', href: '/admin/health' },
         { id: 'inquiries', icon: Mail, label: 'Inquiries' },
         { id: 'ads', icon: Megaphone, label: 'Ads' },
@@ -3920,6 +3932,117 @@ export default function AdminDashboard() {
                                     </div>
                                 )}
                             </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'reviews' && (
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between mb-2">
+                                <div>
+                                    <h2 className="text-xl font-medium text-primary">Client Reviews</h2>
+                                    <p className="text-sm text-primary/50 mt-1">Approve submissions before they go live on the website</p>
+                                </div>
+                            </div>
+                            {/* Filter tabs */}
+                            <div className="flex gap-2 mb-4">
+                                {(['pending', 'approved', 'rejected', 'all'] as const).map((s) => (
+                                    <button key={s} onClick={() => {
+                                        setReviewFilter(s);
+                                        const tok = localStorage.getItem('adminToken') || '';
+                                        fetch(`/api/admin/reviews?status=${s}`, { headers: { Authorization: `Bearer ${tok}` } })
+                                            .then(r => r.json()).then(d => setReviews(Array.isArray(d.reviews) ? d.reviews : []));
+                                    }}
+                                        className={`px-4 py-2 rounded-full text-sm font-semibold capitalize transition-all ${reviewFilter === s ? 'bg-primary text-cream' : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-400'}`}>
+                                        {s}
+                                        {s === 'pending' && reviews.filter(r => (r.status as string) === 'pending').length > 0 && (
+                                            <span className="ml-1.5 bg-white/20 text-xs font-bold px-1.5 py-0.5 rounded-full">
+                                                {reviews.filter(r => (r.status as string) === 'pending').length}
+                                            </span>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                            {reviews.length === 0 ? (
+                                <div className="text-center py-16 text-primary/40">No {reviewFilter} reviews.</div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {reviews.map((r) => {
+                                        const id = r._id as string || r.id as string;
+                                        const status = r.status as string;
+                                        return (
+                                            <div key={id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                                <div className="p-4 flex items-start gap-4">
+                                                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-cream font-bold shrink-0">
+                                                        {(r.name as string).charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 flex-wrap">
+                                                            <span className="font-semibold text-gray-900">{r.name as string}</span>
+                                                            <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${status === 'approved' ? 'bg-green-50 text-green-700 border-green-200' : status === 'rejected' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-gray-100 text-gray-700 border-gray-200'}`}>{status}</span>
+                                                        </div>
+                                                        <p className="text-xs text-gray-500 mt-0.5">{r.email as string} · {r.country as string} · Trip: <strong>{r.trip as string}</strong></p>
+                                                        <p className="text-xs text-gray-400 mt-0.5">{'★'.repeat(Number(r.rating))}{'☆'.repeat(5 - Number(r.rating))} · {new Date(r.createdAt as string).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                                                    </div>
+                                                    <button onClick={() => setReviewExpanded(reviewExpanded === id ? null : id)} className="text-gray-400 hover:text-gray-600 shrink-0">
+                                                        {reviewExpanded === id ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                                                    </button>
+                                                </div>
+                                                <div className="px-4 pb-3">
+                                                    <p className={`text-sm text-gray-700 leading-relaxed ${reviewExpanded !== id ? 'line-clamp-2' : ''}`}>"{r.text as string}"</p>
+                                                </div>
+                                                {reviewExpanded === id && (
+                                                    <div className="border-t border-gray-100 px-4 py-4 bg-gray-50 space-y-3">
+                                                        <textarea placeholder="Optional admin note..." rows={2}
+                                                            value={reviewNotes[id] || ''}
+                                                            onChange={(e) => setReviewNotes({ ...reviewNotes, [id]: e.target.value })}
+                                                            className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg resize-none outline-none focus:border-gray-400" />
+                                                        <div className="flex items-center gap-2 flex-wrap">
+                                                            {status !== 'approved' && (
+                                                                <button disabled={reviewActing === id} onClick={async () => {
+                                                                    setReviewActing(id);
+                                                                    const tok = localStorage.getItem('adminToken') || '';
+                                                                    await fetch('/api/admin/reviews', { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tok}` }, body: JSON.stringify({ id, status: 'approved', adminNote: reviewNotes[id] || '' }) });
+                                                                    const rRes = await fetch(`/api/admin/reviews?status=${reviewFilter}`, { headers: { Authorization: `Bearer ${tok}` } });
+                                                                    const rJson = await rRes.json();
+                                                                    setReviews(Array.isArray(rJson.reviews) ? rJson.reviews : []);
+                                                                    setReviewActing(null);
+                                                                }} className="flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-4 py-2 rounded-lg disabled:opacity-60 transition-colors">
+                                                                    <CheckCircle className="w-3.5 h-3.5" />{reviewActing === id ? 'Saving…' : 'Approve & Publish'}
+                                                                </button>
+                                                            )}
+                                                            {status !== 'rejected' && (
+                                                                <button disabled={reviewActing === id} onClick={async () => {
+                                                                    setReviewActing(id);
+                                                                    const tok = localStorage.getItem('adminToken') || '';
+                                                                    await fetch('/api/admin/reviews', { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tok}` }, body: JSON.stringify({ id, status: 'rejected', adminNote: reviewNotes[id] || '' }) });
+                                                                    const rRes = await fetch(`/api/admin/reviews?status=${reviewFilter}`, { headers: { Authorization: `Bearer ${tok}` } });
+                                                                    const rJson = await rRes.json();
+                                                                    setReviews(Array.isArray(rJson.reviews) ? rJson.reviews : []);
+                                                                    setReviewActing(null);
+                                                                }} className="flex items-center gap-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-bold px-4 py-2 rounded-lg disabled:opacity-60 transition-colors">
+                                                                    <XCircle className="w-3.5 h-3.5" />Reject
+                                                                </button>
+                                                            )}
+                                                            <button disabled={reviewActing === id} onClick={async () => {
+                                                                if (!confirm('Permanently delete this review?')) return;
+                                                                setReviewActing(id);
+                                                                const tok = localStorage.getItem('adminToken') || '';
+                                                                await fetch('/api/admin/reviews', { method: 'DELETE', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tok}` }, body: JSON.stringify({ id }) });
+                                                                const rRes = await fetch(`/api/admin/reviews?status=${reviewFilter}`, { headers: { Authorization: `Bearer ${tok}` } });
+                                                                const rJson = await rRes.json();
+                                                                setReviews(Array.isArray(rJson.reviews) ? rJson.reviews : []);
+                                                                setReviewActing(null);
+                                                            }} className="flex items-center gap-1.5 text-red-500 hover:text-red-700 text-xs font-semibold px-3 py-2 border border-red-200 rounded-lg hover:bg-red-50 disabled:opacity-60 ml-auto">
+                                                                <Trash2 className="w-3.5 h-3.5" />Delete
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     )}
 
