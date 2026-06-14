@@ -588,7 +588,7 @@ export default function InternationalTestimonials() {
             <article
               key={i}
               className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.08] transition-all duration-300 flex flex-col shrink-0"
-              style={{ width: '340px', scrollSnapAlign: 'start' }}
+              style={{ width: 'clamp(280px, 85vw, 340px)', scrollSnapAlign: 'start' }}
             >
               {/* Trip destination photo */}
               <div className="relative h-44 overflow-hidden shrink-0">
