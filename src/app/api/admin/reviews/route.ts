@@ -1,16 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getReviews, updateReviewStatus, deleteReview } from '@/lib/reviews-sheet';
 
-function isAuthorised(req: NextRequest): boolean {
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trip-backend-65232427280.asia-south1.run.app/api';
+
+async function isAuthorised(req: NextRequest): Promise<boolean> {
+  // Accept ADMIN_SECRET directly (x-admin-secret / x-admin-token headers)
   const adminSecret = process.env.ADMIN_SECRET;
-  if (!adminSecret) return false; // no secret = deny all, never open by default
-  const token = req.headers.get('x-admin-secret') || req.headers.get('x-admin-token');
-  return token === adminSecret;
+  const directToken = req.headers.get('x-admin-secret') || req.headers.get('x-admin-token');
+  if (adminSecret && directToken === adminSecret) return true;
+
+  // Accept backend JWT via Authorization: Bearer <token>
+  const bearer = req.headers.get('authorization')?.replace('Bearer ', '');
+  if (!bearer) return false;
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/verify`, {
+      headers: { Authorization: `Bearer ${bearer}` },
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 // GET — list reviews (admin)
 export async function GET(req: NextRequest) {
-  if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!await isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const status = req.nextUrl.searchParams.get('status') || 'all';
     const reviews = await getReviews(status);
@@ -23,7 +37,7 @@ export async function GET(req: NextRequest) {
 
 // PATCH — approve or reject
 export async function PATCH(req: NextRequest) {
-  if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!await isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const { id, status, adminNote } = await req.json();
     if (!id || !['approved', 'rejected'].includes(status)) {
@@ -40,7 +54,7 @@ export async function PATCH(req: NextRequest) {
 
 // DELETE — permanently remove
 export async function DELETE(req: NextRequest) {
-  if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!await isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const { id } = await req.json();
     await deleteReview(id);

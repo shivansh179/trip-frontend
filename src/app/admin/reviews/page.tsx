@@ -47,7 +47,7 @@ export default function AdminReviews() {
 
   const adminHeaders = () => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : '';
-    return { 'Content-Type': 'application/json', ...(token ? { 'x-admin-token': token } : {}) };
+    return { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) };
   };
 
   const load = useCallback(async () => {
