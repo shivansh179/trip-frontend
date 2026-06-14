@@ -592,12 +592,20 @@ export default function InternationalTestimonials() {
             >
               {/* Trip destination photo */}
               <div className="relative h-44 overflow-hidden shrink-0">
-                <Image
-                  src={r.tripPhoto}
-                  alt={`${r.name} — ${r.trip}`}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
+                {r.tripPhoto.startsWith('data:') ? (
+                  <img
+                    src={r.tripPhoto}
+                    alt={`${r.name} — ${r.trip}`}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                ) : (
+                  <Image
+                    src={r.tripPhoto}
+                    alt={`${r.name} — ${r.trip}`}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
                 {/* Trip + platform at bottom of photo */}
