@@ -109,7 +109,8 @@ export function proxy(req: NextRequest) {
   // Exception: booking-notes uses GCS service-account auth — no ADMIN_SECRET needed
   if (pathname.startsWith('/api/admin/') &&
       !pathname.startsWith('/api/admin/booking-notes') &&
-      !pathname.startsWith('/api/admin/booking-docs')) {
+      !pathname.startsWith('/api/admin/booking-docs') &&
+      !pathname.startsWith('/api/admin/reviews')) {
     const adminSecret = process.env.ADMIN_SECRET;
     if (!adminSecret) {
       // ADMIN_SECRET not configured — deny all admin API access
