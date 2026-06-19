@@ -30,7 +30,7 @@ function RefCard({ ref: bookingRef, label, gradient }: { ref: string; label: str
       <div className="relative z-10">
         <p className="text-white/70 text-xs font-bold uppercase tracking-[0.2em] mb-2">{label}</p>
         <div className="flex items-center gap-3 mb-3">
-          <span className="text-3xl sm:text-4xl font-black tracking-widest font-mono">{bookingRef}</span>
+          <span className="text-2xl sm:text-3xl font-black tracking-wide sm:tracking-widest font-mono break-all">{bookingRef}</span>
           <button onClick={copy}
             className="shrink-0 w-10 h-10 bg-white/20 hover:bg-white/35 backdrop-blur rounded-xl flex items-center justify-center transition-all active:scale-95">
             <Copy size={16} />

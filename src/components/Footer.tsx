@@ -63,7 +63,7 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="bg-[#1C1C1C] dark:bg-[#0d0d0d] text-white">
+      <footer className="bg-[#1C1C1C] text-white">
 
 
         {/* Main content */}
@@ -75,39 +75,39 @@ export default function Footer() {
               <Link href="/" className="inline-block">
                 <img src="/logo.png" alt="YlooTrips — India Travel Experts" className="h-12 w-auto object-contain brightness-0 invert" />
               </Link>
-              <p className="text-white/55 text-sm leading-relaxed">
-                We believe in slow travel and meaningful connections. Curated journeys for those who seek authentic experiences and lasting memories.
+              <p className="text-white/80 text-sm leading-relaxed">
+                India&apos;s trusted travel partner — safe, affordable trips to 50+ destinations. From Kashmir to Bali, trusted by 25,000+ happy travelers.
               </p>
 
               {/* Contact info */}
               <div className="space-y-2.5">
                 <a href="https://wa.me/918427831127" target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2.5 text-white/50 hover:text-white/80 transition-colors text-sm group">
+                  className="flex items-center gap-2.5 text-white/75 hover:text-white transition-colors text-sm group">
                   <Phone className="w-3.5 h-3.5 group-hover:text-white/80" />
                   <span>+91 84278 31127 (WhatsApp)</span>
                 </a>
                 <a href="mailto:hello@ylootrips.com"
-                  className="flex items-center gap-2.5 text-white/50 hover:text-white/80 transition-colors text-sm group">
+                  className="flex items-center gap-2.5 text-white/75 hover:text-white transition-colors text-sm group">
                   <Mail className="w-3.5 h-3.5 group-hover:text-white/80" />
                   <span>hello@ylootrips.com</span>
                 </a>
-                <div className="flex items-start gap-2.5 text-white/40 text-sm">
+                <div className="flex items-start gap-2.5 text-white/70 text-sm">
                   <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
                   <span>New Delhi, India · Serving travelers worldwide</span>
                 </div>
               </div>
 
               {/* GST / Registration */}
-              <div className="border border-white/8 rounded px-4 py-3 space-y-1">
-                <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">Company Details</p>
-                <p className="text-[10px] text-white/35">MSME: UDYAM-HR-05-0141455</p>
-                <p className="text-[10px] text-white/35">GST: 07BATPV1942C1ZF</p>
-                <p className="text-[10px] text-white/35">New Delhi, India · Est. 2022</p>
+              <div className="border border-white/20 rounded px-4 py-3 space-y-1">
+                <p className="text-[9px] uppercase tracking-[0.2em] text-white/60">Company Details</p>
+                <p className="text-[10px] text-white/70">MSME: UDYAM-HR-05-0141455</p>
+                <p className="text-[10px] text-white/70">GST: 07BATPV1942C1ZF</p>
+                <p className="text-[10px] text-white/70">New Delhi, India · Est. 2022</p>
               </div>
 
               {/* Newsletter */}
               <div>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-3">Travel Inspiration Weekly</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-white/70 mb-3">Travel Inspiration Weekly</p>
                 <form className="flex gap-0">
                   <input type="email" placeholder="your@email.com"
                     className="flex-1 min-w-0 bg-white/5 border border-white/10 px-4 py-3 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-colors" />
@@ -115,7 +115,7 @@ export default function Footer() {
                     <ArrowUpRight className="w-4 h-4" />
                   </button>
                 </form>
-                <p className="text-[9px] text-white/25 mt-1.5">No spam. Unsubscribe any time.</p>
+                <p className="text-[9px] text-white/55 mt-1.5">No spam. Unsubscribe any time.</p>
               </div>
             </div>
 
@@ -125,11 +125,11 @@ export default function Footer() {
 
                 {/* Explore */}
                 <div className="md:col-span-2">
-                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">Explore</h4>
+                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/70 mb-4">Explore</h4>
                   <ul className="space-y-2">
                     {footerLinks.explore.map(l => (
                       <li key={l.name}>
-                        <Link href={l.href} className="text-white/50 hover:text-white transition-colors text-sm">{l.name}</Link>
+                        <Link href={l.href} className="text-white/80 hover:text-white transition-colors text-sm">{l.name}</Link>
                       </li>
                     ))}
                   </ul>
@@ -137,23 +137,23 @@ export default function Footer() {
 
                 {/* Tours — split into 2 explicit columns */}
                 <div className="md:col-span-6">
-                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">Tours</h4>
-                  <div className="grid grid-cols-2 gap-x-4">
+                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/70 mb-4">Tours</h4>
+                  <div className="grid grid-cols-2 gap-x-2 md:gap-x-4">
                     <ul className="space-y-2">
                       {footerLinks.toursCol1.map(l => (
                         <li key={l.name}>
-                          <Link href={l.href} className="text-white/50 hover:text-white transition-colors text-sm">{l.name}</Link>
+                          <Link href={l.href} className="text-white/80 hover:text-white transition-colors text-sm">{l.name}</Link>
                         </li>
                       ))}
                     </ul>
                     <ul className="space-y-2">
                       {footerLinks.toursCol2.map(l => (
                         <li key={l.name}>
-                          <Link href={l.href} className="text-white/50 hover:text-white transition-colors text-sm">{l.name}</Link>
+                          <Link href={l.href} className="text-white/80 hover:text-white transition-colors text-sm">{l.name}</Link>
                         </li>
                       ))}
                       <li>
-                        <Link href="/destinations" className="text-white/30 hover:text-white/60 transition-colors text-xs italic">View all →</Link>
+                        <Link href="/destinations" className="text-white/60 hover:text-white transition-colors text-xs italic">View all →</Link>
                       </li>
                     </ul>
                   </div>
@@ -161,11 +161,11 @@ export default function Footer() {
 
                 {/* Company */}
                 <div className="md:col-span-2">
-                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">Company</h4>
+                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/70 mb-4">Company</h4>
                   <ul className="space-y-2">
                     {footerLinks.company.map(l => (
                       <li key={l.name}>
-                        <Link href={l.href} className="text-white/50 hover:text-white transition-colors text-sm">{l.name}</Link>
+                        <Link href={l.href} className="text-white/80 hover:text-white transition-colors text-sm">{l.name}</Link>
                       </li>
                     ))}
                   </ul>
@@ -173,11 +173,11 @@ export default function Footer() {
 
                 {/* Legal */}
                 <div className="md:col-span-2">
-                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">Legal</h4>
+                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/70 mb-4">Legal</h4>
                   <ul className="space-y-2">
                     {footerLinks.legal.map(l => (
                       <li key={l.name}>
-                        <Link href={l.href} className="text-white/50 hover:text-white transition-colors text-sm">{l.name}</Link>
+                        <Link href={l.href} className="text-white/80 hover:text-white transition-colors text-sm">{l.name}</Link>
                       </li>
                     ))}
                   </ul>
@@ -190,26 +190,26 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-white/8">
+        <div className="border-t border-white/20">
           {/* Social icons row — always visible on mobile above sticky nav */}
           <div className="section-container pt-5 pb-2">
             <div className="flex items-center justify-center sm:justify-end gap-6">
               <a href="https://www.instagram.com/ylootrips/" target="_blank" rel="noopener noreferrer"
-                className="text-white/50 hover:text-white transition-colors" aria-label="Instagram">
+                className="text-white/70 hover:text-white transition-colors" aria-label="Instagram">
                 <Instagram className="w-6 h-6" />
               </a>
               <a href="https://www.facebook.com/profile.php?id=61574908545709" target="_blank" rel="noopener noreferrer"
-                className="text-white/50 hover:text-white transition-colors" aria-label="Facebook">
+                className="text-white/70 hover:text-white transition-colors" aria-label="Facebook">
                 <Facebook className="w-6 h-6" />
               </a>
               <a href="https://www.linkedin.com/company/ylootrips" target="_blank" rel="noopener noreferrer"
-                className="text-white/50 hover:text-white transition-colors" aria-label="LinkedIn">
+                className="text-white/70 hover:text-white transition-colors" aria-label="LinkedIn">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                 </svg>
               </a>
               <a href="https://www.youtube.com/@ylootrips" target="_blank" rel="noopener noreferrer"
-                className="text-white/50 hover:text-white transition-colors" aria-label="YouTube">
+                className="text-white/70 hover:text-white transition-colors" aria-label="YouTube">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                 </svg>
@@ -220,10 +220,10 @@ export default function Footer() {
           <div className="section-container py-4 pb-28 sm:pb-5">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-3 text-center sm:text-left">
               <div className="space-y-1">
-                <p className="text-[10px] text-white/35 uppercase tracking-widest">
+                <p className="text-[10px] text-white/70 uppercase tracking-widest">
                   © {currentYear} YlooTrips · All rights reserved.
                 </p>
-                <p className="text-[9px] text-white/20">
+                <p className="text-[9px] text-white/50">
                   Prices are inclusive of all taxes · No hidden fees · Currency shown based on your selection
                 </p>
               </div>

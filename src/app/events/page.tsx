@@ -311,7 +311,7 @@ export default function EventsPage() {
       ]} />
 
       {/* ── HERO ── */}
-      <section className="relative h-[85vh] min-h-[600px] overflow-hidden">
+      <section className="relative h-[75vh] min-h-[420px] md:min-h-[600px] overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1600&q=85"
           alt="Royal palace events across India — YlooTrips event planning"
@@ -349,7 +349,7 @@ export default function EventsPage() {
         {/* Stats bar */}
         <div className="absolute bottom-0 left-0 right-0 bg-primary/80 backdrop-blur-sm">
           <div className="section-container">
-            <div className="grid grid-cols-3 divide-x divide-cream/10 py-4">
+            <div className="grid grid-cols-3 divide-x divide-cream/10 py-3 md:py-4">
               {[
                 { num: '500+', label: 'Events Organised' },
                 { num: '50+', label: 'Destinations' },
@@ -366,9 +366,9 @@ export default function EventsPage() {
       </section>
 
       {/* ── EVENT CATEGORIES ── */}
-      <section className="py-20 md:py-28 bg-cream">
+      <section className="py-12 md:py-16 bg-cream">
         <div className="section-container">
-          <div className="text-center mb-14">
+          <div className="text-center mb-10">
             <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-3">What We Plan</p>
             <h2 className="font-display text-display-lg text-primary">
               Every occasion, <span className="italic">expertly crafted</span>
@@ -398,9 +398,9 @@ export default function EventsPage() {
       </section>
 
       {/* ── WHY CHOOSE US ── */}
-      <section className="py-20 bg-primary text-cream">
+      <section className="py-12 md:py-16 bg-primary text-cream">
         <div className="section-container">
-          <div className="text-center mb-14">
+          <div className="text-center mb-10">
             <p className="text-caption uppercase tracking-[0.3em] text-cream/50 mb-3">Why YlooTrips</p>
             <h2 className="font-display text-display-lg text-cream">
               India&apos;s events, <span className="italic text-cream/70">without the stress</span>
@@ -439,9 +439,9 @@ export default function EventsPage() {
       </div>
 
       {/* ── PARTY EVENTS ── */}
-      <section id="party-events" className="py-20 md:py-28 bg-gradient-to-br from-primary via-primary/95 to-[#1a0a2e]">
+      <section id="party-events" className="py-12 md:py-16 bg-gradient-to-br from-primary via-primary/95 to-[#1a0a2e]">
         <div className="section-container">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <p className="text-caption uppercase tracking-[0.3em] text-cream/50 mb-3">NCR · ₹2,000 per person</p>
             <h2 className="font-display text-display-lg text-cream">
               Party Events <span className="italic text-cream/70">NCR</span>
@@ -526,7 +526,7 @@ export default function EventsPage() {
       </section>
 
       {/* ── UPCOMING / LIVE EVENTS ── */}
-      <section id="upcoming-events" className="py-20 md:py-28 bg-cream-dark">
+      <section id="upcoming-events" className="py-12 md:py-16 bg-cream-dark">
         <div className="section-container">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
             <div>
@@ -699,9 +699,9 @@ export default function EventsPage() {
       </section>
 
       {/* ── DESTINATION EVENTS ── */}
-      <section className="py-20 md:py-28 bg-cream">
+      <section className="py-12 md:py-16 bg-cream">
         <div className="section-container">
-          <div className="text-center mb-14">
+          <div className="text-center mb-8">
             <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-3">Where We Operate</p>
             <h2 className="font-display text-display-lg text-primary">
               Events across <span className="italic">India&apos;s finest</span> destinations
@@ -728,7 +728,7 @@ export default function EventsPage() {
       </section>
 
       {/* ── QUICK ENQUIRY FORM ── */}
-      <section className="py-20 md:py-28 bg-cream-dark">
+      <section className="py-12 md:py-16 bg-cream-dark">
         <div className="section-container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Left */}
@@ -792,7 +792,7 @@ export default function EventsPage() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="py-20 bg-primary text-cream">
+      <section className="py-12 md:py-16 bg-primary text-cream">
         <div className="section-container text-center">
           <h2 className="font-display text-display-lg text-cream mb-4">
             Ready to create something <span className="italic text-accent">extraordinary?</span>

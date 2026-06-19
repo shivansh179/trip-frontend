@@ -557,7 +557,7 @@ export default function Hero({ content, stats }: HeroProps) {
 
                                             <div className="flex flex-col sm:flex-row gap-2 flex-wrap">
                                                 {/* From city dropdown */}
-                                                <div className="relative flex-1 min-w-[140px]">
+                                                <div className="relative flex-1 min-w-0">
                                                     <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">From</label>
                                                     <div className="relative">
                                                         <Plane size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 rotate-45 z-10 pointer-events-none" />
@@ -572,7 +572,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 </button>
 
                                                 {/* To city dropdown */}
-                                                <div className="relative flex-1 min-w-[140px]">
+                                                <div className="relative flex-1 min-w-0">
                                                     <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">To</label>
                                                     <div className="relative">
                                                         <Plane size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none" />
