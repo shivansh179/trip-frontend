@@ -1,7 +1,8 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { initiateEasebuzzPayment } from '@/lib/easebuzz-checkout';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { MouseEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -407,14 +408,74 @@ const STATIC_TRENDING: Trip[] = [
   { id: 9013, title: 'Vietnam Explorer', destination: 'Hanoi + Ha Long Bay + Hoi An', duration: '7N/8D', price: 51499, originalPrice: 64000, rating: 4.8, reviewCount: 289, imageUrl: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80', isFeatured: true, isTrending: true, isPopular: true, category: 'International', description: '', highlights: [], includes: [], excludes: [], difficulty: 'Easy', maxGroupSize: 10, slug: 'destinations/international' } as any,
 ];
 
+/* ── Infinite Marquee Carousel ────────────────────────────────────── */
+function TrendingCarousel({ trips, onBook }: { trips: Trip[]; onBook: (t: Trip) => void }) {
+  const [paused, setPaused] = useState(false);
+  // Double the cards — marquee keyframe moves -50% so second copy seamlessly loops
+  const looped = [...trips, ...trips];
+  const CARD_W = 320; // card width px
+  // Speed: ≈3s per card
+  const duration = trips.length * 3;
+
+  return (
+    <>
+      {/* ── Mobile: swipeable horizontal scroll ── */}
+      <div className="md:hidden -mx-4 px-4">
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth"
+          style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+          {trips.map((trip, i) => (
+            <div key={trip.id} className="snap-start shrink-0 w-[80vw] max-w-[300px]">
+              <TrendingCard trip={trip} rank={i + 1} onBook={onBook} />
+            </div>
+          ))}
+        </div>
+        <p className="text-center text-[11px] text-gray-400 mt-1">← Swipe to explore →</p>
+      </div>
+
+      {/* ── Desktop: auto-scrolling marquee ── */}
+      <div
+        className="relative overflow-hidden hidden md:block"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        {/* Edge fade masks */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-20 z-10 bg-gradient-to-r from-cream to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-20 z-10 bg-gradient-to-l from-cream to-transparent" />
+
+        {/* Marquee track */}
+        <div
+          className="flex gap-6 pb-4"
+          style={{
+            animation: `marquee ${duration}s linear infinite`,
+            animationPlayState: paused ? 'paused' : 'running',
+            willChange: 'transform',
+          }}
+        >
+          {looped.map((trip, i) => (
+            <div
+              key={`${trip.id}-${i}`}
+              className="shrink-0"
+              style={{ width: `${CARD_W}px` }}
+            >
+              <TrendingCard trip={trip} rank={(i % trips.length) + 1} onBook={onBook} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
 /* ── Main Component ───────────────────────────────────────────────── */
 export default function TrendingPackages() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeBooking, setActiveBooking] = useState<Trip | null>(null);
+  const [travelersCount] = useState(() => Math.floor(Date.now() / 3600000) % 40 + 120);
 
   useEffect(() => {
     // Always use curated STATIC_TRENDING for consistent featured trips
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTrips(STATIC_TRENDING);
     Promise.resolve()
       .finally(() => setLoading(false));
@@ -434,7 +495,7 @@ export default function TrendingPackages() {
               Trending <span className="italic text-secondary">Right Now</span>
             </h2>
             <p className="text-primary/55 dark:text-gray-400 text-sm mt-2 max-w-lg">
-              Real-time popular packages — booked by {Math.floor(Date.now() / 3600000) % 40 + 120}+ travelers this week
+              Real-time popular packages — booked by {travelersCount}+ travelers this week
             </p>
           </div>
           <div className="flex items-center gap-3 shrink-0">
@@ -451,19 +512,15 @@ export default function TrendingPackages() {
           </div>
         </div>
 
-        {/* Grid */}
+        {/* Auto-sliding carousel */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1,2,3,4,5,6].map(i => (
-              <div key={i} className="h-[460px] rounded-2xl bg-cream-dark animate-pulse" />
+          <div className="flex gap-6 overflow-hidden">
+            {[1,2,3].map(i => (
+              <div key={i} className="shrink-0 h-[460px] rounded-2xl bg-cream-dark animate-pulse" style={{ width: 'clamp(280px, 32%, 360px)' }} />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(trips.length > 0 ? trips : STATIC_TRENDING).map((trip, i) => (
-              <TrendingCard key={trip.id} trip={trip} rank={i + 1} onBook={setActiveBooking} />
-            ))}
-          </div>
+          <TrendingCarousel trips={trips.length > 0 ? trips : STATIC_TRENDING} onBook={setActiveBooking} />
         )}
 
         {/* Booking drawer */}
