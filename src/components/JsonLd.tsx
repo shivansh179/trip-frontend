@@ -288,13 +288,6 @@ export function TourJsonLd({
             url: 'https://www.ylootrips.com',
           },
         },
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: rating.toString(),
-          reviewCount: reviewCount.toString(),
-          bestRating: '5',
-          worstRating: '1',
-        },
         additionalProperty: [
           { '@type': 'PropertyValue', name: 'Duration', value: duration },
           { '@type': 'PropertyValue', name: 'Departure City', value: startLocation },
@@ -306,9 +299,7 @@ export function TourJsonLd({
           })),
         ],
       },
-      // Product schema — enables price in Google Shopping & SERPs
-      // Note: aggregateRating intentionally omitted here to avoid "multiple aggregate ratings"
-      // GSC error — it lives on TouristTrip above.
+      // Product schema — AggregateRating goes here (Google only supports review snippets on Product)
       {
         '@type': 'Product',
         '@id': `${url}#product`,
@@ -316,6 +307,13 @@ export function TourJsonLd({
         description,
         image,
         brand: { '@type': 'Brand', name: 'YlooTrips' },
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: rating.toString(),
+          reviewCount: reviewCount.toString(),
+          bestRating: '5',
+          worstRating: '1',
+        },
         offers: {
           '@type': 'Offer',
           priceCurrency: currency,
