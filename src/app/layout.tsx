@@ -139,11 +139,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
       <head>
-        {/* Blocking theme script — prevents dark mode flash on initial load */}
-        <script dangerouslySetInnerHTML={{__html:`!function(){try{var t=localStorage.getItem('theme');var d=t==='dark'||((!t||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList[d?'add':'remove']('dark')}catch(e){}}()`}} />
-        <meta name="color-scheme" content="light dark" />
-        <meta name="theme-color" content="#F5F1EB" media="(prefers-color-scheme: light)" />
-        <meta name="theme-color" content="#0F0E0C" media="(prefers-color-scheme: dark)" />
+        <meta name="color-scheme" content="light" />
+        <meta name="theme-color" content="#ffffff" />
         {/* Viewport — critical for mobile rendering */}
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
         {/* GEO: AI search engine discovery link */}
@@ -181,7 +178,7 @@ export default function RootLayout({
           <Suspense fallback={<div className="h-24 bg-cream" />}>
             <Header />
           </Suspense>
-          <main className="min-h-screen pb-40 md:pb-0">
+          <main className="min-h-screen pb-20 md:pb-0">
             {children}
           </main>
           <Footer />

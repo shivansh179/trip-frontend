@@ -29,6 +29,7 @@ export default function MobileStickyCTA() {
         return () => document.removeEventListener('mousedown', handleClick);
     }, [tripsOpen]);
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     useEffect(() => { setTripsOpen(false); }, [pathname]);
 
     if (HIDDEN_PATHS.some(p => pathname?.startsWith(p))) return null;
@@ -167,81 +168,76 @@ export default function MobileStickyCTA() {
 
             {/* Bottom Nav */}
             <nav
-                className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
-                style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+                className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-gray-200"
+                style={{
+                    paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+                    boxShadow: '0 -4px 20px rgba(0,0,0,0.06)',
+                }}
             >
-                <div
-                    className="mx-0 border-t"
-                    style={{
-                        background: 'rgba(10,10,10,0.97)',
-                        backdropFilter: 'blur(24px)',
-                        borderColor: 'rgba(201,169,110,0.15)',
-                        boxShadow: '0 -1px 0 rgba(201,169,110,0.08), 0 -12px 40px rgba(0,0,0,0.5)',
-                    }}
-                >
-                    <div className="grid grid-cols-5 h-16 px-1">
+                <div className="grid grid-cols-5 h-16 px-1">
 
-                        {/* Home */}
-                        <Link href="/" className="relative flex flex-col items-center justify-center gap-1 transition-all duration-200 active:scale-90 select-none">
-                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${isHome ? 'bg-white/8' : ''}`}>
-                                <Home size={20} strokeWidth={isHome ? 2.5 : 1.8} style={{ color: isHome ? '#C9A96E' : 'rgba(255,255,255,0.35)' }} />
-                                <span className="text-[10px] font-medium" style={{ color: isHome ? '#C9A96E' : 'rgba(255,255,255,0.35)' }}>Home</span>
-                            </div>
-                            {isHome && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full" style={{ background: '#C9A96E' }} />}
-                        </Link>
+                    {/* Home */}
+                    <Link href="/" className="relative flex flex-col items-center justify-center gap-1 transition-all duration-200 active:scale-90 select-none">
+                        <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${isHome ? 'bg-blue-50' : ''}`}>
+                            <Home size={20} strokeWidth={isHome ? 2.5 : 1.8} className={isHome ? 'text-[#008cff]' : 'text-gray-400'} />
+                            <span className={`text-[10px] font-medium ${isHome ? 'text-[#008cff]' : 'text-gray-400'}`}>Home</span>
+                        </div>
+                        {isHome && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full bg-[#008cff]" />}
+                    </Link>
 
-                        {/* Trips */}
-                        <button onClick={() => setTripsOpen(!tripsOpen)} className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none">
-                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${isTrips || tripsOpen ? 'bg-white/8' : ''}`}>
-                                <Compass size={20} strokeWidth={isTrips || tripsOpen ? 2.5 : 1.8} style={{ color: isTrips || tripsOpen ? '#C9A96E' : 'rgba(255,255,255,0.35)' }} />
-                                <span className="text-[10px] font-medium" style={{ color: isTrips || tripsOpen ? '#C9A96E' : 'rgba(255,255,255,0.35)' }}>Trips</span>
-                            </div>
-                            {(isTrips || tripsOpen) && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full" style={{ background: '#C9A96E' }} />}
-                        </button>
+                    {/* Trips */}
+                    <button onClick={() => setTripsOpen(!tripsOpen)} className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none">
+                        <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${isTrips || tripsOpen ? 'bg-blue-50' : ''}`}>
+                            <Compass size={20} strokeWidth={isTrips || tripsOpen ? 2.5 : 1.8} className={isTrips || tripsOpen ? 'text-[#008cff]' : 'text-gray-400'} />
+                            <span className={`text-[10px] font-medium ${isTrips || tripsOpen ? 'text-[#008cff]' : 'text-gray-400'}`}>Trips</span>
+                        </div>
+                        {(isTrips || tripsOpen) && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full bg-[#008cff]" />}
+                    </button>
 
-                        {/* AI Planner — centre raised */}
-                        <Link href="/trip-planner" className="relative flex flex-col items-center justify-center select-none active:scale-90 transition-all duration-200">
-                            <div
-                                className="flex flex-col items-center justify-center w-[54px] h-[54px] -mt-7 rounded-[18px] transition-all duration-200"
-                                style={{
-                                    background: isPlannerActive
-                                        ? 'linear-gradient(135deg, #A07840, #C9A96E)'
-                                        : 'linear-gradient(135deg, #C9A96E, #E2C68F)',
-                                    boxShadow: '0 4px 20px rgba(201,169,110,0.45)',
-                                }}
-                            >
-                                <Sparkles size={19} strokeWidth={2} className="text-black" />
-                                <span className="text-black text-[9px] font-black mt-0.5 leading-none tracking-tight">AI</span>
-                            </div>
-                            <span className="text-[10px] font-semibold mt-1" style={{ color: isPlannerActive ? '#C9A96E' : 'rgba(255,255,255,0.4)' }}>Plan Trip</span>
-                        </Link>
+                    {/* AI Planner — centre raised */}
+                    <Link href="/trip-planner" className="relative flex flex-col items-center justify-center select-none active:scale-90 transition-all duration-200">
+                        <div
+                            className="flex flex-col items-center justify-center w-[54px] h-[54px] -mt-7 rounded-[18px] transition-all duration-200 shadow-lg"
+                            style={{
+                                background: isPlannerActive
+                                    ? 'linear-gradient(135deg, #0070cc, #008cff)'
+                                    : 'linear-gradient(135deg, #1a1a1a, #333)',
+                                boxShadow: isPlannerActive
+                                    ? '0 4px 20px rgba(0,140,255,0.4)'
+                                    : '0 4px 20px rgba(0,0,0,0.25)',
+                            }}
+                        >
+                            <Sparkles size={19} strokeWidth={2} className="text-white" />
+                            <span className="text-white text-[9px] font-black mt-0.5 leading-none tracking-tight">AI</span>
+                        </div>
+                        <span className={`text-[10px] font-semibold mt-1 ${isPlannerActive ? 'text-[#008cff]' : 'text-gray-400'}`}>Plan Trip</span>
+                    </Link>
 
-                        {/* Wallet */}
-                        <Link href="/cashback" className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none">
-                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 relative ${isWallet ? 'bg-white/8' : ''}`}>
-                                <Wallet size={20} strokeWidth={isWallet ? 2.5 : 1.8} style={{ color: isWallet ? '#C9A96E' : balance > 0 ? '#6ee7b7' : 'rgba(255,255,255,0.35)' }} />
-                                {balance > 0 && (
-                                    <span className="absolute -top-0.5 right-1 min-w-[18px] h-[14px] px-1 text-black text-[8px] font-bold rounded-full flex items-center justify-center leading-none" style={{ background: '#C9A96E' }}>
-                                        ₹{balance >= 1000 ? `${(balance / 1000).toFixed(1)}k` : balance}
-                                    </span>
-                                )}
-                                <span className="text-[10px] font-medium" style={{ color: isWallet ? '#C9A96E' : balance > 0 ? '#6ee7b7' : 'rgba(255,255,255,0.35)' }}>
-                                    {balance > 0 ? 'Cash' : 'Wallet'}
+                    {/* Wallet */}
+                    <Link href="/cashback" className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none">
+                        <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 relative ${isWallet ? 'bg-blue-50' : ''}`}>
+                            <Wallet size={20} strokeWidth={isWallet ? 2.5 : 1.8} className={isWallet ? 'text-[#008cff]' : balance > 0 ? 'text-green-500' : 'text-gray-400'} />
+                            {balance > 0 && (
+                                <span className="absolute -top-0.5 right-1 min-w-[18px] h-[14px] px-1 text-white text-[8px] font-bold rounded-full flex items-center justify-center leading-none bg-[#008cff]">
+                                    ₹{balance >= 1000 ? `${(balance / 1000).toFixed(1)}k` : balance}
                                 </span>
-                            </div>
-                            {isWallet && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full" style={{ background: '#C9A96E' }} />}
-                        </Link>
+                            )}
+                            <span className={`text-[10px] font-medium ${isWallet ? 'text-[#008cff]' : balance > 0 ? 'text-green-500' : 'text-gray-400'}`}>
+                                {balance > 0 ? 'Cash' : 'Wallet'}
+                            </span>
+                        </div>
+                        {isWallet && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full bg-[#008cff]" />}
+                    </Link>
 
-                        {/* My Trips */}
-                        <Link href="/my-booking" className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none">
-                            <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${isMyTrips ? 'bg-white/8' : ''}`}>
-                                <Ticket size={20} strokeWidth={isMyTrips ? 2.5 : 1.8} style={{ color: isMyTrips ? '#C9A96E' : 'rgba(255,255,255,0.35)' }} />
-                                <span className="text-[10px] font-medium" style={{ color: isMyTrips ? '#C9A96E' : 'rgba(255,255,255,0.35)' }}>My Trips</span>
-                            </div>
-                            {isMyTrips && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full" style={{ background: '#C9A96E' }} />}
-                        </Link>
+                    {/* My Trips */}
+                    <Link href="/my-booking" className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none">
+                        <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${isMyTrips ? 'bg-blue-50' : ''}`}>
+                            <Ticket size={20} strokeWidth={isMyTrips ? 2.5 : 1.8} className={isMyTrips ? 'text-[#008cff]' : 'text-gray-400'} />
+                            <span className={`text-[10px] font-medium ${isMyTrips ? 'text-[#008cff]' : 'text-gray-400'}`}>My Trips</span>
+                        </div>
+                        {isMyTrips && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full bg-[#008cff]" />}
+                    </Link>
 
-                    </div>
                 </div>
             </nav>
 
