@@ -6,7 +6,9 @@ export interface Trip {
     destination: string;
     imageUrl: string;
     images?: string[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     price: number | string | any; // Can be number or BigDecimal from backend
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     originalPrice?: number | string | any;
     duration: string;
     difficulty?: 'Easy' | 'Moderate' | 'Challenging' | 'Difficult' | string;

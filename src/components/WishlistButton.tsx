@@ -20,6 +20,7 @@ export default function WishlistButton({ tripId, tripTitle, className = '' }: Wi
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const ids: number[] = JSON.parse(stored);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsSaved(ids.includes(tripId));
       }
     } catch {

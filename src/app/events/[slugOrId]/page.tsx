@@ -75,6 +75,7 @@ export default function EventDetailPage() {
                     : await api.getEventBySlug(slugOrId);
                 setEvent(response.data);
                 setError(null);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 setError(err.response?.status === 404 ? 'Event not found' : 'Failed to load event');
                 setEvent(null);

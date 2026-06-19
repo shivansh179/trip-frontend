@@ -713,7 +713,7 @@ function IntlCard({ d }: { d: IntlDestination }) {
             <div className="flex gap-2">
               <Link
                 href={d.href}
-                className="flex items-center gap-1.5 bg-primary text-cream dark:bg-amber-500 dark:text-white text-xs font-bold px-4 py-2.5 rounded-full hover:bg-secondary dark:hover:bg-amber-400 transition-colors"
+                className="flex items-center gap-1.5 bg-accent text-primary text-xs font-bold px-4 py-2.5 rounded-full hover:bg-accent-warm transition-colors shadow-sm shadow-accent/20"
               >
                 <CreditCard className="w-3.5 h-3.5" /> Book Now
               </Link>
@@ -742,37 +742,40 @@ export default function InternationalDestinationsPage() {
         subtitle="Curated international journeys designed for Indian travelers — visa support, INR pricing, 24/7 on-trip assistance."
         breadcrumb="International"
         backgroundImage="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&q=80"
-        overlayClassName="bg-gradient-to-b from-secondary/40 via-primary/60 to-primary/90"
+        overlayClassName="bg-gradient-to-b from-black/40 via-black/55 to-black/85"
       />
 
-      {/* Trust bar */}
-      <section className="py-6 bg-secondary/5 border-b border-primary/8">
+      {/* Trust bar — dark luxury */}
+      <section className="py-5 bg-[#0A2752] border-b border-white/5">
         <div className="section-container">
-          <div className="flex flex-wrap justify-center gap-4 md:gap-8">
+          <div className="flex flex-wrap justify-center gap-5 md:gap-10">
             {[
-              '✈️  Visa assistance included',
-              '💳  INR pricing · no forex surprises',
-              '🗣  Hindi & English-speaking guides',
-              '📞  24/7 on-trip emergency support',
+              { icon: '✈️', text: 'Visa assistance included' },
+              { icon: '💳', text: 'INR pricing · no forex surprises' },
+              { icon: '🗣', text: 'Hindi & English guides' },
+              { icon: '📞', text: '24/7 on-trip support' },
             ].map((item) => (
-              <span key={item} className="text-xs md:text-sm text-primary/70 font-medium">{item}</span>
+              <span key={item.text} className="flex items-center gap-2 text-xs md:text-sm text-white/60 font-medium">
+                <span>{item.icon}</span>
+                <span>{item.text}</span>
+              </span>
             ))}
           </div>
         </div>
       </section>
 
       {/* Region filter */}
-      <section className="py-4 md:py-5 bg-cream-dark border-b border-primary/8 sticky top-16 z-30">
+      <section className="py-4 md:py-5 bg-cream-dark border-b border-primary/8 sticky top-16 z-30 shadow-sm">
         <div className="section-container">
           <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-0.5">
             {regions.map((r) => (
               <button
                 key={r.value}
                 onClick={() => setActiveRegion(r.value)}
-                className={`shrink-0 px-4 py-2 text-xs uppercase tracking-widest font-medium transition-all duration-200 rounded-full ${
+                className={`shrink-0 px-4 py-2 text-xs uppercase tracking-widest font-semibold transition-all duration-200 rounded-full ${
                   activeRegion === r.value
-                    ? 'bg-secondary text-cream shadow-sm'
-                    : 'bg-white text-primary/70 border border-primary/15 hover:border-secondary/40 hover:text-secondary'
+                    ? 'bg-accent text-primary shadow-md shadow-accent/20'
+                    : 'bg-white text-primary/60 border border-primary/15 hover:border-accent/50 hover:text-primary'
                 }`}
               >
                 {r.label}
@@ -783,18 +786,19 @@ export default function InternationalDestinationsPage() {
       </section>
 
       {/* Destination grid */}
-      <section className="py-12 md:py-20 bg-cream">
+      <section className="py-10 md:py-14 bg-cream">
         <div className="section-container">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-secondary mb-2">
+              <div className="w-10 h-0.5 bg-accent mb-3" />
+              <p className="text-xs uppercase tracking-[0.35em] text-accent font-semibold mb-2">
                 {activeRegion === 'All' ? 'Across the globe' : activeRegion}
               </p>
-              <h2 className="font-display text-4xl md:text-5xl text-primary">
+              <h2 className="font-display text-4xl md:text-5xl text-primary leading-tight">
                 {activeRegion === 'All' ? 'Where in the world?' : `Explore ${activeRegion}`}
               </h2>
             </div>
-            <p className="text-sm text-primary/50">{filtered.length} destination{filtered.length !== 1 ? 's' : ''}</p>
+            <p className="text-sm text-primary/40 font-medium">{filtered.length} destination{filtered.length !== 1 ? 's' : ''}</p>
           </div>
 
           {filtered.length > 0 ? (
@@ -814,7 +818,7 @@ export default function InternationalDestinationsPage() {
       </section>
 
       {/* Countries we cover */}
-      <section className="py-10 bg-cream-dark border-y border-primary/8">
+      <section className="py-6 md:py-8 bg-cream-dark border-y border-primary/8">
         <div className="section-container text-center">
           <p className="text-xs uppercase tracking-[0.3em] text-secondary mb-5">Popular with Indian travelers</p>
           <div className="flex flex-wrap justify-center gap-2.5">
@@ -827,7 +831,7 @@ export default function InternationalDestinationsPage() {
       </section>
 
       {/* WhatsApp CTA */}
-      <section className="py-16 md:py-24 bg-secondary text-cream">
+      <section className="py-12 md:py-16 bg-secondary text-cream">
         <div className="section-container">
           <div className="max-w-3xl mx-auto text-center">
             <div className="flex justify-center mb-5">

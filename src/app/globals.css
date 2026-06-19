@@ -1,32 +1,37 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Force class-based dark mode — dark: classes only apply when .dark is on a parent.
+   Since Providers.tsx uses forcedTheme="light", .dark is never added,
+   making all dark: utility classes permanently inert. */
+@variant dark (&:where(.dark *));
+
 /* Custom Theme - Using Tailwind v4 @theme directive */
 @theme {
-  /* Earthy, sophisticated palette */
-  --color-primary: #1C1C1C;
-  --color-primary-light: #2D2D2D;
-  --color-primary-dark: #0A0A0A;
+  /* MakeMyTrip-inspired palette — Navy + Blue + Clean White */
+  --color-primary: #0A2752;
+  --color-primary-light: #1A3C6E;
+  --color-primary-dark: #05152E;
 
-  --color-secondary: #8B7355;
-  --color-secondary-light: #A89078;
-  --color-secondary-dark: #6B5544;
+  --color-secondary: #1A73E8;
+  --color-secondary-light: #4A93F8;
+  --color-secondary-dark: #0D5CC0;
 
-  --color-accent: #C4A77D;
-  --color-accent-warm: #D4B896;
-  --color-accent-muted: #B8A08A;
+  --color-accent: #008CFF;
+  --color-accent-warm: #33A3FF;
+  --color-accent-muted: #66BAFF;
 
-  --color-cream: #F5F1EB;
-  --color-cream-dark: #E8E2D9;
-  --color-cream-light: #FAF8F5;
+  --color-cream: #F6F9FF;
+  --color-cream-dark: #E8EFF9;
+  --color-cream-light: #FAFCFF;
 
-  --color-sage: #87907C;
-  --color-sage-light: #A5AD9C;
-  --color-sage-dark: #6B7460;
+  --color-sage: #5C8DBA;
+  --color-sage-light: #7AADD4;
+  --color-sage-dark: #3D6E9A;
 
-  --color-terracotta: #C17F59;
-  --color-terracotta-light: #D4967A;
-  --color-terracotta-dark: #A66B48;
+  --color-terracotta: #FF6B35;
+  --color-terracotta-light: #FF8C5A;
+  --color-terracotta-dark: #E8501A;
 
   /* Font families */
   --font-display: var(--font-playfair), Georgia, serif;
@@ -49,6 +54,10 @@
   --animate-float: float 6s ease-in-out infinite;
   --animate-marquee: marquee 30s linear infinite;
   --animate-pulse-slow: pulse 4s ease-in-out infinite;
+  --animate-ken-burns: ken-burns 12s ease-in-out forwards;
+  --animate-ken-burns-alt: ken-burns-alt 12s ease-in-out forwards;
+  --animate-ken-burns-rev: ken-burns-rev 12s ease-in-out forwards;
+  --animate-gold-shimmer: gold-shimmer 4s linear infinite;
 
   /* Timing functions */
   --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
@@ -164,23 +173,65 @@
   }
 }
 
-/* Dark mode variable overrides */
-.dark {
-  --color-primary: #F0EDE8;
-  --color-primary-light: #E8E4DE;
-  --color-primary-dark: #FAF8F5;
+/* Ken Burns slow zoom — primary (zoom in, drift right) */
+@keyframes ken-burns {
+  0%   { transform: scale(1)    translateX(0%)    translateY(0%); }
+  100% { transform: scale(1.18) translateX(-3%)   translateY(-2%); }
+}
 
-  --color-secondary: #A89078;
-  --color-secondary-light: #C4A88A;
-  --color-secondary-dark: #8B7355;
+/* Ken Burns alternate (zoom in, drift left) */
+@keyframes ken-burns-alt {
+  0%   { transform: scale(1.05) translateX(2%)    translateY(1%); }
+  100% { transform: scale(1.2)  translateX(-2%)   translateY(-3%); }
+}
 
-  --color-cream: #1A1814;
-  --color-cream-dark: #252220;
-  --color-cream-light: #0F0E0C;
+/* Ken Burns reverse (slow zoom out, drift up) */
+@keyframes ken-burns-rev {
+  0%   { transform: scale(1.15) translateX(-2%)   translateY(-1%); }
+  100% { transform: scale(1)    translateX(3%)    translateY(2%); }
+}
 
-  --color-sage: #6B7460;
-  --color-sage-light: #87907C;
-  --color-sage-dark: #505848;
+.animate-ken-burns {
+  animation: ken-burns 12s ease-in-out forwards;
+  will-change: transform;
+}
+.animate-ken-burns-alt {
+  animation: ken-burns-alt 12s ease-in-out forwards;
+  will-change: transform;
+}
+.animate-ken-burns-rev {
+  animation: ken-burns-rev 12s ease-in-out forwards;
+  will-change: transform;
+}
+
+/* Gold shimmer text */
+@keyframes gold-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.text-gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    #C4A77D 0%,
+    #F5D78E 30%,
+    #E8C46A 50%,
+    #F5D78E 70%,
+    #C4A77D 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gold-shimmer 4s linear infinite;
+}
+
+/* Slide fade crossfade */
+@keyframes slide-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-slide-fade-in {
+  animation: slide-fade-in 1.2s ease-out forwards;
 }
 
 /* Base styles */
@@ -188,16 +239,12 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
-.dark html, html.dark {
-  color-scheme: dark;
-}
-
-/* Ensure form controls adapt to theme */
+/* Ensure form controls always use light mode */
 input, textarea, select {
-  color-scheme: inherit;
+  color-scheme: light;
 }
 
 body {
@@ -885,13 +932,13 @@ h6 {
 .dark .border-red-100    { border-color: rgba(239,68,68,0.15)  !important; }
 
 /* Dark mode: text-cream on dark/image backgrounds (blog heroes, dark sections) */
-.dark .text-cream { color: #f5f1eb !important; }
-.dark .text-cream\/80 { color: rgba(245,241,235,0.8) !important; }
-.dark .text-cream\/70 { color: rgba(245,241,235,0.7) !important; }
-.dark .text-cream\/60 { color: rgba(245,241,235,0.6) !important; }
-.dark .text-cream\/50 { color: rgba(245,241,235,0.5) !important; }
-.dark .text-cream\/40 { color: rgba(245,241,235,0.4) !important; }
-.dark .text-cream\/35 { color: rgba(245,241,235,0.35) !important; }
-.dark .text-cream\/30 { color: rgba(245,241,235,0.3) !important; }
-.dark .text-cream\/25 { color: rgba(245,241,235,0.25) !important; }
-.dark .text-cream\/20 { color: rgba(245,241,235,0.2) !important; }
+.dark .text-cream { color: #f6f9ff !important; }
+.dark .text-cream\/80 { color: rgba(246,249,255,0.8) !important; }
+.dark .text-cream\/70 { color: rgba(246,249,255,0.7) !important; }
+.dark .text-cream\/60 { color: rgba(246,249,255,0.6) !important; }
+.dark .text-cream\/50 { color: rgba(246,249,255,0.5) !important; }
+.dark .text-cream\/40 { color: rgba(246,249,255,0.4) !important; }
+.dark .text-cream\/35 { color: rgba(246,249,255,0.35) !important; }
+.dark .text-cream\/30 { color: rgba(246,249,255,0.3) !important; }
+.dark .text-cream\/25 { color: rgba(246,249,255,0.25) !important; }
+.dark .text-cream\/20 { color: rgba(246,249,255,0.2) !important; }

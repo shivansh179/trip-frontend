@@ -37,6 +37,7 @@ export default function BlogDetailPage() {
                 const response = await api.getBlogBySlug(slug);
                 setBlog(response.data);
                 setError(null);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 setError(err.response?.status === 404 ? 'Blog post not found' : 'Failed to load blog post');
             } finally {

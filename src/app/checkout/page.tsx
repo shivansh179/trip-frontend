@@ -226,6 +226,7 @@ function CheckoutContent() {
             } else {
                 throw new Error(paymentData.error || 'Failed to get payment URL from Easebuzz. Please check your payment gateway configuration.');
             }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             let msg = 'Failed to create booking. Please try again.';
 

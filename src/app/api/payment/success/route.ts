@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     let txnid: string | null = null;
     let status: string = 'success';
     let easepayid: string | null = null;
-    let hashParams: Record<string, string> = {};
+    const hashParams: Record<string, string> = {};
 
     if (contentType.includes('application/x-www-form-urlencoded')) {
       // Parse form-urlencoded data

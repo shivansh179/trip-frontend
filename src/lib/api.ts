@@ -100,8 +100,10 @@ export const api = {
   getBlogBySlug: (slug: string) => apiClient.get(`/blogs/slug/${slug}`),
 
   // Bookings
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createBooking: (bookingData: any) => apiClient.post('/bookings', bookingData),
   getBooking: (reference: string) => apiClient.get(`/bookings/${reference}`),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updatePaymentStatus: (reference: string, paymentData: any) =>
     apiClient.post(`/bookings/${reference}/payment`, paymentData),
 
@@ -114,6 +116,7 @@ export const api = {
   getEventsByCity: (city: string) => apiClient.get(`/events/city/${city}`),
 
   // Event Bookings
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createEventBooking: (data: any) => apiClient.post('/event-bookings', data),
   getEventBooking: (reference: string) => apiClient.get(`/event-bookings/${reference}`),
 
@@ -141,6 +144,7 @@ export const api = {
 
   // Direct API client access for custom calls
   get: (url: string) => apiClient.get(url),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   post: (url: string, data?: any) => apiClient.post(url, data),
 
   // Admin Authentication

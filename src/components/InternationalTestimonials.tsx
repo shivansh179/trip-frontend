@@ -208,7 +208,7 @@ function Stars({ n, interactive, onSelect }: { n: number; interactive?: boolean;
   return (
     <div className="flex gap-0.5">
       {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className={`w-3.5 h-3.5 ${i < n ? 'fill-[#FBBC05] text-[#FBBC05]' : 'text-white/20'}`} />
+        <Star key={i} className={`w-3.5 h-3.5 ${i < n ? 'fill-[#FBBC05] text-[#FBBC05]' : 'fill-gray-200 text-gray-200'}`} />
       ))}
     </div>
   );
@@ -495,6 +495,7 @@ export default function InternationalTestimonials() {
   const [showModal, setShowModal] = useState(false);
   const [dbReviews, setDbReviews] = useState<DBReview[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(false);
 
   const scroll = (dir: 'left' | 'right') => {
     if (!scrollRef.current) return;
@@ -506,6 +507,21 @@ export default function InternationalTestimonials() {
       .then(r => r.json())
       .then(d => setDbReviews(d.reviews || []))
       .catch(() => {});
+  }, []);
+
+  // Auto-scroll: advance one card every 2 seconds, loop back to start
+  useEffect(() => {
+    const id = setInterval(() => {
+      const el = scrollRef.current;
+      if (!el || pausedRef.current) return;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (el.scrollLeft >= maxScroll - 10) {
+        el.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        el.scrollBy({ left: 360, behavior: 'smooth' });
+      }
+    }, 2000);
+    return () => clearInterval(id);
   }, []);
 
   // Hardcoded photo overrides for reviews where the stored base64 was corrupted
@@ -533,22 +549,23 @@ export default function InternationalTestimonials() {
   const allReviews = [...dynamicCards, ...reviews];
 
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-[#1c1c1c]" style={{ backgroundColor: '#1c1c1c' }}>
+    <section className="py-16 md:py-24 lg:py-32 bg-gray-50">
       <div className="section-container">
 
         {/* ── Header ─────────────────────────────────────────────────── */}
         <div className="text-center mb-12 md:mb-16">
-          <p className="text-caption uppercase tracking-[0.3em] text-cream/40 mb-4">Verified Reviews</p>
-          <h2 className="font-display text-display-lg text-cream max-w-3xl mx-auto">
-            Travelers from <span className="italic text-cream/70">40+ countries</span> trust us
+          <div className="w-10 h-0.5 bg-[#008cff] mx-auto mb-4" />
+          <p className="text-caption uppercase tracking-[0.35em] text-[#008cff] font-semibold mb-4">Verified Reviews</p>
+          <h2 className="font-display text-display-lg text-gray-900 max-w-3xl mx-auto">
+            Travelers from <span className="italic text-gray-400">40+ countries</span> trust us
           </h2>
 
           {/* Stats */}
           <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
             {stats.map(s => (
               <div key={s.label} className="text-center">
-                <div className="font-display text-2xl md:text-3xl text-cream">{s.value}</div>
-                <div className="text-xs text-cream/50 uppercase tracking-widest mt-1">{s.label}</div>
+                <div className="font-display text-2xl md:text-3xl text-gray-900">{s.value}</div>
+                <div className="text-xs text-gray-400 uppercase tracking-widest mt-1">{s.label}</div>
               </div>
             ))}
           </div>
@@ -556,11 +573,11 @@ export default function InternationalTestimonials() {
           {/* Platform badges */}
           <div className="mt-6 flex items-center justify-center gap-4 flex-wrap">
             {['Google', 'TripAdvisor'].map(platform => (
-              <div key={platform} className="flex items-center gap-1.5 bg-[#2a2a2a] border border-[#3a3a3a] px-4 py-2 rounded-full">
+              <div key={platform} className="flex items-center gap-1.5 bg-white border border-gray-200 px-4 py-2 rounded-full shadow-sm">
                 <div className="flex gap-0.5">
                   {[1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 fill-[#FBBC05] text-[#FBBC05]" />)}
                 </div>
-                <span className="text-cream/60 text-xs">{platform}</span>
+                <span className="text-gray-500 text-xs">{platform}</span>
                 <BadgeCheck className="w-3.5 h-3.5 text-blue-400" />
               </div>
             ))}
@@ -572,14 +589,14 @@ export default function InternationalTestimonials() {
           {/* Arrow buttons */}
           <button
             onClick={() => scroll('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-primary border border-white/20 hover:border-accent/60 flex items-center justify-center text-cream/70 hover:text-cream transition-all shadow-lg hidden md:flex"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 hover:border-[#008cff] flex items-center justify-center text-gray-500 hover:text-[#008cff] transition-all shadow-md hidden md:flex"
             aria-label="Scroll left"
           >
             ‹
           </button>
           <button
             onClick={() => scroll('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-primary border border-white/20 hover:border-accent/60 flex items-center justify-center text-cream/70 hover:text-cream transition-all shadow-lg hidden md:flex"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 hover:border-[#008cff] flex items-center justify-center text-gray-500 hover:text-[#008cff] transition-all shadow-md hidden md:flex"
             aria-label="Scroll right"
           >
             ›
@@ -590,11 +607,13 @@ export default function InternationalTestimonials() {
             ref={scrollRef}
             className="flex gap-5 overflow-x-auto scroll-smooth pb-4"
             style={{ scrollSnapType: 'x mandatory', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            onMouseEnter={() => { pausedRef.current = true; }}
+            onMouseLeave={() => { pausedRef.current = false; }}
           >
           {allReviews.map((r, i) => (
             <article
               key={i}
-              className="bg-[#252525] border border-[#333] rounded-2xl overflow-hidden hover:bg-[#2d2d2d] transition-all duration-300 flex flex-col shrink-0"
+              className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col shrink-0"
               style={{ width: 'clamp(280px, 85vw, 340px)', scrollSnapAlign: 'start' }}
             >
               {/* Trip destination photo */}
@@ -637,32 +656,32 @@ export default function InternationalTestimonials() {
 
                 {/* Quote icon + text */}
                 <div className="mt-3 flex-1">
-                  <Quote className="w-5 h-5 text-accent/60 mb-2" />
-                  <p className="text-cream/90 text-sm leading-relaxed">
+                  <Quote className="w-5 h-5 text-[#008cff]/40 mb-2" />
+                  <p className="text-gray-700 text-sm leading-relaxed">
                     {r.text}
                   </p>
                 </div>
 
                 {/* Author row */}
-                <div className="mt-5 flex items-center gap-3 border-t border-white/10 pt-4">
+                <div className="mt-5 flex items-center gap-3 border-t border-gray-100 pt-4">
                   {/* Avatar */}
                   {r.avatar ? (
                     <img
                       src={r.avatar}
                       alt={r.name}
-                      className="w-9 h-9 rounded-full object-cover border border-white/20 shrink-0"
+                      className="w-9 h-9 rounded-full object-cover border border-gray-200 shrink-0"
                     />
                   ) : (
-                    <div className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-sm shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-[#008cff]/10 flex items-center justify-center text-[#008cff] font-bold text-sm shrink-0">
                       {r.name.charAt(0).toUpperCase()}
                     </div>
                   )}
                   <div className="min-w-0">
-                    <div className="text-sm font-semibold text-cream flex items-center gap-1.5 truncate">
+                    <div className="text-sm font-semibold text-gray-900 flex items-center gap-1.5 truncate">
                       {r.name} <span className="shrink-0">{r.flag}</span>
                     </div>
-                    <div className="text-[10px] text-cream/60 mt-0.5">{r.country}</div>
-                    <div className="text-[10px] text-accent/90 uppercase tracking-wider mt-0.5">{r.date}</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5">{r.country}</div>
+                    <div className="text-[10px] text-[#008cff] uppercase tracking-wider mt-0.5">{r.date}</div>
                   </div>
                 </div>
               </div>
@@ -672,18 +691,18 @@ export default function InternationalTestimonials() {
         </div>
 
         {/* ── Write a Review CTA ──────────────────────────────────────── */}
-        <div className="bg-[#252525] border border-[#333] rounded-2xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-center gap-6">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-center gap-6 shadow-sm">
           <div className="flex-1 text-center sm:text-left">
-            <p className="text-accent text-xs font-bold uppercase tracking-widest mb-2">Traveled with us?</p>
-            <h3 className="font-display text-xl text-cream mb-2">Share your story with the world</h3>
-            <p className="text-cream/60 text-sm">
+            <p className="text-[#008cff] text-xs font-bold uppercase tracking-widest mb-2">Traveled with us?</p>
+            <h3 className="font-display text-xl text-gray-900 mb-2">Share your story with the world</h3>
+            <p className="text-gray-500 text-sm">
               Your review helps thousands of travelers plan their perfect trip. Takes less than 2 minutes.
             </p>
             <div className="flex items-center gap-3 mt-3 justify-center sm:justify-start">
               <div className="flex gap-0.5">
                 {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-[#FBBC05] text-[#FBBC05]" />)}
               </div>
-              <span className="text-cream/50 text-xs">4.9★ Google Rating</span>
+              <span className="text-gray-400 text-xs">4.9★ Google Rating</span>
             </div>
           </div>
           <button

@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Admin-only codes require a valid admin session token
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ((promo as any).adminOnly) {
     const adminToken = req.headers.get('x-admin-token') || req.headers.get('x-admin-secret');
     const adminSecret = process.env.ADMIN_SECRET;
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
     promo.type === 'fixed_price'
       ? Math.max(0, orderTotal - promo.value)
       : promo.type === 'percent'
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ? Math.min(Math.round((orderTotal * promo.value) / 100), (promo as any).maxDiscount ?? Infinity)
       : promo.value;
 

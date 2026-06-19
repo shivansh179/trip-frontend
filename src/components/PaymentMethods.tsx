@@ -43,6 +43,12 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
         cardholderName: '',
     });
 
+    // EMI calculation helper
+    const calculateEmi = (principal: number, months: number, annualRate: number) => {
+        const r = annualRate / 12 / 100;
+        return principal * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
+    };
+
     // Fetch EMI options when amount changes
     useEffect(() => {
         const fetchEmiOptions = async () => {
@@ -89,12 +95,6 @@ export default function PaymentMethods({ selectedMethod, onMethodChange, amount,
 
         fetchEmiOptions();
     }, [amount]);
-
-    // EMI calculation helper
-    const calculateEmi = (principal: number, months: number, annualRate: number) => {
-        const r = annualRate / 12 / 100;
-        return principal * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
-    };
 
     const handleEmiSelect = (emi: EmiOption | null) => {
         setSelectedEmiLocal(emi);

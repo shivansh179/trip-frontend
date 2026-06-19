@@ -11,6 +11,7 @@ function CheckoutSuccessContent() {
     const router = useRouter();
     const reference = searchParams.get('reference');
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [booking, setBooking] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 

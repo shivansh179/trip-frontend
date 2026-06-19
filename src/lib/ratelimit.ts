@@ -3,7 +3,7 @@
 // Good enough for a small site — replace with Upstash Redis for multi-instance accuracy.
 
 declare global {
-  // eslint-disable-next-line no-var
+   
   var _rateLimitStore: Map<string, number[]> | undefined;
 }
 

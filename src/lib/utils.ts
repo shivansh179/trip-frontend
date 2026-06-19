@@ -6,6 +6,7 @@ export function cn(...inputs: ClassValue[]) {
     return clsx(inputs);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function formatPrice(price: number | string | any): string {
     // Handle BigDecimal from backend (can be object with value property)
     let numPrice: number;
@@ -25,6 +26,7 @@ export function formatPrice(price: number | string | any): string {
     }).format(numPrice);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function calculateDiscount(originalPrice: number | string | any, currentPrice: number | string | any): number {
     let orig: number;
     let curr: number;

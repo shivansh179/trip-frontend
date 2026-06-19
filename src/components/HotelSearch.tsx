@@ -415,6 +415,7 @@ export default function HotelSearch() {
     if (didAutoSearch.current) return;
     if (query.trim() && checkIn && checkOut) {
       didAutoSearch.current = true;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       search();
     }
   }, [query, checkIn, checkOut, search]);

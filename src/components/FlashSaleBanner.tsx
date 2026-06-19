@@ -14,6 +14,7 @@ export default function FlashSaleBanner() {
   useEffect(() => {
     const wasDismissed = sessionStorage.getItem(DISMISSED_KEY);
     if (!wasDismissed) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDismissed(false);
     }
   }, []);

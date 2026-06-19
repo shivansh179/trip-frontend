@@ -12,6 +12,7 @@ export default function CallbackWidget() {
   const [state, setState] = useState<State>('idle');
   const [isMuted, setIsMuted] = useState(false);
   const [statusText, setStatusText] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const vapiRef = useRef<any>(null);
 
   // Cleanup on unmount
@@ -49,6 +50,7 @@ export default function CallbackWidget() {
         vapiRef.current = null;
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vapi.on('error', (err: any) => {
         console.error('Vapi error:', err);
         setState('error');

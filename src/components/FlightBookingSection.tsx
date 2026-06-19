@@ -90,6 +90,7 @@ export default function FlightBookingSection({ destination, travelDate, guests }
     const [bookingForm, setBookingForm] = useState({ name: '', email: '', phone: '' });
     const [submitting, setSubmitting] = useState(false);
     const [expandedFlight, setExpandedFlight] = useState<string | null>(null);
+    const [bookingRef] = useState(() => Math.random().toString(36).toUpperCase().slice(2, 9));
 
     const handleSearch = () => {
         if (!from || !to || !date) return;
@@ -445,7 +446,7 @@ export default function FlightBookingSection({ destination, travelDate, guests }
                                 Confirmation sent to {bookingForm.email}
                             </p>
                             <p className="text-xs text-gray-400 mt-1">
-                                Booking ref: FL-{Math.random().toString(36).toUpperCase().slice(2, 9)}
+                                Booking ref: FL-{bookingRef}
                             </p>
                         </div>
                     )}

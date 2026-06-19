@@ -132,6 +132,7 @@ function EventCheckoutContent() {
             } else {
                 throw new Error('No payment URL received');
             }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             const msg = err.response?.data?.error || err.message || 'Something went wrong. Please try again.';
             setCheckoutError(msg);

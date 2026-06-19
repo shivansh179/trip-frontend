@@ -50,6 +50,7 @@ export default function HotelDetailPage() {
                 const response = await api.getHotelById(Number(id));
                 setHotel(response.data);
                 setError(null);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 setError(err.response?.status === 404 ? 'Hotel not found' : 'Failed to load hotel');
             } finally {

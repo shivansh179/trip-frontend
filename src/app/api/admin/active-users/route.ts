@@ -14,7 +14,7 @@ function isAuthorised(req: NextRequest): boolean {
 // Module-level session map — persists within a Node.js instance
 // (approximate for serverless; good enough for a small site)
 declare global {
-  // eslint-disable-next-line no-var
+   
   var _activeSessions: Map<string, number> | undefined;
 }
 

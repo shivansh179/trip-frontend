@@ -33,6 +33,7 @@ function SuccessContent() {
         try {
             const data = JSON.parse(raw);
             const bookingWithTxn = { ...data, txnid: txnid || data.txnid || 'FLT-UNKNOWN' };
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setBooking(bookingWithTxn);
 
             // Send confirmation email (once)

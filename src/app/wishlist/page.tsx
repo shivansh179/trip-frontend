@@ -32,6 +32,7 @@ export default function WishlistPage() {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       const parsed: number[] = stored ? JSON.parse(stored) : [];
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIds(parsed);
       if (parsed.length === 0) { setLoading(false); return; }
 

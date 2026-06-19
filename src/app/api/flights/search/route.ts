@@ -122,7 +122,7 @@ async function fetchSerpApi(
 
 // ── Amadeus token cache — tokens live 30 min, reuse across requests ───────────
 declare global {
-    // eslint-disable-next-line no-var
+     
     var _amadeusToken: { token: string; expiresAt: number } | undefined;
 }
 

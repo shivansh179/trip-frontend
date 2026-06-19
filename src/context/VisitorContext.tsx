@@ -27,6 +27,7 @@ export function VisitorProvider({ children }: { children: ReactNode }) {
     try {
       const saved = localStorage.getItem(STORAGE_KEY) as VisitorType;
       if (saved === 'indian' || saved === 'foreigner') {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setVisitorState(saved);
         setHasChosen(true);
         window.dispatchEvent(new CustomEvent('visitorchange', { detail: saved }));

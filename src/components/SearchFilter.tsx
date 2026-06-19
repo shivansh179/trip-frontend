@@ -30,6 +30,7 @@ export default function SearchFilter({ onSearch, onFilterChange }: SearchFilterP
         onSearch?.(searchQuery);
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleFilterChange = (key: keyof FilterState, value: any) => {
         const newFilters = { ...filters, [key]: value === 'All' ? undefined : value };
         setFilters(newFilters);

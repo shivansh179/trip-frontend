@@ -108,6 +108,7 @@ export default function DestinationDetailPage() {
                 }
 
                 setError(null);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 setError(err.response?.status === 404 ? 'Destination not found' : 'Failed to load destination');
             } finally {

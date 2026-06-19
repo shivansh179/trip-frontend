@@ -10,36 +10,36 @@ const config: Config = {
     theme: {
         extend: {
             colors: {
-                // Earthy, sophisticated palette
+                // MakeMyTrip-inspired palette — Navy + Blue + Clean White
                 primary: {
-                    DEFAULT: '#1C1C1C',
-                    light: '#2D2D2D',
-                    dark: '#0A0A0A',
+                    DEFAULT: '#0A2752',
+                    light: '#1A3C6E',
+                    dark: '#05152E',
                 },
                 secondary: {
-                    DEFAULT: '#8B7355',
-                    light: '#A89078',
-                    dark: '#6B5544',
+                    DEFAULT: '#1A73E8',
+                    light: '#4A93F8',
+                    dark: '#0D5CC0',
                 },
                 accent: {
-                    DEFAULT: '#C4A77D',
-                    warm: '#D4B896',
-                    muted: '#B8A08A',
+                    DEFAULT: '#008CFF',
+                    warm: '#33A3FF',
+                    muted: '#66BAFF',
                 },
                 cream: {
-                    DEFAULT: '#F5F1EB',
-                    dark: '#E8E2D9',
-                    light: '#FAF8F5',
+                    DEFAULT: '#F6F9FF',
+                    dark: '#E8EFF9',
+                    light: '#FAFCFF',
                 },
                 sage: {
-                    DEFAULT: '#87907C',
-                    light: '#A5AD9C',
-                    dark: '#6B7460',
+                    DEFAULT: '#5C8DBA',
+                    light: '#7AADD4',
+                    dark: '#3D6E9A',
                 },
                 terracotta: {
-                    DEFAULT: '#C17F59',
-                    light: '#D4967A',
-                    dark: '#A66B48',
+                    DEFAULT: '#FF6B35',
+                    light: '#FF8C5A',
+                    dark: '#E8501A',
                 },
             },
             fontFamily: {

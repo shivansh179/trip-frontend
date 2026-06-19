@@ -12,6 +12,7 @@ export default function VisitorSwitcher() {
   const [mounted, setMounted] = useState(false);
   const [animating, setAnimating] = useState<'indian' | 'foreigner' | null>(null);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
 
   if (!mounted || dismissed) return null;

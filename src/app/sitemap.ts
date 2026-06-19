@@ -133,6 +133,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const tripsData = await fetchJson<{ content?: Array<{ id: number }> } | Array<{ id: number }>>('/trips/paginated?page=0&size=200');
   const tripItems: Array<{ id: number }> = Array.isArray(tripsData)
     ? tripsData
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     : (tripsData as any)?.content ?? [];
 
   const tripPages: MetadataRoute.Sitemap = tripItems.map((t) => ({
@@ -155,6 +156,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const eventsData = await fetchJson<{ content?: Array<{ id: number; slug?: string }> } | Array<{ id: number; slug?: string }>>('/events?page=0&size=100');
   const eventItems: Array<{ id: number; slug?: string }> = Array.isArray(eventsData)
     ? eventsData
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     : (eventsData as any)?.content ?? [];
 
   // Filter out internal/test/payment events

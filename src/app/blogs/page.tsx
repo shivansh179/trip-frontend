@@ -254,9 +254,9 @@ export default function BlogsPage() {
       </section>
 
       {/* Static India Travel Guides — always visible */}
-      <section className="py-14 md:py-20 bg-cream">
+      <section className="py-10 md:py-14 bg-cream">
         <div className="section-container">
-          <div className="mb-10">
+          <div className="mb-8">
             <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-3">India Travel Guides</p>
             <h2 className="font-display text-display-lg text-primary">
               Essential reads for <span className="italic">first-time visitors</span>
@@ -319,7 +319,7 @@ export default function BlogsPage() {
 
       {/* Featured Post */}
       {!loading && featuredPost && (
-        <section className="py-16 md:py-24 bg-cream">
+        <section className="py-10 md:py-14 bg-cream">
           <div className="section-container">
             <Link href={`/blogs/${featuredPost.slug}`} className="group grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="relative h-[400px] lg:h-[500px] overflow-hidden">
@@ -363,7 +363,7 @@ export default function BlogsPage() {
       )}
 
       {/* All Posts Grid */}
-      <section className="py-16 md:py-24 bg-cream-dark">
+      <section className="py-10 md:py-14 bg-cream-dark">
         <div className="section-container">
           <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-3">From Our Writers</p>
           <h2 className="font-display text-display-lg text-primary mb-2">Latest Stories</h2>
@@ -426,7 +426,7 @@ export default function BlogsPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 md:py-20 bg-primary text-cream">
+      <section className="py-10 md:py-14 bg-primary text-cream">
         <div className="section-container">
           <div className="max-w-3xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-16">
             <div className="flex-1 text-center md:text-left">

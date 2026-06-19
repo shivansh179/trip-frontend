@@ -60,8 +60,9 @@ export default function AdminReviews() {
     const data = await res.json();
     setReviews(data.reviews || []);
     setLoading(false);
-  }, [filter, router]); // eslint-disable-line
+  }, [filter, router]);  
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load(); }, [load]);
 
   const act = async (id: string, status: 'approved' | 'rejected') => {

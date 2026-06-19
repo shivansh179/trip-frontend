@@ -27,6 +27,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const visitor = localStorage.getItem('ylootrips-visitor');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (visitor === 'foreigner') setCurrencyState('USD');
     } catch {
       // ignore

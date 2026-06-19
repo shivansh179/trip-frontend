@@ -333,7 +333,7 @@ function checkEasebuzz(): Partial<ApiStatus> {
 // Cache health results for 5 minutes — prevents repeated API calls to Groq/Gemini/SerpAPI
 // every time the admin dashboard refreshes
 declare global {
-  // eslint-disable-next-line no-var
+   
   var _healthCache: { data: unknown; expiresAt: number } | undefined;
 }
 

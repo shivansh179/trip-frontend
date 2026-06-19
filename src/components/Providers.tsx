@@ -8,7 +8,7 @@ import { VisitorProvider } from '@/context/VisitorContext';
 import { WalletProvider } from '@/context/WalletContext';
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem={true} disableTransitionOnChange={true}>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} forcedTheme="light" disableTransitionOnChange={true}>
       <SessionProvider>
         <CurrencyProvider>
           <VisitorProvider>
