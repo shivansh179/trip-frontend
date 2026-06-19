@@ -1633,16 +1633,14 @@ function DomesticDestinationsContent() {
       )}
 
       {/* Highlights strip */}
-      <section className="py-8 md:py-10 bg-cream dark:bg-gray-900 border-b border-primary/8 dark:border-gray-700">
-        <div className="section-container">
-          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-            {highlights.map(({ icon: Icon, label, color, bg }) => (
-              <div key={label} className={`flex items-center gap-2 ${bg} dark:bg-gray-800 px-4 py-2.5 rounded-full`}>
-                <Icon className={`w-4 h-4 ${color} shrink-0`} />
-                <span className="text-xs font-medium text-primary/80 dark:text-gray-300 whitespace-nowrap">{label}</span>
-              </div>
-            ))}
-          </div>
+      <section className="py-5 md:py-8 bg-cream dark:bg-gray-900 border-b border-primary/8 dark:border-gray-700">
+        <div className="flex md:flex-wrap md:justify-center gap-3 md:gap-4 overflow-x-auto px-4 md:px-6 lg:px-8 pb-1 md:pb-0" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+          {highlights.map(({ icon: Icon, label, color, bg }) => (
+            <div key={label} className={`flex items-center gap-2 ${bg} dark:bg-gray-800 px-4 py-2 rounded-full shrink-0`}>
+              <Icon className={`w-4 h-4 ${color} shrink-0`} />
+              <span className="text-xs font-medium text-primary/80 dark:text-gray-300 whitespace-nowrap">{label}</span>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -1855,9 +1853,9 @@ function DomesticDestinationsContent() {
       </section>
 
       {/* Trip grid */}
-      <section className="py-12 md:py-20 lg:py-28 bg-cream">
+      <section className="py-8 md:py-16 lg:py-24 bg-cream">
         <div className="section-container">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-10 md:mb-14">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 md:mb-12">
             <div>
               <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-2">
                 {tripTypeFilter === 'international' ? 'International Packages' : tripTypeFilter === 'all' ? 'All Trips' : activeRegion === 'All India' ? (isInternational ? 'Choose Your India Experience' : 'Across India') : activeRegion}
