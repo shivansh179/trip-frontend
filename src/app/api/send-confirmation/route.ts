@@ -86,8 +86,8 @@ export async function POST(req: NextRequest) {
           <!-- Header -->
           <tr>
             <td style="background:#1a1714;padding:36px 40px;text-align:center;">
-              <p style="margin:0;font-size:28px;font-weight:bold;color:#F4F1EA;letter-spacing:-1px;">LocalHi.</p>
-              <p style="margin:6px 0 0;font-size:11px;color:#c8a97e;text-transform:uppercase;letter-spacing:3px;">by YlooTrips</p>
+              <p style="margin:0;font-size:28px;font-weight:bold;color:#F4F1EA;letter-spacing:-1px;">YlooTrips</p>
+              <p style="margin:6px 0 0;font-size:11px;color:#c8a97e;text-transform:uppercase;letter-spacing:3px;">Safe & Budget India Trips</p>
             </td>
           </tr>
 
@@ -210,7 +210,7 @@ export async function POST(req: NextRequest) {
           <!-- Footer -->
           <tr>
             <td style="background:#1a1714;padding:32px 40px;text-align:center;">
-              <p style="margin:0 0 8px;font-size:11px;color:#c8a97e;text-transform:uppercase;letter-spacing:3px;font-family:Arial,sans-serif;">YlooTrips · LocalHi</p>
+              <p style="margin:0 0 8px;font-size:11px;color:#c8a97e;text-transform:uppercase;letter-spacing:3px;font-family:Arial,sans-serif;">YlooTrips</p>
               <p style="margin:0;font-size:12px;color:#666;font-family:Arial,sans-serif;">
                 <a href="https://www.ylootrips.com" style="color:#c8a97e;text-decoration:none;">www.ylootrips.com</a>
               </p>

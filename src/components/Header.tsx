@@ -44,7 +44,7 @@ export default function Header() {
                         ? 'bg-transparent'
                         : 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-b border-gray-100 dark:border-gray-800'
             }`}>
-                <div className="hidden sm:block"><FlashSaleBanner /></div>
+
                 <div className={`section-container transition-all duration-500 ${
                     isScrolled ? 'py-3' : hasHero ? 'py-6' : 'py-4'
                 }`}>
@@ -120,37 +120,29 @@ export default function Header() {
                 </div>
             </header>
 
-            {/* Mobile Menu — full-screen luxury dark overlay (z-[60] > header z-50, eliminates double logo) */}
-            <div className={`fixed inset-0 z-[60] lg:hidden transition-all duration-500 ${
+            {/* Mobile Menu — full-screen white sheet (slides in from right) */}
+            <div className={`fixed inset-0 z-[60] lg:hidden transition-all duration-300 ${
                 isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
             }`}>
-                {/* Full-screen dark panel slides up */}
+                {/* Backdrop */}
+                <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+
+                {/* White panel slides in from right */}
                 <div
-                    className={`absolute inset-0 transition-transform duration-500 ease-out ${
-                        isMobileMenuOpen ? 'translate-y-0' : 'translate-y-full'
+                    className={`absolute top-0 right-0 h-full w-[88%] max-w-sm bg-white shadow-2xl transition-transform duration-300 ease-out flex flex-col ${
+                        isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
                     }`}
-                    style={{
-                        background: 'linear-gradient(160deg,#0d0d14 0%,#151520 50%,#0d0d14 100%)',
-                    }}
                 >
-                    {/* Ambient glows */}
-                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-                    <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
-
-                    {/* Subtle grid */}
-                    <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
-                        style={{ backgroundImage:'linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px)', backgroundSize:'40px 40px' }} />
-
-                    <div className="relative flex flex-col h-full px-6 pt-5 pb-8"
+                    <div className="flex flex-col h-full px-6 pt-5 pb-8"
                          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 2rem)' }}>
 
                         {/* Top bar — logo + close */}
-                        <div className="flex items-center justify-between mb-10">
+                        <div className="flex items-center justify-between mb-8">
                             <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-                                <img src="/logo.png" alt="YlooTrips" className="h-9 w-auto object-contain brightness-0 invert" />
+                                <img src="/logo.png" alt="YlooTrips" className="h-8 w-auto object-contain" />
                             </Link>
                             <button onClick={() => setIsMobileMenuOpen(false)}
-                                className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-white/10 transition-colors active:scale-90">
+                                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors active:scale-90">
                                 <X size={20} />
                             </button>
                         </div>
@@ -162,41 +154,40 @@ export default function Header() {
                                     <Link href={link.href}
                                         onClick={() => setIsMobileMenuOpen(false)}
                                         className={`flex items-center justify-between py-4 transition-all duration-300 active:scale-[0.98] ${
-                                            isMobileMenuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'
-                                        } ${isActive(link.href) ? 'text-white' : 'text-white/85 hover:text-white'}`}
-                                        style={{ transitionDelay: isMobileMenuOpen ? `${i * 55 + 80}ms` : '0ms' }}>
-                                        <span className="font-semibold text-xl tracking-tight">{link.name}</span>
-                                        <ChevronRight size={18} className={isActive(link.href) ? 'text-white' : 'text-white/20'} />
+                                            isMobileMenuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+                                        } ${isActive(link.href) ? 'text-[#008cff]' : 'text-gray-800 hover:text-gray-900'}`}
+                                        style={{ transitionDelay: isMobileMenuOpen ? `${i * 45 + 60}ms` : '0ms' }}>
+                                        <span className="font-semibold text-[18px] tracking-tight">{link.name}</span>
+                                        <ChevronRight size={18} className={isActive(link.href) ? 'text-[#008cff]' : 'text-gray-300'} />
                                     </Link>
                                     {i < navLinks.length - 1 && (
-                                        <div className="h-px bg-white/5" />
+                                        <div className="h-px bg-gray-100" />
                                     )}
                                 </div>
                             ))}
                         </nav>
 
                         {/* Trust micro-line */}
-                        <div className="flex items-center gap-2 mb-5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                            <span className="text-[10px] text-white/25 uppercase tracking-widest">4.9★ · 25,000+ trips · MSME certified</span>
+                        <div className="flex items-center gap-2 mb-4">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                            <span className="text-[10px] text-gray-400 uppercase tracking-widest">4.9★ · 25,000+ trips · MSME certified</span>
                         </div>
 
                         {/* Bottom CTAs */}
-                        <div className="flex flex-col gap-3"
-                            style={{ transitionDelay: isMobileMenuOpen ? '380ms' : '0ms' }}>
+                        <div className="flex flex-col gap-3">
                             <Link href="/my-booking" onClick={() => setIsMobileMenuOpen(false)}
-                                className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold border border-white/20 text-white transition-all duration-500 ${
-                                    isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                                className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold border border-gray-200 text-gray-700 bg-gray-50 transition-all duration-500 ${
+                                    isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                                 }`}
-                                style={{ transitionDelay: isMobileMenuOpen ? '360ms' : '0ms', backgroundColor: 'rgba(255,255,255,0.08)' }}>
+                                style={{ transitionDelay: isMobileMenuOpen ? '340ms' : '0ms' }}>
                                 <Ticket size={15} />
                                 Track My Booking
                             </Link>
                             <Link href="/trip-planner" onClick={() => setIsMobileMenuOpen(false)}
-                                className={`flex items-center justify-center gap-2.5 py-4 rounded-2xl text-sm font-bold text-gray-900 shadow-lg shadow-black/20 transition-all duration-500 ${
-                                    isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                                className={`flex items-center justify-center gap-2.5 py-4 rounded-2xl text-sm font-bold text-white bg-gray-900 shadow-lg shadow-black/20 transition-all duration-500 ${
+                                    isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                                 }`}
-                                style={{ transitionDelay: isMobileMenuOpen ? '430ms' : '0ms', backgroundColor: '#F0EDE8' }}>
+                                style={{ transitionDelay: isMobileMenuOpen ? '400ms' : '0ms' }}>
                                 <Sparkles size={16} />
                                 Plan Your Journey
                             </Link>

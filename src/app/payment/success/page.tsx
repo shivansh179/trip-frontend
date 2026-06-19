@@ -15,6 +15,7 @@ function PaymentSuccessContent() {
     const { currency } = useCurrency();
     const { addCashback, deductBalance } = useWallet();
     const [loading, setLoading] = useState(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [booking, setBooking] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
     const [notFound, setNotFound] = useState(false);
@@ -109,6 +110,7 @@ function PaymentSuccessContent() {
                             ? await api.getEventPaymentStatus(urlTxnid)
                             : await api.getPaymentStatus(urlTxnid);
                         break; // Success, exit retry loop
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     } catch (retryErr: any) {
                         if (retryErr.response?.status === 405 && retries < maxRetries) {
                             retries++;
@@ -192,10 +194,25 @@ function PaymentSuccessContent() {
                             body: JSON.stringify({ to: customerEmail, booking: bookingData }),
                         }).catch(() => { /* email send failed silently */ });
                     }
+
+                    // Block seats in availability calendar (non-fatal)
+                    const tripId = bookingData.trip?.id;
+                    const travelDate = bookingData.travelDate;
+                    const guests = bookingData.numberOfGuests;
+                    if (tripId && travelDate && guests) {
+                        const dateStr = new Date(travelDate).toISOString().slice(0, 10);
+                        fetch(`/api/availability/${tripId}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ date: dateStr, guests: Number(guests) }),
+                        }).catch(() => { /* non-fatal */ });
+                    }
+
                     setError(null);
                 } else {
                     setError('Payment verification failed. Payment status: ' + (bookingData.paymentStatus || 'Unknown'));
                 }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 clearTimeout(timeoutId);
 
