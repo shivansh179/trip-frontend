@@ -91,9 +91,9 @@ export default function ReferAndEarn() {
               <div>
                 <div className="flex items-center gap-1.5 text-accent">
                   <Wallet size={16} />
-                  <span className="text-2xl font-bold text-cream">₹24L+</span>
+                  <span className="text-2xl font-bold text-cream">Live</span>
                 </div>
-                <p className="text-cream/35 text-xs mt-1">Rewards given out</p>
+                <p className="text-cream/35 text-xs mt-1">Rewards program active</p>
               </div>
             </div>
           </div>

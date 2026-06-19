@@ -542,14 +542,14 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
           {/* Card scroll */}
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
             {([
-              { label: 'Goa', image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=300&q=70', price: '₹9,999', priceNum: 9999, original: 12999, nights: '3N/4D', tag: 'Best Seller', tagColor: 'bg-green-500', href: '/goa-tour-package', urgency: '48 booked today' },
-              { label: 'Manali', image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=300&q=70', price: '₹12,999', priceNum: 12999, original: 16999, nights: '4N/5D', tag: 'Trending', tagColor: 'bg-orange-500', href: '/manali-tour-package', urgency: '6 spots left' },
-              { label: 'Kashmir', image: 'https://images.unsplash.com/photo-1566552881560-0be862a7c445?w=300&q=70', price: '₹18,999', priceNum: 18999, original: 24999, nights: '5N/6D', tag: 'Popular', tagColor: 'bg-blue-500', href: '/kashmir-tour-package', urgency: '12 booked today' },
-              { label: 'Dubai', image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=300&q=70', price: '₹35,999', priceNum: 35999, original: 46000, nights: '5N/6D', tag: 'International', tagColor: 'bg-purple-500', href: '/dubai-tour-package-from-delhi', urgency: '24hr price' },
-              { label: 'Bali', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=300&q=70', price: '₹42,999', priceNum: 42999, original: 55000, nights: '6N/7D', tag: 'Honeymoon', tagColor: 'bg-pink-500', href: '/bali-honeymoon-package', urgency: '3 spots left' },
+              { label: 'Goa', image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=300&q=70', price: '₹9,999', priceNum: 9999, original: 12999, nights: '3N/4D', tag: 'Best Seller', tagColor: 'bg-green-500', href: '/goa-tour-package', urgency: 'Top rated' },
+              { label: 'Manali', image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=300&q=70', price: '₹12,999', priceNum: 12999, original: 16999, nights: '4N/5D', tag: 'Trending', tagColor: 'bg-orange-500', href: '/manali-tour-package', urgency: 'Most popular' },
+              { label: 'Kashmir', image: 'https://images.unsplash.com/photo-1566552881560-0be862a7c445?w=300&q=70', price: '₹18,999', priceNum: 18999, original: 24999, nights: '5N/6D', tag: 'Popular', tagColor: 'bg-blue-500', href: '/kashmir-tour-package', urgency: 'Highly rated' },
+              { label: 'Dubai', image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=300&q=70', price: '₹35,999', priceNum: 35999, original: 46000, nights: '5N/6D', tag: 'International', tagColor: 'bg-purple-500', href: '/dubai-tour-package-from-delhi', urgency: 'Limited price' },
+              { label: 'Bali', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=300&q=70', price: '₹42,999', priceNum: 42999, original: 55000, nights: '6N/7D', tag: 'Honeymoon', tagColor: 'bg-pink-500', href: '/bali-honeymoon-package', urgency: 'All inclusive' },
               { label: 'Singapore', image: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=300&q=70', price: '₹44,999', priceNum: 44999, original: 58000, nights: '4N/5D', tag: 'New', tagColor: 'bg-cyan-500', href: '/singapore-tour-package', urgency: 'Just added' },
-              { label: 'Thailand', image: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=300&q=70', price: '₹28,999', priceNum: 28999, original: 37000, nights: '5N/6D', tag: 'Budget', tagColor: 'bg-teal-500', href: '/thailand-budget-trip', urgency: '30 booked today' },
-              { label: 'Maldives', image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=300&q=70', price: '₹89,999', priceNum: 89999, original: 115000, nights: '4N/5D', tag: 'Luxury', tagColor: 'bg-violet-600', href: '/maldives-luxury-package', urgency: 'Only 2 left' },
+              { label: 'Thailand', image: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=300&q=70', price: '₹28,999', priceNum: 28999, original: 37000, nights: '5N/6D', tag: 'Budget', tagColor: 'bg-teal-500', href: '/thailand-budget-trip', urgency: 'Best value' },
+              { label: 'Maldives', image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=300&q=70', price: '₹89,999', priceNum: 89999, original: 115000, nights: '4N/5D', tag: 'Luxury', tagColor: 'bg-violet-600', href: '/maldives-luxury-package', urgency: 'Exclusive deal' },
             ] as (HomePkg & { image: string; original: number; urgency: string; tagColor: string })[]).map((pkg) => {
               const off = Math.round((1 - (pkg.priceNum ?? 0) / pkg.original) * 100);
               return (
@@ -798,7 +798,7 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Wallet size={13} className="text-white/60" />
-                  <span className="text-white text-xs font-semibold">₹24L+ rewards given</span>
+                  <span className="text-white text-xs font-semibold">Cashback rewards active</span>
                 </div>
               </div>
             </div>

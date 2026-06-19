@@ -56,6 +56,7 @@ export default function TripDetailPage() {
                 setTrip(tripRes.data);
                 setItinerary(itineraryRes.data);
                 setError(null);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 setError(err.response?.status === 404 ? 'Trip not found' : 'Failed to load trip');
             } finally {
@@ -77,11 +78,8 @@ export default function TripDetailPage() {
     const effectivePrice = dynamicPrice || basePrice;
     const totalPrice = effectivePrice * selectedGuests;
 
-    // Deterministic urgency numbers (consistent server/client)
+    // Spots left (hash-based, conservative display)
     const spotsLeft = trip ? (((trip.id * 7) % 9) + 1 <= 5 ? ((trip.id * 7) % 9) + 1 : null) : null;
-    const viewers = trip ? ((trip.id * 13 + 7) % 20) + 4 : 0;
-    const bookedToday = trip ? ((trip.id * 5 + 11) % 12) + 3 : 0; // 3–14
-    const bookedWeek  = trip ? bookedToday * 7 + ((trip.id * 3) % 20) : 0;
 
     // EMI calculation (6-month no-cost EMI)
     const emiMonthly = trip ? Math.ceil(totalPrice / 6) : 0;
@@ -407,14 +405,11 @@ export default function TripDetailPage() {
 
                             <div className="p-5 space-y-4">
 
-                                {/* FOMO bar */}
-                                <div className="flex items-center justify-between bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-                                    <span className="text-xs text-red-700 font-medium flex items-center gap-1.5">
-                                        <span className="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                                        <strong>{bookedToday} people</strong> booked today
-                                    </span>
-                                    <span className="text-[10px] text-red-500 font-semibold uppercase tracking-wide">
-                                        <Eye className="w-3 h-3 inline mr-0.5" />{viewers} viewing
+                                {/* Popularity bar */}
+                                <div className="flex items-center gap-2 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+                                    <span className="inline-block w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                                    <span className="text-xs text-amber-800 font-medium">
+                                        Popular trip — frequently booked this season
                                     </span>
                                 </div>
 
@@ -540,10 +535,10 @@ export default function TripDetailPage() {
                                     {visitor === 'foreigner' ? 'Ask a Question on WhatsApp' : 'Chat on WhatsApp'}
                                 </a>
 
-                                {/* Booked this week social proof */}
+                                {/* Social proof */}
                                 <p className="text-center text-[11px] text-primary/40">
                                     <Award className="w-3 h-3 inline mr-1 text-amber-500" />
-                                    <strong className="text-primary/60">{bookedWeek}+ travelers</strong> booked this trip in the last 7 days
+                                    <strong className="text-primary/60">Verified travelers</strong> — MSME certified · GST registered
                                 </p>
                             </div>
                         </div>
@@ -556,6 +551,7 @@ export default function TripDetailPage() {
                                 trip.difficulty && { label: 'Difficulty', value: trip.difficulty },
                                 trip.maxGroupSize && { label: 'Max Group', value: `${trip.maxGroupSize} people` },
                                 { label: 'Cancellation', value: 'Free up to 14 days' },
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             ].filter(Boolean).map((row: any) => (
                                 <div key={row.label} className="flex justify-between text-sm">
                                     <span className="text-primary/50">{row.label}</span>

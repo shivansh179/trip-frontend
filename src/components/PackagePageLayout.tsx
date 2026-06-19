@@ -455,17 +455,11 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
         {/* Step: Config (default) */}
         {step === 'config' && (
           <div className="p-5 space-y-4">
-            {/* Live signals */}
+            {/* Popularity signal */}
             <div className="flex items-center gap-2 text-xs text-primary/55">
               <Eye className="w-3.5 h-3.5 text-amber-500" />
-              <span><strong className="text-primary">{live} people</strong> viewing this package right now</span>
+              <span><strong className="text-primary">Popular this week</strong> — frequently booked package</span>
             </div>
-            {slots && (
-              <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse shrink-0" />
-                <span className="text-red-700 text-xs font-semibold">Only {slots} slots left for this month!</span>
-              </div>
-            )}
 
             {/* Guests */}
             <div>

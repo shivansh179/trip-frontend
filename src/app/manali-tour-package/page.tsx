@@ -3,11 +3,11 @@ import PackagePageLayout, { type PackageData } from '@/components/PackagePageLay
 import { getPackagePrice } from '@/lib/packagePrices';
 
 export const metadata: Metadata = {
-  title: 'Manali Tour Package 2026 — 4 Nights Starting ₹6,999 | YlooTrips',
-  description: 'Book Manali tour packages starting ₹6,999. 4 nights / 5 days — Rohtang Pass, Solang Valley, Old Manali, Hadimba Temple. Volvo bus or flights + hotel + transfers included.',
+  title: 'Manali Tour Package 2026 — 4 Nights Starting ₹12,999 | YlooTrips',
+  description: 'Book Manali tour packages starting ₹12,999. 4 nights / 5 days — Rohtang Pass, Solang Valley, Old Manali, Hadimba Temple. Volvo bus or flights + hotel + transfers included.',
   keywords: 'Manali tour package, Manali trip from Delhi, Manali holiday package 2026, Rohtang Pass package, Solang Valley tour, Manali 4 nights 5 days, Manali package cost, Manali trip cost India, Manali honeymoon package',
   openGraph: {
-    title: 'Manali Tour Package 2026 — 4 Nights Starting ₹6,999',
+    title: 'Manali Tour Package 2026 — 4 Nights Starting ₹12,999',
     description: 'All-inclusive Manali holiday — Rohtang Pass, Solang Valley, river rafting, snow activities. Volvo + hotel + transfers included.',
     url: 'https://www.ylootrips.com/manali-tour-package',
     type: 'website',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Manali Tour Package — ₹6,999 Onwards | YlooTrips',
+    title: 'Manali Tour Package — ₹12,999 Onwards | YlooTrips',
     description: 'Rohtang Pass + Solang Valley + River Rafting + Snow Activities. Volvo + hotel included.',
     images: ['https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=1200&q=80'],
   },
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
 const pkg: PackageData = {
   slug: 'manali-tour-package',
   canonicalUrl: 'https://www.ylootrips.com/manali-tour-package',
-  metaTitle: 'Manali Tour Package 2026 — 4 Nights Starting ₹6,999 | YlooTrips',
-  metaDescription: 'Book Manali tour packages starting ₹6,999. 4 nights 5 days — Rohtang Pass, Solang Valley, Hadimba Temple. Volvo + hotel + transfers included.',
+  metaTitle: 'Manali Tour Package 2026 — 4 Nights Starting ₹12,999 | YlooTrips',
+  metaDescription: 'Book Manali tour packages starting ₹12,999. 4 nights 5 days — Rohtang Pass, Solang Valley, Hadimba Temple. Volvo + hotel + transfers included.',
   keywords: 'Manali tour package from Delhi',
   ogImage: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=1200&q=80',
 
