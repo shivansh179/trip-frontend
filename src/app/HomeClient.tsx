@@ -498,56 +498,104 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
         stats={content?.stats}
       />
 
-      {/* 2 — Quick navigation categories */}
+      {/* 2 — Social proof micro-bar */}
+      <div className="bg-gray-950 py-2.5 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center justify-center gap-6 md:gap-10 px-4 whitespace-nowrap">
+          {[
+            { icon: '⭐', text: '4.9/5 Google Rating', sub: '2,400+ reviews' },
+            { icon: '✈️', text: '25,000+ Trips Booked', sub: 'since 2022' },
+            { icon: '🔒', text: '100% Secure Payments', sub: 'Easebuzz & SSL' },
+            { icon: '📞', text: 'Reply in < 1 Hour', sub: '24/7 support' },
+            { icon: '🏆', text: 'Ministry of Tourism', sub: 'Registered' },
+          ].map(({ icon, text, sub }) => (
+            <div key={text} className="flex items-center gap-2 shrink-0">
+              <span className="text-sm">{icon}</span>
+              <div>
+                <p className="text-white text-[11px] font-semibold leading-tight">{text}</p>
+                <p className="text-white/40 text-[9px] leading-tight">{sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 3 — Quick navigation categories */}
       <MobileCategories />
 
-      {/* 3 — Trending Packages: show what we sell immediately */}
+      {/* 4 — Trending Packages: show what we sell immediately */}
       <TrendingPackages />
 
-      {/* 4 — Hot Package Strip: quick price scan */}
-      <section className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-white/10 py-6 overflow-x-hidden">
+      {/* 5 — Hot Deals Strip */}
+      <section className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-white/10 py-5">
         <div className="section-container">
+          {/* Header row */}
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <span className="text-gray-900 dark:text-white text-[11px] font-bold uppercase tracking-widest">Top Packages</span>
+            <div className="flex items-center gap-2.5">
+              <span className="flex items-center gap-1.5 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/30 text-red-600 dark:text-red-400 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
+                🔥 Flash Prices
+              </span>
+              <span className="text-gray-400 dark:text-white/30 text-[11px]">Limited-time deals · Prices may change</span>
             </div>
-            <span className="text-gray-400 text-[10px] font-medium">Starting from ₹9,999</span>
+            <Link href="/trips" className="text-[11px] font-bold text-accent hover:underline underline-offset-2 hidden sm:block">View All →</Link>
           </div>
-          <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+
+          {/* Card scroll */}
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
             {([
-              { label: 'Goa', price: '₹9,999', priceNum: 9999, nights: '3N/4D', tag: 'Best Seller', href: '/goa-tour-package' },
-              { label: 'Manali', price: '₹12,999', priceNum: 12999, nights: '4N/5D', tag: 'Most Popular', href: '/manali-tour-package' },
-              { label: 'Kashmir', price: '₹18,999', priceNum: 18999, nights: '5N/6D', tag: 'Trending', href: '/kashmir-tour-package' },
-              { label: 'Dubai', price: '₹35,999', priceNum: 35999, nights: '5N/6D', tag: 'International', href: '/dubai-tour-package-from-delhi' },
-              { label: 'Bali', price: '₹42,999', priceNum: 42999, nights: '6N/7D', tag: 'Honeymoon', href: '/bali-honeymoon-package' },
-              { label: 'Singapore', price: '₹44,999', priceNum: 44999, nights: '4N/5D', tag: 'New', href: '/singapore-tour-package' },
-              { label: 'Thailand', price: '₹28,999', priceNum: 28999, nights: '5N/6D', tag: 'Budget', href: '/thailand-budget-trip' },
-              { label: 'Maldives', price: '₹89,999', priceNum: 89999, nights: '4N/5D', tag: 'Luxury', href: '/maldives-luxury-package' },
-            ] as HomePkg[]).map((pkg) => (
-              <Link key={pkg.href} href={pkg.href}
-                className="group flex-shrink-0 relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-white/10 hover:border-gray-400 dark:hover:border-white/30 rounded-2xl overflow-hidden transition-all duration-300 active:scale-95 text-left shadow-sm hover:shadow-md"
-                style={{ minWidth: '148px' }}>
-                {/* Header bar */}
-                <div className="h-2 bg-gray-900 dark:bg-amber-500" />
-                {/* Content */}
-                <div className="px-3.5 pt-3 pb-3.5">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400">{pkg.tag}</span>
-                    <span className="text-[9px] text-gray-400">{pkg.nights}</span>
+              { label: 'Goa', image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=300&q=70', price: '₹9,999', priceNum: 9999, original: 12999, nights: '3N/4D', tag: 'Best Seller', tagColor: 'bg-green-500', href: '/goa-tour-package', urgency: '48 booked today' },
+              { label: 'Manali', image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=300&q=70', price: '₹12,999', priceNum: 12999, original: 16999, nights: '4N/5D', tag: 'Trending', tagColor: 'bg-orange-500', href: '/manali-tour-package', urgency: '6 spots left' },
+              { label: 'Kashmir', image: 'https://images.unsplash.com/photo-1566552881560-0be862a7c445?w=300&q=70', price: '₹18,999', priceNum: 18999, original: 24999, nights: '5N/6D', tag: 'Popular', tagColor: 'bg-blue-500', href: '/kashmir-tour-package', urgency: '12 booked today' },
+              { label: 'Dubai', image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=300&q=70', price: '₹35,999', priceNum: 35999, original: 46000, nights: '5N/6D', tag: 'International', tagColor: 'bg-purple-500', href: '/dubai-tour-package-from-delhi', urgency: '24hr price' },
+              { label: 'Bali', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=300&q=70', price: '₹42,999', priceNum: 42999, original: 55000, nights: '6N/7D', tag: 'Honeymoon', tagColor: 'bg-pink-500', href: '/bali-honeymoon-package', urgency: '3 spots left' },
+              { label: 'Singapore', image: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=300&q=70', price: '₹44,999', priceNum: 44999, original: 58000, nights: '4N/5D', tag: 'New', tagColor: 'bg-cyan-500', href: '/singapore-tour-package', urgency: 'Just added' },
+              { label: 'Thailand', image: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=300&q=70', price: '₹28,999', priceNum: 28999, original: 37000, nights: '5N/6D', tag: 'Budget', tagColor: 'bg-teal-500', href: '/thailand-budget-trip', urgency: '30 booked today' },
+              { label: 'Maldives', image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=300&q=70', price: '₹89,999', priceNum: 89999, original: 115000, nights: '4N/5D', tag: 'Luxury', tagColor: 'bg-violet-600', href: '/maldives-luxury-package', urgency: 'Only 2 left' },
+            ] as (HomePkg & { image: string; original: number; urgency: string; tagColor: string })[]).map((pkg) => {
+              const off = Math.round((1 - (pkg.priceNum ?? 0) / pkg.original) * 100);
+              return (
+                <Link
+                  key={pkg.href}
+                  href={pkg.href}
+                  className="group flex-shrink-0 relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-100 dark:border-white/10 hover:border-accent/40 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                  style={{ width: 'clamp(140px, 45vw, 160px)' }}
+                >
+                  {/* Destination image */}
+                  <div className="relative h-24 overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={pkg.image} alt={pkg.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    {/* % OFF badge */}
+                    <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-md">
+                      {off}% OFF
+                    </div>
+                    {/* Category tag */}
+                    <div className={`absolute top-2 right-2 ${pkg.tagColor} text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md`}>
+                      {pkg.tag}
+                    </div>
+                    {/* Destination name on image */}
+                    <p className="absolute bottom-1.5 left-2.5 text-white font-bold text-sm leading-tight drop-shadow">{pkg.label}</p>
                   </div>
-                  <p className="text-gray-900 dark:text-white font-bold text-base leading-tight">{pkg.label}</p>
-                  <p className="text-gray-700 dark:text-gray-300 font-bold text-sm leading-tight mt-0.5">{pkg.price} <span className="text-gray-400 font-normal text-[10px]">/ person</span></p>
-                  <div className="mt-3 bg-gray-900 dark:bg-amber-500 group-hover:bg-gray-800 dark:group-hover:bg-amber-400 text-white text-[10px] font-bold uppercase tracking-widest text-center rounded-xl py-2 transition-colors">
-                    Book Now →
+
+                  {/* Card body */}
+                  <div className="p-3">
+                    <p className="text-[10px] text-gray-400 mb-0.5">{pkg.nights} · per person</p>
+                    <div className="flex items-baseline gap-1.5 mb-1">
+                      <span className="text-gray-900 dark:text-white font-black text-base leading-none">₹{pkg.priceNum.toLocaleString('en-IN')}</span>
+                      <span className="text-gray-400 text-[11px] line-through">₹{pkg.original.toLocaleString('en-IN')}</span>
+                    </div>
+                    <p className="text-[10px] text-orange-500 font-semibold mb-2">⚡ {pkg.urgency}</p>
+                    <div className="w-full bg-gray-900 dark:bg-accent group-hover:bg-accent text-white dark:text-primary text-[10px] font-bold uppercase tracking-widest text-center rounded-xl py-2 transition-colors">
+                      Book Now
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* 5 — Trust Hub: credibility right after pricing */}
+      {/* 6 — Trust Hub: credibility right after pricing */}
       <TrustHub />
 
       {/* 6 — Hidden Gems: premium brand differentiator */}
@@ -560,10 +608,11 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
             {/* Content */}
             <div className="space-y-8">
               <div>
-                <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-4">
+                <div className="w-10 h-0.5 bg-accent mb-4" />
+                <p className="text-caption uppercase tracking-[0.35em] text-accent font-semibold mb-4">
                   {philosophySection?.eyebrow || 'Our Philosophy'}
                 </p>
-                <h2 className="font-display text-display-lg text-primary dark:text-white">
+                <h2 className="font-display text-display-lg text-primary dark:text-white leading-tight">
                   {philosophySection?.title?.split('.').map((part, i) => (
                     <span key={i}>
                       {i === 1 ? <><br /><span className="italic text-secondary">{part.trim()}</span></> : part}
@@ -590,10 +639,10 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
                   const IconComponent = iconMap[feature.icon] || Compass;
                   return (
                     <div key={index} className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
-                        <IconComponent className="w-5 h-5 text-secondary" />
+                      <div className="w-10 h-10 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0">
+                        <IconComponent className="w-5 h-5 text-accent" />
                       </div>
-                      <span className="text-sm text-primary/80 dark:text-gray-300">{feature.title}</span>
+                      <span className="text-sm font-medium text-primary/80 dark:text-gray-300">{feature.title}</span>
                     </div>
                   );
                 })}
@@ -609,43 +658,47 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
             <div className="relative">
               <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <div className="space-y-2 sm:space-y-4">
-                  <div className="relative aspect-portrait overflow-hidden">
+                  <div className="relative aspect-portrait overflow-hidden group">
                     <Image
                       src="https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=600&q=80"
                       alt="Taj Mahal at sunrise, Agra, India"
                       fill
                       sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 300px"
-                      className="object-cover"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
-                  <div className="relative aspect-square overflow-hidden">
+                  <div className="relative aspect-square overflow-hidden group">
                     <Image
                       src="https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=600&q=80"
                       alt="Kerala backwaters houseboat cruise, South India"
                       fill
                       sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 300px"
-                      className="object-cover"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
                 </div>
                 <div className="pt-6 sm:pt-12 space-y-2 sm:space-y-4">
-                  <div className="relative aspect-square overflow-hidden">
+                  <div className="relative aspect-square overflow-hidden group">
                     <Image
                       src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600&q=80"
                       alt="Colorful Rajasthani culture and traditions, Jaipur India"
                       fill
                       sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 300px"
-                      className="object-cover"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
-                  <div className="relative aspect-portrait overflow-hidden">
+                  <div className="relative aspect-portrait overflow-hidden group">
                     <Image
                       src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&q=80"
                       alt="Himalayan mountain landscape, North India"
                       fill
                       sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 300px"
-                      className="object-cover"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
                 </div>
               </div>

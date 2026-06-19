@@ -14,7 +14,9 @@ interface Trip {
   shortDescription?: string;
   destination: string;
   imageUrl: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   price: number | string | any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   originalPrice?: number | string | any;
   duration: string;
   rating?: number;
@@ -30,10 +32,10 @@ export default function CuratedJourneys({ trips }: { trips: Trip[] }) {
   const fp = (p: Trip['price']) => formatPriceWithCurrency(p, currency);
 
   return (
-    <section className="py-16 md:py-24 bg-cream-light">
+    <section className="py-10 md:py-16 lg:py-24 bg-cream-light">
       <div className="section-container">
 
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <p className="text-caption uppercase tracking-[0.3em] text-secondary mb-3">Handpicked for You</p>
           <h2 className="font-display text-display-lg text-primary">
             Curated <span className="italic">Journeys</span>
@@ -60,7 +62,7 @@ export default function CuratedJourneys({ trips }: { trips: Trip[] }) {
                   style={{ animationDelay: `${i * 0.08}s` }}>
 
                   {/* Image */}
-                  <div className="relative h-60 overflow-hidden">
+                  <div className="relative h-44 sm:h-52 md:h-60 overflow-hidden">
                     <Image src={trip.imageUrl || FALLBACK_IMAGE} alt={trip.title} fill
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                       onError={(e) => { e.currentTarget.srcset = ''; e.currentTarget.src = FALLBACK_IMAGE; }} />

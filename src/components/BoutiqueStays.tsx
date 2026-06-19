@@ -16,6 +16,7 @@ interface Hotel {
     country?: string;
     rating: number;
     reviewCount: number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pricePerNight?: number | string | any;
     isBoutique?: boolean;
     isFeatured?: boolean;
@@ -30,8 +31,8 @@ export default function BoutiqueStays({ hotels }: BoutiqueStaysProps) {
     return (
         <section className="section-padding bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="mb-16 text-center">
-                    <h2 className="text-4xl md:text-5xl font-light text-foreground mb-4">
+                <div className="mb-8 md:mb-16 text-center">
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-foreground mb-4">
                         Our Boutique Stays
                     </h2>
                     <p className="text-lg text-text-secondary max-w-2xl mx-auto font-light">
@@ -49,7 +50,7 @@ export default function BoutiqueStays({ hotels }: BoutiqueStaysProps) {
                             <Link
                                 key={hotel.id}
                                 href={`/hotels/${hotel.id}`}
-                                className="group block relative h-[400px] overflow-hidden card-hover"
+                                className="group block relative h-[280px] sm:h-[350px] md:h-[400px] overflow-hidden card-hover"
                                 style={{ animationDelay: `${index * 0.1}s` }}
                             >
                                 <Image
@@ -63,7 +64,7 @@ export default function BoutiqueStays({ hotels }: BoutiqueStaysProps) {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                                 
                                 {/* Content */}
-                                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white">
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="flex items-center gap-1">
                                             <Star size={16} className="fill-yellow-400 text-yellow-400" />
