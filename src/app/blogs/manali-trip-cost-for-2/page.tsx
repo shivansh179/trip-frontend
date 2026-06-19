@@ -168,7 +168,7 @@ export default function ManaliTripCostFor2() {
           </section>
 
           <div className="bg-green-50 border border-green-200 p-6 not-prose">
-            <p className="font-medium text-primary mb-1">Book Manali for 2 — ₹6,999/person</p>
+            <p className="font-medium text-primary mb-1">Book Manali for 2 — ₹12,999/person</p>
             <p className="text-sm text-primary/65 mb-4">All-inclusive Manali package: Volvo bus, hotel, transfers, guide. Pay only ₹2,500 advance to confirm.</p>
             <div className="flex flex-wrap gap-3">
               <Link href="/manali-tour-package" className="inline-flex items-center gap-2 bg-primary text-cream px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors">

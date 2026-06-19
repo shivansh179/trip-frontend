@@ -34,6 +34,11 @@ export default function robots(): MetadataRoute.Robots {
             { userAgent: 'DuckDuckBot',        allow: ['/'] }, // DuckDuckGo AI
             { userAgent: 'Amazonbot',          allow: ['/'] }, // Alexa AI (allow AI, block pure scraper below)
             { userAgent: 'facebookexternalhit', allow: ['/'] }, // Meta link previews
+            { userAgent: 'Twitterbot',          allow: ['/'] }, // Twitter/X cards
+            { userAgent: 'xAI-SearchBot',       allow: ['/'] }, // xAI / Grok
+            { userAgent: 'MistralBot',          allow: ['/'] }, // Mistral AI
+            { userAgent: 'NaverBot',            allow: ['/'] }, // Naver AI (Korea)
+            { userAgent: 'BingBot',             allow: ['/'] }, // Bing / Copilot AI
             // ── Block pure scrapers/training-data harvesters ──────────────────
             { userAgent: 'CCBot',           disallow: ['/'] }, // Common Crawl (training only)
             { userAgent: 'Bytespider',      disallow: ['/'] }, // ByteDance scraper

@@ -241,6 +241,20 @@ export default function GoaBudgetTripGuide() {
             </div>
           </div>
 
+          <div className="bg-orange-50 border border-orange-200 p-6 not-prose">
+            <p className="font-medium text-primary mb-1">Book Goa — ₹9,999/person all-inclusive</p>
+            <p className="text-sm text-primary/65 mb-4">3N/4D Goa package: beach hotels, transfers, sightseeing. Only ₹2,500 advance to confirm.</p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/goa-tour-package" className="inline-flex items-center gap-2 bg-primary text-cream px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors">
+                View Goa Package <ArrowRight size={14} />
+              </Link>
+              <a href="https://wa.me/918427831127?text=Hi!%20I%20want%20to%20book%20a%20Goa%20trip." target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 text-sm font-medium hover:bg-green-700 transition-colors">
+                <MessageCircle size={14} /> WhatsApp Us
+              </a>
+            </div>
+          </div>
+
           <section>
             <h2 className="font-display text-3xl text-primary mb-6">Frequently Asked Questions</h2>
             <div className="not-prose space-y-4">

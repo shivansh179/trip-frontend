@@ -319,6 +319,20 @@ export default function KedarnathYatraGuide() {
             </div>
           </div>
 
+          <div className="bg-amber-50 border border-amber-200 p-6 not-prose">
+            <p className="font-medium text-primary mb-1">Book Kedarnath Yatra — ₹11,999/person all-inclusive</p>
+            <p className="text-sm text-primary/65 mb-4">4N/5D Kedarnath package: Gaurikund, pony/doli, temple darshan, hotel + transport from Delhi included.</p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/uttarakhand-tour-package" className="inline-flex items-center gap-2 bg-primary text-cream px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors">
+                View Kedarnath Package <ArrowRight size={14} />
+              </Link>
+              <a href="https://wa.me/918427831127?text=Hi!%20I%20want%20to%20book%20the%20Kedarnath%20Yatra%20package." target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 text-sm font-medium hover:bg-green-700 transition-colors">
+                <MessageCircle size={14} /> WhatsApp Us
+              </a>
+            </div>
+          </div>
+
           <section>
             <h2 className="font-display text-3xl text-primary mb-6">Frequently Asked Questions</h2>
             <div className="not-prose space-y-4">

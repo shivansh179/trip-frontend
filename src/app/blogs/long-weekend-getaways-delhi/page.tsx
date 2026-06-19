@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArticleJsonLd, BreadcrumbJsonLd, FaqJsonLd } from '@/components/JsonLd';
-import { MessageCircle, MapPin, Clock, Calendar } from 'lucide-react';
+import { MessageCircle, ArrowRight, MapPin, Clock, Calendar } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: "20 Best Long Weekend Getaways from Delhi 2026 — Under 500km",
@@ -243,6 +243,20 @@ export default function LongWeekendGetawaysDelhi() {
                   <MessageCircle size={16} /> Chat on WhatsApp
                 </a>
               </div>
+            </div>
+          </div>
+
+          <div className="bg-green-50 border border-green-200 p-6 not-prose">
+            <p className="font-medium text-primary mb-1">Ready to book your long weekend?</p>
+            <p className="text-sm text-primary/65 mb-4">Manali from ₹12,999 · Goa from ₹9,999 · Himachal from ₹7,699 · all-inclusive with hotel, transport & guide.</p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/destinations/domestic" className="inline-flex items-center gap-2 bg-primary text-cream px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors">
+                Browse All Weekend Trips <ArrowRight size={14} />
+              </Link>
+              <a href="https://wa.me/918427831127?text=Hi!%20I%20want%20to%20book%20a%20long%20weekend%20trip%20from%20Delhi." target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 text-sm font-medium hover:bg-green-700 transition-colors">
+                <MessageCircle size={14} /> WhatsApp Us
+              </a>
             </div>
           </div>
 

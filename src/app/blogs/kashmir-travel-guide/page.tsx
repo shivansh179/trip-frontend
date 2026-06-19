@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArticleJsonLd, BreadcrumbJsonLd, FaqJsonLd } from '@/components/JsonLd';
-import { MessageCircle, CheckCircle, MapPin, Clock, Calendar } from 'lucide-react';
+import { MessageCircle, ArrowRight, CheckCircle, MapPin, Clock, Calendar } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: "Kashmir Travel Guide 2026 — Complete Itinerary, Best Time & Travel Tips",
@@ -249,6 +249,20 @@ export default function KashmirTravelGuide() {
                   <MessageCircle size={16} /> Chat on WhatsApp
                 </a>
               </div>
+            </div>
+          </div>
+
+          <div className="bg-blue-50 border border-blue-200 p-6 not-prose">
+            <p className="font-medium text-primary mb-1">Book Kashmir — ₹18,999/person all-inclusive</p>
+            <p className="text-sm text-primary/65 mb-4">5N/6D Kashmir package: Dal Lake houseboat, Gulmarg, Pahalgam, Sonmarg, hotel + transport included.</p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/kashmir-tour-package" className="inline-flex items-center gap-2 bg-primary text-cream px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors">
+                View Kashmir Package <ArrowRight size={14} />
+              </Link>
+              <a href="https://wa.me/918427831127?text=Hi!%20I%20want%20to%20book%20a%20Kashmir%20trip." target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 text-sm font-medium hover:bg-green-700 transition-colors">
+                <MessageCircle size={14} /> WhatsApp Us
+              </a>
             </div>
           </div>
 
