@@ -144,7 +144,7 @@ export default function TripAdvisorPage() {
         },
         {
           question: 'Is YlooTrips a legitimate travel company?',
-          answer: 'Yes. YlooTrips India Pvt. Ltd. is MSME-registered (UDYAM-HR-05-0141455), GST-certified (07BATPV1942C1ZF), and registered with India\'s Ministry of Tourism. They have served 25,000+ travelers from 40+ countries since 2022.',
+          answer: 'Yes. YlooTrips India Pvt. Ltd. is MSME-registered (UDYAM-HR-05-0141455) and GST-certified (07BATPV1942C1ZF) — a fully compliant Indian travel company operating since 2022 from New Delhi.',
         },
       ]} />
 
@@ -317,7 +317,7 @@ export default function TripAdvisorPage() {
                   {[
                     { label: 'MSME Registered', value: 'UDYAM-HR-05-0141455' },
                     { label: 'GST Certified', value: '07BATPV1942C1ZF' },
-                    { label: 'Ministry of Tourism', value: 'Registered Operator' },
+                    { label: 'GST Certified', value: '07BATPV1942C1ZF' },
                     { label: 'Payment Security', value: 'PCI-DSS (Easebuzz)' },
                   ].map((c) => (
                     <div key={c.label} className="flex items-start gap-2">

@@ -1434,7 +1434,7 @@ const highlights = [
 ];
 
 const trustSignals = [
-  { icon: Shield, title: 'Fully Licensed & Insured', desc: 'Registered with India\'s Ministry of Tourism. All guides hold national guide cards.', color: 'text-blue-600', bg: 'bg-blue-50' },
+  { icon: Shield, title: 'MSME Certified & GST Registered', desc: 'Ambe Enterprise — MSME: UDYAM-HR-05-0141455 · GST: 07BATPV1942C1ZF. Fully compliant Indian travel company.', color: 'text-blue-600', bg: 'bg-blue-50' },
   { icon: Users, title: 'English-Speaking Private Guides', desc: 'Dedicated guide throughout your trip. Also available in French, German, Spanish & Japanese.', color: 'text-indigo-600', bg: 'bg-indigo-50' },
   { icon: Globe, title: 'Trusted by 40+ Countries', desc: 'USA, UK, Australia, Canada, Germany, France — 25,000+ international travelers in 12 years.', color: 'text-green-600', bg: 'bg-green-50' },
   { icon: CreditCard, title: 'Secure International Payment', desc: 'Visa, Mastercard, Amex accepted. Prices in USD. No hidden charges. PCI-DSS compliant gateway.', color: 'text-purple-600', bg: 'bg-purple-50' },
@@ -1560,7 +1560,7 @@ function DomesticDestinationsContent() {
         <section className="bg-gray-900 text-white py-3">
           <div className="section-container">
             <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-xs font-semibold uppercase tracking-wider">
-              {['🇺🇸 Trusted by Americans', '🇬🇧 Loved in the UK', '🇦🇺 Top-rated in Australia', '⭐ 4.9 Google · 2,400+ reviews', '🏛️ Ministry of Tourism Registered', '💳 Visa · Mastercard · Amex'].map((item) => (
+              {['🇺🇸 Trusted by Americans', '🇬🇧 Loved in the UK', '🇦🇺 Top-rated in Australia', '⭐ 4.9 Google · 2,400+ reviews', '🏆 MSME Certified', '💳 Visa · Mastercard · Amex'].map((item) => (
                 <span key={item} className="whitespace-nowrap">{item}</span>
               ))}
             </div>
@@ -1624,7 +1624,7 @@ function DomesticDestinationsContent() {
               ))}
             </div>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-4 md:gap-6 py-3 bg-white/70 rounded-xl border border-gray-100">
-              {['🔒 256-bit SSL', '💳 Visa · MC · Amex', '🗣️ English Guides', '🆓 Free Cancellation', '🏛️ Govt. Licensed'].map((b) => (
+              {['🔒 256-bit SSL', '💳 Visa · MC · Amex', '🗣️ English Guides', '🆓 Free Cancellation', '🏆 MSME Certified'].map((b) => (
                 <span key={b} className="text-xs text-primary/55 font-medium whitespace-nowrap">{b}</span>
               ))}
             </div>

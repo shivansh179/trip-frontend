@@ -63,7 +63,7 @@ function CuratedTourCard({ tour }: { tour: typeof CURATED_TOURS[0] }) {
   const fp = (p: number) => formatPriceWithCurrency(p, currency);
 
   return (
-    <div className="group bg-white rounded-none overflow-hidden border border-primary/10 hover:shadow-xl transition-all duration-300 flex flex-col">
+    <div className="group bg-white rounded-2xl overflow-hidden border border-primary/10 hover:shadow-2xl hover:-translate-y-1 hover:border-accent/30 transition-all duration-300 flex flex-col">
       {/* Image */}
       <Link href={tour.href} className="block relative aspect-[4/3] overflow-hidden shrink-0">
         <Image
@@ -132,7 +132,7 @@ function CuratedTourCard({ tour }: { tour: typeof CURATED_TOURS[0] }) {
         <div className="pt-3">
           <Link
             href={`/checkout/tour?tour=${tour.slug}`}
-            className="flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white px-3 py-2.5 text-xs uppercase tracking-widest font-semibold transition-colors w-full"
+            className="flex items-center justify-center gap-1.5 bg-accent hover:bg-accent-warm text-primary px-3 py-3 text-xs uppercase tracking-widest font-bold transition-colors w-full rounded-xl shadow-sm shadow-accent/20"
           >
             <Shield className="w-3 h-3" />
             Book Now
@@ -443,22 +443,23 @@ export default function TripsContent() {
 
             {/* ── CURATED PRIVATE TOURS — shown at top for international users BEFORE filters ── */}
             {visitor === 'foreigner' && (
-                <section className="bg-gradient-to-b from-amber-50 to-cream border-b border-amber-200/60 py-10 md:py-14">
+                <section className="bg-gradient-to-b from-primary to-primary-light border-b border-white/5 py-10 md:py-14">
                     <div className="section-container">
                         {/* Header */}
-                        <div className="flex items-start justify-between gap-4 mb-8">
+                        <div className="flex items-start justify-between gap-4 mb-10">
                             <div>
-                                <div className="inline-flex items-center gap-2 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-3">
+                                <div className="inline-flex items-center gap-2 bg-accent/20 border border-accent/30 text-accent text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-4">
                                     <Globe className="w-3 h-3" /> Exclusive for International Travelers
                                 </div>
-                                <h2 className="font-display text-2xl md:text-display-lg text-primary">
+                                <div className="w-10 h-0.5 bg-accent mb-4" />
+                                <h2 className="font-display text-2xl md:text-display-lg text-cream leading-tight">
                                     Private Guided India Tours
                                 </h2>
-                                <p className="text-primary/55 text-sm mt-2 max-w-lg">
+                                <p className="text-cream/50 text-sm mt-3 max-w-lg">
                                     English-speaking guide · Private AC car · All entry tickets · Secure USD payment · Free cancellation
                                 </p>
                             </div>
-                            <Link href="/tours" className="hidden md:flex items-center gap-1.5 shrink-0 text-xs font-bold text-amber-600 border border-amber-300 hover:bg-amber-500 hover:text-white hover:border-amber-500 px-4 py-2 rounded-full transition-all uppercase tracking-wider">
+                            <Link href="/tours" className="hidden md:flex items-center gap-1.5 shrink-0 text-xs font-bold text-accent border border-accent/30 hover:bg-accent hover:text-primary px-4 py-2 rounded-full transition-all uppercase tracking-wider">
                                 All Tours <ArrowUpRight className="w-3.5 h-3.5" />
                             </Link>
                         </div>
@@ -471,15 +472,15 @@ export default function TripsContent() {
                         </div>
 
                         {/* Trust row */}
-                        <div className="mt-6 flex flex-wrap items-center justify-center gap-4 md:gap-8 py-4 bg-white/60 rounded-xl border border-amber-200/40">
+                        <div className="mt-8 flex flex-wrap items-center justify-center gap-4 md:gap-8 py-4 bg-white/5 rounded-xl border border-white/10">
                             {[
                                 { icon: '🔒', text: '256-bit SSL · PCI-DSS' },
                                 { icon: '💳', text: 'Visa · Mastercard · Amex' },
                                 { icon: '🗣️', text: 'English-Speaking Guides' },
                                 { icon: '🆓', text: 'Free Cancellation — 14 Days' },
-                                { icon: '🏛️', text: 'Ministry of Tourism Registered' },
+                                { icon: '🏆', text: 'MSME Certified Operator' },
                             ].map(({ icon, text }) => (
-                                <span key={text} className="flex items-center gap-1.5 text-xs text-primary/60 font-medium whitespace-nowrap">
+                                <span key={text} className="flex items-center gap-1.5 text-xs text-cream/50 font-medium whitespace-nowrap">
                                     <span>{icon}</span>{text}
                                 </span>
                             ))}
@@ -487,36 +488,37 @@ export default function TripsContent() {
 
                         {/* Mobile "see all" */}
                         <div className="mt-5 text-center md:hidden">
-                            <Link href="/tours" className="inline-flex items-center gap-1.5 text-sm font-bold text-amber-600 underline underline-offset-4">
+                            <Link href="/tours" className="inline-flex items-center gap-1.5 text-sm font-bold text-accent underline underline-offset-4">
                                 View All Private Tours <ArrowUpRight className="w-4 h-4" />
                             </Link>
                         </div>
 
                         {/* Divider into main trips */}
                         <div className="mt-10 flex items-center gap-4">
-                            <div className="flex-1 border-t border-primary/10" />
-                            <span className="text-[10px] uppercase tracking-widest text-primary/35 whitespace-nowrap flex items-center gap-1.5">
+                            <div className="flex-1 border-t border-white/10" />
+                            <span className="text-[10px] uppercase tracking-widest text-cream/30 whitespace-nowrap flex items-center gap-1.5">
                                 <Sparkles className="w-3 h-3" /> More India Experiences Below
                             </span>
-                            <div className="flex-1 border-t border-primary/10" />
+                            <div className="flex-1 border-t border-white/10" />
                         </div>
                     </div>
                 </section>
             )}
 
             {/* Filters — sticky on all screens */}
-            <section className="py-3 md:py-5 border-b border-primary/10 bg-cream sticky top-16 z-30 shadow-sm">
-                <div className="section-container space-y-3">
-                    {/* Row 1: Categories */}
-                    <div className="flex flex-nowrap gap-2 overflow-x-auto pb-0.5 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-none">
+            <section className="py-2 md:py-5 border-b border-primary/10 bg-cream sticky top-16 z-30 shadow-sm">
+                <div className="section-container space-y-2 md:space-y-3">
+                    {/* Row 1: Categories — single scrollable row on all screens */}
+                    <div className="flex flex-nowrap gap-2 overflow-x-auto pb-0.5 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-none"
+                         style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
                         {displayedCategories.map((category) => (
                             <button
                                 key={category}
                                 onClick={() => handleCategoryClick(category)}
-                                className={`shrink-0 px-3 py-1.5 text-xs uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-1.5 rounded-sm ${
+                                className={`shrink-0 px-3 py-1.5 text-xs uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-1.5 rounded-full ${
                                     activeCategory === category && !searchQuery
-                                        ? 'bg-primary text-cream'
-                                        : 'bg-cream-dark text-primary hover:bg-primary/10'
+                                        ? 'bg-accent text-primary font-bold shadow-sm shadow-accent/20'
+                                        : 'bg-cream-dark text-primary/70 hover:bg-primary/10 hover:text-primary border border-primary/10'
                                 }`}
                             >
                                 <span>{category}</span>
@@ -527,13 +529,13 @@ export default function TripsContent() {
                         ))}
                     </div>
 
-                    {/* Row 2: Budget + Duration filters */}
-                    <div className="flex items-center gap-2 overflow-x-auto pb-0.5 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-none">
+                    {/* Row 2: Budget + Duration filters — hidden on mobile to save space */}
+                    <div className="hidden md:flex items-center gap-2 overflow-x-auto pb-0.5 scrollbar-none">
                         {/* Budget */}
                         <div className="relative shrink-0">
                             <button
                                 onClick={() => { setShowBudgetMenu(v => !v); setShowDurationMenu(false); setShowSortMenu(false); }}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 border text-xs uppercase tracking-widest transition-colors rounded-sm ${budgetIdx !== 0 ? 'bg-secondary text-cream border-secondary' : 'bg-cream border-primary/15 text-primary hover:border-primary/40'}`}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 border text-xs uppercase tracking-widest transition-colors rounded-full ${budgetIdx !== 0 ? 'bg-accent text-primary border-accent font-bold' : 'bg-cream border-primary/15 text-primary hover:border-accent/40'}`}
                             >
                                 💰 {BUDGET_OPTIONS[budgetIdx].label}
                                 <ChevronDown className="w-3 h-3" />
@@ -544,7 +546,7 @@ export default function TripsContent() {
                                         <button
                                             key={opt.label}
                                             onClick={() => { setBudgetIdx(i); setShowBudgetMenu(false); }}
-                                            className={`w-full text-left px-4 py-2.5 text-xs uppercase tracking-widest transition-colors ${budgetIdx === i ? 'bg-primary text-cream' : 'text-primary hover:bg-cream-dark'}`}
+                                            className={`w-full text-left px-4 py-2.5 text-xs uppercase tracking-widest transition-colors ${budgetIdx === i ? 'bg-accent text-primary font-bold' : 'text-primary hover:bg-cream-dark'}`}
                                         >
                                             {opt.label}
                                         </button>
@@ -557,7 +559,7 @@ export default function TripsContent() {
                         <div className="relative shrink-0">
                             <button
                                 onClick={() => { setShowDurationMenu(v => !v); setShowBudgetMenu(false); setShowSortMenu(false); }}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 border text-xs uppercase tracking-widest transition-colors rounded-sm ${durationIdx !== 0 ? 'bg-secondary text-cream border-secondary' : 'bg-cream border-primary/15 text-primary hover:border-primary/40'}`}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 border text-xs uppercase tracking-widest transition-colors rounded-full ${durationIdx !== 0 ? 'bg-accent text-primary border-accent font-bold' : 'bg-cream border-primary/15 text-primary hover:border-accent/40'}`}
                             >
                                 🗓️ {DURATION_OPTIONS[durationIdx].label}
                                 <ChevronDown className="w-3 h-3" />
@@ -568,7 +570,7 @@ export default function TripsContent() {
                                         <button
                                             key={opt.label}
                                             onClick={() => { setDurationIdx(i); setShowDurationMenu(false); }}
-                                            className={`w-full text-left px-4 py-2.5 text-xs uppercase tracking-widest transition-colors ${durationIdx === i ? 'bg-primary text-cream' : 'text-primary hover:bg-cream-dark'}`}
+                                            className={`w-full text-left px-4 py-2.5 text-xs uppercase tracking-widest transition-colors ${durationIdx === i ? 'bg-accent text-primary font-bold' : 'text-primary hover:bg-cream-dark'}`}
                                         >
                                             {opt.label}
                                         </button>
@@ -588,8 +590,44 @@ export default function TripsContent() {
                         )}
                     </div>
 
-                    {/* Row 3: Search + Sort */}
-                    <div className="flex items-center gap-2">
+                    {/* Mobile-only: compact Budget + Search in one row */}
+                    <div className="flex md:hidden items-center gap-2">
+                        <div className="relative shrink-0">
+                            <button
+                                onClick={() => { setShowBudgetMenu(v => !v); setShowDurationMenu(false); setShowSortMenu(false); }}
+                                className={`flex items-center gap-1 px-3 py-2 border text-xs font-semibold transition-colors rounded-full ${budgetIdx !== 0 ? 'bg-accent text-primary border-accent' : 'bg-cream-dark border-primary/15 text-primary/70'}`}
+                            >
+                                💰 {BUDGET_OPTIONS[budgetIdx].label} <ChevronDown className="w-3 h-3" />
+                            </button>
+                            {showBudgetMenu && (
+                                <div className="absolute left-0 top-full mt-1 w-40 bg-white border border-primary/10 shadow-xl z-50 rounded-xl overflow-hidden">
+                                    {BUDGET_OPTIONS.map((opt, i) => (
+                                        <button key={opt.label} onClick={() => { setBudgetIdx(i); setShowBudgetMenu(false); }}
+                                            className={`w-full text-left px-3 py-2.5 text-xs transition-colors ${budgetIdx === i ? 'bg-accent text-primary font-bold' : 'text-primary hover:bg-cream-dark'}`}>
+                                            {opt.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        <form onSubmit={handleSearch} className="flex-1 min-w-0">
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-primary/40" />
+                                <input type="text" placeholder="Search…" value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSearch(e as unknown as React.FormEvent<HTMLFormElement>); } }}
+                                    className="w-full pl-9 pr-8 py-2 bg-cream-dark text-primary text-sm placeholder:text-primary/40 focus:outline-none focus:ring-1 focus:ring-accent rounded-full" />
+                                {(searchInput || searchQuery) && (
+                                    <button type="button" onClick={clearSearch} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-primary/40">
+                                        <X className="w-3.5 h-3.5" />
+                                    </button>
+                                )}
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Row 3: Search + Sort — desktop only */}
+                    <div className="hidden md:flex items-center gap-2">
                         {/* Search */}
                         <form onSubmit={handleSearch} className="flex items-center gap-2 flex-1 min-w-0">
                             <div className="relative flex-1 min-w-0">
@@ -599,7 +637,7 @@ export default function TripsContent() {
                                     placeholder="Search trips, destinations..."
                                     value={searchInput}
                                     onChange={(e) => setSearchInput(e.target.value)}
-                                    className="w-full pl-9 pr-8 py-2.5 bg-cream-dark text-primary text-sm placeholder:text-primary/35 focus:outline-none focus:ring-1 focus:ring-secondary"
+                                    className="w-full pl-9 pr-8 py-2.5 bg-cream-dark text-primary text-sm placeholder:text-primary/35 focus:outline-none focus:ring-1 focus:ring-accent rounded-full"
                                 />
                                 {(searchInput || searchQuery) && (
                                     <button
@@ -681,7 +719,7 @@ export default function TripsContent() {
             )}
 
             {/* Trips Grid */}
-            <section className="py-12 md:py-20 bg-cream" onClick={() => { setShowSortMenu(false); setShowBudgetMenu(false); setShowDurationMenu(false); }}>
+            <section className="py-8 md:py-12 bg-cream" onClick={() => { setShowSortMenu(false); setShowBudgetMenu(false); setShowDurationMenu(false); }}>
                 <div className="section-container">
 
                     {/* Results count */}
@@ -748,7 +786,7 @@ export default function TripsContent() {
 
                     {/* Load More */}
                     {trips.length > 0 && hasMore && !searchQuery && (
-                        <div className="text-center mt-14">
+                        <div className="text-center mt-8">
                             <button
                                 onClick={handleLoadMore}
                                 disabled={loadingMore}

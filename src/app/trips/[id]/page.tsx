@@ -207,7 +207,7 @@ export default function TripDetailPage() {
                                 '🗣️ English-Speaking Private Guide',
                                 '🆓 Free Cancellation — 7 Days',
                                 '📞 24/7 WhatsApp Support',
-                                '🏛️ Ministry of Tourism Registered',
+                                '🏆 MSME Certified Operator',
                             ].map((item) => (
                                 <span key={item} className="whitespace-nowrap">{item}</span>
                             ))}
@@ -567,7 +567,7 @@ export default function TripDetailPage() {
                                 {[
                                     { icon: '💳', text: 'Visa · Mastercard · Amex · no surcharges' },
                                     { icon: '🗣️', text: 'English-speaking private guide throughout' },
-                                    { icon: '🏛️', text: 'Ministry of Tourism registered operator' },
+                                    { icon: '🏆', text: 'MSME certified · GST registered operator' },
                                     { icon: '📞', text: '24/7 WhatsApp support during your trip' },
                                 ].map(({ icon, text }) => (
                                     <div key={text} className="flex items-start gap-2 text-xs text-amber-800">

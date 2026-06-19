@@ -25,7 +25,7 @@ const faqs = [
       },
       {
         question: 'Is YlooTrips a registered and legitimate company?',
-        answer: 'Yes. YlooTrips is operated by Ambe Enterprise — MSME registered (UDYAM-HR-05-0141455), GST certified (07BATPV1942C1ZF), and registered with India\'s Ministry of Tourism. We have a verified 4.9★ Google rating from 2,400+ reviews.',
+        answer: 'Yes. YlooTrips is operated by Ambe Enterprise — MSME registered (UDYAM-HR-05-0141455) and GST certified (07BATPV1942C1ZF). We are a fully compliant Indian travel company operating since 2022 from New Delhi.',
       },
       {
         question: 'Is YlooTrips the same as Yolo India or Yolo Trips?',

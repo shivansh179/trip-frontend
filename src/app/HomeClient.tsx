@@ -506,7 +506,7 @@ export default function HomeClient({ content, destinations }: HomeClientProps) {
             { icon: '✈️', text: '25,000+ Trips Booked', sub: 'since 2022' },
             { icon: '🔒', text: '100% Secure Payments', sub: 'Easebuzz & SSL' },
             { icon: '📞', text: 'Reply in < 1 Hour', sub: '24/7 support' },
-            { icon: '🏆', text: 'Ministry of Tourism', sub: 'Registered' },
+            { icon: '🏆', text: 'MSME Certified', sub: 'UDYAM-HR-05-0141455' },
           ].map(({ icon, text, sub }) => (
             <div key={text} className="flex items-center gap-2 shrink-0">
               <span className="text-sm">{icon}</span>

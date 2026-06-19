@@ -350,7 +350,7 @@ function TourCheckoutContent() {
           <div className="flex items-center justify-center gap-6 text-xs">
             <span className="flex items-center gap-1.5"><Lock size={11} className="text-green-400" /> 256-bit SSL Encrypted</span>
             <span className="hidden sm:flex items-center gap-1.5"><Shield size={11} className="text-blue-400" /> PCI-DSS Compliant</span>
-            <span className="hidden sm:flex items-center gap-1.5"><BadgeCheck size={11} className="text-amber-400" /> Ministry of Tourism Registered</span>
+            <span className="hidden sm:flex items-center gap-1.5"><BadgeCheck size={11} className="text-amber-400" /> MSME Certified · GST Registered</span>
             <span className="flex items-center gap-1.5"><Globe size={11} className="text-purple-400" /> International Cards Accepted</span>
           </div>
         </div>
@@ -722,7 +722,7 @@ function TourCheckoutContent() {
                     { icon: Lock, label: '256-bit SSL', sub: 'Encrypted checkout', color: 'text-green-600', bg: 'bg-green-50' },
                     { icon: CreditCard, label: 'PCI-DSS', sub: 'Certified gateway', color: 'text-blue-600', bg: 'bg-blue-50' },
                     { icon: RefreshCw, label: 'Free Cancel', sub: '7 days before trip', color: 'text-amber-600', bg: 'bg-amber-50' },
-                    { icon: BadgeCheck, label: 'Govt. Licensed', sub: 'Ministry of Tourism', color: 'text-purple-600', bg: 'bg-purple-50' },
+                    { icon: BadgeCheck, label: 'MSME Certified', sub: 'UDYAM-HR-05-0141455', color: 'text-purple-600', bg: 'bg-purple-50' },
                   ].map(({ icon: Icon, label, sub, color, bg }) => (
                     <div key={label} className={`flex flex-col items-center text-center p-3 ${bg} rounded-xl`}>
                       <Icon size={18} className={`${color} mb-1`} />
