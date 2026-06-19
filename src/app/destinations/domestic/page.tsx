@@ -1321,7 +1321,7 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
               {trip.badge}
             </span>
           )}
-          <span className="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
+          <span className="bg-white/90 backdrop-blur-sm text-gray-900 text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
             {trip.category}
           </span>
         </div>
@@ -1552,7 +1552,7 @@ function DomesticDestinationsContent() {
         }
         breadcrumb={isInternational ? 'India Tours' : 'Domestic'}
         backgroundImage="https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1920&q=80"
-        overlayClassName="bg-gradient-to-b from-terracotta/50 via-primary/60 to-primary/90"
+        overlayClassName="bg-gradient-to-b from-black/50 via-black/60 to-black/85"
       />
 
       {/* International trust bar */}
@@ -1708,7 +1708,7 @@ function DomesticDestinationsContent() {
 
       {/* Country flags / social proof */}
       {isInternational && (
-        <section className="py-12 bg-primary text-cream">
+        <section className="py-12 bg-[#0A2752] text-white">
           <div className="section-container">
             <p className="text-center text-caption uppercase tracking-[0.3em] text-cream/50 mb-8">Trusted by travelers from</p>
             <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-10">
@@ -1773,52 +1773,48 @@ function DomesticDestinationsContent() {
               🔍 Showing results for: <span className="capitalize">{tagQuery}</span>
               <span className="ml-2 text-gray-600 font-normal">({filtered.length} trip{filtered.length !== 1 ? 's' : ''})</span>
             </p>
-            <a href="/destinations/domestic" className="text-xs font-bold text-gray-700 border border-gray-300 px-3 py-1 rounded-full hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all">
+            <Link href="/destinations/domestic" className="text-xs font-bold text-gray-700 border border-gray-300 px-3 py-1 rounded-full hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all">
               Clear filter ✕
-            </a>
+            </Link>
           </div>
         </div>
       )}
 
       {/* Filter bar */}
-      <section className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-16 z-30 shadow-sm">
-        <div className="section-container py-3 space-y-3">
+      <section className="bg-white border-b border-gray-200 sticky top-16 z-30 shadow-sm">
+        <div className="px-4 py-2 space-y-1.5">
 
-          {/* Row 1: Trip type + budget */}
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Row 1: Trip type + budget — horizontal scroll on mobile */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
             {/* Trip type */}
-            <div className="flex bg-gray-100 dark:bg-gray-800 rounded-full p-0.5 shrink-0">
-              {([['all','🌐 All Trips'],['domestic','🇮🇳 Domestic'],['international','✈️ International']] as const).map(([val, label]) => (
+            <div className="flex bg-gray-100 rounded-full p-0.5 shrink-0">
+              {([['all','🌐 All'],['domestic','🇮🇳 Domestic'],['international','✈️ Intl']] as const).map(([val, label]) => (
                 <button key={val} onClick={() => { setTripTypeFilter(val); resetPage(); }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${tripTypeFilter === val ? 'bg-white dark:bg-gray-600 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}>
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${tripTypeFilter === val ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
                   {label}
                 </button>
               ))}
             </div>
 
-            <div className="w-px h-5 bg-gray-200 hidden sm:block" />
+            <div className="w-px h-5 bg-gray-200 shrink-0" />
 
             {/* Budget chips */}
-            <div className="flex gap-1.5 flex-wrap">
-              <span className="text-[10px] text-gray-400 uppercase tracking-widest self-center hidden sm:block">Budget</span>
-              {[
-                { value: 'all', label: 'Any' },
-                { value: 'under10', label: 'Under ₹10k' },
-                { value: '10to25', label: '₹10k–₹25k' },
-                { value: '25to50', label: '₹25k–₹50k' },
-                { value: 'above50', label: '₹50k+' },
-              ].map((b) => (
-                <button key={b.value} onClick={() => { setBudgetFilter(b.value); resetPage(); }}
-                  className={`px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${budgetFilter === b.value ? 'bg-terracotta text-white border-terracotta' : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-terracotta hover:text-terracotta bg-white dark:bg-gray-800'}`}>
-                  {b.label}
-                </button>
-              ))}
-            </div>
+            {[
+              { value: 'all', label: 'Any' },
+              { value: 'under10', label: 'Under ₹10k' },
+              { value: '10to25', label: '₹10k–₹25k' },
+              { value: '25to50', label: '₹25k–₹50k' },
+              { value: 'above50', label: '₹50k+' },
+            ].map((b) => (
+              <button key={b.value} onClick={() => { setBudgetFilter(b.value); resetPage(); }}
+                className={`shrink-0 px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${budgetFilter === b.value ? 'bg-terracotta text-white border-terracotta' : 'border-gray-200 text-gray-600 hover:border-terracotta hover:text-terracotta bg-white'}`}>
+                {b.label}
+              </button>
+            ))}
           </div>
 
-          {/* Row 2: Category tags + Region */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[10px] text-gray-400 uppercase tracking-widest self-center hidden sm:block">Type</span>
+          {/* Row 2: Category + Region — horizontal scroll on mobile */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
             {[
               { value: 'all', label: '🏷️ All' },
               { value: 'adventure', label: '🧗 Adventure' },
@@ -1829,10 +1825,10 @@ function DomesticDestinationsContent() {
               { value: 'pilgrimage', label: '🛕 Pilgrimage' },
               { value: 'nature', label: '🌿 Nature' },
               { value: 'luxury', label: '✨ Luxury' },
-              { value: 'budget', label: '💰 Budget-Friendly' },
+              { value: 'budget', label: '💰 Budget' },
             ].map((c) => (
               <button key={c.value} onClick={() => { setCategoryFilter(c.value); resetPage(); }}
-                className={`px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${categoryFilter === c.value ? 'bg-primary text-white border-primary' : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-primary hover:text-primary bg-white dark:bg-gray-800'}`}>
+                className={`shrink-0 px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${categoryFilter === c.value ? 'bg-primary text-white border-primary' : 'border-gray-200 text-gray-600 hover:border-primary hover:text-primary bg-white'}`}>
                 {c.label}
               </button>
             ))}
@@ -1840,16 +1836,16 @@ function DomesticDestinationsContent() {
             {/* Region filter — only show for domestic */}
             {tripTypeFilter === 'domestic' && (
               <>
-                <div className="w-px h-4 bg-gray-200 mx-1" />
+                <div className="w-px h-4 bg-gray-200 mx-1 shrink-0" />
                 {indiaRegions.slice(1).map((r) => (
                   <button key={r.value} onClick={() => { setActiveRegion(r.value); resetPage(); }}
-                    className={`shrink-0 px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${activeRegion === r.value ? 'bg-secondary text-white border-secondary' : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-secondary hover:text-secondary bg-white dark:bg-gray-800'}`}>
+                    className={`shrink-0 px-3 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap ${activeRegion === r.value ? 'bg-secondary text-white border-secondary' : 'border-gray-200 text-gray-600 hover:border-secondary hover:text-secondary bg-white'}`}>
                     {r.label}
                   </button>
                 ))}
                 {activeRegion !== 'All India' && (
                   <button onClick={() => { setActiveRegion('All India'); resetPage(); }}
-                    className="px-2 py-1 text-xs text-gray-400 hover:text-gray-700 font-medium">✕ Clear region</button>
+                    className="shrink-0 px-2 py-1 text-xs text-gray-400 hover:text-gray-700 font-medium">✕ Clear</button>
                 )}
               </>
             )}
@@ -1937,7 +1933,7 @@ function DomesticDestinationsContent() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 md:py-24 bg-primary text-cream">
+      <section className="py-16 md:py-24 bg-[#0A2752] text-white">
         <div className="section-container">
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-caption uppercase tracking-[0.3em] text-cream/50 mb-4">
