@@ -8,6 +8,7 @@ import {
   Plane, CreditCard, ThumbsUp
 } from 'lucide-react';
 import curatedTours from '@/data/curatedTours';
+import { TourJsonLd, BreadcrumbJsonLd, FaqJsonLd } from '@/components/JsonLd';
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -54,6 +55,28 @@ export default async function TourPage({ params }: Props) {
 
   return (
     <>
+      {/* JSON-LD structured data */}
+      <TourJsonLd
+        name={tour.name}
+        description={tour.tagline}
+        url={`https://www.ylootrips.com/tours/${tour.slug}`}
+        image={tour.heroImage}
+        price={tour.priceUSD.toString()}
+        currency="USD"
+        duration={tour.duration}
+        startLocation="India"
+        destination={tour.name.split(' —')[0].trim()}
+        highlights={tour.highlights.slice(0, 6)}
+        rating={tour.avgRating}
+        reviewCount={tour.reviewCount}
+      />
+      <BreadcrumbJsonLd items={[
+        { name: 'Home', url: 'https://www.ylootrips.com' },
+        { name: 'India Tours', url: 'https://www.ylootrips.com/tours' },
+        { name: tour.name, url: `https://www.ylootrips.com/tours/${tour.slug}` },
+      ]} />
+      <FaqJsonLd faqs={tour.faq.map(f => ({ question: f.q, answer: f.a }))} />
+
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section className="relative h-[60vh] sm:h-[70vh] md:h-[75vh] min-h-[320px] sm:min-h-[420px] md:min-h-[560px] flex items-end overflow-hidden">
         <Image src={tour.heroImage} alt={tour.name} fill className="object-cover" priority />

@@ -134,7 +134,7 @@ export default function TripDetailPage() {
                 url={`https://www.ylootrips.com/trips/${trip.id}`}
                 image={trip.imageUrl || (trip.images?.[0]) || 'https://www.ylootrips.com/og-image.jpg'}
                 price={basePrice.toString()}
-                currency="USD"
+                currency="INR"
                 duration={trip.duration || ''}
                 startLocation={trip.destination || 'India'}
                 highlights={trip.highlights || []}
