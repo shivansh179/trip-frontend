@@ -1632,17 +1632,6 @@ function DomesticDestinationsContent() {
         </section>
       )}
 
-      {/* Highlights strip */}
-      <section className="py-5 md:py-8 bg-cream dark:bg-gray-900 border-b border-primary/8 dark:border-gray-700">
-        <div className="flex md:flex-wrap md:justify-center gap-3 md:gap-4 overflow-x-auto px-4 md:px-6 lg:px-8 pb-1 md:pb-0" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
-          {highlights.map(({ icon: Icon, label, color, bg }) => (
-            <div key={label} className={`flex items-center gap-2 ${bg} dark:bg-gray-800 px-4 py-2 rounded-full shrink-0`}>
-              <Icon className={`w-4 h-4 ${color} shrink-0`} />
-              <span className="text-xs font-medium text-primary/80 dark:text-gray-300 whitespace-nowrap">{label}</span>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* International trust section */}
       {isInternational && (
