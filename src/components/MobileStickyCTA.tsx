@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Compass, Ticket, Sparkles, Wallet, Globe, Mountain, X, Camera } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { Home, Compass, Ticket, Sparkles, Wallet, Camera } from 'lucide-react';
+import { useState } from 'react';
 import { useWallet } from '@/context/WalletContext';
 import dynamic from 'next/dynamic';
 
@@ -14,23 +14,7 @@ const HIDDEN_PATHS = ['/checkout', '/payment', '/admin'];
 export default function MobileStickyCTA() {
     const pathname = usePathname();
     const { balance } = useWallet();
-    const [tripsOpen, setTripsOpen] = useState(false);
     const [memoryOpen, setMemoryOpen] = useState(false);
-    const popupRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (!tripsOpen) return;
-        const handleClick = (e: MouseEvent) => {
-            if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
-                setTripsOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClick);
-        return () => document.removeEventListener('mousedown', handleClick);
-    }, [tripsOpen]);
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    useEffect(() => { setTripsOpen(false); }, [pathname]);
 
     if (HIDDEN_PATHS.some(p => pathname?.startsWith(p))) return null;
 
@@ -45,103 +29,6 @@ export default function MobileStickyCTA() {
 
     return (
         <>
-            {/* Trips popup sheet */}
-            {tripsOpen && (
-                <div
-                    ref={popupRef}
-                    className="fixed bottom-[76px] left-3 right-3 z-[80] rounded-3xl overflow-hidden animate-in slide-in-from-bottom-4 duration-250"
-                    style={{
-                        background: 'rgba(12,12,12,0.97)',
-                        backdropFilter: 'blur(24px)',
-                        border: '1px solid rgba(201,169,110,0.2)',
-                        boxShadow: '0 -8px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,169,110,0.08)',
-                    }}
-                >
-                    {/* Header */}
-                    <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                        <div>
-                            <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: '#C9A96E' }}>Explore</span>
-                            <p className="text-sm font-semibold text-white mt-0.5">Where to next?</p>
-                        </div>
-                        <button onClick={() => setTripsOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                            <X size={14} className="text-white/60" />
-                        </button>
-                    </div>
-
-                    {/* 4-option grid */}
-                    <div className="grid grid-cols-2 gap-2.5 p-4">
-                        <Link href="/destinations/domestic" onClick={() => setTripsOpen(false)}
-                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl active:scale-95 transition-all duration-150"
-                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,169,110,0.15)' }}>
-                            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.15)', border: '1px solid rgba(201,169,110,0.3)' }}>
-                                <Mountain size={20} style={{ color: '#C9A96E' }} />
-                            </div>
-                            <div className="text-center">
-                                <div className="font-semibold text-sm text-white">Domestic</div>
-                                <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>150+ India trips</div>
-                            </div>
-                        </Link>
-
-                        <Link href="/destinations/international" onClick={() => setTripsOpen(false)}
-                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl active:scale-95 transition-all duration-150"
-                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,169,110,0.15)' }}>
-                            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.15)', border: '1px solid rgba(201,169,110,0.3)' }}>
-                                <Globe size={20} style={{ color: '#C9A96E' }} />
-                            </div>
-                            <div className="text-center">
-                                <div className="font-semibold text-sm text-white">International</div>
-                                <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>50+ countries</div>
-                            </div>
-                        </Link>
-
-                        <Link href="/reel-to-trip" onClick={() => setTripsOpen(false)}
-                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl active:scale-95 transition-all duration-150"
-                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,169,110,0.15)' }}>
-                            <div className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden" style={{ background: 'linear-gradient(135deg, #f9ce34, #ee2a7b, #6228d7)' }}>
-                                {/* Instagram brand icon */}
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                                    <rect x="2" y="2" width="20" height="20" rx="5.5" stroke="white" strokeWidth="2"/>
-                                    <circle cx="12" cy="12" r="4.5" stroke="white" strokeWidth="2"/>
-                                    <circle cx="17.5" cy="6.5" r="1.2" fill="white"/>
-                                </svg>
-                            </div>
-                            <div className="text-center">
-                                <div className="font-semibold text-sm text-white">Reel to Trip</div>
-                                <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Paste Insta URL</div>
-                            </div>
-                        </Link>
-
-                        <Link href="/trip-planner" onClick={() => setTripsOpen(false)}
-                            className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-2xl active:scale-95 transition-all duration-150"
-                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,169,110,0.15)' }}>
-                            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.15)', border: '1px solid rgba(201,169,110,0.3)' }}>
-                                <Sparkles size={20} style={{ color: '#C9A96E' }} />
-                            </div>
-                            <div className="text-center">
-                                <div className="font-semibold text-sm text-white">AI Planner</div>
-                                <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Plan with AI</div>
-                            </div>
-                        </Link>
-                    </div>
-
-                    {/* Quick tags */}
-                    <div className="px-4 pb-5 flex flex-wrap gap-2">
-                        {['Manali 🏔️', 'Kedarnath ⛪', 'Spiti 🗻', 'Bali 🌴', 'Dubai ✈️', 'Thailand 🐘'].map((tag) => {
-                            const dest = tag.split(' ')[0].toLowerCase();
-                            const isIntl = ['bali', 'dubai', 'thailand'].includes(dest);
-                            return (
-                                <Link key={tag}
-                                    href={isIntl ? `/destinations/international?q=${dest}` : `/destinations/domestic?q=${dest}`}
-                                    onClick={() => setTripsOpen(false)}
-                                    className="text-[11px] font-medium px-3 py-1.5 rounded-full active:scale-95 transition-transform"
-                                    style={{ background: 'rgba(201,169,110,0.1)', border: '1px solid rgba(201,169,110,0.2)', color: 'rgba(226,198,143,0.9)' }}>
-                                    {tag}
-                                </Link>
-                            );
-                        })}
-                    </div>
-                </div>
-            )}
 
             {/* YLOO Reels floating button — shown on all pages except hidden paths */}
             {!pathname?.startsWith('/share-and-earn') && (
@@ -186,13 +73,13 @@ export default function MobileStickyCTA() {
                     </Link>
 
                     {/* Trips */}
-                    <button onClick={() => setTripsOpen(!tripsOpen)} className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none">
-                        <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${isTrips || tripsOpen ? 'bg-blue-50' : ''}`}>
-                            <Compass size={20} strokeWidth={isTrips || tripsOpen ? 2.5 : 1.8} className={isTrips || tripsOpen ? 'text-[#008cff]' : 'text-gray-400'} />
-                            <span className={`text-[10px] font-medium ${isTrips || tripsOpen ? 'text-[#008cff]' : 'text-gray-400'}`}>Trips</span>
+                    <Link href="/destinations/domestic" className="relative flex flex-col items-center justify-center transition-all duration-200 active:scale-90 select-none">
+                        <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${isTrips ? 'bg-blue-50' : ''}`}>
+                            <Compass size={20} strokeWidth={isTrips ? 2.5 : 1.8} className={isTrips ? 'text-[#008cff]' : 'text-gray-400'} />
+                            <span className={`text-[10px] font-medium ${isTrips ? 'text-[#008cff]' : 'text-gray-400'}`}>Trips</span>
                         </div>
-                        {(isTrips || tripsOpen) && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full bg-[#008cff]" />}
-                    </button>
+                        {isTrips && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full bg-[#008cff]" />}
+                    </Link>
 
                     {/* AI Planner — centre raised */}
                     <Link href="/trip-planner" className="relative flex flex-col items-center justify-center select-none active:scale-90 transition-all duration-200">
