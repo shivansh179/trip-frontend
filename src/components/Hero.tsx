@@ -72,6 +72,46 @@ const CITIES_INTL = [
 
 const ALL_CITIES = [...CITIES_DOMESTIC, ...CITIES_INTL];
 
+// Premium hero slideshow — luxury destinations
+const HERO_SLIDES = [
+    {
+        src: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1920&q=85&auto=format&fit=crop',
+        destination: 'Taj Mahal, India',
+        tagline: 'Eternal wonders await',
+        ken: 'animate-ken-burns',
+    },
+    {
+        src: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1920&q=85&auto=format&fit=crop',
+        destination: 'Bali, Indonesia',
+        tagline: 'Heaven on earth',
+        ken: 'animate-ken-burns-alt',
+    },
+    {
+        src: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&q=85&auto=format&fit=crop',
+        destination: 'Dubai, UAE',
+        tagline: 'Where luxury meets sky',
+        ken: 'animate-ken-burns-rev',
+    },
+    {
+        src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=85&auto=format&fit=crop',
+        destination: 'Kashmir, India',
+        tagline: 'Paradise in the Himalayas',
+        ken: 'animate-ken-burns',
+    },
+    {
+        src: 'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=1920&q=85&auto=format&fit=crop',
+        destination: 'Maldives',
+        tagline: 'Crystal blue infinity',
+        ken: 'animate-ken-burns-alt',
+    },
+    {
+        src: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1920&q=85&auto=format&fit=crop',
+        destination: 'Thailand',
+        tagline: 'Land of golden temples',
+        ken: 'animate-ken-burns-rev',
+    },
+];
+
 function HeroCityPicker({ value, onChange }: { value: string; onChange: (code: string) => void }) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
@@ -190,6 +230,13 @@ export default function Hero({ content, stats }: HeroProps) {
     const [showFromSug, setShowFromSug] = useState(false);
     const [showToSug, setShowToSug] = useState(false);
 
+    // Holiday Packages extra fields
+    const [tourDate, setTourDate] = useState('');
+    const [tourNights, setTourNights] = useState('5');
+    const [tourTravellers, setTourTravellers] = useState(2);
+    const [showTourGuestPicker, setShowTourGuestPicker] = useState(false);
+    const tourGuestRef = useRef<HTMLDivElement>(null);
+
     // Flight fields
     const [flightFrom, setFlightFrom] = useState('DEL');
     const [flightTo, setFlightTo] = useState('GOI');
@@ -204,6 +251,10 @@ export default function Hero({ content, stats }: HeroProps) {
     const [flightError, setFlightError] = useState<string | null>(null);
     const [isDemo, setIsDemo] = useState(false);
     const [sortBy, setSortBy] = useState<'price' | 'duration'>('price');
+
+    // Hero slideshow
+    const [slideIndex, setSlideIndex] = useState(0);
+    const [prevSlide, setPrevSlide] = useState<number | null>(null);
 
     // Ads
     const [ads, setAds] = useState<Ad[]>([]);
@@ -228,6 +279,18 @@ export default function Hero({ content, stats }: HeroProps) {
         const t = setInterval(() => setAdIndex(i => (i + 1) % ads.length), 4000);
         return () => clearInterval(t);
     }, [ads.length]);
+
+    // Auto-advance hero slides every 6s
+    useEffect(() => {
+        const t = setInterval(() => {
+            setSlideIndex(i => {
+                const next = (i + 1) % HERO_SLIDES.length;
+                setPrevSlide(i);
+                return next;
+            });
+        }, 6000);
+        return () => clearInterval(t);
+    }, []);
 
     const swapFlightCities = useCallback(() => {
         setFlightFrom(flightTo);
@@ -320,7 +383,6 @@ export default function Hero({ content, stats }: HeroProps) {
     }, [flightDate, flightPax]);
 
     const currentAd = ads[adIndex];
-    const imageUrl = content?.imageUrl || 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1920&q=80';
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
@@ -331,14 +393,72 @@ export default function Hero({ content, stats }: HeroProps) {
     }, []);
 
     return (
-        <section className="relative min-h-[100svh] flex flex-col overflow-hidden">
-            {/* Background */}
-            <div className="absolute inset-0">
-                <video ref={videoRef} autoPlay muted loop playsInline preload="auto" poster={imageUrl} className="absolute inset-0 w-full h-full object-cover">
+        <section className="relative min-h-[100svh] flex flex-col overflow-hidden bg-[#0A2752]">
+            {/* Hero slideshow background */}
+            <div className="absolute inset-0 overflow-hidden">
+                {/* Fading-out previous slide */}
+                {prevSlide !== null && (
+                    <div key={`prev-${prevSlide}`} className="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-0">
+                        <Image
+                            src={HERO_SLIDES[prevSlide].src}
+                            alt={HERO_SLIDES[prevSlide].destination}
+                            fill
+                            className="object-cover"
+                            sizes="100vw"
+                        />
+                    </div>
+                )}
+                {/* Active slide with Ken Burns */}
+                {HERO_SLIDES.map((slide, idx) => (
+                    <div
+                        key={`slide-${idx}`}
+                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === slideIndex ? 'opacity-100' : 'opacity-0'}`}
+                        aria-hidden={idx !== slideIndex}
+                    >
+                        <Image
+                            src={slide.src}
+                            alt={slide.destination}
+                            fill
+                            priority={idx === 0}
+                            className={`object-cover ${idx === slideIndex ? slide.ken : ''}`}
+                            sizes="100vw"
+                        />
+                    </div>
+                ))}
+
+                {/* Video layer — plays on top of image slideshow when loaded */}
+                <video
+                    ref={videoRef}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    className="absolute inset-0 w-full h-full object-cover z-[1]"
+                >
                     <source src="https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_30fps.mp4" type="video/mp4" />
                 </video>
-                <Image src={imageUrl} alt="India travel" fill priority className="object-cover -z-10" />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/45 to-black/85" />
+
+                {/* MMT-style navy blue gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#0A2752]/75 via-[#0f3d7a]/35 to-[#0A2752]/80 z-[2]" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0A2752]/50 via-transparent to-[#0A2752]/25 z-[2]" />
+
+
+                {/* Slide dots — bottom center */}
+                <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-[3] flex gap-2">
+                    {HERO_SLIDES.map((_, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => { setPrevSlide(slideIndex); setSlideIndex(idx); }}
+                            aria-label={`Go to slide ${idx + 1}`}
+                            className={`h-1.5 rounded-full transition-all duration-500 ${
+                                idx === slideIndex
+                                    ? 'w-8 bg-accent shadow-[0_0_8px_rgba(196,167,125,0.8)]'
+                                    : 'w-2 bg-white/40 hover:bg-white/70'
+                            }`}
+                        />
+                    ))}
+                </div>
             </div>
 
             {/* Mobile ad strip */}
@@ -355,11 +475,11 @@ export default function Hero({ content, stats }: HeroProps) {
             )}
 
             {/* Main content */}
-            <div className="relative z-10 flex flex-col justify-center flex-1 px-4 sm:px-6 lg:px-8 pt-28 sm:pt-24 pb-10">
-                <div className="max-w-7xl mx-auto w-full">
+            <div className="relative z-10 flex flex-col justify-center flex-1 px-4 sm:px-6 lg:px-8 pt-24 sm:pt-20 pb-8">
+                <div className="max-w-5xl mx-auto w-full">
 
-                    {/* Visitor / Currency toggle */}
-                    <div className="flex justify-end mb-5">
+                    {/* Visitor / Currency toggle — top right (hidden on mobile: ad strip overlaps) */}
+                    <div className="hidden sm:flex justify-end mb-4">
                         <div className="flex items-center gap-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full p-1">
                             <button onClick={() => chooseVisitor('indian')}
                                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${visitor === 'indian' ? 'bg-white text-gray-900' : 'text-white/70 hover:text-white'}`}>
@@ -375,46 +495,53 @@ export default function Hero({ content, stats }: HeroProps) {
                         </div>
                     </div>
 
-                    {/* 2-column: left=content+search, right=ad */}
-                    <div className="grid lg:grid-cols-[1fr_300px] gap-8 items-start">
+                    {/* Headline — centered */}
+                    <div className="text-center mb-6">
+                        <p className="text-accent text-xs uppercase tracking-[0.35em] font-bold mb-2 drop-shadow">
+                            {content?.eyebrow || '⭐ Rated 4.9 on Google · 25,000+ Trips Booked'}
+                        </p>
+                        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 drop-shadow-lg">
+                            {content?.title
+                                ? <span className="text-white">{content.title}</span>
+                                : <>
+                                    <span className="text-white">Explore India &amp; Beyond</span>
+                                    <br />
+                                    <span className="text-gold-shimmer italic">Trips From ₹9,999</span>
+                                  </>
+                            }
+                        </h1>
+                        <p className="text-white/70 text-sm sm:text-base max-w-2xl mx-auto drop-shadow">
+                            {content?.subtitle || 'Goa · Kashmir · Dubai · Bali · Singapore · Thailand — Book in 2 minutes, pay ₹5,000 to confirm.'}
+                        </p>
+                    </div>
 
-                        {/* LEFT */}
-                        <div>
-                            {/* Headline */}
-                            <div className="mb-6">
-                                <p className="text-white/70 text-xs uppercase tracking-[0.3em] font-semibold mb-3">
-                                    {content?.eyebrow || '⭐ Rated 4.9 on Google · 25,000+ Trips Booked'}
-                                </p>
-                                <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-4">
-                                    {content?.title ? content.title : <>International Trips<br /><span className="italic text-white/70">Starting ₹9,999</span></>}
-                                </h1>
-                                <p className="text-white/70 text-base sm:text-lg max-w-xl">
-                                    {content?.subtitle || 'Goa · Kashmir · Dubai · Bali · Singapore · Thailand — Book in 2 minutes, pay ₹5,000 to confirm.'}
-                                </p>
-                            </div>
+                    {/* ── MMT-style Search Widget ── */}
+                    <div className="bg-white rounded-3xl shadow-[0_8px_40px_rgba(0,0,0,0.35)] overflow-visible max-w-4xl mx-auto" style={{ colorScheme: 'light' }}>
+                        {/* Tab bar */}
+                        <div className="flex rounded-t-3xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f2744 0%, #1a3c5e 100%)' }}>
+                            {[
+                                { id: 'trips',   label: 'Holiday Packages', short: 'Holidays', icon: Compass },
+                                { id: 'flights', label: 'Flights',           short: 'Flights',  icon: Plane   },
+                                { id: 'hotels',  label: 'Hotels',            short: 'Hotels',   icon: Hotel   },
+                            ].map(tab => {
+                                const Icon = tab.icon;
+                                const isActive = activeTab === tab.id;
+                                return (
+                                    <button key={tab.id} onClick={() => { setActiveTab(tab.id); setFlightResults(null); }}
+                                        className={`flex items-center gap-2 px-5 py-4 text-sm font-bold transition-all flex-1 justify-center border-b-[3px] ${
+                                            isActive
+                                                ? 'bg-white text-[#008cff] border-[#008cff]'
+                                                : 'text-white/70 border-transparent hover:text-white hover:bg-white/10'
+                                        }`}>
+                                        <Icon size={17} />
+                                        <span className="hidden sm:inline">{tab.label}</span>
+                                        <span className="sm:hidden">{tab.short}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
 
-                            {/* Search Widget */}
-                            <div className="bg-white rounded-2xl shadow-2xl overflow-visible">
-                                {/* Tabs */}
-                                <div className="flex border-b border-gray-100 rounded-t-2xl overflow-hidden">
-                                    {[
-                                        { id: 'trips', label: 'Tour Packages', short: 'Tours', icon: Compass },
-                                        { id: 'flights', label: 'Flights', short: 'Flights', icon: Plane },
-                                        { id: 'hotels', label: 'Hotels', short: 'Hotels', icon: Hotel },
-                                    ].map(tab => {
-                                        const Icon = tab.icon;
-                                        return (
-                                            <button key={tab.id} onClick={() => { setActiveTab(tab.id); setFlightResults(null); }}
-                                                className={`flex items-center gap-2 px-4 py-3.5 text-sm font-semibold transition-all flex-1 justify-center ${activeTab === tab.id ? 'text-gray-900 border-b-2 border-gray-900 bg-gray-50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
-                                                <Icon size={15} />
-                                                <span className="hidden sm:inline">{tab.label}</span>
-                                                <span className="sm:hidden">{tab.short}</span>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-
-                                <div className="p-4">
+                        <div className="p-5 sm:p-6 bg-white text-gray-900">
                                     {/* ── FLIGHTS TAB ── */}
                                     {activeTab === 'flights' && (
                                         <>
@@ -460,7 +587,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                         <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                         <input type="date" value={flightDate} min={todayStr}
                                                             onChange={e => { setFlightDate(e.target.value); setFlightResults(null); }}
-                                                            className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
+                                                            className="w-full pl-8 pr-2 py-4 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
                                                     </div>
                                                 </div>
 
@@ -472,7 +599,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                             <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                             <input type="date" value={flightReturn} min={flightDate || todayStr}
                                                                 onChange={e => setFlightReturn(e.target.value)}
-                                                                className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
+                                                                className="w-full pl-8 pr-2 py-4 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
                                                         </div>
                                                     </div>
                                                 )}
@@ -481,7 +608,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 <div className="relative sm:w-32 shrink-0" ref={guestRef}>
                                                     <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">Passengers</label>
                                                     <button onClick={() => setShowGuestPicker(!showGuestPicker)}
-                                                        className="w-full flex items-center pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm text-left hover:border-gray-300 transition-colors">
+                                                        className="w-full flex items-center pl-8 pr-3 py-4 border border-gray-200 rounded-xl text-sm text-left hover:border-gray-300 transition-colors">
                                                         <Users size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                         <span className="text-gray-700">{flightPax} Pax</span>
                                                         <ChevronDown size={12} className="ml-auto text-gray-400" />
@@ -501,7 +628,7 @@ export default function Hero({ content, stats }: HeroProps) {
 
                                                 {/* Search */}
                                                 <button onClick={handleFlightSearch} disabled={!flightDate || flightLoading}
-                                                    className="flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all shadow-lg shadow-gray-900/20 active:scale-95 shrink-0 whitespace-nowrap">
+                                                    className="flex items-center justify-center gap-2 px-5 py-4 bg-[#008cff] hover:bg-[#0077dd] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 active:scale-95 shrink-0 whitespace-nowrap">
                                                     {flightLoading
                                                         ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Searching...</>
                                                         : <><Search size={16} /> Search</>
@@ -619,13 +746,16 @@ export default function Hero({ content, stats }: HeroProps) {
                                     {/* ── TOURS TAB ── */}
                                     {activeTab === 'trips' && (
                                         <>
-                                            {/* Single Google-style search */}
-                                            <div className="flex gap-2">
-                                                <div className="relative flex-1">
-                                                    <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                            {/* MMT-style: Destination + Date + Nights + Travellers */}
+                                            <div className="flex flex-col sm:flex-row gap-2">
+
+                                                {/* Going To — destination with suggestions */}
+                                                <div className="relative flex-1 min-w-0">
+                                                    <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">Going To</label>
+                                                    <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#008cff] pointer-events-none z-10" />
                                                     <input
                                                         type="text"
-                                                        placeholder="Search trips, destinations, or experiences…"
+                                                        placeholder="Destination, city or country"
                                                         value={tourQuery}
                                                         autoComplete="off"
                                                         onChange={e => {
@@ -641,14 +771,14 @@ export default function Hero({ content, stats }: HeroProps) {
                                                         onFocus={() => { if (tourQuery.length > 0) setShowTourSug(true); }}
                                                         onBlur={() => setTimeout(() => setShowTourSug(false), 150)}
                                                         onKeyDown={e => { if (e.key === 'Enter') handleTourSearch(); }}
-                                                        className="w-full pl-9 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                                                        className="w-full pl-9 pr-3 py-4 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#008cff] focus:ring-2 focus:ring-blue-100 transition-colors"
                                                     />
                                                     {showTourSug && (
                                                         <ul className="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
                                                             {tourSuggestions.map(s => (
                                                                 <li key={s} onMouseDown={() => { setTourQuery(s); setShowTourSug(false); setTimeout(handleTourSearch, 50); }}
-                                                                    className="flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-gray-50 cursor-pointer text-gray-800">
-                                                                    <MapPin size={11} className="text-gray-400 shrink-0" />{s}
+                                                                    className="flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-blue-50 cursor-pointer text-gray-800">
+                                                                    <MapPin size={11} className="text-[#008cff] shrink-0" />{s}
                                                                 </li>
                                                             ))}
                                                             {tourSuggestions.length === 0 && tourQuery.length > 0 && (
@@ -666,18 +796,64 @@ export default function Hero({ content, stats }: HeroProps) {
                                                         </ul>
                                                     )}
                                                 </div>
+
+                                                {/* Departure Date */}
+                                                <div className="relative sm:w-38">
+                                                    <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">Departure</label>
+                                                    <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#008cff] pointer-events-none" />
+                                                    <input type="date" value={tourDate} min={todayStr}
+                                                        onChange={e => setTourDate(e.target.value)}
+                                                        className="w-full pl-9 pr-2 py-4 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#008cff] focus:ring-2 focus:ring-blue-100 transition-colors" />
+                                                </div>
+
+                                                {/* Nights */}
+                                                <div className="relative sm:w-32">
+                                                    <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">Nights</label>
+                                                    <Clock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#008cff] pointer-events-none" />
+                                                    <select value={tourNights} onChange={e => setTourNights(e.target.value)}
+                                                        className="w-full pl-9 pr-3 py-4 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#008cff] focus:ring-2 focus:ring-blue-100 appearance-none bg-white transition-colors">
+                                                        {[2,3,4,5,6,7,8,9,10,12,14].map(n => (
+                                                            <option key={n} value={n}>{n} Nights</option>
+                                                        ))}
+                                                    </select>
+                                                    <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                                </div>
+
+                                                {/* Travellers */}
+                                                <div className="relative sm:w-34 shrink-0" ref={tourGuestRef}>
+                                                    <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">Travellers</label>
+                                                    <Users size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#008cff] pointer-events-none" />
+                                                    <button type="button" onClick={() => setShowTourGuestPicker(!showTourGuestPicker)}
+                                                        className="w-full flex items-center pl-9 pr-3 py-4 border border-gray-200 rounded-xl text-sm font-medium text-left hover:border-[#008cff] transition-colors">
+                                                        <span className="text-gray-800">{tourTravellers} {tourTravellers === 1 ? 'Person' : 'People'}</span>
+                                                        <ChevronDown size={12} className="ml-auto text-gray-400 shrink-0" />
+                                                    </button>
+                                                    {showTourGuestPicker && (
+                                                        <div className="absolute top-full mt-2 left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-4 z-50 w-44">
+                                                            <p className="text-xs text-gray-500 mb-3 font-semibold uppercase tracking-wide">Travellers</p>
+                                                            <div className="flex items-center justify-between gap-3">
+                                                                <button onClick={() => setTourTravellers(Math.max(1, tourTravellers - 1))} className="w-9 h-9 rounded-full border-2 border-gray-200 hover:border-[#008cff] flex items-center justify-center text-lg font-bold transition-colors">−</button>
+                                                                <span className="text-xl font-bold w-8 text-center text-gray-900">{tourTravellers}</span>
+                                                                <button onClick={() => setTourTravellers(Math.min(20, tourTravellers + 1))} className="w-9 h-9 rounded-full border-2 border-gray-200 hover:border-[#008cff] flex items-center justify-center text-lg font-bold transition-colors">+</button>
+                                                            </div>
+                                                            <button onClick={() => setShowTourGuestPicker(false)} className="mt-4 w-full py-2 bg-[#008cff] text-white text-xs font-bold rounded-lg hover:bg-[#0077dd] transition-colors">Done</button>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Search button */}
                                                 <button onClick={handleTourSearch}
-                                                    className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-xl transition-all shadow-lg shadow-gray-900/20 active:scale-95 shrink-0">
-                                                    <Search size={16} /><span>Search</span>
+                                                    className="flex items-center justify-center gap-2 px-6 py-4 bg-[#008cff] hover:bg-[#0077dd] text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 active:scale-95 shrink-0 text-base">
+                                                    <Search size={18} /><span className="hidden sm:inline">Search</span><span className="sm:hidden">Search Trips</span>
                                                 </button>
                                             </div>
 
-                                            {/* Trending */}
-                                            <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-gray-100">
-                                                <span className="text-xs text-gray-400 font-medium shrink-0">Trending:</span>
+                                            {/* Trending chips */}
+                                            <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+                                                <span className="text-xs text-gray-400 font-semibold shrink-0 uppercase tracking-wide">Trending:</span>
                                                 {POPULAR_DESTINATIONS.map(dest => (
                                                     <Link key={dest.label} href={dest.href}
-                                                        className="flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-xs text-gray-600 font-medium transition-colors">
+                                                        className="flex items-center gap-1 px-3 py-1.5 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-200 rounded-full text-xs text-gray-700 font-medium transition-all">
                                                         <span>{dest.icon}</span><span>{dest.label}</span>
                                                     </Link>
                                                 ))}
@@ -694,7 +870,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                     <MapPin size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                     <input type="text" placeholder="City or hotel name" value={toCity}
                                                         onChange={e => setToCity(e.target.value)}
-                                                        className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100" />
+                                                        className="w-full pl-8 pr-3 py-4 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100" />
                                                 </div>
                                             </div>
                                             <div className="relative sm:w-36">
@@ -702,7 +878,7 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 <div className="relative">
                                                     <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                     <input type="date" value={checkIn} min={todayStr} onChange={e => setCheckIn(e.target.value)}
-                                                        className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
+                                                        className="w-full pl-8 pr-2 py-4 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
                                                 </div>
                                             </div>
                                             <div className="relative sm:w-36">
@@ -710,13 +886,13 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 <div className="relative">
                                                     <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                     <input type="date" value={checkOut} min={checkIn || todayStr} onChange={e => setCheckOut(e.target.value)}
-                                                        className="w-full pl-8 pr-2 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
+                                                        className="w-full pl-8 pr-2 py-4 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400" />
                                                 </div>
                                             </div>
                                             <div className="relative sm:w-28 shrink-0">
                                                 <label className="absolute -top-2 left-3 bg-white px-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wide z-10">Guests</label>
                                                 <button onClick={() => setShowGuestPicker(!showGuestPicker)}
-                                                    className="w-full flex items-center pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm text-left hover:border-gray-300">
+                                                    className="w-full flex items-center pl-8 pr-3 py-4 border border-gray-200 rounded-xl text-sm text-left hover:border-gray-300">
                                                     <Users size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                                     <span className="text-gray-700">{guests} {guests > 1 ? 'Guests' : 'Guest'}</span>
                                                     <ChevronDown size={12} className="ml-auto text-gray-400" />
@@ -733,66 +909,29 @@ export default function Hero({ content, stats }: HeroProps) {
                                                 )}
                                             </div>
                                             <button onClick={handleHotelSearch}
-                                                className="flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-xl transition-all shadow-lg shadow-gray-900/20 active:scale-95 shrink-0">
+                                                className="flex items-center justify-center gap-2 px-5 py-4 bg-[#008cff] hover:bg-[#0077dd] text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 active:scale-95 shrink-0">
                                                 <Search size={16} /><span>Search</span>
                                             </button>
                                         </div>
                                     )}
-                                </div>
-                            </div>
 
-                            {/* Trust bar */}
-                            <div className="mt-6 flex flex-wrap gap-5 sm:gap-8">
-                                <div className="flex items-center gap-2 text-white/80 text-sm">
-                                    <Star size={15} className="text-amber-400 fill-amber-400" />
-                                    <span><strong className="text-white">4.9/5</strong> · 2,400+ reviews</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-white/80 text-sm">
-                                    <Shield size={15} className="text-green-400" />
-                                    <span><strong className="text-white">Secure</strong> · Licensed & insured</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-white/80 text-sm">
-                                    <Clock size={15} className="text-blue-400" />
-                                    <span><strong className="text-white">1-hour</strong> response guarantee</span>
-                                </div>
-                            </div>
                         </div>
+                    </div>
 
-                        {/* RIGHT: Ad card */}
-                        {currentAd && !flightResults && (
-                            <div className="hidden lg:block self-center">
-                                <Link href={visitor === 'indian' && (currentAd.redirectUrl === '/tours' || currentAd.redirectUrl?.startsWith('/tours')) ? '/trips' : currentAd.redirectUrl}
-                                    className="block relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden shadow-2xl hover:scale-[1.02] transition-all duration-300">
-                                    {currentAd.discountText && (
-                                        <div className="absolute top-3 right-3 z-10">
-                                            <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg -rotate-2">
-                                                🔥 {currentAd.discountText}
-                                            </div>
-                                        </div>
-                                    )}
-                                    <div className="relative h-44 overflow-hidden">
-                                        <Image src={currentAd.imageUrl || 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=600&q=80'}
-                                            alt={currentAd.title} fill className="object-cover"
-                                            onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=600&q=80'; }} />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                    </div>
-                                    <div className="p-4">
-                                        <h3 className="font-semibold text-white text-base mb-1">{currentAd.title}</h3>
-                                        <p className="text-sm text-white/70 line-clamp-2">{currentAd.description}</p>
-                                        <div className="mt-3 py-2 bg-gray-900 text-white text-xs font-bold uppercase tracking-widest text-center rounded-lg hover:bg-gray-800 transition-colors">Book Now</div>
-                                        {ads.length > 1 && (
-                                            <div className="flex gap-1 justify-center mt-3">
-                                                {ads.map((_, i) => (
-                                                    <button key={i} onClick={e => { e.preventDefault(); setAdIndex(i); }}
-                                                        className={`w-1.5 h-1.5 rounded-full transition-colors ${i === adIndex ? 'bg-white' : 'bg-white/30'}`} />
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="absolute inset-0 rounded-2xl border border-white/10 pointer-events-none" />
-                                </Link>
-                            </div>
-                        )}
+                    {/* Trust bar - on dark hero background */}
+                    <div className="mt-5 flex flex-wrap items-center justify-center gap-5 sm:gap-8">
+                        <div className="flex items-center gap-2 text-white/80 text-sm">
+                            <Star size={15} className="text-amber-400 fill-amber-400" />
+                            <span><strong className="text-white">4.9/5</strong> · 2,400+ reviews</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-white/80 text-sm">
+                            <Shield size={15} className="text-green-400" />
+                            <span><strong className="text-white">Secure</strong> · Licensed &amp; insured</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-white/80 text-sm">
+                            <Clock size={15} className="text-blue-400" />
+                            <span><strong className="text-white">1-hour</strong> response guarantee</span>
+                        </div>
                     </div>
                 </div>
             </div>
