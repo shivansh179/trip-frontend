@@ -32,7 +32,7 @@ const VoucherSchema = new Schema<IVoucher>(
     usedAt:    { type: Date },
     createdBy: { type: String, enum: ['admin', 'client'], default: 'admin' },
     txnid:       { type: String },
-    note:        { type: String, maxlength: 500 },
+    note:        { type: String, maxlength: 5000 },
     destination: { type: String, trim: true },
     pdfUrl:      { type: String, trim: true },
   },

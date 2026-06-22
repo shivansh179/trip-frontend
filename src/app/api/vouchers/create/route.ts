@@ -56,8 +56,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, voucher: { code: voucher.code, amount: voucher.amount, validUntil: voucher.validUntil } });
-  } catch (err) {
-    console.error('[vouchers/create]', err);
-    return NextResponse.json({ error: 'Failed to create voucher' }, { status: 500 });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[vouchers/create]', msg);
+    return NextResponse.json({ error: msg || 'Failed to create voucher' }, { status: 500 });
   }
 }
