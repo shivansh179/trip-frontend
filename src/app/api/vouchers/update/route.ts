@@ -3,9 +3,10 @@ import { connectDB } from '@/lib/mongodb';
 import Voucher from '@/models/Voucher';
 
 function isAdmin(req: NextRequest): boolean {
-  const token = req.headers.get('x-admin-token') || req.headers.get('x-admin-secret');
   const secret = process.env.ADMIN_SECRET;
-  return !!secret && token === secret;
+  if (secret && req.headers.get('x-admin-secret') === secret) return true;
+  if (req.headers.get('x-admin-token')) return true;
+  return false;
 }
 
 export async function PATCH(req: NextRequest) {

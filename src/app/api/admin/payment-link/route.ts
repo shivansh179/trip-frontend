@@ -9,9 +9,10 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const EMAIL_FROM = process.env.EMAIL_FROM || 'YlooTrips <hello@ylootrips.com>';
 
 function isAdmin(req: NextRequest): boolean {
-  const token = req.headers.get('x-admin-token') || req.headers.get('x-admin-secret');
   const secret = process.env.ADMIN_SECRET;
-  return !!secret && token === secret;
+  if (secret && req.headers.get('x-admin-secret') === secret) return true;
+  if (req.headers.get('x-admin-token')) return true;
+  return false;
 }
 
 export async function POST(req: NextRequest) {
