@@ -15,6 +15,8 @@ import {
 import PageHero from '@/components/PageHero';
 import { useVisitor } from '@/context/VisitorContext';
 import { useWallet } from '@/context/WalletContext';
+import { useCurrency } from '@/context/CurrencyContext';
+import { formatPriceWithCurrency } from '@/lib/utils';
 import PaymentOptions from '@/components/PaymentOptions';
 import PromoCodeInput from '@/components/PromoCodeInput';
 
@@ -968,6 +970,8 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
   const [cbSent, setCbSent] = useState(false);
   const [cbSending, setCbSending] = useState(false);
   const { balance: walletBalance, addCashback, deductBalance } = useWallet();
+  const { currency } = useCurrency();
+  const fp = (n: number) => formatPriceWithCurrency(n, currency);
 
   // Lock body scroll on mobile when drawer is open
   useEffect(() => {
@@ -1028,7 +1032,7 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
         body: JSON.stringify({
           name: cbName, email: 'not-provided@ylootrips.com', phone: cbPhone,
           destination: trip.title,
-          message: `Callback request for: ${trip.title} (${trip.duration}, ₹${trip.priceINR.toLocaleString('en-IN')}/person). Guests: ${guests}. Client wants EMI options.`,
+          message: `Callback request for: ${trip.title} (${trip.duration}, ₹${trip.priceINR.toLocaleString('en-IN')}/person). Guests: ${guests}. Client wants EMI options.`, // always INR in messages
         }),
       });
     } catch { /* non-fatal */ }
@@ -1044,7 +1048,7 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
         <div className="flex items-start justify-between px-5 py-4 border-b border-gray-100">
           <div>
             <h3 className="font-bold text-gray-900 text-base leading-tight">{trip.title}</h3>
-            <p className="text-xs text-gray-500 mt-0.5">{trip.location} · {trip.duration} · ₹{trip.priceINR.toLocaleString('en-IN')}/person</p>
+            <p className="text-xs text-gray-500 mt-0.5">{trip.location} · {trip.duration} · {fp(trip.priceINR)}/person</p>
           </div>
           <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500 shrink-0 ml-3"><X size={18} /></button>
         </div>
@@ -1095,7 +1099,7 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-gray-900">WanderLoot 💸</p>
-                      <p className="text-xs text-gray-600">Balance: ₹{walletBalance.toLocaleString('en-IN')} · Use up to ₹{maxWalletUsable.toLocaleString('en-IN')}</p>
+                      <p className="text-xs text-gray-600">Balance: {fp(walletBalance)} · Use up to {fp(maxWalletUsable)}</p>
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input type="checkbox" checked={applyWallet} onChange={e => { setApplyWallet(e.target.checked); setPayStep('options'); setChargeNow(null); }} className="w-4 h-4" />
@@ -1105,7 +1109,7 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
                   {applyWallet && walletDeduction > 0 && (
                     <div className="mt-2 pt-2 border-t border-gray-200 flex items-center justify-between text-xs">
                       <span className="text-gray-700">💰 WanderLoot applied</span>
-                      <span className="font-semibold text-green-700">−₹{walletDeduction.toLocaleString('en-IN')}</span>
+                      <span className="font-semibold text-green-700">−{fp(walletDeduction)}</span>
                     </div>
                   )}
                 </div>
@@ -1127,7 +1131,7 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
                       <p className="text-xs font-bold text-green-800">
                         {paymentMode === 'partial' ? '20% Advance Selected' : paymentMode === 'emi' ? 'EMI Selected' : 'Full Payment Selected'}
                       </p>
-                      <p className="text-[11px] text-green-600 mt-0.5">Paying now: ₹{(chargeNow ?? finalPrice).toLocaleString('en-IN')}</p>
+                      <p className="text-[11px] text-green-600 mt-0.5">Paying now: {fp(chargeNow ?? finalPrice)}</p>
                     </div>
                     <button onClick={() => { setPayStep('options'); setPayError(''); }} className="text-xs text-green-700 underline">Change</button>
                   </div>
@@ -1143,7 +1147,7 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
                     <button type="submit" disabled={paying}
                       className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white font-bold text-sm py-3.5 rounded-xl hover:bg-gray-800 disabled:opacity-60 transition-colors">
                       {paying ? <Loader2 size={14} className="animate-spin"/> : <CreditCard size={14}/>}
-                      {paying ? 'Redirecting…' : `Pay ₹${(chargeNow ?? finalPrice).toLocaleString('en-IN')} via Easebuzz`}
+                      {paying ? 'Redirecting…' : `Pay ${fp(chargeNow ?? finalPrice)} via Easebuzz`}
                     </button>
                     <p className="text-[10px] text-gray-400 text-center">🔒 Secured by Easebuzz · No hidden charges · Full refund policy</p>
                   </form>
@@ -1213,6 +1217,8 @@ function DomesticBookingDrawer({ trip, onClose, initialTab = 'pay' }: { trip: Do
 
 // ── Trip Card ─────────────────────────────────────────────────────────────────
 function TripDetailsModal({ trip, onClose, onBook }: { trip: DomesticTrip; onClose: () => void; onBook: () => void }) {
+  const { currency } = useCurrency();
+  const fp = (n: number) => formatPriceWithCurrency(n, currency);
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -1235,8 +1241,8 @@ function TripDetailsModal({ trip, onClose, onBook }: { trip: DomesticTrip; onClo
             <h2 className="text-white font-display text-xl leading-tight">{trip.title}</h2>
           </div>
           <div className="absolute bottom-3 right-4 text-right">
-            <p className="text-white/60 text-xs line-through">₹{trip.originalPriceINR.toLocaleString('en-IN')}</p>
-            <p className="text-white font-bold text-lg">₹{trip.priceINR.toLocaleString('en-IN')}<span className="text-xs font-normal">/person</span></p>
+            <p className="text-white/60 text-xs line-through">{fp(trip.originalPriceINR)}</p>
+            <p className="text-white font-bold text-lg">{fp(trip.priceINR)}<span className="text-xs font-normal">/person</span></p>
           </div>
         </div>
 
@@ -1307,6 +1313,8 @@ function TripDetailsModal({ trip, onClose, onBook }: { trip: DomesticTrip; onClo
 
 function TripCard({ trip }: { trip: DomesticTrip }) {
   const [imgSrc, setImgSrc] = useState(trip.image);
+  const { currency } = useCurrency();
+  const fp = (n: number) => formatPriceWithCurrency(n, currency);
   const discount = Math.round(((trip.originalPriceINR - trip.priceINR) / trip.originalPriceINR) * 100);
 
   return (
@@ -1332,8 +1340,8 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
         )}
         <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
           <div>
-            <p className="text-white/70 text-[11px] line-through">₹{trip.originalPriceINR.toLocaleString('en-IN')}</p>
-            <p className="text-white font-display text-xl">₹{trip.priceINR.toLocaleString('en-IN')}<span className="text-sm font-normal">/person</span></p>
+            <p className="text-white/70 text-[11px] line-through">{fp(trip.originalPriceINR)}</p>
+            <p className="text-white font-display text-xl">{fp(trip.priceINR)}<span className="text-sm font-normal">/person</span></p>
           </div>
           {discount > 0 && (
             <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">{discount}% OFF</span>
@@ -1377,7 +1385,7 @@ function TripCard({ trip }: { trip: DomesticTrip }) {
         {/* Trust badges strip */}
         <div className="flex gap-1.5 flex-wrap mb-3">
           <span className="text-[10px] bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-full font-semibold">
-            💳 EMI from ₹{Math.ceil(trip.priceINR / 3).toLocaleString('en-IN')}/mo
+            💳 EMI from {fp(Math.ceil(trip.priceINR / 3))}/mo
           </span>
           <span className="text-[10px] bg-green-50 text-green-700 border border-green-100 px-2 py-0.5 rounded-full font-semibold">
             🔒 Secure Easebuzz

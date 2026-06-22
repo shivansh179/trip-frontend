@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { TourJsonLd, BreadcrumbJsonLd, FaqJsonLd } from '@/components/JsonLd';
 import { useWallet } from '@/context/WalletContext';
+import { useCurrency } from '@/context/CurrencyContext';
+import { formatPriceWithCurrency } from '@/lib/utils';
 import PromoCodeInput from '@/components/PromoCodeInput';
 
 /* ─────────────────────────────────────────────────────────────────── */
@@ -141,6 +143,9 @@ function PackageBookingDrawer({ pkg, onClose }: { pkg: PackageData; onClose: () 
   const [promoCode, setPromoCode] = useState<string | null>(null);
   const [promoDiscount, setPromoDiscount] = useState(0);
 
+  const { currency } = useCurrency();
+  const fp = (n: number) => formatPriceWithCurrency(n, currency);
+
   const totalPrice = pkg.priceINR * Number(guests || 2);
   const finalPrice = Math.max(0, totalPrice - promoDiscount);
 
@@ -262,18 +267,18 @@ function PackageBookingDrawer({ pkg, onClose }: { pkg: PackageData; onClose: () 
               {/* Price summary */}
               <div className="bg-gray-50 rounded-xl p-3 space-y-1.5">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">₹{pkg.priceINR.toLocaleString('en-IN')} × {guests} guests</span>
-                  <span className="font-medium">₹{totalPrice.toLocaleString('en-IN')}</span>
+                  <span className="text-gray-500">{fp(pkg.priceINR)} × {guests} guests</span>
+                  <span className="font-medium">{fp(totalPrice)}</span>
                 </div>
                 {promoDiscount > 0 && (
                   <div className="flex justify-between text-sm text-green-700">
                     <span>Promo discount</span>
-                    <span>−₹{promoDiscount.toLocaleString('en-IN')}</span>
+                    <span>−{fp(promoDiscount)}</span>
                   </div>
                 )}
                 <div className="border-t border-gray-200 pt-1.5 flex justify-between font-bold text-gray-900">
                   <span>Total</span>
-                  <span>₹{finalPrice.toLocaleString('en-IN')}</span>
+                  <span>{fp(finalPrice)}</span>
                 </div>
               </div>
 
@@ -293,7 +298,7 @@ function PackageBookingDrawer({ pkg, onClose }: { pkg: PackageData; onClose: () 
                 <button type="submit" disabled={paying}
                   className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white font-bold text-sm py-4 rounded-xl hover:bg-gray-800 disabled:opacity-60 transition-colors">
                   {paying ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
-                  {paying ? 'Redirecting…' : `Pay ₹${finalPrice.toLocaleString('en-IN')} — Choose Payment`}
+                  {paying ? 'Redirecting…' : `Pay ${fp(finalPrice)} — Choose Payment`}
                 </button>
                 <p className="text-[10px] text-gray-400 text-center">🔒 UPI · Cards · Net Banking · EMI — all on next page</p>
               </form>
@@ -377,6 +382,8 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
   const [promoDiscount, setPromoDiscount] = useState(0);
   const [applyWallet, setApplyWallet] = useState(false);
   const { balance: walletBalance } = useWallet();
+  const { currency } = useCurrency();
+  const fp = (n: number) => formatPriceWithCurrency(n, currency);
   const slots = spotsLeft(pkg.slug);
   const live = viewers(pkg.slug);
   const total = pkg.priceINR * guests;
@@ -438,18 +445,20 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
         <div className="bg-gradient-to-r from-primary to-secondary px-6 py-5">
           <p className="text-white/60 text-[10px] uppercase tracking-widest mb-1">Starting from</p>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-3xl text-white">{fmt(pkg.priceINR)}</span>
+            <span className="font-display text-3xl text-white">{fp(pkg.priceINR)}</span>
             <span className="text-white/55 text-sm">/ person</span>
           </div>
           {pkg.originalPriceINR && (
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-white/40 text-xs line-through">{fmt(pkg.originalPriceINR)}</span>
+              <span className="text-white/40 text-xs line-through">{fp(pkg.originalPriceINR)}</span>
               <span className="bg-terracotta text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                 {Math.round((1 - pkg.priceINR / pkg.originalPriceINR) * 100)}% OFF
               </span>
             </div>
           )}
-          <p className="text-white/50 text-xs mt-1">≈ {fmtUSD(pkg.priceUSD)} for international travelers</p>
+          {currency === 'INR' && (
+            <p className="text-white/50 text-xs mt-1">≈ {fmtUSD(pkg.priceUSD)} for international travelers</p>
+          )}
         </div>
 
         {/* Step: Config (default) */}
@@ -494,19 +503,19 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
             {/* Price breakdown */}
             <div className="bg-cream/60 rounded-xl p-4 border border-primary/8 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-primary/55">{fmt(pkg.priceINR)} × {guests}</span>
-                <span className="font-medium">{fmt(total)}</span>
+                <span className="text-primary/55">{fp(pkg.priceINR)} × {guests}</span>
+                <span className="font-medium">{fp(total)}</span>
               </div>
               <div className="flex justify-between text-sm text-green-700">
                 <span>10% WanderLoot cashback</span>
-                <span>+{fmt(Math.ceil(total * 0.1))}</span>
+                <span>+{fp(Math.ceil(total * 0.1))}</span>
               </div>
               <div className="border-t border-primary/10 pt-2 flex justify-between font-semibold">
                 <span className="text-primary">Total</span>
-                <span className="font-display text-xl text-primary">{fmt(total)}</span>
+                <span className="font-display text-xl text-primary">{fp(total)}</span>
               </div>
               <div className="text-xs text-primary/40 text-right">
-                Advance: {fmt(deposit)} · Balance on arrival
+                Advance: {fp(deposit)} · Balance on arrival
               </div>
             </div>
 
@@ -514,7 +523,7 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
             <div className="flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-xl px-4 py-3">
               <TrendingDown className="w-4 h-4 text-violet-600 shrink-0" />
               <p className="text-xs text-violet-800">
-                <strong>No-cost EMI</strong> from <strong>{fmt(emi)}/mo</strong> for 6 months
+                <strong>No-cost EMI</strong> from <strong>{fp(emi)}/mo</strong> for 6 months
               </p>
             </div>
 
@@ -562,7 +571,7 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
                 ← Back
               </button>
               <span className="text-xs text-primary/40">·</span>
-              <span className="text-xs text-primary/60">{guests} {guests === 1 ? 'traveler' : 'travelers'} · {fmt(effectiveTotal)}</span>
+              <span className="text-xs text-primary/60">{guests} {guests === 1 ? 'traveler' : 'travelers'} · {fp(effectiveTotal)}</span>
             </div>
 
             {/* Promo code */}
@@ -580,7 +589,7 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-amber-900">WanderLoot 💸</p>
-                    <p className="text-xs text-amber-700">Balance: {fmt(walletBalance)} · Use up to {fmt(maxWalletUsable)}</p>
+                    <p className="text-xs text-amber-700">Balance: {fp(walletBalance)} · Use up to {fp(maxWalletUsable)}</p>
                   </div>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" checked={applyWallet} onChange={e => setApplyWallet(e.target.checked)} className="w-4 h-4 accent-amber-500" />
@@ -590,7 +599,7 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
                 {applyWallet && walletDeduction > 0 && (
                   <div className="mt-2 pt-2 border-t border-amber-200 flex items-center justify-between text-xs">
                     <span className="text-amber-800">💰 WanderLoot applied</span>
-                    <span className="font-semibold text-green-700">−{fmt(walletDeduction)}</span>
+                    <span className="font-semibold text-green-700">−{fp(walletDeduction)}</span>
                   </div>
                 )}
               </div>
@@ -611,7 +620,7 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
               <button type="submit" disabled={paying}
                 className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-cream font-bold text-sm py-4 rounded-xl disabled:opacity-60 transition-colors shadow-lg">
                 {paying ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
-                {paying ? 'Redirecting to Easebuzz…' : `Pay ₹${effectiveTotal.toLocaleString('en-IN')} — Choose Payment`}
+                {paying ? 'Redirecting to Easebuzz…' : `Pay ${fp(effectiveTotal)} — Choose Payment`}
               </button>
               <p className="text-[10px] text-gray-400 text-center">🔒 UPI · Cards · Net Banking · EMI — all on next page</p>
             </form>
@@ -660,11 +669,13 @@ function BookingSidebar({ pkg }: { pkg: PackageData }) {
 /*  Mobile Sticky Bar                                                  */
 /* ─────────────────────────────────────────────────────────────────── */
 function MobileBar({ pkg, onOpenDrawer }: { pkg: PackageData; onOpenDrawer: () => void }) {
+  const { currency } = useCurrency();
+  const fp = (n: number) => formatPriceWithCurrency(n, currency);
   return (
     <div className="lg:hidden fixed bottom-16 left-0 right-0 z-[60] bg-white border-t border-primary/10 shadow-2xl px-4 py-3 flex items-center gap-3">
       <div className="flex-1 min-w-0">
         <p className="text-[10px] text-primary/50 uppercase tracking-wider">Starting from</p>
-        <p className="font-display text-xl text-primary leading-none">{fmt(pkg.priceINR)}<span className="text-sm font-sans text-primary/40"> /person</span></p>
+        <p className="font-display text-xl text-primary leading-none">{fp(pkg.priceINR)}<span className="text-sm font-sans text-primary/40"> /person</span></p>
       </div>
       <a
         href={`https://wa.me/918427831127?text=${encodeURIComponent(pkg.whatsappMsg)}`}
@@ -691,6 +702,8 @@ export default function PackagePageLayout({ pkg }: { pkg: PackageData }) {
   const [openDay, setOpenDay] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { currency } = useCurrency();
+  const fp = (n: number) => formatPriceWithCurrency(n, currency);
 
   const slots = spotsLeft(pkg.slug);
 
@@ -766,7 +779,7 @@ export default function PackagePageLayout({ pkg }: { pkg: PackageData }) {
       <div className="lg:hidden bg-white border-b border-primary/10 sticky top-0 z-30 shadow-sm px-4 py-3 flex items-center justify-between gap-3">
         <div>
           <p className="text-[10px] text-primary/50 uppercase tracking-wider">Starting from</p>
-          <p className="font-display text-xl text-primary">{fmt(pkg.priceINR)}<span className="text-xs font-sans text-primary/40"> /person</span></p>
+          <p className="font-display text-xl text-primary">{fp(pkg.priceINR)}<span className="text-xs font-sans text-primary/40"> /person</span></p>
         </div>
         <div className="flex gap-2">
           <a
@@ -980,7 +993,7 @@ export default function PackagePageLayout({ pkg }: { pkg: PackageData }) {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <button onClick={() => setDrawerOpen(true)} className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-accent-warm text-primary px-8 py-3.5 text-sm font-bold uppercase tracking-widest rounded-xl transition-all">
-                  <Zap className="w-4 h-4" /> Book Now — {fmt(pkg.priceINR)}/person
+                  <Zap className="w-4 h-4" /> Book Now — {fp(pkg.priceINR)}/person
                 </button>
                 <a
                   href={`https://wa.me/918427831127?text=${encodeURIComponent(pkg.whatsappMsg)}`}
@@ -1029,7 +1042,7 @@ export default function PackagePageLayout({ pkg }: { pkg: PackageData }) {
                       </div>
                       <div className="p-4">
                         <h3 className="text-sm font-semibold text-primary group-hover:text-secondary transition-colors line-clamp-2">{r.title}</h3>
-                        <p className="text-xs text-secondary mt-1 font-medium">From {fmt(r.priceINR)}/person</p>
+                        <p className="text-xs text-secondary mt-1 font-medium">From {fp(r.priceINR)}/person</p>
                       </div>
                     </Link>
                   ))}
