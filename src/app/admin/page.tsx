@@ -9,7 +9,7 @@ import {
     MessageSquare, BookOpen, Settings, LogOut, ChevronRight,
     Save, RefreshCw, Plus, Trash2, Eye, ChevronDown, ChevronUp,
     ShoppingBag, CheckCircle, XCircle, Clock, Mail, User, Calendar, Phone,
-    Megaphone, Star, Activity, Upload, Copy, Link2, X, ExternalLink, Zap, Tag
+    Megaphone, Star, Activity, Upload, Copy, Link2, X, ExternalLink, Zap, Tag, Gift
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import ImagePreview from '@/components/ImagePreview';
@@ -80,6 +80,14 @@ export default function AdminDashboard() {
     const [uploadFolder, setUploadFolder] = useState('admin');
     const [uploadedImageUrl, setUploadedImageUrl] = useState('');
     const [message, setMessage] = useState({ type: '', text: '' });
+
+    // Vouchers
+    const [vouchers, setVouchers] = useState<Record<string, unknown>[]>([]);
+    const [voucherForm, setVoucherForm] = useState({ amount: '', validDays: '365', name: '', email: '', phone: '', note: '' });
+    const [voucherSaving, setVoucherSaving] = useState(false);
+    const [voucherMsg, setVoucherMsg] = useState({ type: '', text: '' });
+    const [voucherCreated, setVoucherCreated] = useState<{ code: string; amount: number; validUntil: string } | null>(null);
+    const [voucherCopied, setVoucherCopied] = useState(false);
 
     // Custom Trip Creator
     const [itineraryMode, setItineraryMode] = useState<'builder' | 'paste'>('builder');
@@ -1031,6 +1039,7 @@ export default function AdminDashboard() {
     };
 
     const sidebarItems = [
+        { id: 'vouchers', icon: Gift, label: 'Gift Vouchers' },
         { id: 'package-prices', icon: Tag, label: 'Package Prices' },
         { id: 'custom-trips', icon: Zap, label: 'Custom Trip Link' },
         { id: 'destinations', icon: MapPin, label: 'Destinations' },
@@ -4065,6 +4074,191 @@ export default function AdminDashboard() {
                                     })}
                                 </div>
                             )}
+                        </div>
+                    )}
+
+                    {activeTab === 'vouchers' && (
+                        <div className="space-y-6">
+                            <div>
+                                <h2 className="text-xl font-medium text-primary">Gift Vouchers</h2>
+                                <p className="text-sm text-primary/50 mt-1">Create voucher codes for clients to use at checkout. Set the amount and validity period.</p>
+                            </div>
+
+                            {/* Create Voucher Form */}
+                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2"><Gift className="w-4 h-4 text-amber-500" /> Create New Voucher</h3>
+                                {voucherCreated ? (
+                                    <div className="text-center py-6">
+                                        <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-3" />
+                                        <p className="font-semibold text-gray-900 mb-1">Voucher Created!</p>
+                                        <div className="inline-block bg-amber-50 border-2 border-dashed border-amber-300 rounded-xl px-8 py-4 my-3">
+                                            <p className="text-xs text-gray-500 mb-1">Voucher Code</p>
+                                            <p className="font-mono text-2xl font-bold tracking-widest text-gray-900">{voucherCreated.code}</p>
+                                            <p className="text-sm text-gray-600 mt-1">₹{voucherCreated.amount.toLocaleString('en-IN')} · Valid until {new Date(voucherCreated.validUntil).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                                        </div>
+                                        <div className="flex gap-2 justify-center mt-2">
+                                            <button onClick={() => { navigator.clipboard.writeText(voucherCreated.code); setVoucherCopied(true); setTimeout(() => setVoucherCopied(false), 2000); }}
+                                                className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50">
+                                                <Copy className="w-3.5 h-3.5" />{voucherCopied ? 'Copied!' : 'Copy Code'}
+                                            </button>
+                                            <button onClick={() => { setVoucherCreated(null); setVoucherForm({ amount: '', validDays: '365', name: '', email: '', phone: '', note: '' }); }}
+                                                className="flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90">
+                                                <Plus className="w-3.5 h-3.5" />Create Another
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <form onSubmit={async (e) => {
+                                        e.preventDefault();
+                                        setVoucherSaving(true);
+                                        setVoucherMsg({ type: '', text: '' });
+                                        const tok = localStorage.getItem('adminToken') || '';
+                                        try {
+                                            const res = await fetch('/api/vouchers/create', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json', 'x-admin-secret': tok },
+                                                body: JSON.stringify({
+                                                    amount: Number(voucherForm.amount),
+                                                    validDays: Number(voucherForm.validDays),
+                                                    recipientName: voucherForm.name,
+                                                    recipientEmail: voucherForm.email,
+                                                    recipientPhone: voucherForm.phone,
+                                                    note: voucherForm.note,
+                                                }),
+                                            });
+                                            const data = await res.json();
+                                            if (res.ok && data.voucher) {
+                                                setVoucherCreated(data.voucher);
+                                                setVouchers([]);
+                                            } else {
+                                                setVoucherMsg({ type: 'error', text: data.error || 'Failed to create voucher.' });
+                                            }
+                                        } catch {
+                                            setVoucherMsg({ type: 'error', text: 'Network error.' });
+                                        }
+                                        setVoucherSaving(false);
+                                    }} className="space-y-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">Amount (₹) *</label>
+                                                <input required type="number" min="100" placeholder="e.g. 5000"
+                                                    value={voucherForm.amount}
+                                                    onChange={e => setVoucherForm(f => ({ ...f, amount: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                                            </div>
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">Valid for (days) *</label>
+                                                <select value={voucherForm.validDays}
+                                                    onChange={e => setVoucherForm(f => ({ ...f, validDays: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                                                    <option value="30">30 days (1 month)</option>
+                                                    <option value="90">90 days (3 months)</option>
+                                                    <option value="180">180 days (6 months)</option>
+                                                    <option value="365">365 days (1 year)</option>
+                                                    <option value="730">730 days (2 years)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">Recipient Name *</label>
+                                                <input required type="text" placeholder="Client full name"
+                                                    value={voucherForm.name}
+                                                    onChange={e => setVoucherForm(f => ({ ...f, name: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                                            </div>
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">Recipient Email *</label>
+                                                <input required type="email" placeholder="client@email.com"
+                                                    value={voucherForm.email}
+                                                    onChange={e => setVoucherForm(f => ({ ...f, email: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">Phone</label>
+                                                <input type="tel" placeholder="+91 XXXXXXXXXX"
+                                                    value={voucherForm.phone}
+                                                    onChange={e => setVoucherForm(f => ({ ...f, phone: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                                            </div>
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">Internal Note</label>
+                                                <input type="text" placeholder="Optional note"
+                                                    value={voucherForm.note}
+                                                    onChange={e => setVoucherForm(f => ({ ...f, note: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                                            </div>
+                                        </div>
+                                        {voucherMsg.text && (
+                                            <p className={`text-sm rounded-lg px-3 py-2 ${voucherMsg.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+                                                {voucherMsg.text}
+                                            </p>
+                                        )}
+                                        <button type="submit" disabled={voucherSaving}
+                                            className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary/90 disabled:opacity-60 transition-colors">
+                                            {voucherSaving ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" />Creating…</> : <><Gift className="w-3.5 h-3.5" />Create Voucher</>}
+                                        </button>
+                                    </form>
+                                )}
+                            </div>
+
+                            {/* Vouchers List */}
+                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="font-semibold text-gray-900">All Vouchers</h3>
+                                    <button onClick={async () => {
+                                        const tok = localStorage.getItem('adminToken') || '';
+                                        const res = await fetch('/api/vouchers/list', { headers: { 'x-admin-secret': tok } });
+                                        const data = await res.json();
+                                        setVouchers(Array.isArray(data.vouchers) ? data.vouchers : []);
+                                    }} className="flex items-center gap-1.5 text-sm text-primary/60 hover:text-primary border border-gray-200 px-3 py-1.5 rounded-lg">
+                                        <RefreshCw className="w-3.5 h-3.5" />Load
+                                    </button>
+                                </div>
+                                {vouchers.length === 0 ? (
+                                    <p className="text-center py-8 text-primary/40 text-sm">Click &quot;Load&quot; to fetch vouchers.</p>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {vouchers.map((v: any) => {
+                                            const statusColor = v.status === 'active' ? 'bg-green-100 text-green-700' : v.status === 'used' ? 'bg-blue-100 text-blue-700' : v.status === 'cancelled' ? 'bg-gray-100 text-gray-500' : 'bg-red-100 text-red-600';
+                                            return (
+                                                <div key={v.code as string} className="border border-gray-100 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 flex-wrap">
+                                                            <span className="font-mono font-bold text-primary text-sm tracking-wider">{v.code as string}</span>
+                                                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${statusColor}`}>{v.status as string}</span>
+                                                        </div>
+                                                        <p className="text-xs text-gray-500 mt-0.5">
+                                                            ₹{(v.amount as number).toLocaleString('en-IN')} · {v.purchasedBy ? `${(v.purchasedBy as any).name} · ${(v.purchasedBy as any).email}` : ''}
+                                                        </p>
+                                                        <p className="text-xs text-gray-400 mt-0.5">
+                                                            Valid until {new Date(v.validUntil as string).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                            {v.usedFor ? ` · Used for: ${v.usedFor}` : ''}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <button onClick={() => { navigator.clipboard.writeText(v.code as string); }}
+                                                            className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500" title="Copy code">
+                                                            <Copy className="w-3.5 h-3.5" />
+                                                        </button>
+                                                        {v.status === 'active' && (
+                                                            <button onClick={async () => {
+                                                                const tok = localStorage.getItem('adminToken') || '';
+                                                                await fetch('/api/vouchers/update', { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'x-admin-secret': tok }, body: JSON.stringify({ code: v.code, status: 'cancelled' }) });
+                                                                setVouchers(prev => prev.map((vv: any) => vv.code === v.code ? { ...vv, status: 'cancelled' } : vv));
+                                                            }} className="px-3 py-1.5 border border-red-200 text-red-600 rounded-lg text-xs font-medium hover:bg-red-50">
+                                                                Cancel
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
 

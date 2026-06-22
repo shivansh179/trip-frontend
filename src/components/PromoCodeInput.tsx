@@ -42,6 +42,27 @@ export default function PromoCodeInput({
     setError(null);
     setLoading(true);
     try {
+      const trimmed = code.trim().toUpperCase();
+
+      // Route voucher codes (YLVCH-XXXXXX) to voucher API
+      if (trimmed.startsWith('YLVCH-')) {
+        const res = await fetch('/api/vouchers/validate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: trimmed }),
+        });
+        const data = await res.json();
+        if (data.valid) {
+          const discount = Math.min(data.amount, orderTotal);
+          onApply(data.code, discount);
+          setInput('');
+        } else {
+          setError(data.error ?? 'Invalid voucher code.');
+        }
+        return;
+      }
+
+      // Standard promo code
       const adminToken = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
       const res = await fetch('/api/promos/validate', {
         method: 'POST',
@@ -49,7 +70,7 @@ export default function PromoCodeInput({
           'Content-Type': 'application/json',
           ...(adminToken ? { 'x-admin-token': adminToken } : {}),
         },
-        body: JSON.stringify({ code, orderTotal }),
+        body: JSON.stringify({ code: trimmed, orderTotal }),
       });
       const data = await res.json();
       if (data.valid) {
@@ -60,7 +81,7 @@ export default function PromoCodeInput({
         setError(data.error ?? 'Invalid promo code.');
       }
     } catch {
-      setError('Could not validate promo code. Please try again.');
+      setError('Could not validate code. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -75,7 +96,10 @@ export default function PromoCodeInput({
             <CheckCircle size={17} className="text-amber-600 shrink-0" />
             <div>
               <p className="text-sm font-bold text-amber-800">{appliedCode} applied!</p>
-              <p className="text-xs text-amber-700">🎁 {fp(discountAmount)} will be credited to your WanderLoot wallet after payment!</p>
+              {appliedCode?.startsWith('YLVCH-')
+                ? <p className="text-xs text-amber-700">🎟️ {fp(discountAmount)} gift voucher discount applied!</p>
+                : <p className="text-xs text-amber-700">🎁 {fp(discountAmount)} will be credited to your WanderLoot wallet after payment!</p>
+              }
             </div>
           </div>
           <button
@@ -97,7 +121,7 @@ export default function PromoCodeInput({
                 value={input}
                 onChange={(e) => { setInput(e.target.value.toUpperCase()); setError(null); }}
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), validate(input))}
-                placeholder="Enter promo code"
+                placeholder="Promo or gift voucher code"
                 disabled={loading}
                 className="w-full pl-9 pr-4 py-3 border border-primary/20 bg-white rounded-xl text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent uppercase disabled:opacity-60"
               />
