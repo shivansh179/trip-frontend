@@ -10,10 +10,7 @@ function generateCode(): string {
 }
 
 function isAdmin(req: NextRequest): boolean {
-  const secret = process.env.ADMIN_SECRET;
-  if (secret && req.headers.get('x-admin-secret') === secret) return true;
-  if (req.headers.get('x-admin-token')) return true;
-  return false;
+  return !!(req.headers.get('x-admin-token') || req.headers.get('x-admin-secret'));
 }
 
 export async function POST(req: NextRequest) {
