@@ -17,10 +17,11 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { amount, validDays, recipientName, recipientEmail, recipientPhone, note, destination, pdfUrl } = body as {
+    const { amount, validDays, recipientName, recipientEmail, recipientPhone, note, destination, pdfUrl, tripName, tripDates, hotel, inclusions } = body as {
       amount?: number; validDays?: number; recipientName?: string;
       recipientEmail?: string; recipientPhone?: string; note?: string;
       destination?: string; pdfUrl?: string;
+      tripName?: string; tripDates?: string; hotel?: string; inclusions?: string;
     };
 
     if (!amount || amount < 100) return NextResponse.json({ error: 'Amount must be at least ₹100' }, { status: 400 });
@@ -49,6 +50,10 @@ export async function POST(req: NextRequest) {
       note: note || '',
       destination: destination || '',
       pdfUrl: pdfUrl || '',
+      tripName: tripName || '',
+      tripDates: tripDates || '',
+      hotel: hotel || '',
+      inclusions: inclusions || '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

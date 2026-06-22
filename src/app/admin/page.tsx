@@ -83,7 +83,7 @@ export default function AdminDashboard() {
 
     // Vouchers
     const [vouchers, setVouchers] = useState<Record<string, unknown>[]>([]);
-    const [voucherForm, setVoucherForm] = useState({ amount: '', validDays: '365', name: '', email: '', phone: '', note: '', destination: '', pdfUrl: '' });
+    const [voucherForm, setVoucherForm] = useState({ amount: '', validDays: '365', name: '', email: '', phone: '', note: '', destination: '', pdfUrl: '', tripName: '', tripDates: '', hotel: '', inclusions: '' });
     const [voucherSaving, setVoucherSaving] = useState(false);
     const [voucherMsg, setVoucherMsg] = useState({ type: '', text: '' });
     const [voucherCreated, setVoucherCreated] = useState<{ code: string; amount: number; validUntil: string } | null>(null);
@@ -4254,7 +4254,11 @@ export default function AdminDashboard() {
                                                     className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50">
                                                     <Copy className="w-3.5 h-3.5" />{voucherCopied ? 'Copied!' : 'Copy Code'}
                                                 </button>
-                                                <button onClick={() => { setVoucherCreated(null); setVoucherPayLink(''); setVoucherForm({ amount: '', validDays: '365', name: '', email: '', phone: '', note: '', destination: '', pdfUrl: '' }); }}
+                                                <a href={`/vouchers/pdf?code=${voucherCreated.code}`} target="_blank" rel="noopener noreferrer"
+                                                    className="flex items-center gap-1.5 px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-semibold hover:bg-amber-600">
+                                                    <FileText className="w-3.5 h-3.5" />View PDF Voucher
+                                                </a>
+                                                <button onClick={() => { setVoucherCreated(null); setVoucherPayLink(''); setVoucherForm({ amount: '', validDays: '365', name: '', email: '', phone: '', note: '', destination: '', pdfUrl: '', tripName: '', tripDates: '', hotel: '', inclusions: '' }); }}
                                                     className="flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90">
                                                     <Plus className="w-3.5 h-3.5" />Create Another
                                                 </button>
@@ -4340,6 +4344,10 @@ export default function AdminDashboard() {
                                                     note: voucherForm.note,
                                                     destination: voucherForm.destination,
                                                     pdfUrl: voucherForm.pdfUrl,
+                                                    tripName: voucherForm.tripName,
+                                                    tripDates: voucherForm.tripDates,
+                                                    hotel: voucherForm.hotel,
+                                                    inclusions: voucherForm.inclusions,
                                                 }),
                                             });
                                             const data = await res.json();
@@ -4425,6 +4433,42 @@ export default function AdminDashboard() {
                                                     value={voucherForm.pdfUrl}
                                                     onChange={e => setVoucherForm(f => ({ ...f, pdfUrl: e.target.value }))}
                                                     className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                                            </div>
+                                        </div>
+                                        {/* Trip Details for PDF */}
+                                        <div className="border-t border-gray-100 pt-4">
+                                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Trip Details — printed on PDF voucher</p>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="text-xs font-medium text-gray-600 block mb-1">Trip / Package Name</label>
+                                                    <input type="text" placeholder="e.g. Bali 5N/6D Honeymoon Package"
+                                                        value={voucherForm.tripName}
+                                                        onChange={e => setVoucherForm(f => ({ ...f, tripName: e.target.value }))}
+                                                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                                                </div>
+                                                <div>
+                                                    <label className="text-xs font-medium text-gray-600 block mb-1">Travel Dates</label>
+                                                    <input type="text" placeholder="e.g. 15 Jul – 21 Jul 2026"
+                                                        value={voucherForm.tripDates}
+                                                        onChange={e => setVoucherForm(f => ({ ...f, tripDates: e.target.value }))}
+                                                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4 mt-3">
+                                                <div>
+                                                    <label className="text-xs font-medium text-gray-600 block mb-1">Hotel / Stay</label>
+                                                    <input type="text" placeholder="e.g. Alaya Resort, Ubud"
+                                                        value={voucherForm.hotel}
+                                                        onChange={e => setVoucherForm(f => ({ ...f, hotel: e.target.value }))}
+                                                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                                                </div>
+                                                <div>
+                                                    <label className="text-xs font-medium text-gray-600 block mb-1">What&apos;s Included</label>
+                                                    <input type="text" placeholder="Flights, 4★ Hotel, Transfers, Breakfast"
+                                                        value={voucherForm.inclusions}
+                                                        onChange={e => setVoucherForm(f => ({ ...f, inclusions: e.target.value }))}
+                                                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                                                </div>
                                             </div>
                                         </div>
                                         {voucherMsg.text && (

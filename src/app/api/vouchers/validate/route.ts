@@ -24,9 +24,45 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ valid: false, error: 'This voucher has expired.' });
     }
 
-    return NextResponse.json({ valid: true, code: v.code, amount: v.amount, validUntil: v.validUntil, holder: v.purchasedBy?.name });
+    return NextResponse.json({
+      valid: true, code: v.code, amount: v.amount, validUntil: v.validUntil,
+      holder: v.purchasedBy?.name,
+      tripName: v.tripName || '', tripDates: v.tripDates || '',
+      hotel: v.hotel || '', inclusions: v.inclusions || '',
+      destination: v.destination || '', pdfUrl: v.pdfUrl || '',
+      holderName: v.purchasedBy?.name || '', holderEmail: v.purchasedBy?.email || '',
+    });
   } catch (err) {
     console.error('[vouchers/validate]', err);
     return NextResponse.json({ valid: false, error: 'Failed to validate voucher.' }, { status: 500 });
+  }
+}
+
+// GET /api/vouchers/validate?code=YLVCH-XXX — fetch full voucher details for PDF
+export async function GET(req: NextRequest) {
+  const ip = getClientIp(req);
+  if (isRateLimited(`voucher-pdf:${ip}`, 20, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+  const code = req.nextUrl.searchParams.get('code')?.trim().toUpperCase();
+  if (!code) return NextResponse.json({ error: 'Code required' }, { status: 400 });
+
+  try {
+    const snap = await db().collection('vouchers').doc(code).get();
+    if (!snap.exists) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    const v = snap.data()!;
+    if (!['active', 'used'].includes(String(v.status))) return NextResponse.json({ error: 'Voucher not active' }, { status: 403 });
+
+    return NextResponse.json({
+      code: v.code, amount: v.amount, validUntil: v.validUntil, status: v.status,
+      destination: v.destination || '', pdfUrl: v.pdfUrl || '',
+      tripName: v.tripName || '', tripDates: v.tripDates || '',
+      hotel: v.hotel || '', inclusions: v.inclusions || '',
+      holderName: v.purchasedBy?.name || '', holderEmail: v.purchasedBy?.email || '',
+      createdAt: v.createdAt,
+    });
+  } catch (err) {
+    console.error('[vouchers/validate GET]', err);
+    return NextResponse.json({ error: 'Failed to fetch voucher' }, { status: 500 });
   }
 }

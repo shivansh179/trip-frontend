@@ -136,7 +136,7 @@ function VoucherSuccessContent() {
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-3 justify-center mb-6 print:hidden">
+        <div className="flex flex-wrap gap-3 justify-center mb-6 print:hidden">
           <button
             onClick={copy}
             className="flex items-center gap-2 px-5 py-2.5 border border-primary/20 rounded-full text-sm font-medium text-primary hover:bg-primary/5 transition-colors"
@@ -144,13 +144,15 @@ function VoucherSuccessContent() {
             <Copy className="w-3.5 h-3.5" />
             {copied ? 'Copied!' : 'Copy code'}
           </button>
-          <button
-            onClick={printVoucher}
-            className="flex items-center gap-2 px-5 py-2.5 border border-primary/20 rounded-full text-sm font-medium text-primary hover:bg-primary/5 transition-colors"
+          <a
+            href={`/vouchers/pdf?code=${code}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-full text-sm font-semibold hover:bg-primary/90 transition-colors"
           >
             <Download className="w-3.5 h-3.5" />
-            Download PDF
-          </button>
+            Download PDF Voucher
+          </a>
         </div>
 
         {/* PDF attachment */}

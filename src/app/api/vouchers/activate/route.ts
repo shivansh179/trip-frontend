@@ -18,7 +18,14 @@ export async function POST(req: NextRequest) {
 
     // Already active
     if (v.status === 'active') {
-      return NextResponse.json({ success: true, already: true, amount: v.amount, validUntil: v.validUntil, destination: v.destination || '', pdfUrl: v.pdfUrl || '' });
+      return NextResponse.json({
+        success: true, already: true,
+        amount: v.amount, validUntil: v.validUntil,
+        destination: v.destination || '', pdfUrl: v.pdfUrl || '',
+        tripName: v.tripName || '', tripDates: v.tripDates || '',
+        hotel: v.hotel || '', inclusions: v.inclusions || '',
+        holderName: v.purchasedBy?.name || '', holderEmail: v.purchasedBy?.email || '',
+      });
     }
 
     // Must be cancelled (pending payment) and matching txnid
@@ -56,7 +63,19 @@ export async function POST(req: NextRequest) {
       }).catch(() => {});
     }
 
-    return NextResponse.json({ success: true, amount: v.amount, validUntil: v.validUntil, destination: v.destination || '', pdfUrl: v.pdfUrl || '' });
+    return NextResponse.json({
+      success: true,
+      amount: v.amount,
+      validUntil: v.validUntil,
+      destination: v.destination || '',
+      pdfUrl: v.pdfUrl || '',
+      tripName: v.tripName || '',
+      tripDates: v.tripDates || '',
+      hotel: v.hotel || '',
+      inclusions: v.inclusions || '',
+      holderName: v.purchasedBy?.name || '',
+      holderEmail: v.purchasedBy?.email || '',
+    });
   } catch (err) {
     console.error('[vouchers/activate]', err);
     return NextResponse.json({ error: 'Failed to activate voucher.' }, { status: 500 });
