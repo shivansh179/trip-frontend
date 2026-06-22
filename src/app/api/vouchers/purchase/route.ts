@@ -26,8 +26,8 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { name, email, phone, amount, validDays = 365 } = body as {
-      name?: string; email?: string; phone?: string; amount?: number; validDays?: number;
+    const { name, email, phone, amount, validDays = 365, destination, pdfUrl } = body as {
+      name?: string; email?: string; phone?: string; amount?: number; validDays?: number; destination?: string; pdfUrl?: string;
     };
 
     if (!name || !email || !phone) return NextResponse.json({ error: 'Name, email and phone are required.' }, { status: 400 });
@@ -55,6 +55,8 @@ export async function POST(req: NextRequest) {
       createdBy: 'client',
       txnid,
       note: 'Pending payment',
+      destination: destination || '',
+      pdfUrl: pdfUrl || '',
     });
 
     // If Easebuzz not configured, return code directly (dev/test)
@@ -93,7 +95,7 @@ export async function POST(req: NextRequest) {
       udf2: code,
       udf3: '', udf4: '', udf5: '',
       hash,
-      surl: `${SITE_URL}/vouchers/success?code=${encodeURIComponent(code)}&txnid=${txnid}`,
+      surl: `${SITE_URL}/vouchers/success?code=${encodeURIComponent(code)}&txnid=${txnid}${destination ? `&dest=${encodeURIComponent(destination)}` : ''}`,
       furl: `${SITE_URL}/vouchers?error=payment_failed`,
     });
 

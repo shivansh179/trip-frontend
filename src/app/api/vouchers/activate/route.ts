@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     if (!voucher) {
       // Already activated or invalid
       const existing = await Voucher.findOne({ code: code.trim().toUpperCase() });
-      if (existing?.status === 'active') return NextResponse.json({ success: true, already: true });
+      if (existing?.status === 'active') return NextResponse.json({ success: true, already: true, amount: existing.amount, validUntil: existing.validUntil, destination: existing.destination || '', pdfUrl: existing.pdfUrl || '' });
       return NextResponse.json({ error: 'Voucher not found or already processed.' }, { status: 404 });
     }
 
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       }).catch(() => {});
     }
 
-    return NextResponse.json({ success: true, amount: voucher.amount, validUntil: voucher.validUntil });
+    return NextResponse.json({ success: true, amount: voucher.amount, validUntil: voucher.validUntil, destination: voucher.destination || '', pdfUrl: voucher.pdfUrl || '' });
   } catch (err) {
     console.error('[vouchers/activate]', err);
     return NextResponse.json({ error: 'Failed to activate voucher.' }, { status: 500 });

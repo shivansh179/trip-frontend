@@ -11,6 +11,8 @@ export interface IVoucher extends Document {
   createdBy: 'admin' | 'client';
   txnid?: string;
   note?: string;
+  destination?: string;
+  pdfUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -29,8 +31,10 @@ const VoucherSchema = new Schema<IVoucher>(
     usedFor:   { type: String },
     usedAt:    { type: Date },
     createdBy: { type: String, enum: ['admin', 'client'], default: 'admin' },
-    txnid:     { type: String },
-    note:      { type: String, maxlength: 500 },
+    txnid:       { type: String },
+    note:        { type: String, maxlength: 500 },
+    destination: { type: String, trim: true },
+    pdfUrl:      { type: String, trim: true },
   },
   { timestamps: true }
 );

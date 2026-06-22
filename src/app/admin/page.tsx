@@ -9,7 +9,7 @@ import {
     MessageSquare, BookOpen, Settings, LogOut, ChevronRight,
     Save, RefreshCw, Plus, Trash2, Eye, ChevronDown, ChevronUp,
     ShoppingBag, CheckCircle, XCircle, Clock, Mail, User, Calendar, Phone,
-    Megaphone, Star, Activity, Upload, Copy, Link2, X, ExternalLink, Zap, Tag, Gift
+    Megaphone, Star, Activity, Upload, Copy, Link2, X, ExternalLink, Zap, Tag, Gift, CreditCard
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import ImagePreview from '@/components/ImagePreview';
@@ -83,11 +83,18 @@ export default function AdminDashboard() {
 
     // Vouchers
     const [vouchers, setVouchers] = useState<Record<string, unknown>[]>([]);
-    const [voucherForm, setVoucherForm] = useState({ amount: '', validDays: '365', name: '', email: '', phone: '', note: '' });
+    const [voucherForm, setVoucherForm] = useState({ amount: '', validDays: '365', name: '', email: '', phone: '', note: '', destination: '', pdfUrl: '' });
     const [voucherSaving, setVoucherSaving] = useState(false);
     const [voucherMsg, setVoucherMsg] = useState({ type: '', text: '' });
     const [voucherCreated, setVoucherCreated] = useState<{ code: string; amount: number; validUntil: string } | null>(null);
     const [voucherCopied, setVoucherCopied] = useState(false);
+
+    // Collect Payment (advance)
+    const [payForm, setPayForm] = useState({ clientName: '', email: '', phone: '', amount: '', description: '', pdfUrl: '', note: '', sendEmail: true });
+    const [paySaving, setPaySaving] = useState(false);
+    const [payMsg, setPayMsg] = useState({ type: '', text: '' });
+    const [payLink, setPayLink] = useState('');
+    const [payCopied, setPayCopied] = useState(false);
 
     // Custom Trip Creator
     const [itineraryMode, setItineraryMode] = useState<'builder' | 'paste'>('builder');
@@ -1039,6 +1046,7 @@ export default function AdminDashboard() {
     };
 
     const sidebarItems = [
+        { id: 'collect-payment', icon: CreditCard, label: 'Collect Payment' },
         { id: 'vouchers', icon: Gift, label: 'Gift Vouchers' },
         { id: 'package-prices', icon: Tag, label: 'Package Prices' },
         { id: 'custom-trips', icon: Zap, label: 'Custom Trip Link' },
@@ -4077,6 +4085,146 @@ export default function AdminDashboard() {
                         </div>
                     )}
 
+                    {activeTab === 'collect-payment' && (
+                        <div className="space-y-6">
+                            <div>
+                                <h2 className="text-xl font-medium text-primary">Collect Advance Payment</h2>
+                                <p className="text-sm text-primary/50 mt-1">Generate a secure Easebuzz payment link to collect advance from a client. Optionally email the link directly.</p>
+                            </div>
+
+                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                {payLink ? (
+                                    <div className="text-center py-4">
+                                        <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-3" />
+                                        <p className="font-semibold text-gray-900 mb-1">Payment Link Generated!</p>
+                                        {payForm.sendEmail && <p className="text-sm text-gray-500 mb-4">Email sent to {payForm.email}</p>}
+                                        <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-4 text-left">
+                                            <p className="text-xs text-gray-400 mb-1">Payment Link</p>
+                                            <p className="text-xs font-mono text-gray-700 break-all">{payLink}</p>
+                                        </div>
+                                        <div className="flex gap-2 justify-center">
+                                            <button onClick={() => { navigator.clipboard.writeText(payLink); setPayCopied(true); setTimeout(() => setPayCopied(false), 2000); }}
+                                                className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50">
+                                                <Copy className="w-3.5 h-3.5" />{payCopied ? 'Copied!' : 'Copy Link'}
+                                            </button>
+                                            <a href={payLink} target="_blank" rel="noopener noreferrer"
+                                                className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50">
+                                                <ExternalLink className="w-3.5 h-3.5" />Open Link
+                                            </a>
+                                            <button onClick={() => { setPayLink(''); setPayMsg({ type: '', text: '' }); setPayForm({ clientName: '', email: '', phone: '', amount: '', description: '', pdfUrl: '', note: '', sendEmail: true }); }}
+                                                className="flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90">
+                                                <Plus className="w-3.5 h-3.5" />New Link
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <form onSubmit={async (e) => {
+                                        e.preventDefault();
+                                        setPaySaving(true);
+                                        setPayMsg({ type: '', text: '' });
+                                        const tok = localStorage.getItem('adminToken') || '';
+                                        try {
+                                            const res = await fetch('/api/admin/payment-link', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json', 'x-admin-secret': tok },
+                                                body: JSON.stringify({
+                                                    clientName: payForm.clientName,
+                                                    email: payForm.email,
+                                                    phone: payForm.phone,
+                                                    amount: Number(payForm.amount),
+                                                    description: payForm.description,
+                                                    pdfUrl: payForm.pdfUrl,
+                                                    note: payForm.note,
+                                                    sendEmail: payForm.sendEmail,
+                                                }),
+                                            });
+                                            const data = await res.json();
+                                            if (res.ok && data.paymentUrl) {
+                                                setPayLink(data.paymentUrl);
+                                            } else {
+                                                setPayMsg({ type: 'error', text: data.error || 'Failed to generate link.' });
+                                            }
+                                        } catch {
+                                            setPayMsg({ type: 'error', text: 'Network error.' });
+                                        }
+                                        setPaySaving(false);
+                                    }} className="space-y-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">Client Name *</label>
+                                                <input required type="text" placeholder="Full name"
+                                                    value={payForm.clientName}
+                                                    onChange={e => setPayForm(f => ({ ...f, clientName: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                                            </div>
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">Email *</label>
+                                                <input required type="email" placeholder="client@email.com"
+                                                    value={payForm.email}
+                                                    onChange={e => setPayForm(f => ({ ...f, email: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">Phone *</label>
+                                                <input required type="tel" placeholder="+91 XXXXXXXXXX"
+                                                    value={payForm.phone}
+                                                    onChange={e => setPayForm(f => ({ ...f, phone: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                                            </div>
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">Amount (Rs.) *</label>
+                                                <input required type="number" min="100" placeholder="e.g. 10000"
+                                                    value={payForm.amount}
+                                                    onChange={e => setPayForm(f => ({ ...f, amount: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-medium text-gray-600 block mb-1">Description / Purpose *</label>
+                                            <input required type="text" placeholder="e.g. Advance for Manali Trip — 5 Nights 6 Days"
+                                                value={payForm.description}
+                                                onChange={e => setPayForm(f => ({ ...f, description: e.target.value }))}
+                                                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">PDF / Itinerary URL</label>
+                                                <input type="url" placeholder="https://drive.google.com/..."
+                                                    value={payForm.pdfUrl}
+                                                    onChange={e => setPayForm(f => ({ ...f, pdfUrl: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                                            </div>
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">Internal Note</label>
+                                                <input type="text" placeholder="Optional note for records"
+                                                    value={payForm.note}
+                                                    onChange={e => setPayForm(f => ({ ...f, note: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                                            </div>
+                                        </div>
+                                        <label className="flex items-center gap-2.5 cursor-pointer">
+                                            <input type="checkbox" checked={payForm.sendEmail}
+                                                onChange={e => setPayForm(f => ({ ...f, sendEmail: e.target.checked }))}
+                                                className="w-4 h-4 rounded border-gray-300 text-primary" />
+                                            <span className="text-sm text-gray-700">Send payment link to client&apos;s email automatically</span>
+                                        </label>
+                                        {payMsg.text && (
+                                            <p className={`text-sm rounded-lg px-3 py-2 ${payMsg.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+                                                {payMsg.text}
+                                            </p>
+                                        )}
+                                        <button type="submit" disabled={paySaving}
+                                            className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary/90 disabled:opacity-60 transition-colors">
+                                            {paySaving ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" />Generating…</> : <><CreditCard className="w-3.5 h-3.5" />Generate Payment Link</>}
+                                        </button>
+                                    </form>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
                     {activeTab === 'vouchers' && (
                         <div className="space-y-6">
                             <div>
@@ -4101,7 +4249,7 @@ export default function AdminDashboard() {
                                                 className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50">
                                                 <Copy className="w-3.5 h-3.5" />{voucherCopied ? 'Copied!' : 'Copy Code'}
                                             </button>
-                                            <button onClick={() => { setVoucherCreated(null); setVoucherForm({ amount: '', validDays: '365', name: '', email: '', phone: '', note: '' }); }}
+                                            <button onClick={() => { setVoucherCreated(null); setVoucherForm({ amount: '', validDays: '365', name: '', email: '', phone: '', note: '', destination: '', pdfUrl: '' }); }}
                                                 className="flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90">
                                                 <Plus className="w-3.5 h-3.5" />Create Another
                                             </button>
@@ -4124,6 +4272,8 @@ export default function AdminDashboard() {
                                                     recipientEmail: voucherForm.email,
                                                     recipientPhone: voucherForm.phone,
                                                     note: voucherForm.note,
+                                                    destination: voucherForm.destination,
+                                                    pdfUrl: voucherForm.pdfUrl,
                                                 }),
                                             });
                                             const data = await res.json();
@@ -4188,6 +4338,26 @@ export default function AdminDashboard() {
                                                 <input type="text" placeholder="Optional note"
                                                     value={voucherForm.note}
                                                     onChange={e => setVoucherForm(f => ({ ...f, note: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">Destination (for cover)</label>
+                                                <select value={voucherForm.destination}
+                                                    onChange={e => setVoucherForm(f => ({ ...f, destination: e.target.value }))}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                                                    <option value="">None / Generic</option>
+                                                    {['Manali','Kashmir','Goa','Kerala','Rajasthan','Bali','Dubai','Singapore','Maldives','Thailand','Vietnam','Europe'].map(d => (
+                                                        <option key={d} value={d}>{d}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="text-xs font-medium text-gray-600 block mb-1">PDF / Itinerary URL</label>
+                                                <input type="url" placeholder="https://..."
+                                                    value={voucherForm.pdfUrl}
+                                                    onChange={e => setVoucherForm(f => ({ ...f, pdfUrl: e.target.value }))}
                                                     className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
                                             </div>
                                         </div>

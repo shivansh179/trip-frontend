@@ -20,13 +20,15 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { amount, validDays, recipientName, recipientEmail, recipientPhone, note } = body as {
+    const { amount, validDays, recipientName, recipientEmail, recipientPhone, note, destination, pdfUrl } = body as {
       amount?: number;
       validDays?: number;
       recipientName?: string;
       recipientEmail?: string;
       recipientPhone?: string;
       note?: string;
+      destination?: string;
+      pdfUrl?: string;
     };
 
     if (!amount || amount < 100) return NextResponse.json({ error: 'Amount must be at least ₹100' }, { status: 400 });
@@ -51,6 +53,8 @@ export async function POST(req: NextRequest) {
       purchasedBy: { name: recipientName, email: recipientEmail, phone: recipientPhone || '' },
       createdBy: 'admin',
       note: note || '',
+      destination: destination || '',
+      pdfUrl: pdfUrl || '',
     });
 
     return NextResponse.json({ success: true, voucher: { code: voucher.code, amount: voucher.amount, validUntil: voucher.validUntil } });

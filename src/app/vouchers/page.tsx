@@ -1,33 +1,44 @@
 'use client';
 
 import { useState } from 'react';
-import { Gift, CreditCard, Shield, Clock, CheckCircle, Loader2, ArrowRight } from 'lucide-react';
+import { Gift, CreditCard, Shield, Clock, CheckCircle, Loader2, ArrowRight, ChevronDown } from 'lucide-react';
 
 const PRESET_AMOUNTS = [500, 1000, 2500, 5000, 10000, 25000];
+
+const DESTINATIONS = [
+  { key: 'Manali', emoji: '🏔️', label: 'Manali', grad: 'from-blue-800 to-blue-500' },
+  { key: 'Kashmir', emoji: '❄️', label: 'Kashmir', grad: 'from-indigo-800 to-purple-600' },
+  { key: 'Goa', emoji: '🌊', label: 'Goa', grad: 'from-cyan-700 to-teal-500' },
+  { key: 'Kerala', emoji: '🌿', label: 'Kerala', grad: 'from-green-800 to-green-500' },
+  { key: 'Rajasthan', emoji: '🏜️', label: 'Rajasthan', grad: 'from-amber-800 to-orange-500' },
+  { key: 'Bali', emoji: '🌺', label: 'Bali', grad: 'from-purple-800 to-emerald-600' },
+  { key: 'Dubai', emoji: '🌆', label: 'Dubai', grad: 'from-yellow-800 to-amber-500' },
+  { key: 'Singapore', emoji: '🦁', label: 'Singapore', grad: 'from-blue-800 to-sky-500' },
+  { key: 'Maldives', emoji: '🐬', label: 'Maldives', grad: 'from-cyan-800 to-cyan-400' },
+  { key: 'Thailand', emoji: '🐘', label: 'Thailand', grad: 'from-orange-800 to-orange-500' },
+  { key: 'Vietnam', emoji: '🛵', label: 'Vietnam', grad: 'from-green-800 to-red-500' },
+  { key: 'Europe', emoji: '🏰', label: 'Europe', grad: 'from-blue-900 to-slate-500' },
+];
 
 export default function VouchersPage() {
   const [amount, setAmount] = useState<number | ''>('');
   const [customAmount, setCustomAmount] = useState('');
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const [destination, setDestination] = useState('');
+  const [showDestPicker, setShowDestPicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const selectedAmount = amount || (customAmount ? Number(customAmount) : 0);
+  const selectedDest = DESTINATIONS.find(d => d.key === destination);
 
-  const handlePreset = (val: number) => {
-    setAmount(val);
-    setCustomAmount('');
-  };
-
-  const handleCustom = (val: string) => {
-    setCustomAmount(val);
-    setAmount('');
-  };
+  const handlePreset = (val: number) => { setAmount(val); setCustomAmount(''); };
+  const handleCustom = (val: string) => { setCustomAmount(val); setAmount(''); };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!selectedAmount || selectedAmount < 500) { setError('Minimum voucher amount is ₹500.'); return; }
+    if (!selectedAmount || selectedAmount < 500) { setError('Minimum voucher amount is Rs.500.'); return; }
     if (!form.name || !form.email || !form.phone) { setError('All fields are required.'); return; }
 
     setLoading(true);
@@ -35,15 +46,14 @@ export default function VouchersPage() {
       const res = await fetch('/api/vouchers/purchase', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: form.name, email: form.email, phone: form.phone, amount: selectedAmount, validDays: 365 }),
+        body: JSON.stringify({ name: form.name, email: form.email, phone: form.phone, amount: selectedAmount, validDays: 365, destination }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Something went wrong.'); setLoading(false); return; }
       if (data.paymentUrl) {
         window.location.href = data.paymentUrl;
       } else {
-        // No payment gateway configured — redirect to success
-        window.location.href = `/vouchers/success?code=${data.code}&txnid=${data.txnid}`;
+        window.location.href = `/vouchers/success?code=${data.code}&txnid=${data.txnid}${destination ? `&dest=${encodeURIComponent(destination)}` : ''}`;
       }
     } catch {
       setError('Network error. Please try again.');
@@ -96,26 +106,80 @@ export default function VouchersPage() {
                         : 'border-primary/20 text-primary/70 hover:border-primary/50 dark:border-gray-600 dark:text-gray-300'
                     }`}
                   >
-                    ₹{val.toLocaleString('en-IN')}
+                    Rs.{val.toLocaleString('en-IN')}
                   </button>
                 ))}
               </div>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40 font-semibold">₹</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40 font-semibold text-sm">Rs.</span>
                 <input
                   type="number"
                   min="500"
                   max="100000"
-                  placeholder="Custom amount (min ₹500)"
+                  placeholder="Custom amount (min Rs.500)"
                   value={customAmount}
                   onChange={e => handleCustom(e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 border border-primary/20 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"
+                  className="w-full pl-10 pr-4 py-3 border border-primary/20 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"
                 />
               </div>
               {selectedAmount >= 500 && (
                 <p className="text-xs text-green-600 mt-1.5 font-medium">
-                  ✓ Voucher worth ₹{selectedAmount.toLocaleString('en-IN')} — valid for 1 year
+                  Voucher worth Rs.{selectedAmount.toLocaleString('en-IN')} — valid for 1 year
                 </p>
+              )}
+            </div>
+
+            {/* Destination picker */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setShowDestPicker(v => !v)}
+                className="flex items-center gap-2 text-sm font-semibold text-primary/70 dark:text-gray-300 hover:text-primary transition-colors"
+              >
+                <ChevronDown className={`w-4 h-4 transition-transform ${showDestPicker ? 'rotate-180' : ''}`} />
+                {destination ? `Destination: ${selectedDest?.emoji} ${selectedDest?.label}` : 'Personalize with a destination (optional)'}
+              </button>
+
+              {showDestPicker && (
+                <div className="mt-3 grid grid-cols-4 gap-2">
+                  {DESTINATIONS.map(d => (
+                    <button
+                      key={d.key}
+                      type="button"
+                      onClick={() => { setDestination(d.key === destination ? '' : d.key); }}
+                      className={`relative flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-xl border-2 transition-all text-xs font-semibold bg-gradient-to-br ${d.grad} text-white ${
+                        destination === d.key ? 'border-primary ring-2 ring-primary/30 scale-105' : 'border-transparent opacity-80 hover:opacity-100'
+                      }`}
+                    >
+                      <span className="text-xl">{d.emoji}</span>
+                      <span>{d.label}</span>
+                      {destination === d.key && (
+                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center text-white text-[9px]">✓</span>
+                      )}
+                    </button>
+                  ))}
+                  {destination && (
+                    <button
+                      type="button"
+                      onClick={() => setDestination('')}
+                      className="flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-xl border-2 border-gray-200 dark:border-gray-600 text-xs text-primary/50 dark:text-gray-500 hover:border-primary/30 transition-all"
+                    >
+                      <span className="text-xl">✕</span>
+                      <span>None</span>
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Destination preview card */}
+              {destination && selectedDest && selectedAmount >= 500 && (
+                <div className={`mt-4 bg-gradient-to-br ${selectedDest.grad} rounded-2xl p-5 text-white text-center shadow-lg`}>
+                  <p className="text-3xl mb-1">{selectedDest.emoji}</p>
+                  <p className="text-xs uppercase tracking-widest opacity-70 mb-1">Gift Voucher</p>
+                  <p className="font-display text-xl font-bold mb-0.5">YlooTrips — {selectedDest.label}</p>
+                  <p className="text-sm opacity-80">Rs.{selectedAmount.toLocaleString('en-IN')} · Valid 1 Year</p>
+                  <p className="mt-3 font-mono text-sm tracking-[0.2em] opacity-60">YLVCH-XXXXXX</p>
+                </div>
               )}
             </div>
 
@@ -162,12 +226,12 @@ export default function VouchersPage() {
               {loading ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
               ) : (
-                <><CreditCard className="w-4 h-4" /> Pay ₹{selectedAmount ? selectedAmount.toLocaleString('en-IN') : '—'} & Get Voucher <ArrowRight className="w-4 h-4" /></>
+                <><CreditCard className="w-4 h-4" /> Pay Rs.{selectedAmount ? selectedAmount.toLocaleString('en-IN') : '—'} & Get Voucher <ArrowRight className="w-4 h-4" /></>
               )}
             </button>
 
             <p className="text-center text-xs text-primary/40 dark:text-gray-500">
-              🔒 Secured by Easebuzz · UPI · Cards · Net Banking · EMI
+              Secured by Easebuzz · UPI · Cards · Net Banking · EMI
             </p>
           </form>
         </div>
