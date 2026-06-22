@@ -1,30 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import Voucher from '@/models/Voucher';
+import { db } from '@/lib/firestore';
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { code, bookingRef } = body as { code?: string; bookingRef?: string };
-
+    const { code, bookingRef } = await req.json() as { code?: string; bookingRef?: string };
     if (!code) return NextResponse.json({ error: 'Voucher code required.' }, { status: 400 });
 
-    await connectDB();
-    const voucher = await Voucher.findOne({ code: code.trim().toUpperCase() });
+    const ref = db().collection('vouchers').doc(code.trim().toUpperCase());
+    const snap = await ref.get();
 
-    if (!voucher) return NextResponse.json({ error: 'Invalid voucher code.' }, { status: 404 });
-    if (voucher.status !== 'active') return NextResponse.json({ error: `Voucher is ${voucher.status}.` }, { status: 400 });
-    if (voucher.validUntil < new Date()) {
-      await Voucher.updateOne({ _id: voucher._id }, { status: 'expired' });
+    if (!snap.exists) return NextResponse.json({ error: 'Invalid voucher code.' }, { status: 404 });
+    const v = snap.data()!;
+    if (v.status !== 'active') return NextResponse.json({ error: `Voucher is ${v.status}.` }, { status: 400 });
+    if (v.validUntil < new Date().toISOString()) {
+      await ref.update({ status: 'expired', updatedAt: new Date().toISOString() });
       return NextResponse.json({ error: 'Voucher has expired.' }, { status: 400 });
     }
 
-    await Voucher.updateOne(
-      { _id: voucher._id },
-      { status: 'used', usedFor: bookingRef || '', usedAt: new Date() }
-    );
-
-    return NextResponse.json({ success: true, amount: voucher.amount });
+    await ref.update({ status: 'used', usedFor: bookingRef || '', usedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+    return NextResponse.json({ success: true, amount: v.amount });
   } catch (err) {
     console.error('[vouchers/redeem]', err);
     return NextResponse.json({ error: 'Failed to redeem voucher.' }, { status: 500 });

@@ -1,5 +1,4 @@
-import { connectDB } from '@/lib/mongodb';
-import { PackagePrice } from '@/lib/db/models';
+import { db } from '@/lib/firestore';
 import { PACKAGE_DEFAULTS } from '@/lib/packageDefaults';
 
 export async function getPackagePrice(slug: string): Promise<{ priceINR: number; originalPriceINR: number }> {
@@ -7,11 +6,11 @@ export async function getPackagePrice(slug: string): Promise<{ priceINR: number;
   if (!defaults) return { priceINR: 0, originalPriceINR: 0 };
 
   try {
-    await connectDB();
-    const override = await PackagePrice.findOne({ slug }).lean();
+    const snap = await db().collection('package_prices').doc(slug).get();
+    const override = snap.data();
     return {
-      priceINR: override?.priceINR ?? defaults.priceINR,
-      originalPriceINR: override?.originalPriceINR ?? defaults.originalPriceINR,
+      priceINR: (override?.priceINR as number) ?? defaults.priceINR,
+      originalPriceINR: (override?.originalPriceINR as number) ?? defaults.originalPriceINR,
     };
   } catch {
     return { priceINR: defaults.priceINR, originalPriceINR: defaults.originalPriceINR };

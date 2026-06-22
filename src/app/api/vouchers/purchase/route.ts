@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { connectDB } from '@/lib/mongodb';
-import Voucher from '@/models/Voucher';
+import { db } from '@/lib/firestore';
 import { isRateLimited, getClientIp } from '@/lib/ratelimit';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ylootrips.com';
@@ -33,42 +32,45 @@ export async function POST(req: NextRequest) {
     if (!name || !email || !phone) return NextResponse.json({ error: 'Name, email and phone are required.' }, { status: 400 });
     if (!amount || amount < 500) return NextResponse.json({ error: 'Minimum voucher amount is ₹500.' }, { status: 400 });
 
-    await connectDB();
+    const firestore = db();
 
     // Generate unique code
     let code = generateCode();
     let tries = 0;
-    while (await Voucher.exists({ code }) && tries < 10) { code = generateCode(); tries++; }
+    while ((await firestore.collection('vouchers').doc(code).get()).exists && tries < 10) {
+      code = generateCode(); tries++;
+    }
 
     const validUntil = new Date();
     validUntil.setDate(validUntil.getDate() + Number(validDays));
-
     const txnid = `VCH-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    const cleanPhone = phone.replace(/\D/g, '').slice(-10) || '';
 
-    // Create voucher in pending state — activate on payment success
-    await Voucher.create({
+    const voucher = {
       code,
       amount: Number(amount),
-      validUntil,
-      status: 'cancelled', // will be set to 'active' after successful payment
-      purchasedBy: { name, email, phone: phone.replace(/\D/g, '').slice(-10) || '' },
+      validUntil: validUntil.toISOString(),
+      status: 'cancelled',
+      purchasedBy: { name, email, phone: cleanPhone },
       createdBy: 'client',
       txnid,
       note: 'Pending payment',
       destination: destination || '',
       pdfUrl: pdfUrl || '',
-    });
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
 
-    // If Easebuzz not configured, return code directly (dev/test)
+    await firestore.collection('vouchers').doc(code).set(voucher);
+
+    // No payment gateway — activate immediately
     if (!EASEBUZZ_KEY || !EASEBUZZ_SALT) {
-      await Voucher.updateOne({ code }, { status: 'active', note: 'Activated (no payment gateway)' });
+      await firestore.collection('vouchers').doc(code).update({ status: 'active', note: 'Activated (no payment gateway)', updatedAt: new Date().toISOString() });
       return NextResponse.json({ success: true, code, txnid, paymentUrl: null });
     }
 
-    // Initiate Easebuzz payment
     const amountStr = Number(amount).toFixed(2);
     const firstname = name.split(' ')[0] || name;
-    const cleanPhone = phone.replace(/\D/g, '').slice(-10).padStart(10, '0');
     const productinfo = `YlooTrips Gift Voucher ₹${Number(amount).toLocaleString('en-IN')}`;
 
     const hashStr = [
@@ -84,32 +86,20 @@ export async function POST(req: NextRequest) {
       : 'https://testpay.easebuzz.in/payment/initiateLink';
 
     const formData = new URLSearchParams({
-      key: EASEBUZZ_KEY,
-      txnid,
-      amount: amountStr,
-      productinfo,
-      firstname,
-      email,
-      phone: cleanPhone,
-      udf1: txnid,
-      udf2: code,
-      udf3: '', udf4: '', udf5: '',
+      key: EASEBUZZ_KEY, txnid, amount: amountStr, productinfo, firstname, email,
+      phone: cleanPhone.padStart(10, '0'),
+      udf1: txnid, udf2: code, udf3: '', udf4: '', udf5: '',
       hash,
       surl: `${SITE_URL}/vouchers/success?code=${encodeURIComponent(code)}&txnid=${txnid}${destination ? `&dest=${encodeURIComponent(destination)}` : ''}`,
       furl: `${SITE_URL}/vouchers?error=payment_failed`,
     });
 
-    const ebRes = await fetch(payUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: formData,
-    });
+    const ebRes = await fetch(payUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: formData });
     const ebJson = await ebRes.json();
 
     if (ebJson.status === 1 && ebJson.data) {
       const redirectBase = EASEBUZZ_ENV === 'production' ? 'https://pay.easebuzz.in' : 'https://testpay.easebuzz.in';
 
-      // Send notification to admin
       if (RESEND_API_KEY) {
         fetch('https://api.resend.com/emails', {
           method: 'POST',
@@ -118,7 +108,7 @@ export async function POST(req: NextRequest) {
             from: EMAIL_FROM,
             to: [process.env.ADMIN_EMAIL || 'hello@ylootrips.com'],
             subject: `[Voucher] ${name} purchasing ₹${Number(amount).toLocaleString('en-IN')} gift voucher`,
-            text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nAmount: ₹${Number(amount).toLocaleString('en-IN')}\nCode: ${code}\nValid until: ${validUntil.toLocaleDateString('en-IN')}\nTxn: ${txnid}`,
+            text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nAmount: ₹${Number(amount).toLocaleString('en-IN')}\nCode: ${code}\nTxn: ${txnid}`,
           }),
         }).catch(() => {});
       }
@@ -126,8 +116,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ paymentUrl: `${redirectBase}/pay/${ebJson.data}`, txnid, code });
     }
 
-    // Payment init failed — clean up pending voucher
-    await Voucher.deleteOne({ code });
+    await firestore.collection('vouchers').doc(code).delete();
     return NextResponse.json({ error: ebJson.error_desc || 'Payment gateway error. Please try again.' }, { status: 502 });
   } catch (err) {
     console.error('[vouchers/purchase]', err);

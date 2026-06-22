@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import Voucher from '@/models/Voucher';
+import { db } from '@/lib/firestore';
 
 function isAdmin(req: NextRequest): boolean {
   return !!(req.headers.get('x-admin-token') || req.headers.get('x-admin-secret'));
@@ -10,15 +9,20 @@ export async function GET(req: NextRequest) {
   if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
-    await connectDB();
+    const firestore = db();
+    const snap = await firestore.collection('vouchers').orderBy('createdAt', 'desc').limit(200).get();
+    const now = new Date().toISOString();
 
-    // Auto-expire vouchers past their validUntil date
-    await Voucher.updateMany(
-      { status: 'active', validUntil: { $lt: new Date() } },
-      { $set: { status: 'expired' } }
-    );
+    const vouchers = await Promise.all(snap.docs.map(async (d) => {
+      const v = d.data();
+      // Auto-expire active vouchers past validUntil
+      if (v.status === 'active' && v.validUntil < now) {
+        await d.ref.update({ status: 'expired', updatedAt: new Date().toISOString() });
+        v.status = 'expired';
+      }
+      return { _id: d.id, ...v };
+    }));
 
-    const vouchers = await Voucher.find().sort({ createdAt: -1 }).limit(200).lean();
     return NextResponse.json({ vouchers });
   } catch (err) {
     console.error('[vouchers/list]', err);

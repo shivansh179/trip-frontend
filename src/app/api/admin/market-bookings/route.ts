@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import { MarketBooking } from '@/lib/db/models';
+import { db } from '@/lib/firestore';
 
 function isAuthorised(req: NextRequest): boolean {
   const adminSecret = process.env.ADMIN_SECRET;
@@ -15,31 +14,28 @@ export async function GET(req: NextRequest) {
   const evtRef = req.nextUrl.searchParams.get('evtRef');
   console.log(`[market-bookings GET] txnid=${txnid} evtRef=${evtRef}`);
 
-  await connectDB();
+  const col = db().collection('market_bookings');
 
-  if (evtRef) {
-    const doc = await MarketBooking.findOne({ evtRef }).lean();
-    return NextResponse.json({ data: doc || null });
-  }
   if (txnid) {
-    const doc = await MarketBooking.findOne({ txnid }).lean();
-    return NextResponse.json({ data: doc || null });
+    const snap = await col.where('txnid', '==', txnid).limit(1).get();
+    return NextResponse.json({ data: snap.empty ? null : { _id: snap.docs[0].id, ...snap.docs[0].data() } });
+  }
+  if (evtRef) {
+    const snap = await col.where('evtRef', '==', evtRef).limit(1).get();
+    return NextResponse.json({ data: snap.empty ? null : { _id: snap.docs[0].id, ...snap.docs[0].data() } });
   }
 
   if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const docs = await MarketBooking.find({}).sort({ createdAt: -1 }).lean();
-  return NextResponse.json({ data: docs });
+  const snap = await col.orderBy('createdAt', 'desc').get();
+  return NextResponse.json({ data: snap.docs.map(d => ({ _id: d.id, ...d.data() })) });
 }
 
 export async function POST(req: NextRequest) {
   const booking = await req.json();
   console.log(`[market-bookings POST] txnid=${booking?.txnid}`);
-  await connectDB();
-  await MarketBooking.findOneAndUpdate(
-    { txnid: booking.txnid },
-    { ...booking },
-    { upsert: true, new: true }
-  );
+  const col = db().collection('market_bookings');
+  const docId = booking.txnid || `mkt-${Date.now()}`;
+  await col.doc(docId).set({ ...booking, savedAt: new Date().toISOString() }, { merge: true });
   return NextResponse.json({ success: true });
 }
 
@@ -47,10 +43,12 @@ export async function PATCH(req: NextRequest) {
   if (!isAuthorised(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { txnid, evtRef, status } = await req.json();
   console.log(`[market-bookings PATCH] txnid=${txnid} status=${status}`);
-  await connectDB();
-  const update: Record<string, unknown> = {};
+  const col = db().collection('market_bookings');
+  const update: Record<string, unknown> = { updatedAt: new Date().toISOString() };
   if (evtRef  !== undefined) update.evtRef  = evtRef;
   if (status  !== undefined) update.status  = status;
-  await MarketBooking.findOneAndUpdate({ txnid }, { $set: update });
+
+  const snap = await col.where('txnid', '==', txnid).limit(1).get();
+  if (!snap.empty) await snap.docs[0].ref.update(update);
   return NextResponse.json({ success: true });
 }

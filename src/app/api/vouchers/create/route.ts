@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import Voucher from '@/models/Voucher';
+import { db } from '@/lib/firestore';
 
 function generateCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -19,43 +18,44 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { amount, validDays, recipientName, recipientEmail, recipientPhone, note, destination, pdfUrl } = body as {
-      amount?: number;
-      validDays?: number;
-      recipientName?: string;
-      recipientEmail?: string;
-      recipientPhone?: string;
-      note?: string;
-      destination?: string;
-      pdfUrl?: string;
+      amount?: number; validDays?: number; recipientName?: string;
+      recipientEmail?: string; recipientPhone?: string; note?: string;
+      destination?: string; pdfUrl?: string;
     };
 
     if (!amount || amount < 100) return NextResponse.json({ error: 'Amount must be at least ₹100' }, { status: 400 });
     if (!validDays || validDays < 1) return NextResponse.json({ error: 'validDays must be at least 1' }, { status: 400 });
     if (!recipientName || !recipientEmail) return NextResponse.json({ error: 'Recipient name and email are required' }, { status: 400 });
 
-    await connectDB();
+    const firestore = db();
 
     // Generate unique code
     let code = generateCode();
     let tries = 0;
-    while (await Voucher.exists({ code }) && tries < 10) { code = generateCode(); tries++; }
+    while ((await firestore.collection('vouchers').doc(code).get()).exists && tries < 10) {
+      code = generateCode(); tries++;
+    }
 
     const validUntil = new Date();
     validUntil.setDate(validUntil.getDate() + Number(validDays));
 
-    const voucher = await Voucher.create({
+    const voucher = {
       code,
       amount: Number(amount),
-      validUntil,
+      validUntil: validUntil.toISOString(),
       status: 'active',
       purchasedBy: { name: recipientName, email: recipientEmail, phone: recipientPhone || '' },
       createdBy: 'admin',
       note: note || '',
       destination: destination || '',
       pdfUrl: pdfUrl || '',
-    });
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
 
-    return NextResponse.json({ success: true, voucher: { code: voucher.code, amount: voucher.amount, validUntil: voucher.validUntil } });
+    await firestore.collection('vouchers').doc(code).set(voucher);
+
+    return NextResponse.json({ success: true, voucher: { code, amount: voucher.amount, validUntil: voucher.validUntil } });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error('[vouchers/create]', msg);
