@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { clientName, email, phone, amount, description, pdfUrl, note, sendEmail } = body as {
+    const { clientName, email, phone, amount, description, pdfUrl, note, sendEmail, voucherCode } = body as {
       clientName?: string;
       email?: string;
       phone?: string;
@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
       pdfUrl?: string;
       note?: string;
       sendEmail?: boolean;
+      voucherCode?: string;
     };
 
     if (!clientName || !email || !phone) {
@@ -44,14 +45,17 @@ export async function POST(req: NextRequest) {
     const cleanPhone = phone.replace(/\D/g, '').slice(-10).padStart(10, '0');
     const productinfo = description.slice(0, 100);
 
-    const receiptBase = `${SITE_URL}/payment/receipt?txnid=${txnid}&name=${encodeURIComponent(clientName)}&amount=${amount}&desc=${encodeURIComponent(description)}`;
+    // Build success URL: if this payment is for a voucher, redirect to voucher success page
+    const successUrl = voucherCode
+      ? `${SITE_URL}/vouchers/success?code=${encodeURIComponent(voucherCode)}&txnid=${txnid}`
+      : `${SITE_URL}/payment/receipt?txnid=${txnid}&name=${encodeURIComponent(clientName)}&amount=${amount}&desc=${encodeURIComponent(description)}`;
 
     // If Easebuzz not configured, return a direct receipt link (dev/test)
     if (!EASEBUZZ_KEY || !EASEBUZZ_SALT) {
-      return NextResponse.json({ success: true, paymentUrl: receiptBase, txnid });
+      return NextResponse.json({ success: true, paymentUrl: successUrl, txnid });
     }
 
-    const surl = `${receiptBase}${pdfUrl ? `&pdf=${encodeURIComponent(pdfUrl)}` : ''}`;
+    const surl = `${successUrl}${!voucherCode && pdfUrl ? `&pdf=${encodeURIComponent(pdfUrl)}` : ''}`;
     const furl = `${SITE_URL}/payment/receipt?txnid=${txnid}&error=1`;
 
     const hashStr = [

@@ -110,7 +110,8 @@ export function proxy(req: NextRequest) {
   if (pathname.startsWith('/api/admin/') &&
       !pathname.startsWith('/api/admin/booking-notes') &&
       !pathname.startsWith('/api/admin/booking-docs') &&
-      !pathname.startsWith('/api/admin/reviews')) {
+      !pathname.startsWith('/api/admin/reviews') &&
+      !pathname.startsWith('/api/admin/payment-link')) {
     const adminSecret = process.env.ADMIN_SECRET;
     if (!adminSecret) {
       // ADMIN_SECRET not configured — deny all admin API access

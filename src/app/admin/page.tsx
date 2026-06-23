@@ -4309,11 +4309,18 @@ export default function AdminDashboard() {
                                                                     pdfUrl: voucherForm.pdfUrl,
                                                                     note: voucherForm.note,
                                                                     sendEmail: false,
+                                                                    voucherCode: voucherCreated.code,
                                                                 }),
                                                             });
                                                             const data = await res.json();
-                                                            if (data.paymentUrl) setVoucherPayLink(data.paymentUrl);
-                                                        } catch { /* ignore */ }
+                                                            if (data.paymentUrl) {
+                                                                setVoucherPayLink(data.paymentUrl);
+                                                            } else {
+                                                                setVoucherMsg({ type: 'error', text: data.error || 'Failed to generate payment link.' });
+                                                            }
+                                                        } catch {
+                                                            setVoucherMsg({ type: 'error', text: 'Network error generating payment link.' });
+                                                        }
                                                         setVoucherPayLoading(false);
                                                     }}
                                                     disabled={voucherPayLoading || !voucherForm.email}
@@ -4323,6 +4330,7 @@ export default function AdminDashboard() {
                                                 </button>
                                             )}
                                             {!voucherForm.email && <p className="text-xs text-gray-400 mt-1.5">Add recipient email in the form to generate a payment link.</p>}
+                                            {voucherMsg.type === 'error' && voucherMsg.text && <p className="text-xs text-red-600 mt-1.5">{voucherMsg.text}</p>}
                                         </div>
                                     </div>
                                 ) : (
